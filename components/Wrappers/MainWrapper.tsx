@@ -1,9 +1,9 @@
 import React from "react";
-import SectionContainer from "@/components/SectionContainer";
+import SectionWrapper from "@/components/Wrappers/SectionWrapper";
 import Link from "@/components/Link";
-import ThemeSwitch from "@/components/ThemeSwitch";
-import LanguageSwitch from "@/components/LanguageSwitch";
-import MobileNav from "./MobileNav";
+import ThemeSwitch from "@/components/Switches/ThemeSwitch";
+import LanguageSwitch from "@/components/Switches/LanguageSwitch";
+import MobileNav from "@/components/MobileNav";
 import { siteMetadata } from "@/data/siteMetadata";
 import { LanguageContext } from "@/providers/LanguageProvider";
 
@@ -15,7 +15,7 @@ const LayoutWrapper = ({ children }: LayoutWrapperProps) => {
   const { language } = React.useContext(LanguageContext);
   return (
     <div className="bg-slate-100 dark:bg-slate-800">
-      <SectionContainer className="fixed w-screen bg-slate-200 dark:bg-slate-900">
+      <SectionWrapper className="fixed w-screen bg-slate-200 dark:bg-slate-900">
         <header className="flex items-center justify-between py-3">
           <Link
             href="/"
@@ -45,7 +45,7 @@ const LayoutWrapper = ({ children }: LayoutWrapperProps) => {
           </div>
           <MobileNav />
         </header>
-      </SectionContainer>
+      </SectionWrapper>
       <main>{children}</main>
     </div>
   );

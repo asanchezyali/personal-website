@@ -2,8 +2,8 @@ import React, { useState } from 'react'
 import Link from './Link'
 import { siteMetadata } from "@/data/siteMetadata";
 import { LanguageContext } from '@/providers/LanguageProvider';
-import LanguageSwitch from './LanguageSwitch';
-import ThemeSwitch from './ThemeSwitch';
+import LanguageSwitch from './Switches/LanguageSwitch';
+import ThemeSwitch from './Switches/ThemeSwitch';
 
 const MobileNav = () => {
   const [navShow, setNavShow] = useState(false)

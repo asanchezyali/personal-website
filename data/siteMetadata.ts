@@ -1,6 +1,7 @@
 export const siteMetadata: { [key: string]: any } = {
-  en: {
+  es: {
     headerTitle: "Alejandro Sánchez Yalí - Blog",
+    headerSubtitle:"¿Si programo entonces existo?",
     headerNavLinks: [
       { href: "/blog", name: "Artículos" },
       { href: "/tags", name: "Etiquetas" },
@@ -8,8 +9,9 @@ export const siteMetadata: { [key: string]: any } = {
       { href: "/about", name: "Bio" },
     ],
   },
-  es: {
+  en: {
     headerTitle: "Alejandro Sánchez Yalí - Blog",
+    headerSubtitle:"If I program, then I exist?",
     headerNavLinks: [
       { href: "/blog", name: "Blog" },
       { href: "/tags", name: "Tags" },
