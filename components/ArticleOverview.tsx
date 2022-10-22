@@ -29,7 +29,7 @@ export default function ArticleOverview() {
               Alejandro Sánchez Yalí
             </p>
             <p className="text-base font-light text-slate-800 dark:text-slate-300 px-0 md:px-4">
-              {siteMetadata[language].date("10 de Junio de 2021", 2)}
+              {siteMetadata[language].date("2021/10/01", 2)}
             </p>
           </div>
           <div className="flex flex-col">
@@ -52,7 +52,7 @@ export default function ArticleOverview() {
         solana-web3.js. Este SDK nos permite interactuar con la red de Solana.
       </p>
       <p className="text-base font-semibold text-sky-700 dark:text-sky-500 pt-2">
-        Leer más ...
+        {siteMetadata[language].readMore}
       </p>
 
 
