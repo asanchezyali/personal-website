@@ -15,7 +15,7 @@ const LayoutWrapper = ({ children }: LayoutWrapperProps) => {
   const { language } = React.useContext(LanguageContext);
   return (
     <div className="bg-slate-100 dark:bg-slate-800">
-      <SectionWrapper className="fixed w-screen bg-slate-200 dark:bg-slate-900">
+      <SectionWrapper className="fixed w-screen bg-slate-200 dark:bg-slate-900 z-10">
         <header className="flex items-center justify-between py-3">
           <Link
             href="/"

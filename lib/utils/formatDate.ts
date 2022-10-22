@@ -26,6 +26,7 @@ export const timeAgo = (date: string, language: string) => {
       years: (years: number) => `${years} years ago`,
     },
   };
+  
   const articleDate = new Date(date);
   const today = new Date();
   const diff = Math.abs(today.getTime() - articleDate.getTime());

@@ -1,25 +1,46 @@
 import React from "react";
-import Image from "@/components/Image";
+import NextImage from "next/image";
+import Image from "next/image";
 import { siteMetadata } from "@/data/siteMetadata";
 import { LanguageContext } from "@/providers/LanguageProvider";
 
-export default function ArticleOverview() {
+interface ArticleOverviewProps {
+  title: string;
+  summary: string;
+  date: string;
+  headerImage: string;
+  slug: string;
+}
+
+export default function ArticleOverview({
+  title,
+  summary,
+  date,
+  headerImage,
+  slug,
+}: ArticleOverviewProps) {
   const { language } = React.useContext(LanguageContext);
   return (
     <div className="flex flex-col border-b border-dashed border-slate-200 dark:border-slate-700 py-8">
-      <Image
-        src="/images/featured-image.webp"
-        alt="Next.js"
-        className="h-80 w-full object-cover rounded-lg"
-      />
-      <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-300 my-2">
-        ¿Cómo crear una colección de NFTs en Solana con IPFS?
+      <div className="relative h-[300px] w-full hover:scale-[1.005] ease-in duration-500">
+        <Image
+          src={`${headerImage}`}
+          layout="fill"
+          objectFit="cover"
+          objectPosition="center"
+          className="rounded-lg"
+        />
+      </div>
+      <h1 className="text-xl md:text-2xl font-bold text-slate-800 dark:text-slate-300 my-2">
+        {title}
       </h1>
       <div className="flex flex-row w-full py-4">
         <div className="hidden md:block">
-          <Image
+          <NextImage
             src="/avatar.jpeg"
             alt="Avatar"
+            height={50}
+            width={50}
             className="h-10 w-10 rounded-full "
           />
         </div>
@@ -29,7 +50,7 @@ export default function ArticleOverview() {
               Alejandro Sánchez Yalí
             </p>
             <p className="text-base font-light text-slate-800 dark:text-slate-300 px-0 md:px-4">
-              {siteMetadata[language].date("2022/10/22", 2)}
+              {siteMetadata[language].date(date)}
             </p>
           </div>
           <div className="flex flex-col">
@@ -44,12 +65,7 @@ export default function ArticleOverview() {
       </div>
 
       <p className="text-base font-light text-slate-800 dark:text-slate-300 text-justify">
-        En este tutorial aprenderás a crear una colección de NFTs en Solana con
-        IPFS. Para ello, crearemos un proyecto de Next.js y utilizaremos la
-        librería de React llamada react-ipfs. Esta librería nos permite subir un
-        archivo a IPFS y obtener su hash. Este hash es el que utilizaremos para
-        crear el NFT en Solana. Para ello, utilizaremos el SDK de Solana llamado
-        solana-web3.js. Este SDK nos permite interactuar con la red de Solana.
+        {summary}
       </p>
       <p className="text-base font-semibold text-sky-700 dark:text-sky-500 pt-2">
         {siteMetadata[language].readMore}
