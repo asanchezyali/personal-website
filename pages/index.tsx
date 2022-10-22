@@ -2,7 +2,7 @@ import React from "react";
 import type { NextPage } from "next";
 import { siteMetadata } from "@/data/siteMetadata";
 import SectionWrapper from "@/components/Wrappers/SectionWrapper";
-import Overview from "@/components/Overview";
+import ArticleOverview from "@/components/ArticleOverview";
 import Image from "@/components/Image";
 import { LanguageContext } from "@/providers/LanguageProvider";
 
@@ -23,7 +23,9 @@ const Home: NextPage = () => {
           {siteMetadata[language].headerSubtitle}
         </h1>
       </div>
-      <Overview />
+      <ArticleOverview />
+      <ArticleOverview />
+      <ArticleOverview />
     </SectionWrapper>
   );
 };
