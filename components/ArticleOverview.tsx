@@ -17,11 +17,11 @@ export default function ArticleOverview() {
       </h1>
       <div className="flex flex-row w-full py-4">
         <div className="hidden md:block">
-        <Image
-          src="/avatar.jpeg"
-          alt="Avatar"
-          className="h-10 w-10 rounded-full "
-        />
+          <Image
+            src="/avatar.jpeg"
+            alt="Avatar"
+            className="h-10 w-10 rounded-full "
+          />
         </div>
         <div className="flex flex-row justify-between w-full">
           <div className="flex flex-col">
@@ -29,7 +29,7 @@ export default function ArticleOverview() {
               Alejandro Sánchez Yalí
             </p>
             <p className="text-base font-light text-slate-800 dark:text-slate-300 px-0 md:px-4">
-              {siteMetadata[language].date("2021/10/01", 2)}
+              {siteMetadata[language].date("2022/10/22", 2)}
             </p>
           </div>
           <div className="flex flex-col">
@@ -54,8 +54,6 @@ export default function ArticleOverview() {
       <p className="text-base font-semibold text-sky-700 dark:text-sky-500 pt-2">
         {siteMetadata[language].readMore}
       </p>
-
-
     </div>
   );
 }
