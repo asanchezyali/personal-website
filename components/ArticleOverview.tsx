@@ -3,6 +3,7 @@ import NextImage from "next/image";
 import Image from "next/image";
 import { siteMetadata } from "@/data/siteMetadata";
 import { LanguageContext } from "@/providers/LanguageProvider";
+import Link from "@/components/Link";
 
 interface ArticleOverviewProps {
   title: string;
@@ -22,18 +23,25 @@ export default function ArticleOverview({
   const { language } = React.useContext(LanguageContext);
   return (
     <div className="flex flex-col border-b border-dashed border-slate-200 dark:border-slate-700 py-8">
-      <div className="relative h-[300px] w-full hover:scale-[1.005] ease-in duration-500">
-        <Image
-          src={`${headerImage}`}
-          layout="fill"
-          objectFit="cover"
-          objectPosition="center"
-          className="rounded-lg"
-        />
-      </div>
-      <h1 className="text-xl md:text-2xl font-bold text-slate-800 dark:text-slate-300 my-2">
-        {title}
-      </h1>
+      <Link href={`/blog/${slug}`}>
+        <div className="relative h-[300px] w-full hover:scale-[1.005] ease-in duration-500">
+          <Image
+            src={`${headerImage}`}
+            layout="fill"
+            objectFit="cover"
+            objectPosition="center"
+            className="rounded-lg"
+          />
+        </div>
+      </Link>
+      <h2 className="pt-4">
+        <Link
+          href={`/blog/${slug}`}
+          className="text-xl md:text-2xl font-bold text-slate-800 dark:text-slate-300"
+        >
+          {title}
+        </Link>
+      </h2>
       <div className="flex flex-row w-full py-4">
         <div className="hidden md:block">
           <NextImage
@@ -64,12 +72,15 @@ export default function ArticleOverview({
         </div>
       </div>
 
-      <p className="text-base font-light text-slate-800 dark:text-slate-300 text-justify">
+      <p className="text-base text-slate-800 dark:text-slate-300 text-justify">
         {summary}
       </p>
-      <p className="text-base font-semibold text-sky-700 dark:text-sky-500 pt-2">
+      <Link
+        href={`/blog/${slug}`}
+        className="text-base font-semibold text-sky-700 dark:text-sky-500 pt-2 hover:underline"
+      >
         {siteMetadata[language].readMore}
-      </p>
+      </Link>
     </div>
   );
 }
