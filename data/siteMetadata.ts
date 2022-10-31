@@ -32,4 +32,7 @@ export const siteMetadata: { [key: string]: any } = {
   theme: "system",
   avatar: "/avatar.jpeg",
   footerText: "© 2021 Alejandro Sánchez Yalí",
+  siteUrl: "https://asanchezyali.com",
+  email: "asanchezyali@gmail.com",
+  author: "Alejandro Sánchez Yalí",
 };
