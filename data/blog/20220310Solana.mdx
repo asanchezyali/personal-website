@@ -1,0 +1,159 @@
+---
+title: "Programando Dapps en Solana"
+date: "2022/03/10"
+lastmod: '2021-02-01'
+tags: ['Solana', 'Anchor', 'Phantom Wallet', 'Dapps', 'Español']
+draft: false
+summary: "Una blockchain es una libro de registros de bloques de información que son almacenados secuencialmente y enlazados por métodos criptográficos a través de una red de computadores. Es más que un simple algoritmo, blockchain es una tecnología que facilita la intermediación descentralizada de datos entre los participantes"
+layout: PostLayout
+bibliography: references-data.bib
+canonicalUrl: https://tailwind-nextjs-starter-blog.vercel.app/blog/new-features-in-v1/
+headerImage: "/images/post-solana.webp"
+language: "es"
+---
+
+Aquí vas a encontrar cómo construir el código base para una _dapp_ en la cadena de bloques de Solana.
+
+<TOCInline toc={props.toc} exclude="Overview" toHeading={2}  asDisclosure/>
+
+Para ello, necesitarás:
+
+1. [Solana Tool Suite (1.8.16)](https://docs.solana.com/cli/install-solana-cli-tools) - Esta es la CLI de Solana. La documentación es muy completa y allí encontrarás todos los detalles para aprender a utilizarla. 
+2. [Anchor (0.21.0)](https://project-serum.github.io/anchor/getting-started/introduction.html) - Seguramente si has desarrollado dapps sobre Ethereum, habrás utilizado [Hardhat](https://hardhat.org/). Bueno, Anchor es un _framework_ parecido a Hardhat que se utiliza para desarrollar _dapps_ sobre Solana. 
+3. [solana/web3.js (1.36.0)](https://solana-labs.github.io/solana-web3.js/) - Es una version de [web3.js](https://web3js.readthedocs.io/) para solana, sin embargo la documentación no es muy buena, así que si tienes dificultades con ella busca apoyo en las comunidades de discord. 
+4. [React.js (17.0.2)](https://reactjs.org/) - _Framework_ para el desarrollo de Front-end. Bastante popular y con muy buena documentación.
+
+5. [Node.js (16.04)](https://nodejs.org/en/) - Para instalarla puedes usar [nvm](https://github.com/nvm-sh/nvm).
+
+6.  [Phantom](https://project-serum.github.io/anchor/getting-started/installation.html) - Es la criptocartera que emplearemos para guardar las criptomonedas de Solana.
+
+Como has visto en cada uno de los items encontrarás enlazada cada herramienta con la documentación para instalarlas, ya que cada proyecto explica como hacerlo y además mantienen actualizados los procedimientos.
+
+También te recomendamos que te unas a las comunidades de discord de Anchor, Stractors, Metaplex y Solana para que te ayuden a mantenerte actualizado:
+
+1.  [Anchor](https://discord.gg/ZCHmqvXgDw)
+2.  [Stractors](https://discord.gg/ebsJrabneZ)
+3.  [Metaplex](https://discord.gg/rpn5wM8Ry3)
+4.  [Solana Tech](https://discord.gg/solana)
+
+Y si quieres aprender más sobre la blockchain conmigo, puedes visitar mi canal de discord [CODE & MATH](https://discord.gg/eeZgZaWNRu).
+
+Espero que el contenido que voy a presentar a continuación sea de su agrado y les permita incrementar su _Qi_ como desarrolladores de _Blockchain_.
+## Solana CLI
+
+El CLI de Solana es una herramienta que te permite interactuar con la blockchain de Solana. Para ello, necesitas instalarlo de acuerdo a las instrucciones que te proporciona la documentación: [Solana Tool Suite (1.8.16)](https://docs.solana.com/cli/install-solana-cli-tools). Por otro lado, debes configurarlo para que puedas interactuar con la blockchain. Existen tres redes de configurar el ambiente de trabajo: `localhost`, `testnet`, `devnet` o `mainnet-beta`.
+
+Además, debes obtener algunas criptomonedas de prueba para realizar pruebas. Las criptomonedas que te proporcionará el CLI para las redes `localhost`, `testnet` y `devnet` no tiene ningún valor comercial, son solo para probar las dapps en ambientes de desarrollo.
+### Criptocartera de papel y airdrop 
+
+Una criptocartera de criptomonedas es una herramienta que te permite almacenar claves privadas que son utilizadas para generar claves públicas que son utilizadas para generar transacciones. A continuación te enseñaremos como generar una [criptocartera de papel](https://docs.solana.com/wallet-guide/paper-wallet) usando la línea de comandos de Solana. Para ello, utilizaremos el comando  `solana-keygen`, que se debería haber sido instalado cuando instalamos el CLI de solana. Sin embargo, para verificar que se instaló correctamente, podemos ejecutar el siguiente comando:
+
+```shell
+solana --version
+```
+
+```shell:output
+solana-cli 1.8.16 (src:23af37fe; feat:1886190546)
+```
+Si vemos la versión, es que se instaló correctamente. Significa que podemos ejecutar el comando `solana-keygen` para generar una criptocartera de papel.
+
+```shell
+solana-keygen new --outfile ~/.config/solana/«MY_PAPER_WALLET».json
+```
+
+```shell:output
+Generating a new keypair
+
+For added security, enter a BIP39 passphrase
+
+NOTE! This passphrase improves security of the recovery seed phrase NOT the
+keypair file itself, which is stored as insecure plain text
+
+BIP39 Passphrase (empty for none): 
+
+Wrote new keypair to /home/alejandro/.config/solana/«MY_PAPER_WALLET».json
+==============================================================================
+pubkey: A9exxqnew6bbovMLt8ZDA2CyUVEKP6Y2uGkT8EGE2q7J
+==============================================================================
+Save this seed phrase and your BIP39 passphrase to recover your new keypair:
+surface pride wild second judge where episode wire enforce trial upgrade music
+```
+
+El parámetro `MY_PAPER_WALLET` es un nombre que le daremos a la criptocartera de papel que generaremos. Por ejemplo, si queremos generar una criptocartera de papel para guardarla en la carpeta `~/.config/solana/`, podemos usar `MY_PAPER_WALLET=my_paper_wallet`. Cuando ejecutemos el comando `solana-keygen new`, el CLI nos pedirá que introduzcamos una frase de recuperación para generar la clave pública y la clave privada. Siéntase libre de añadir una frase de contraseña si lo desea, está bien no hacerlo para los propósitos de este tutorial.
+
+Una vez que hemos rellenado el formulario, el terminal debería mostrar la clave pública y la frase semilla generada. Copie y guarde la frase semilla en un lugar seguro.
+
+El par de claves se generará en la siguiente ubicación:
+
+```shell
+/home/<your user>/.config/solana/«MY_PAPER_WALLET».json
+```
+
+El archivo json puede llamarse como usted quiera, asegúrese de almacenar su frase semilla en algún lugar seguro.
+
+Para usar tu nueva criptocartera, entonces escribimos el siguiente comando:
+
+```shell
+solana config set --keypair ~/.config/solana/«MY_PAPER_WALLET».json
+```
+
+```shell:output
+Config File: /home/alejandro/.config/solana/cli/config.yml
+RPC URL: https://api.devnet.solana.com 
+WebSocket URL: wss://api.devnet.solana.com/ (computed)
+Keypair Path: /home/alejandro/.config/solana/«MY_PAPER_WALLET».json 
+Commitment: confirmed 
+```
+
+Ahora vamos a probar que la criptocartera de papel se ha creado correctamente. Para ello, debemos asegurarnos primero de usar la red de pruebas `devnet`:
+
+```shell
+solana config set --url devnet
+```
+
+```shell:output
+Config File: /home/alejandro/.config/solana/cli/config.yml
+RPC URL: https://api.devnet.solana.com 
+WebSocket URL: wss://api.devnet.solana.com/ (computed)
+Keypair Path: /home/alejandro/.config/solana/«MY_PAPER_WALLET».json 
+Commitment: confirmed 
+```
+
+Para comprobar la configuración actual de la red (y otras) podemos emplear este comando:
+
+```shell
+solana config get
+```
+
+```shell:output
+Config File: /home/user/.config/solana/cli/config.yml
+RPC URL: https://api.devnet.solana.com 
+WebSocket URL: wss://api.devnet.solana.com/ (computed)
+Keypair Path: /home/user/.config/solana/«MY_PAPER_WALLET».json 
+Commitment: confirmed 
+```
+
+con el CLI podemos ver la dirección de nuestra criptocartera:
+
+```shell
+solana address
+```
+
+```shell:output
+4aDSG82CdgMwt81z7AwnLnDRZyp6MjvZMUVpT82HZRU9
+```
+
+A continuación vamos a conseguir algo de criptomonedas de prueba de Solana, para hacer esto, debemos asegurarnos que estamos usando la `devnet`, ya que nuestro código base va a funcionar en esta red. Para conseguir las criptomonedas de prueba, ejecutamos el siguiente comando:
+
+
+```shell
+solana airdrop 2 «YOUR_ADDRESS» --url devnet
+```
+
+```shell:output
+Requesting airdrop of 2 SOL
+
+Signature: 3KsFBCULmso5Lc7CAQdqF8rzsBXb3xaVrG3cup19n3P2paw3ryvovWQ9MsMB8GMiQkXJWyHXGrni63BsNrxVfHP2
+
+2 SOL
+```

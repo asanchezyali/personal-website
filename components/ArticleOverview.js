@@ -62,12 +62,13 @@ export default function ArticleOverview({ title, summary, date, headerImage, slu
       <div className="flex w-full flex-row justify-between pt-2">
         <Link
           href={`/blog/${slug}`}
-          className="text-base font-semibold text-sky-700 hover:underline dark:text-sky-500"
+          className="text-base text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
         >
           Read more ...
         </Link>
-        <div className='text-base text-slate-800 dark:text-slate-300 space-x-2'>
-          Tags: {tags.map((tag) => (
+        <div className="space-x-2 text-base text-slate-800 dark:text-slate-300">
+          Tags:{' '}
+          {tags.map((tag) => (
             <Tag key={tag} text={tag} />
           ))}
         </div>

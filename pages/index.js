@@ -3,6 +3,7 @@ import { getAllFilesFrontMatter } from '@/lib/mdx'
 import siteMetadata from '@/data/siteMetadata'
 import ListLayout from '@/layouts/ListLayout'
 import { PageSEO } from '@/components/SEO'
+import SocialIcon from '@/components/social-icons'
 
 export const POSTS_PER_PAGE = 5
 
@@ -21,7 +22,7 @@ export default function Blog({ posts, initialDisplayPosts, pagination }) {
   return (
     <>
       <PageSEO title={`Blog - ${siteMetadata.author}`} description={siteMetadata.description} />
-      <div className="flex h-[20rem] flex-col items-center justify-center pt-20">
+      <div className="flex flex-col items-center justify-center pt-20 pb-20">
         <div className="duration-500 ease-in hover:translate-y-[-3px] hover:scale-[1.01]">
           <NextImage
             src="/avatar.jpeg"
@@ -34,6 +35,14 @@ export default function Blog({ posts, initialDisplayPosts, pagination }) {
         <h1 className="my-2 text-lg text-slate-800 dark:text-slate-300">
           ¿Si programo entonces existo?
         </h1>
+        <div className="mb-3 flex space-x-4">
+          <SocialIcon kind="mail" href={`mailto:${siteMetadata.email}`} size="6" />
+          <SocialIcon kind="github" href={siteMetadata.github} size="6" />
+          <SocialIcon kind="facebook" href={siteMetadata.facebook} size="6" />
+          <SocialIcon kind="youtube" href={siteMetadata.youtube} size="6" />
+          <SocialIcon kind="linkedin" href={siteMetadata.linkedin} size="6" />
+          <SocialIcon kind="twitter" href={siteMetadata.twitter} size="6" />
+        </div>
       </div>
       <ListLayout
         posts={posts}

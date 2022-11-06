@@ -30,6 +30,15 @@ export default function PostLayout({ frontMatter, authorDetails, next, prev, chi
       <article>
         <div className="xl:divide-y xl:divide-gray-200 xl:dark:divide-gray-700">
           <header className="pt-6 xl:pb-6">
+            <div className="relative mb-10 h-[500px] w-full duration-500 ease-in hover:scale-[1.005]">
+              <Image
+                src={frontMatter.headerImage}
+                layout="fill"
+                objectFit="cover"
+                objectPosition="center"
+                className="rounded-lg"
+              />
+            </div>
             <div className="space-y-1 text-center">
               <dl className="space-y-10">
                 <div>
@@ -103,7 +112,7 @@ export default function PostLayout({ frontMatter, authorDetails, next, prev, chi
                     <h2 className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">
                       Tags
                     </h2>
-                    <div className="flex flex-wrap">
+                    <div className="flex flex-col">
                       {tags.map((tag) => (
                         <Tag key={tag} text={tag} />
                       ))}

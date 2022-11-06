@@ -1,4 +1,5 @@
 import Link from '@/components/Link'
+import Image from 'next/image'
 import PageTitle from '@/components/PageTitle'
 import SectionContainer from '@/components/SectionContainer'
 import { BlogSEO } from '@/components/SEO'
@@ -17,6 +18,15 @@ export default function PostLayout({ frontMatter, authorDetails, next, prev, chi
       <article>
         <div>
           <header>
+            <div className="relative mb-10 h-[500px] w-full duration-500 ease-in hover:scale-[1.005]">
+              <Image
+                src={frontMatter.headerImage}
+                layout="fill"
+                objectFit="cover"
+                objectPosition="center"
+                className="rounded-lg"
+              />
+            </div>
             <div className="space-y-1 border-b border-gray-200 pb-10 text-center dark:border-gray-700">
               <dl>
                 <div>
