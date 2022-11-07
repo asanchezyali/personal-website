@@ -37,6 +37,7 @@ export default function PostLayout({ frontMatter, authorDetails, next, prev, chi
                 objectFit="cover"
                 objectPosition="center"
                 className="rounded-lg"
+                alt={title}
               />
             </div>
             <div className="space-y-1 text-center">

@@ -16,6 +16,7 @@ export default function ArticleOverview({ title, summary, date, headerImage, slu
             objectFit="cover"
             objectPosition="center"
             className="rounded-lg"
+            alt={title}
           />
         </div>
       </Link>

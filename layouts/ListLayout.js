@@ -52,14 +52,14 @@ export default function ListLayout({ posts, title, initialDisplayPosts = [], pag
             const { slug, date, title, summary, tags, headerImage } = frontMatter
             return (
               <ArticleOverview
-              key={slug}
-              title={title}
-              summary={summary}
-              date={date}
-              headerImage={headerImage}
-              slug={slug}
-              tags={tags}
-            />
+                key={slug}
+                title={title}
+                summary={summary}
+                date={date}
+                headerImage={headerImage}
+                slug={slug}
+                tags={tags}
+              />
             )
           })}
         </ul>
