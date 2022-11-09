@@ -30,7 +30,7 @@ export default function PostLayout({ frontMatter, authorDetails, next, prev, chi
       <article>
         <div className="xl:divide-y xl:divide-gray-200 xl:dark:divide-gray-700">
           <header className="pt-6 xl:pb-6">
-            <div className="relative mb-10 h-[200px] sm:h-[500px] w-full duration-500 ease-in hover:scale-[1.005]">
+            <div className="relative mb-10 h-[200px] w-full duration-500 ease-in hover:scale-[1.005] sm:h-[500px]">
               <Image
                 src={frontMatter.headerImage}
                 layout="fill"
