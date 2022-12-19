@@ -2,7 +2,7 @@ import Link from '@/components/Link'
 import PageTitle from '@/components/PageTitle'
 import SectionContainer from '@/components/SectionContainer'
 import { BlogSEO } from '@/components/SEO'
-import Image from '@/components/Image'
+import SmartImage from '@/components/Image'
 import Tag from '@/components/Tag'
 import siteMetadata from '@/data/siteMetadata'
 import Comments from '@/components/comments'
@@ -31,7 +31,7 @@ export default function PostLayout({ frontMatter, authorDetails, next, prev, chi
         <div className="xl:divide-y xl:divide-gray-200 xl:dark:divide-gray-700">
           <header className="pt-6 xl:pb-6">
             <div className="relative mb-10 h-[200px] w-full duration-500 ease-in hover:scale-[1.005] sm:h-[500px]">
-              <Image
+              <SmartImage
                 src={frontMatter.headerImage}
                 layout="fill"
                 objectFit="cover"
@@ -67,7 +67,7 @@ export default function PostLayout({ frontMatter, authorDetails, next, prev, chi
                   {authorDetails.map((author) => (
                     <li className="flex items-center space-x-2" key={author.name}>
                       {author.avatar && (
-                        <Image
+                        <SmartImage
                           src={author.avatar}
                           width="38px"
                           height="38px"

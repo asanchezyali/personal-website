@@ -1,30 +1,45 @@
-import NextImage from 'next/image'
+import React from 'react'
+import SmartImage from '@/components/Image'
 import { getAllFilesFrontMatter } from '@/lib/mdx'
 import siteMetadata from '@/data/siteMetadata'
+import metaLabels from '@/data/metaLabels'
 import ListLayout from '@/layouts/ListLayout'
 import { PageSEO } from '@/components/SEO'
 import SocialIcon from '@/components/social-icons'
+import { LanguageContext } from '@/providers/LanguageProvider'
 
 export const POSTS_PER_PAGE = 5
 
 export async function getStaticProps() {
   const posts = await getAllFilesFrontMatter('blog')
-  const initialDisplayPosts = posts.slice(0, POSTS_PER_PAGE)
-  const pagination = {
-    currentPage: 1,
-    totalPages: Math.ceil(posts.length / POSTS_PER_PAGE),
-  }
-
-  return { props: { initialDisplayPosts, posts, pagination } }
+  return { props: { posts } }
 }
 
-export default function Blog({ posts, initialDisplayPosts, pagination }) {
+export default function Blog({ posts }) {
+  const [initialDisplayPosts, setInitialDisplayPosts] = React.useState([])
+  const [pagination, setPagination] = React.useState({
+    currentPage: 1,
+    totalPages: 1,
+  })
+  const { language } = React.useContext(LanguageContext)
+
+  React.useEffect(() => {
+    const filteredPosts = posts.filter(
+      (frontMatter) => frontMatter.draft !== true && frontMatter.language === language
+    )
+    setInitialDisplayPosts(filteredPosts.slice(0, POSTS_PER_PAGE))
+    setPagination({
+      currentPage: 1,
+      totalPages: Math.ceil(filteredPosts.length / POSTS_PER_PAGE),
+    })
+  }, [posts, language])
+
   return (
     <>
       <PageSEO title={`Blog - ${siteMetadata.author}`} description={siteMetadata.description} />
       <div className="flex flex-col items-center justify-center pt-20 pb-20">
         <div className="duration-500 ease-in hover:translate-y-[-3px] hover:scale-[1.01]">
-          <NextImage
+          <SmartImage
             src="/avatar.jpeg"
             alt="Avatar"
             width={200}
@@ -33,7 +48,7 @@ export default function Blog({ posts, initialDisplayPosts, pagination }) {
           />
         </div>
         <h1 className="my-2 text-lg text-slate-800 dark:text-slate-300">
-          ¿Si programo entonces existo?
+          {metaLabels[language].lema}
         </h1>
         <div className="mb-3 flex space-x-4">
           <SocialIcon kind="mail" href={`mailto:${siteMetadata.email}`} size="6" />
@@ -48,7 +63,7 @@ export default function Blog({ posts, initialDisplayPosts, pagination }) {
         posts={posts}
         initialDisplayPosts={initialDisplayPosts}
         pagination={pagination}
-        title="All Posts"
+        title={metaLabels[language].title}
       />
     </>
   )
