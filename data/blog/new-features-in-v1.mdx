@@ -3,13 +3,13 @@ title: 'New features in v1'
 date: 2021-08-07T15:32:14Z
 lastmod: '2021-02-01'
 tags: ['next-js', 'tailwind', 'guide']
-draft: false
+draft: true
 summary: 'An overview of the new features released in v1 - code block copy, multiple authors, frontmatter layout and more'
 layout: PostSimple
 bibliography: references-data.bib
 canonicalUrl: https://tailwind-nextjs-starter-blog.vercel.app/blog/new-features-in-v1/
-headerImage: "/images/post-solanaNFTandIPFS.webp"
-language: "en"
+headerImage: '/images/post-solanaNFTandIPFS.webp'
+language: 'en'
 ---
 
 ## Overview
@@ -242,11 +242,11 @@ comment: {
 
 ## Multiple authors
 
-Information on authors is now split from `siteMetadata.js` and stored in its own `data/authors` folder as a markdown file. Minimally, you will need to have a `default.md` file with authorship information. You can create additional files as required and the file name will be used as the reference to the author.
+Information on authors is now split from `siteMetadata.js` and stored in its own `data/authors` folder as a markdown file. Minimally, you will need to have a `default.en.md` file with authorship information. You can create additional files as required and the file name will be used as the reference to the author.
 
 Here's how an author markdown file might look like:
 
-```md:default.md
+```md:default.en.md
 ---
 name: Tails Azimuth
 avatar: /static/images/avatar.png
@@ -273,7 +273,7 @@ This is rendered in the `AuthorLayout` template.
 
 The frontmatter of a blog post accepts an optional `authors` array field. If no field is specified, it is assumed that the default author is used. Simply pass in an array of authors to render multiple authors associated with a post.
 
-For example, the following frontmatter will display the authors given by `data/authors/default.md` and `data/authors/sparrowhawk.md`
+For example, the following frontmatter will display the authors given by `data/authors/default.en.md` and `data/authors/sparrowhawk.md`
 
 ```yaml
 title: 'My first post'

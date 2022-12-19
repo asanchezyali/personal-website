@@ -2,10 +2,10 @@
 title: Sample .md file
 date: '2016-03-08'
 tags: ['markdown', 'code', 'features']
-draft: false
+draft: true
 summary: Example of a markdown file with code blocks and syntax highlighting
-headerImage: "/images/post-solanaNFTandIPFS.webp"
-language: "en"
+headerImage: '/images/post-solanaNFTandIPFS.webp'
+language: 'en'
 ---
 
 A sample post with markdown.
