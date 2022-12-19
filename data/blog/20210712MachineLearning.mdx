@@ -1,17 +1,16 @@
 ---
-title: "¿Aprendiendo de los datos?"
-date: "2021/07/12"
+title: '¿Aprendiendo de los datos?'
+date: '2021/07/12'
 lastmod: '2021-02-01'
-tags: ['Machine Learning', 'Tareas de aprendizaje', 'Regresión', 'Clasificación', 'Español']
+tags: ['Machine Learning', 'Tareas de aprendizaje', 'Regresión', 'Clasificación']
 draft: false
-summary: "¿Cómo aprendemos los humanos? En principio la mayoría del conocimiento humano proviene de nuestra experiencia con los objetos, es decir, aprendemos de los datos que obtenemos acerca de ellos y no a partir de algún tipo de definición matemática."
+summary: '¿Cómo aprendemos los humanos? En principio la mayoría del conocimiento humano proviene de nuestra experiencia con los objetos, es decir, aprendemos de los datos que obtenemos acerca de ellos y no a partir de algún tipo de definición matemática.'
 layout: PostLayout
 bibliography: references-data.bib
 canonicalUrl: https://tailwind-nextjs-starter-blog.vercel.app/blog/new-features-in-v1/
-headerImage: "/images/post-ml.png"
-language: "es"
+headerImage: '/images/post-ml.png'
+language: 'es'
 ---
-
 
 ¿Cómo aprendemos los humanos? En principio la mayoría del conocimiento humano proviene de nuestra experiencia con los objetos, es decir, aprendemos de los datos que obtenemos acerca de ellos y no a partir de algún tipo de definición matemática.
 
@@ -19,7 +18,7 @@ Esta habilidad de aprender de los datos, nos ha resultado bastante útil, dado q
 
 En esta ocasión vamos a tratar brevemente los principales elementos que constituyen **el problema del aprendizaje a partir de los datos**, para finalmente entender un poco cómo las máquinas también pueden aprender.
 
-<TOCInline toc={props.toc} exclude="Overview" toHeading={2}  asDisclosure/>
+<TOCInline toc={props.toc} exclude="Overview" toHeading={2} asDisclosure />
 
 ## El problema del aprendizaje
 
@@ -35,9 +34,9 @@ $$
 
 que a partir de una **muestra de datos** $S = (s_i)_{i\in[m]}$ de cierto tamaño $m$ logre encontrar un **modelo** $h_S = \mathcal{A}(S)\in \mathcal{H}$ con «_buen comportamiento_» en $S$ y «_capacidad de generalizar_» para los datos desconocidos en $\mathcal{Z} \setminus \{s_i\}_{i\in[m]}$. Aquí, el buen comportamiento se mide via la función de perdida $\mathcal{L}$ y corresponde a la perdida $\mathcal{L}(h_S, z)$, mientras la capacidad de generalizar quiere decir, que el comportamiento de $h_S$ en el conjunto de datos desconocidos, $z\in \mathcal{Z} \setminus \{s_i\}_{i\in[m]}$, es similar al comportamiento en el conjunto de datos conocidos, $z\in \mathcal{S}$.
 
-Creo que en este punto, estamos de acuerdo con que las nociones de «_buen comportamiento_» y «_la capacidad de generalizar_» son bastante vagas, sin embargo, veamos como mejorar estas ideas, vamos a centrarnos en los conceptos de **riesgo ideal**  y de **riesgo empírico** cómo veremos a continuación:
+Creo que en este punto, estamos de acuerdo con que las nociones de «_buen comportamiento_» y «_la capacidad de generalizar_» son bastante vagas, sin embargo, veamos como mejorar estas ideas, vamos a centrarnos en los conceptos de **riesgo ideal** y de **riesgo empírico** cómo veremos a continuación:
 
-El **riesgo ideal** de una hipótesis $h\in \mathcal{H}$ con respecto una distribucción de probabilidad $\mathcal{D}$ sobre $\mathcal{Z}$, se define como: 
+El **riesgo ideal** de una hipótesis $h\in \mathcal{H}$ con respecto una distribucción de probabilidad $\mathcal{D}$ sobre $\mathcal{Z}$, se define como:
 
 $$
 \begin{equation}
@@ -45,9 +44,9 @@ L_{D}(h) = \mathbb{E}_{z\sim \mathcal{D}}[\mathcal{L}(h, z)].
 \end{equation}
 $$
 
-Observe que para esta definición, la esperanza de la función de perdida de $h$ es sobre los datos de $z$ muestreados aleatoriamente de acuerdo con la distribucción $\mathcal{D}$. Hay que señalar que en la práctica la distribución $\mathcal{D}$ es esencialmente desconocida. 
+Observe que para esta definición, la esperanza de la función de perdida de $h$ es sobre los datos de $z$ muestreados aleatoriamente de acuerdo con la distribucción $\mathcal{D}$. Hay que señalar que en la práctica la distribución $\mathcal{D}$ es esencialmente desconocida.
 
-Por otro lado, el **riesgo empírico** es la perdida esperada sobre una muestra de datos  $S = (s_i)_{i \in[m]}$, es decir:
+Por otro lado, el **riesgo empírico** es la perdida esperada sobre una muestra de datos $S = (s_i)_{i \in[m]}$, es decir:
 
 $$
 \begin{equation}
@@ -55,7 +54,7 @@ L_{S}(h) = \frac{1}{m}\sum_{i=1}^{m}\mathcal{L}(h, s_i).
 \end{equation}
 $$
 
-Ahora bien, si existiera el modelo $h^*\in \mathcal{H}$ tal que el **riesgo ideal** es cero,  $L_{D}(h^*)=0$, entonces  el **riesgo empírico** también sería cero,  $L_{S}(h^*)=0$, pues el modelo no presentaría ningún error en su tarea de predicción, aunque esto es lo esperado, por lo general, no es posible encontrar un modelo con las características de $h^*$. En la práctica para encontrar el mejor modelo, los esfuerzos se centran en una muestra de datos $S = (s_i)_{i \in[m]}$ y un conjunto de hipótesis $\mathcal{H}$, de tal manera que el objetivo ahora es encontrar un modelo $h_s\in \mathcal{H}$ que satisface la siguiente condición:
+Ahora bien, si existiera el modelo $h^*\in \mathcal{H}$ tal que el **riesgo ideal** es cero, $L_{D}(h^*)=0$, entonces el **riesgo empírico** también sería cero, $L_{S}(h^*)=0$, pues el modelo no presentaría ningún error en su tarea de predicción, aunque esto es lo esperado, por lo general, no es posible encontrar un modelo con las características de $h^*$. En la práctica para encontrar el mejor modelo, los esfuerzos se centran en una muestra de datos $S = (s_i)_{i \in[m]}$ y un conjunto de hipótesis $\mathcal{H}$, de tal manera que el objetivo ahora es encontrar un modelo $h_s\in \mathcal{H}$ que satisface la siguiente condición:
 
 $$
 \begin{equation}
@@ -79,9 +78,9 @@ Una vez se ha identificado la clase de hipótesis $\mathcal{H}$ que sastiface la
 
 Veamos algunos ejemplos de problema de aprendizaje basados en datos:
 
-**Clasificación Multiclase**. Consideremos la tarea de clasificar documentos. Nuestro deseo es diseñar un programa con la capacidad para clasificar una colección de documentos, de acuerdo a diferentes tópicos (e.g., noticias, deportes, biología, medicina). Un algoritmo de aprendizaje para esta tarea debería tener acceso a una colección de documentos correctamente clasificados, $S$, y con base a estos ejemplos, debería entregar una programa (modelo) que puede tomar un nuevo documento y clasificarlo. Aquí el **dominio**, $\mathcal{X}$, es el conjunto de todos los posibles documentos. Es importante señalar, que los documentos debería ser representados por un conjunto de características, que podría incluir el número de palabras diferentes en cada documento, el tamaño de cada documento, el autor, el origen, etc. Las **etiquetas**, $\mathcal{Y}$, es el conjunto de todos los posibles tópicos (en este caso, debería ser algún conjunto finito). Una vez hemos identificado el dominio y las etiquetas, el otro componente que hace falta es determinar una función de perdida adecuada para medir el _performance_ de nuestro algoritmo. 
+**Clasificación Multiclase**. Consideremos la tarea de clasificar documentos. Nuestro deseo es diseñar un programa con la capacidad para clasificar una colección de documentos, de acuerdo a diferentes tópicos (e.g., noticias, deportes, biología, medicina). Un algoritmo de aprendizaje para esta tarea debería tener acceso a una colección de documentos correctamente clasificados, $S$, y con base a estos ejemplos, debería entregar una programa (modelo) que puede tomar un nuevo documento y clasificarlo. Aquí el **dominio**, $\mathcal{X}$, es el conjunto de todos los posibles documentos. Es importante señalar, que los documentos debería ser representados por un conjunto de características, que podría incluir el número de palabras diferentes en cada documento, el tamaño de cada documento, el autor, el origen, etc. Las **etiquetas**, $\mathcal{Y}$, es el conjunto de todos los posibles tópicos (en este caso, debería ser algún conjunto finito). Una vez hemos identificado el dominio y las etiquetas, el otro componente que hace falta es determinar una función de perdida adecuada para medir el _performance_ de nuestro algoritmo.
 
-Para el caso de la clasificación multiclase se puede considerar la variable aleatoria $z$  en $\mathcal{X}\times \mathcal{Y}$ con la siguiente función de perdida:
+Para el caso de la clasificación multiclase se puede considerar la variable aleatoria $z$ en $\mathcal{X}\times \mathcal{Y}$ con la siguiente función de perdida:
 
 $$
 \begin{equation}
@@ -92,7 +91,7 @@ $$
 \end{equation}
 $$
 
-Esta función se usa en general para problemas de clasificación binaria o multiclase. 
+Esta función se usa en general para problemas de clasificación binaria o multiclase.
 
 **Regresión**. En esta tarea, el objetivo es encontrar algún patrón simple en los datos --una relación funcional entre los componentes de los datos $\mathcal{X}$ e $\mathcal{Y}$--. Por ejemplo, encontrar la mejor función que predice el peso de nacimiento de un bebe en relación con las medidas obtenidas por ultrasonido del diámetro de su cabeza, el diámetro abdominal y la longitud de su fémur. Aquí el dominio es algún subconjunto de $\mathbb{R}^{3}$ (las tres medidas obtenidas por el ultrasonido) y las etiquetas es el conjunto de los números reales (el peso en gramos). En este caso el conjunto de entrenamiento es igual que antes, un subconjunto $S\subseteq \mathcal{X}\times \mathcal{Y}$. Sin embargo, la medida de éxito es diferente. En este ejemplo, se podría evaluar la calidad de la hipótesis $h:\mathcal{X}\to \mathcal{Y}$ por el valor esperado del cuadrado de la diferencia entre las etiquetas correctas y su predicción, es decir:
 
@@ -103,7 +102,8 @@ $$
 $$
 
 ## ¿Cómo aprenden las maquinas?
-Como vimos anteriormente, el problema del aprendizaje involucra la elección de un conjunto de hipótesis $\mathcal{H}$ y la búsqueda de la hipótesis $h_{s}$ tal que: 
+
+Como vimos anteriormente, el problema del aprendizaje involucra la elección de un conjunto de hipótesis $\mathcal{H}$ y la búsqueda de la hipótesis $h_{s}$ tal que:
 
 $$
 \begin{equation}
@@ -119,11 +119,12 @@ h \leftarrow h - \lambda \nabla L_{D}(h)
 \end{equation}
 $$
 
-para encontrar una hipótesis $h_s$. Este es un proceso que puede ser automatizable en casi cualquier computadora. Por lo tanto, en principio  cualquier máquina con la capacidad de ejecutar este tipo de iteraciones, estaría en la capacidad de aprender a clasificar y predecir a partir de los datos. Sin embargo, hay que indicarle a la computadora cómo debe aprender, para esto se debe programar una serie de órdenes en las que se le indica como optimizar las diferentes funciones de perdida, según la tarea de aprendizaje que deseamos enseñarle, una vez los algoritmos se haya ejecutado, la computadora debería estar en la capacidad de clasificar y predecir, obviamente esto no es una tarea sencilla, pero no es imposible.
+para encontrar una hipótesis $h_s$. Este es un proceso que puede ser automatizable en casi cualquier computadora. Por lo tanto, en principio cualquier máquina con la capacidad de ejecutar este tipo de iteraciones, estaría en la capacidad de aprender a clasificar y predecir a partir de los datos. Sin embargo, hay que indicarle a la computadora cómo debe aprender, para esto se debe programar una serie de órdenes en las que se le indica como optimizar las diferentes funciones de perdida, según la tarea de aprendizaje que deseamos enseñarle, una vez los algoritmos se haya ejecutado, la computadora debería estar en la capacidad de clasificar y predecir, obviamente esto no es una tarea sencilla, pero no es imposible.
 
 Dejaré por el momento esta publicación hasta aquí, para no hacerla más extensa, espero que la hayan disfrutado. Nos vemos pronto.
 
-## Patrocinio 
+## Patrocinio
+
 ₿itcoin: [bc1qrcecrz47ywrcnyuqknzgzzz2t3lwawyjnl4t7f](https://www.exodus.com/)
 
 Solana: [Ft8A8t3UyGZHjWNvtgruADnUgrij3uaFe7pLj9QNG44N](https://phantom.app/)
@@ -132,8 +133,7 @@ Ethereum: [0x886ce8Cc54cd0964E6939c5290242b1135D10C7f](https://metamask.io/)
 
 Paypal: [@asanchezyali](https://paypal.me/asanchezyali?country.x=CO&locale.x=es_XC)
 
-
 ## Referencias
+
 1. [Julius Berner. 2021. The Modern Mathematics of deep learning.](https://deepai.org/publication/the-modern-mathematics-of-deep-learning)
 2. [Yaser Abu-Mostafa Data. 2012 - 2015. Learning From Data.](https://work.caltech.edu/telecourse)
-

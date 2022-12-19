@@ -1,7 +1,5 @@
 import React from 'react'
-import NextImage from 'next/image'
-import Image from 'next/image'
-import SmartImage from './Image'
+import Image from '@/components/Image'
 import Link from '@/components/Link'
 import formatDate from '@/lib/utils/formatDate'
 import Tag from '@/components/Tag'
@@ -14,7 +12,7 @@ export default function ArticleOverview({ title, summary, date, headerImage, slu
     <div className="flex flex-col border-b border-dashed border-slate-200 py-8 dark:border-slate-700">
       <Link href={`/blog/${slug}`}>
         <div className="relative h-[300px] w-full duration-500 ease-in hover:scale-[1.005]">
-          <SmartImage
+          <Image
             src={`${headerImage}`}
             layout="fill"
             objectFit="cover"
@@ -34,7 +32,7 @@ export default function ArticleOverview({ title, summary, date, headerImage, slu
       </h2>
       <div className="flex w-full flex-row py-4">
         <div className="hidden md:block">
-          <SmartImage
+          <Image
             src="/avatar.jpeg"
             alt="Avatar"
             height={50}

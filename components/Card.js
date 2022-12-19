@@ -1,4 +1,4 @@
-import SmartImage from './Image'
+import Image from './Image'
 import Link from './Link'
 
 const Card = ({ title, description, imgSrc, href }) => (
@@ -11,7 +11,7 @@ const Card = ({ title, description, imgSrc, href }) => (
       {imgSrc &&
         (href ? (
           <Link href={href} aria-label={`Link to ${title}`}>
-            <SmartImage
+            <Image
               alt={title}
               src={imgSrc}
               className="object-cover object-center md:h-36 lg:h-48"
@@ -20,7 +20,7 @@ const Card = ({ title, description, imgSrc, href }) => (
             />
           </Link>
         ) : (
-          <SmartImage
+          <Image
             alt={title}
             src={imgSrc}
             className="object-cover object-center md:h-36 lg:h-48"

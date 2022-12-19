@@ -1,5 +1,5 @@
 import React from 'react'
-import SmartImage from '@/components/Image'
+import Image from '@/components/Image'
 import { getAllFilesFrontMatter } from '@/lib/mdx'
 import siteMetadata from '@/data/siteMetadata'
 import metaLabels from '@/data/metaLabels'
@@ -39,7 +39,7 @@ export default function Blog({ posts }) {
       <PageSEO title={`Blog - ${siteMetadata.author}`} description={siteMetadata.description} />
       <div className="flex flex-col items-center justify-center pt-20 pb-20">
         <div className="duration-500 ease-in hover:translate-y-[-3px] hover:scale-[1.01]">
-          <SmartImage
+          <Image
             src="/avatar.jpeg"
             alt="Avatar"
             width={200}

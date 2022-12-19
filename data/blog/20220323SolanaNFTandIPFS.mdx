@@ -1,33 +1,32 @@
 ---
-title: "¿Cómo crear una colección de NFTs en Solana con IPFS?"
-date: "2022/03/23"
+title: '¿Cómo crear una colección de NFTs en Solana con IPFS?'
+date: '2022/03/23'
 lastmod: '2021/02/01'
-tags: ['Solana', 'NFT', 'Phantom Wallet', 'Español']
+tags: ['Solana', 'NFT', 'Phantom Wallet']
 draft: false
-summary: "Los NFTs son mucho más que imagenes generadas aleatoriamente, esto promete ser la revolución de los derechos de propiedad digital tal y como la conocemos actualmente. En este artículo vamos a explicar cómo crear un NFT en Solana con IPFS."
+summary: 'Los NFTs son mucho más que imagenes generadas aleatoriamente, esto promete ser la revolución de los derechos de propiedad digital tal y como la conocemos actualmente. En este artículo vamos a explicar cómo crear un NFT en Solana con IPFS.'
 layout: PostLayout
 bibliography: references-data.bib
 canonicalUrl: https://tailwind-nextjs-starter-blog.vercel.app/blog/new-features-in-v1/
-headerImage: "/images/post-solanaNFTandIPFS.webp"
-language: "es"
+headerImage: '/images/post-solanaNFTandIPFS.webp'
+language: 'es'
 ---
 
+El objetivo de este artículo es explicar como crear una colección de NFTs usando la blochacin de Solana con IPFS a través de Pinata. Si estás interesado en entender qué son los NFTs y cómo estos son mucho más que imágenes generadas aleatoriamente, que prometen ser la revolución de los derechos de la propiedad digital tal y como la conocemos, te recomiendo leer el articulo de Nick Szabo, [_Secure Property Titles with Owner Authority_](https://nakamotoinstitute.org/secure-property-titles/), allí encontrarás algunas de las ideas que dieron origen a este concepto.
 
-El objetivo de este artículo es explicar como crear una colección de NFTs usando la blochacin de Solana con IPFS a través de Pinata. Si estás interesado en entender qué son los NFTs y cómo estos son mucho más que imágenes generadas aleatoriamente, que prometen ser la revolución de los derechos de la propiedad digital tal y como la conocemos, te recomiendo leer el articulo de Nick Szabo, [_Secure Property Titles with Owner Authority_](https://nakamotoinstitute.org/secure-property-titles/), allí encontrarás algunas de las ideas que dieron origen a este concepto. 
-
-Este tutorial es especialmente interesante, en principio porque Solana ha estado estrechamente vinculado a [Arweave](https://www.arweave.org/), sin embargo hay muchos proyectos que prefieren usar IPFS para almacenar sus datos,  por su rápido acceso al contenido y su fiabilidad. Por otro lado, Metaplex, es un proyecto construido para hacer más fácil la creación de proyectos de NFTs en Solana y tiene soporte para IPFS, esto incluye la capacidad para usar Pinata para almacenar contenido y servirlo a través de una _API Gateway_ dedicada a IPFS. 
+Este tutorial es especialmente interesante, en principio porque Solana ha estado estrechamente vinculado a [Arweave](https://www.arweave.org/), sin embargo hay muchos proyectos que prefieren usar IPFS para almacenar sus datos, por su rápido acceso al contenido y su fiabilidad. Por otro lado, Metaplex, es un proyecto construido para hacer más fácil la creación de proyectos de NFTs en Solana y tiene soporte para IPFS, esto incluye la capacidad para usar Pinata para almacenar contenido y servirlo a través de una _API Gateway_ dedicada a IPFS.
 
 ## Configuración del ambiente de trabajo
 
-Para empezar, te debes registrar en [Pinata](https://www.pinata.cloud/). Si lo que quieres es hacer pruebas, se puede usar la plan gratuito, sin embargo para el lanzamiento de una colección grande de NFTs en la red principal, la recomendación es considerar el plan professional con una _API Gateway_ dedicada a IPFS. 
+Para empezar, te debes registrar en [Pinata](https://www.pinata.cloud/). Si lo que quieres es hacer pruebas, se puede usar la plan gratuito, sin embargo para el lanzamiento de una colección grande de NFTs en la red principal, la recomendación es considerar el plan professional con una _API Gateway_ dedicada a IPFS.
 
 Una vez que te hayas inscrito en Pinata, sólo tienes que asegurarte de que tienes instalados los siguientes elementos (en la lista que encontrarás a continuación, cada uno de ellos está vinculado a las instrucciones de instalación en caso de que tengas que instalarlos):
 
-* [Node.js](https://nodejs.org/en/download/) - version 16.13.0 o la más reciente.
-* [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) - versión 2.32.0 o la más reciente.
-* [Yarn](https://classic.yarnpkg.com/lang/en/docs/install/#mac-stable) - versión 1.22.17 o la más reciente.
-* [TS-Node](https://www.npmjs.com/package/ts-node#installation) - versión 10.4.0 o la más reciente.
-* [Solana CLI](https://docs.solana.com/cli/install-solana-cli-tools) - version 1.8.16 o la más reciente.
+- [Node.js](https://nodejs.org/en/download/) - version 16.13.0 o la más reciente.
+- [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) - versión 2.32.0 o la más reciente.
+- [Yarn](https://classic.yarnpkg.com/lang/en/docs/install/#mac-stable) - versión 1.22.17 o la más reciente.
+- [TS-Node](https://www.npmjs.com/package/ts-node#installation) - versión 10.4.0 o la más reciente.
+- [Solana CLI](https://docs.solana.com/cli/install-solana-cli-tools) - version 1.8.16 o la más reciente.
 
 Por si sirve de algo, seguiremos gran parte de las instrucciones de la página web de [Metaplex](https://docs.metaplex.com/candy-machine-v2/getting-started) con algunas modificaciones para subir contenido a IPFS a través de Pinata.
 
@@ -47,26 +46,25 @@ Una vez que sus imágenes estén en la carpeta, tendrá que crear los metadatos 
 
 ```json
 {
-    "name": "Number #0001",
-    "symbol": "NB",
-    "description": "Collection of 10 numbers on the blockchain. This is the number 1/10.",
-    "image": "0.png",
-    "attributes": [
-        {"trait_type": "Layer-1", "value": "0"},
-        {"trait_type": "Layer-2", "value": "0"}, 
-        {"trait_type": "Layer-3", "value": "0"},
-        {"trait_type": "Layer-4", "value": "1"}
-    ],
-    "properties": {
-        "creators": [{"address": "ADDRESS_FROM_CREATOR", "share": 100}],
-        "files": [{"uri": "0.png", "type": "image/png"}]
-    },
-    "collection": {"name": "numbers", "family": "numbers"}
+  "name": "Number #0001",
+  "symbol": "NB",
+  "description": "Collection of 10 numbers on the blockchain. This is the number 1/10.",
+  "image": "0.png",
+  "attributes": [
+    { "trait_type": "Layer-1", "value": "0" },
+    { "trait_type": "Layer-2", "value": "0" },
+    { "trait_type": "Layer-3", "value": "0" },
+    { "trait_type": "Layer-4", "value": "1" }
+  ],
+  "properties": {
+    "creators": [{ "address": "ADDRESS_FROM_CREATOR", "share": 100 }],
+    "files": [{ "uri": "0.png", "type": "image/png" }]
+  },
+  "collection": { "name": "numbers", "family": "numbers" }
 }
- ```
+```
 
-
- Al igual que con el estándar de los metadatos de Ethereum, el estándar de los metadatos de Solana tiene un nombre, una imagen y una descripción. Además, se pueden incluir atributos (al igual que con ETH), un símbolo y detalles de cobro. En los proyectos de Ethereum, el símbolo del token se asigna generalmente en la implementación del contrato y no en los metadatos. Otra diferencia es la parte de propiedades de los metadatos de Solana. Esto es necesario y le permite incluir una serie de archivos para sus NFTs. Tiene que tener al menos un archivo en esa matriz que apunte al mismo activo que la propiedad de la imagen, pero puede incluir otros archivos que conformen su NFT completa. Este es un concepto realmente interesante que debe ser explorado más a fondo, pero por el bien de este artículo, sólo vamos a operar con NFTs de un solo _asset_.
+Al igual que con el estándar de los metadatos de Ethereum, el estándar de los metadatos de Solana tiene un nombre, una imagen y una descripción. Además, se pueden incluir atributos (al igual que con ETH), un símbolo y detalles de cobro. En los proyectos de Ethereum, el símbolo del token se asigna generalmente en la implementación del contrato y no en los metadatos. Otra diferencia es la parte de propiedades de los metadatos de Solana. Esto es necesario y le permite incluir una serie de archivos para sus NFTs. Tiene que tener al menos un archivo en esa matriz que apunte al mismo activo que la propiedad de la imagen, pero puede incluir otros archivos que conformen su NFT completa. Este es un concepto realmente interesante que debe ser explorado más a fondo, pero por el bien de este artículo, sólo vamos a operar con NFTs de un solo _asset_.
 
 Si desea profundizar en estándar de los metadatos de Solana para los NFTs, puede hacerlo [aquí](https://docs.metaplex.com/candy-machine-v2/preparing-assets).
 
@@ -81,26 +79,28 @@ En tu editor de código, abre ese nuevo archivo. Está vacío, pero lo rellenare
 En su archivo `metadata-generator.js` añada este código:
 
 ```javascript showLineNumbers
-const fs = require('fs');
-const imageDir = fs.readdirSync("./assets");
-imageDir.forEach(img => {
+const fs = require('fs')
+const imageDir = fs.readdirSync('./assets')
+imageDir.forEach((img) => {
   const metadata = {
-    name: `Image ${img.split(".")[0]}`,
-    description: "YOUR DESCRIPTION HERE",
-    symbol: "YOUR_NFT_COLLECTION_SHORT_SYMBOL",
+    name: `Image ${img.split('.')[0]}`,
+    description: 'YOUR DESCRIPTION HERE',
+    symbol: 'YOUR_NFT_COLLECTION_SHORT_SYMBOL',
     image: img,
-    seller_fee_basis_points: "ROYALTIES_PERCENTAGE_BASIS_POINTS",
+    seller_fee_basis_points: 'ROYALTIES_PERCENTAGE_BASIS_POINTS',
     properties: {
-      files: [{ uri: img, "type": "image/png" }],
-      category: "image",
-      creators: [{
-        address: "YOUR_SOL_WALLET_ADDRESS",
-        share: 100
-      }]
-    }
+      files: [{ uri: img, type: 'image/png' }],
+      category: 'image',
+      creators: [
+        {
+          address: 'YOUR_SOL_WALLET_ADDRESS',
+          share: 100,
+        },
+      ],
+    },
   }
-  fs.writeFileSync(`./assets/${img.split(".")[0]}.json`, JSON.stringify(metadata))
-});
+  fs.writeFileSync(`./assets/${img.split('.')[0]}.json`, JSON.stringify(metadata))
+})
 ```
 
 Por supuesto, usted podría personalizar esto para su proyecto. Dar a sus imágenes diferentes nombres, añadir la matriz de atributos, etc. Este es un ejemplo muy básico, pero te servirá para empezar.
@@ -133,7 +133,7 @@ Bien, ya tenemos nuestros activos listos para empezar. Ahora vamos a empezar a u
 
 Metaplex tiene soporte para IPFS a través de algunos servicios, pero aquí nos centrar en el uso de Pinata.
 
-Vamos a seguir la guía estándar de Metaplex  para la Candy Machine 2 que se encuentra [aquí](https://docs.metaplex.com/candy-machine-v2/getting-started). El primer paso va a ser clonar Metaplex. Para esto ejecute el siguiente comando en su terminal:
+Vamos a seguir la guía estándar de Metaplex para la Candy Machine 2 que se encuentra [aquí](https://docs.metaplex.com/candy-machine-v2/getting-started). El primer paso va a ser clonar Metaplex. Para esto ejecute el siguiente comando en su terminal:
 
 ```shell:output
 git clone https://github.com/metaplex-foundation/metaplex.git ~/metaplex
@@ -156,6 +156,7 @@ Ahora, asegurémonos de que la instalación ha funcionado. ¿Recuerdas que insta
 ```shell
 ts-node $candymachine --version
 ```
+
 ```shell:output
 0.0.2
 ```
@@ -186,22 +187,22 @@ solana config set --keypair ~/.config/solana/«NAME_FROM_MY_WALLET_PAPER».json
 
 Por último, vamos a configurar el CLI para interactuar con la `devnet`:
 
-```shell 
+```shell
 solana config set --url devnet
 ```
 
 Para comprobar la configuración actual de la red (y otras) podemos emplear este comando:
 
-```shell 
+```shell
 solana config get
 ```
 
 ```shell:output
 Config File: /home/user/.config/solana/cli/config.yml
-RPC URL: https://api.devnet.solana.com 
+RPC URL: https://api.devnet.solana.com
 WebSocket URL: wss://api.devnet.solana.com/ (computed)
-Keypair Path: /home/user/.config/solana/«MY_PAPER_WALLET».json 
-Commitment: confirmed 
+Keypair Path: /home/user/.config/solana/«MY_PAPER_WALLET».json
+Commitment: confirmed
 ```
 
 con el CLI podemos ver la dirección de nuestra criptocartera:
@@ -209,7 +210,7 @@ con el CLI podemos ver la dirección de nuestra criptocartera:
 ```shell
 solana address
 ```
-  
+
 ```shell:output
 4aDSG82CdgMwt81z7AwnLnDRZyp6MjvZMUVpT82HZRU9
 ```
@@ -229,6 +230,7 @@ Signature: 3KsFBCULmso5Lc7CAQdqF8rzsBXb3xaVrG3cup19n3P2paw3ryvovWQ9MsMB8GMiQkXJW
 ```
 
 Para obtener la información completa de nuestra cuenta:
+
 ```shell
 solana account «YOUR_WALLET_ADDRESS»
 ```
@@ -251,9 +253,10 @@ solana balance «YOUR_WALLET_ADDRESS»
 2 SOL
 ```
 
-Hasta aquí hemos conseguido crear una criptocartera de papel y fondear con  dos solanas, criptomonedas que utilizaremos más adelante para probar nuestra aplicación. A continuación vamos a ver cómo podemos cambiar entre cada una de las redes de Solana (localhost, testnet, devnet y mainnet-beta).
+Hasta aquí hemos conseguido crear una criptocartera de papel y fondear con dos solanas, criptomonedas que utilizaremos más adelante para probar nuestra aplicación. A continuación vamos a ver cómo podemos cambiar entre cada una de las redes de Solana (localhost, testnet, devnet y mainnet-beta).
 
 ## Configuración de la colección NFT
+
 Esta es la parte más importante de todo el desarrollo, por lo que podrás ver los detalles en la [documentación oficial](https://docs.metaplex.com/candy-machine-v2/configuration). Metaplex usan una herramienta llamada _Candy Machine_ para generar los NFT, y es importante asegurarse de que su proyecto esté perfectamente configurado. En la raíz de su proyecto, cree un archivo JSON llamado config.json. Luego, ingrese una configuración como esta:
 
 ```json
@@ -281,9 +284,7 @@ Esta es la parte más importante de todo el desarrollo, por lo que podrás ver l
 
 Esto puede parecer mucho, pero en realidad es sola configuración mínima requerida. Hay mucho más que puedes agregar. Sin embargo, no te preocupes. La matendremos simple. Solo se necesita cambiar cinco cosas en este archivo. El primer cambio es establecer la propiedad de `storage` para que apunte a `pinata`.
 
-
 Luego, debe decidir si va a utilizar una [_Pinata Dedicated Gateway_](https://knowledge.pinata.cloud/en/articles/5666429-dedicated-gateways) o no. Si lo hace, le dará a usted y a cualquier persona que cargue sus NFT el mejor rendimiento posible. Pero, aunque se recomienda, no es obligatorio. Si se decide por una _Pinata Dedicated Gateway_, deberá actualizar su cuenta al [plan profesional](https://www.pinata.cloud/pricing) en _Pinata_.
-
 
 A continuación, debe obtener un JWT para acceder a la API de _Pinata_. Para hacerlo, haga clic en el menú desplegable en la parte superior derecha, haga clic en _API Keys_, y luego genere una nueva _API key_. Puedes seleccionar los _endpoints_ específicos a los que la clave debe tener acceso (_pinFileToIPFS_) o puede convertirla en una clave de administrador que tenga acceso completo. Esto depende de sus preferencias de seguridad, pero la clave debe tener acceso a _pinFileToIPFS_. Puede leer más sobre las _API Key_ [aquí](https://medium.com/pinata/introducing-scoped-api-keys-48e808623d5d).
 
@@ -297,7 +298,7 @@ pinataGateway: null
 
 Finalmente, solo necesita establecer la cantidad de artículos en su colección NFT en la propiedad `number` y el precio en SOL en la propiedad `price`.
 
-Eso es todo lo que necesitas. Ahora, hay mucho más que hacer, pero quiero señalar algo que muchos proyectos probablemente quieran hacer, y eso es ocultar los activos de NFT hasta después de una fecha de revelación. Esto es posible con Metaplex y CandyMachine con configuraciones ocultas. Puedes leer sobre esto  [aqui](https://docs.metaplex.com/candy-machine-v2/configuration#hidden-settings). No haremos eso en este tutorial. El proyecto NFT en este tutorial consiste en apostillar una NFT con revelación inmediata.
+Eso es todo lo que necesitas. Ahora, hay mucho más que hacer, pero quiero señalar algo que muchos proyectos probablemente quieran hacer, y eso es ocultar los activos de NFT hasta después de una fecha de revelación. Esto es posible con Metaplex y CandyMachine con configuraciones ocultas. Puedes leer sobre esto [aqui](https://docs.metaplex.com/candy-machine-v2/configuration#hidden-settings). No haremos eso en este tutorial. El proyecto NFT en este tutorial consiste en apostillar una NFT con revelación inmediata.
 
 Lo último que querrá cambiar en el archivo de configuración es la propiedad `solTreasuryAccount`. Esto probablemente debería apuntar a la dirección de su criptocartera en la red `devnet`, pero puede ser la dirección de cualquier criptocartera de Solana. Para obtener la dirección de sus criptocartera en la red `devnet`, puede ejecutar esto en la línea de comandos:
 
@@ -381,60 +382,64 @@ Si todo va bien, debería ver un mensaje que dice `ready to deploy!`. Esto signi
 
 ```json
 {
-  "program":{
-    "uuid":"ENvMsi",
-    "candyMachine":"ENvMsi3pbpsHYbPRg3fKi6hrr8dGjFWNDTybXFGAhG2b","collection":"6fqwQEJGQGyGpovV6HmYoF5aB7RscoPCR8BmEjh8X4gG"
-    },
-  "items":{
-    "0":{
-      "link":"https://ipfs.io/ipfs/QmQSCDDskNTV9nFE1ysHJTedkup4jJ3Vzs4pbdrPExGHSJ",
-      "imageLink":"https://ipfs.io/ipfs/QmQEPmMzbSq4JZDSqtTgTDC9M7zrNvjRkaEej3UZgDjsaa",
-      "name":"Image 0",
-      "onChain":true,
-      "verifyRun":true
-      },
-    "1":{
-      "link":"https://ipfs.io/ipfs/QmeinbfhRtbkegUf5c3xrYrUZ4TpN3nSZCuvqQNGTEN1r8",
-      "imageLink":"https://ipfs.io/ipfs/QmXKXd9bpH4rasEB4i3HLCoHbW76yYyxcmwvHpadgmeRZs",
-      "name":"Image 1",
-      "onChain":true,
-      "verifyRun":true
-      },
-    "2":{
-      "link":"https://ipfs.io/ipfs/QmPSBJv34txUiuwBXrBXNErQuZTXu6AvjHLsm7U5cFRA6D",
-      "imageLink":"https://ipfs.io/ipfs/QmcPEs45xLiUV4Wq8e8femHetEFcS6uvDKSn5rq6SCrv63",
-      "name":"Image 2",
-      "onChain":true,
-      "verifyRun":true
-      }
+  "program": {
+    "uuid": "ENvMsi",
+    "candyMachine": "ENvMsi3pbpsHYbPRg3fKi6hrr8dGjFWNDTybXFGAhG2b",
+    "collection": "6fqwQEJGQGyGpovV6HmYoF5aB7RscoPCR8BmEjh8X4gG"
   },
-  "env":"devnet",
-  "cacheName":"nft-project"
+  "items": {
+    "0": {
+      "link": "https://ipfs.io/ipfs/QmQSCDDskNTV9nFE1ysHJTedkup4jJ3Vzs4pbdrPExGHSJ",
+      "imageLink": "https://ipfs.io/ipfs/QmQEPmMzbSq4JZDSqtTgTDC9M7zrNvjRkaEej3UZgDjsaa",
+      "name": "Image 0",
+      "onChain": true,
+      "verifyRun": true
+    },
+    "1": {
+      "link": "https://ipfs.io/ipfs/QmeinbfhRtbkegUf5c3xrYrUZ4TpN3nSZCuvqQNGTEN1r8",
+      "imageLink": "https://ipfs.io/ipfs/QmXKXd9bpH4rasEB4i3HLCoHbW76yYyxcmwvHpadgmeRZs",
+      "name": "Image 1",
+      "onChain": true,
+      "verifyRun": true
+    },
+    "2": {
+      "link": "https://ipfs.io/ipfs/QmPSBJv34txUiuwBXrBXNErQuZTXu6AvjHLsm7U5cFRA6D",
+      "imageLink": "https://ipfs.io/ipfs/QmcPEs45xLiUV4Wq8e8femHetEFcS6uvDKSn5rq6SCrv63",
+      "name": "Image 2",
+      "onChain": true,
+      "verifyRun": true
+    }
+  },
+  "env": "devnet",
+  "cacheName": "nft-project"
 }
 ```
+
 La propiedad `program.candyMachine` la dirección de su programa que puede buscar en el explorador de la blockchain de Solana, que encontrará [aquí](https://explorer.solana.com/). Solo asegúrese de configurar su rede en `devnet`.
 
-Perfecto, ahora puede empezar a acuñar sus NFT. Pero, ¿cómo? Probablemente desees construir un sitio web para permitir la acuñación de NFT. Afortunadamente, el código base de Metaplex nos tiene cubiertos. 
+Perfecto, ahora puede empezar a acuñar sus NFT. Pero, ¿cómo? Probablemente desees construir un sitio web para permitir la acuñación de NFT. Afortunadamente, el código base de Metaplex nos tiene cubiertos.
 
 ## Construyendo un sitio web para acuñar NFT
-¿Recuerdas que clonamos el repositorio completo de Metaplex? Lo clonamos en la carpeta `nft-project`. Entonces, desde su línea de comandos, cambiamos a nuestro directorio de trabajo y al proyecto metaplex, directamente a la aplicación React de muestra: 
+
+¿Recuerdas que clonamos el repositorio completo de Metaplex? Lo clonamos en la carpeta `nft-project`. Entonces, desde su línea de comandos, cambiamos a nuestro directorio de trabajo y al proyecto metaplex, directamente a la aplicación React de muestra:
 
 ```bash
 cd ~/metaplex/js/packages/candy-machine-ui
 ```
 
 Deberá instalar las dependencias de esta manera:
+
 ```bash
 yarn install
 ```
 
- Luego, abra el proyecto en su editor de preferencia. Verá un archivo `.env` que contiene la configuración de su proyecto. Deberías actualizarlo para que se vea así:
+Luego, abra el proyecto en su editor de preferencia. Verá un archivo `.env` que contiene la configuración de su proyecto. Deberías actualizarlo para que se vea así:
 
- ```text
-  REACT_APP_CANDY_MACHINE_PUBLIC_KEY=YOUR_PUBLIC_KEY
-  REACT_APP_CANDY_MACHINE_ENV=devnet
-  REACT_APP_SOLANA_RPC_URL=https://api.devnet.solana.com
-  ```
+```text
+ REACT_APP_CANDY_MACHINE_PUBLIC_KEY=YOUR_PUBLIC_KEY
+ REACT_APP_CANDY_MACHINE_ENV=devnet
+ REACT_APP_SOLANA_RPC_URL=https://api.devnet.solana.com
+```
 
 ¿Recuerdas que usamos el `ID` de la Candy machine para buscar nuestro proyecto en Solana Explorer? Vamos a pegar ese mismo ID donde dice `YOUR_PUBLIC_KEY`.
 
@@ -445,7 +450,7 @@ yarn start
 ```
 
 Cuando se cargue la aplicación, deberías ver:
-![CandiMachine](/images/candymachine.png#center "Figura 1. User Interface")
+![CandiMachine](/images/candymachine.png#center 'Figura 1. User Interface')
 Podrá elegir una criptocartera para conectarse. Independientemente de la criptocartera que selecciones, deberá asegurarse de que algo de SOL de desarrollo. ¿Recuerdas cuando recibimos algunos SOL desde `devnet`? También podemos hacerlo con otra dirección. Conecte su billetera, asegúrese de estar en `devnet`, y luego copie la dirección de la criptocartera que desea usar. Desde la línea de comandos, escriba:
 
 ```bash
@@ -453,23 +458,24 @@ solana airdrop 2 YOUR_PUBLIC_KEY --url devnet
 ```
 
 Una vez que esto esté completo, debería tener SOL en su criptocartera basada en navegador y ahora puede acuñar uno de sus nuevos NFT. Para hacerlo, simplemente haga clic en el botón de acuñar (Mint):
-![CandiMachine](/images/candymachine1.png#center "Figura 2. Botón para acuñar un NFT")
+![CandiMachine](/images/candymachine1.png#center 'Figura 2. Botón para acuñar un NFT')
 
 Deberás confirmar la transacción. Cuando lo haga, el proceso de acuñación solo debería tomar unos segundos. Una vez que esté completo, su nuevo NFT debería aparecer en la colección de NFTs de su criptocartera.
 
 La imagen que ve de su NFT se está cargando desde Pinata. Dependiendo de si proporcionó una URL de puerta de enlace dedicada en su archivo de configuración, el NFT ser carga a través de su puerta de enlace personalizada o una puerta de enlace IPFS pública. Nota: si proporcionó una URL de puerta de enlace dedicada, el NFT será cargado a través de su puerta de enlace personalizada, y si no, el NFT será cargado a través de una puerta de enlace IPFS pública. Puede ver esto en el siguiente ejemplo usando Phantom Wallet. Los dos NFT que están atascados en la carga están usando una puerta de enlace IPFS pública. Los dos que se cargan casi instantáneamente en la carga están usando una puerta de enlace personalizada.
 
-![Wallet](/images/wallet.png#center "Figura 3. NFTs apostillados en la Wallet personalizada")
+![Wallet](/images/wallet.png#center 'Figura 3. NFTs apostillados en la Wallet personalizada')
 
-Al ver su NFT en los mercados de Solana NFT, los activos también se cargarán a través de la puerta de enlace de IPFS. Esto permite que las personas puedan ver el contenido de la forma en que fue diseñado para ser experimentado. 
+Al ver su NFT en los mercados de Solana NFT, los activos también se cargarán a través de la puerta de enlace de IPFS. Esto permite que las personas puedan ver el contenido de la forma en que fue diseñado para ser experimentado.
 
 ## Conclusiones
 
-Los beneficios de usar IPFS para el almacenamiento de activos NFT están bien documentados. IPFS ofrece una recuperación rápida (especialmente cuando se usa una puerta de enlace dedicada de Pinata), IPFS ofrece la direccionalidad de contenido e IPFS es portátil. La propiedad del NFT puede transferirse tanto en el sentido simbólico como el en sentido dígital. 
+Los beneficios de usar IPFS para el almacenamiento de activos NFT están bien documentados. IPFS ofrece una recuperación rápida (especialmente cuando se usa una puerta de enlace dedicada de Pinata), IPFS ofrece la direccionalidad de contenido e IPFS es portátil. La propiedad del NFT puede transferirse tanto en el sentido simbólico como el en sentido dígital.
 
 Sin embargo, no siempre ha sido fácil usar IPFS con proyectos de Solana NFT. Con suerte este tutorial ayudará a cambiaro eso.
 
-## Patrocinio 
+## Patrocinio
+
 ₿itcoin: [bc1qrcecrz47ywrcnyuqknzgzzz2t3lwawyjnl4t7f](https://www.exodus.com/)
 
 Solana: [Ft8A8t3UyGZHjWNvtgruADnUgrij3uaFe7pLj9QNG44N](https://phantom.app/)
@@ -477,10 +483,12 @@ Solana: [Ft8A8t3UyGZHjWNvtgruADnUgrij3uaFe7pLj9QNG44N](https://phantom.app/)
 Ethereum: [0x886ce8Cc54cd0964E6939c5290242b1135D10C7f](https://metamask.io/)
 
 Paypal: [@asanchezyali](https://paypal.me/asanchezyali?country.x=CO&locale.x=es_XC)
+
 ## Imágenes
 
-  - [Unplash](https://unsplash.com/) - [NTF inscription on cubes against the background of dollars and microcircuits](https://unsplash.com/photos/yscrM1AOEKI).
-  - [Unplash](https://unsplash.com/) - [Foto 1](https://unsplash.com/es/fotos/W6l35A_rxxU), [Foto 2](https://unsplash.com/es/fotos/ir5gC4hlqT0) y [Foto 3](https://unsplash.com/es/fotos/0XkLAIrknco) de [Michael Dziedzic](https://unsplash.com/es/@lazycreekimages)
+- [Unplash](https://unsplash.com/) - [NTF inscription on cubes against the background of dollars and microcircuits](https://unsplash.com/photos/yscrM1AOEKI).
+- [Unplash](https://unsplash.com/) - [Foto 1](https://unsplash.com/es/fotos/W6l35A_rxxU), [Foto 2](https://unsplash.com/es/fotos/ir5gC4hlqT0) y [Foto 3](https://unsplash.com/es/fotos/0XkLAIrknco) de [Michael Dziedzic](https://unsplash.com/es/@lazycreekimages)
+
 ## Referencias
 
 1. [Justin Hunter. How to create a Solana NFT with IPFS](https://medium.com/pinata/how-to-create-a-solana-nft-with-ipfs-59d87afbe206)
