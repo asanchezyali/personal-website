@@ -132,7 +132,7 @@ npx degit https://github.com/timlrx/tailwind-nextjs-starter-blog.git
 2. Personalize `siteMetadata.js` (site related information)
 3. Modify the content security policy in `next.config.js` if you want to use
    any analytics provider or a commenting solution other than giscus.
-4. Personalize `authors/default.en.md` (main author)
+4. Personalize `authors/default.md` (main author)
 5. Modify `projectsData.js`
 6. Modify `headerNavLinks.js` to customize navigation links
 7. Add blog posts
@@ -166,7 +166,7 @@ You can start editing the page by modifying `pages/index.js`. The page auto-upda
 
 `data/siteMetadata.js` - contains most of the site related information which should be modified for a user's need.
 
-`data/authors/default.en.md` - default author information (required). Additional authors can be added as files in `data/authors`.
+`data/authors/default.md` - default author information (required). Additional authors can be added as files in `data/authors`.
 
 `data/projectsData.js` - data used to generate styled card on the projects page.
 

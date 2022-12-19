@@ -6,15 +6,11 @@ import { LanguageContext } from '@/providers/LanguageProvider'
 const DEFAULT_LAYOUT = 'AuthorLayout'
 
 export async function getStaticProps() {
-  const authorDetailsEn = await getFileBySlug('authors', 'default.en')
-  const authorDetailsEs = await getFileBySlug('authors', 'default.es')
-  return { props: { authorDetailsEn, authorDetailsEs } }
+  const authorDetails = await getFileBySlug('authors', ['default'])
+  return { props: { authorDetails } }
 }
 
-export default function About({ authorDetailsEn, authorDetailsEs }) {
-  const { language } = React.useContext(LanguageContext)
-  const authorDetails = language === 'en' ? authorDetailsEn : authorDetailsEs
-
+export default function About({ authorDetails }) {
   const { mdxSource, frontMatter } = authorDetails
 
   return (
