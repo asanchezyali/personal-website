@@ -1,8 +1,9 @@
 const siteMetadata = {
-  title: 'Alejandro Sánchez Yalí - Blog',
+  title: 'Alejandro Sánchez Yalí - Programming, Mathematics, and Technology Blog',
   author: 'Alejandro Sánchez Yalí',
   headerTitle: 'Alejandro Sánchez Yalí - Blog',
-  description: 'Blog para compartir mis apuntes de todo lo que estoy aprendiendo.',
+  description:
+    'Welcome to my blog, where I share my notes and insights on programming, mathematics, and technology. From machine learning to software development, I cover a wide range of topics related to computer science and beyond.',
   language: 'en-us',
   theme: 'dark', // system, dark or light
   siteUrl: 'https://asanchezyali.com',
