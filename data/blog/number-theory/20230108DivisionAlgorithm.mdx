@@ -1,0 +1,44 @@
+---
+title: 'Algoritmo de la división'
+date: '2023/01/10'
+tags: ['algoritmos', 'matemáticas', 'teoría de numeros', 'python']
+draft: true
+summary: 'Un algoritmo de división es un proceso que divide un número (llamado el dividendo) por otro número (llamado el divisor) y obtiene el cociente y el resto de la división. Se puede implementar un algoritmo de división en Python utilizando un ciclo while y restando el divisor del dividendo en cada iteración. Conocer cómo funciona un algoritmo de división y cómo implementarlo por nuestra cuenta es útil para entender mejor cómo funcionan las divisiones y puede ser útil en situaciones donde no podemos utilizar librerías o funciones predefinidas.'
+bibliography: references-data.bib
+canonicalUrl: 'https://www.asanchezyali.com/blog/20230108DivisionAlgorithm/'
+headerImage: '/images/post-solana.webp'
+language: 'es'
+---
+
+La división es una operación matemática básica que utilizamos a menudo en nuestro día a día. Aunque podemos realizar divisiones de manera sencilla utilizando funciones o librerías predefinidas, es importante conocer cómo funciona un algoritmo de división y cómo implementarlo por nuestra cuenta.
+
+Un algoritmo de división es un proceso que se utiliza para dividir un número (llamado el dividendo) por otro número (llamado el divisor) y obtener el cociente y el resto de la división. Por ejemplo, si queremos dividir 15 por 3, el cociente sería 5 y el resto sería 0, ya que 15 es exactamente divisible entre 3. Si dividimos 17 por 3, el cociente sería 5, y el resto sería 2.
+
+Aquí hay unos cuantos ejemplos más:
+
+Dividir 10 por 2: cociente=5, resto=0
+Dividir 7 por 3: cociente=2, resto=1
+Dividir 8 por 4: cociente=2, resto=0
+Ahora, vamos a ver cómo implementar un algoritmo de división en Python de manera "purista", es decir, sin utilizar ninguna librería o función especial.
+
+Para hacerlo, podemos utilizar un ciclo while para repetir la división hasta que el dividendo sea menor que el divisor. En cada iteración, restamos el divisor del dividendo y aumentamos el cociente en uno. Si el dividendo se vuelve menor que el divisor, terminamos el ciclo y el resto es igual al dividendo.
+
+Aquí hay un ejemplo de código que implementa este algoritmo:
+
+```python 
+def division(dividendo, divisor):
+    cociente = 0
+    resto = dividendo
+    while resto >= divisor:
+        resto -= divisor
+        cociente += 1
+    return cociente, resto
+
+print(division(15, 3))  # debería imprimir (5, 0)
+print(division(17, 3))  # debería imprimir (5, 2)
+print(division(10, 2))  # debería imprimir (5, 0)
+print(division(7, 3))   # debería imprimir (2, 1)
+print(division(8, 4))   # debería imprimir (2, 0)
+```
+
+Espero que esto te ayude a entender cómo funciona un algoritmo de división y cómo implementarlo en Python sin utilizar librerías. Si tienes alguna pregunta adicional, no dudes en hacerla.
