@@ -6,13 +6,15 @@ import { LanguageContext } from '@/providers/LanguageProvider'
 const DEFAULT_LAYOUT = 'AuthorLayout'
 
 export async function getStaticProps() {
-  const authorDetails = await getFileBySlug('authors', ['default'])
+  const AboutInEN = await getFileBySlug('authors', ['default'])
+  const AboutInES = await getFileBySlug('authors', ['default.es'])
+  const authorDetails = { AboutInEN, AboutInES }
   return { props: { authorDetails } }
 }
 
 export default function About({ authorDetails }) {
-  const { mdxSource, frontMatter } = authorDetails
-
+  const { language } = React.useContext(LanguageContext)
+  const { mdxSource, frontMatter } = authorDetails[`AboutIn${language.toUpperCase()}`]
   return (
     <MDXLayoutRenderer
       layout={frontMatter.layout || DEFAULT_LAYOUT}
