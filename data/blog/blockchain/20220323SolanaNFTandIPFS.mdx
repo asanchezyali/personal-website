@@ -1,10 +1,10 @@
 ---
-title: '¿Cómo crear una colección de NFTs en Solana con IPFS?'
+title: 'Crea tu propia colección de NFTs en Solana con IPFS'
 date: '2022/03/23'
 lastmod: '2021/02/01'
-tags: ['solana', 'nft', 'phantom wallet']
+tags: ['solana', 'nft', 'phantom wallet', 'ipfs', 'pinata', 'metaplex', 'candy machine', 'react', 'typescript', 'tailwindcss', 'nextjs', 'vercel', 'propiedad-digital']
 draft: false
-summary: 'Los NFTs son mucho más que imagenes generadas aleatoriamente, esto promete ser la revolución de los derechos de propiedad digital tal y como la conocemos actualmente. En este artículo vamos a explicar cómo crear un NFT en Solana con IPFS.'
+summary: 'Aprende cómo crear tu propia colección de NFTs en Solana utilizando IPFS. Descubre cómo los NFTs están revolucionando los derechos de propiedad digital y cómo puedes aprovechar esta tecnología en Solana.'
 layout: PostLayout
 bibliography: references-data.bib
 canonicalUrl: https://tailwind-nextjs-starter-blog.vercel.app/blog/new-features-in-v1/
@@ -12,9 +12,9 @@ headerImage: '/images/post-solanaNFTandIPFS.webp'
 language: 'es'
 ---
 
-El objetivo de este artículo es explicar como crear una colección de NFTs usando la blochacin de Solana con IPFS a través de Pinata. Si estás interesado en entender qué son los NFTs y cómo estos son mucho más que imágenes generadas aleatoriamente, que prometen ser la revolución de los derechos de la propiedad digital tal y como la conocemos, te recomiendo leer el articulo de Nick Szabo, [_Secure Property Titles with Owner Authority_](https://nakamotoinstitute.org/secure-property-titles/), allí encontrarás algunas de las ideas que dieron origen a este concepto.
+El objetivo de este artículo es brindar una guía paso a paso para crear una colección de NFTs (Non-Fungible Tokens) utilizando la blockchain de Solana con IPFS (InterPlanetary File System) a través de Pinata. Si estás interesado en entender en profundidad qué son los NFTs y cómo estos representan una revolución en los derechos de propiedad digital, te recomendamos leer el artículo de Nick Szabo, [_Secure Property Titles with Owner Authority_](https://nakamotoinstitute.org/secure-property-titles/), donde encontrarás algunas de las ideas fundamentales detrás de este concepto.
 
-Este tutorial es especialmente interesante, en principio porque Solana ha estado estrechamente vinculado a [Arweave](https://www.arweave.org/), sin embargo hay muchos proyectos que prefieren usar IPFS para almacenar sus datos, por su rápido acceso al contenido y su fiabilidad. Por otro lado, Metaplex, es un proyecto construido para hacer más fácil la creación de proyectos de NFTs en Solana y tiene soporte para IPFS, esto incluye la capacidad para usar Pinata para almacenar contenido y servirlo a través de una _API Gateway_ dedicada a IPFS.
+Este tutorial es especialmente relevante ya que Solana ha estado estrechamente vinculado a  [Arweave](https://www.arweave.org/), pero hay muchos proyectos que prefieren utilizar IPFS para almacenar sus datos debido a su rápido acceso y fiabilidad. Además, Metaplex es un proyecto construido para facilitar la creación de proyectos de NFTs en Solana y tiene soporte para IPFS, incluyendo la capacidad de utilizar Pinata para almacenar contenido y servirlo a través de una API Gateway dedicada a IPFS. En este tutorial te mostraremos cómo crear una colección de NFTs utilizando estas herramientas.
 
 ## Configuración del ambiente de trabajo
 
