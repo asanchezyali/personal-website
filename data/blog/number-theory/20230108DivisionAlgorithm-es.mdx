@@ -39,10 +39,18 @@ Para hacer esto, antes de comenzar a implementar el algoritmo, veamos cómo se r
 
 7. El valor final del cociente es $3$, que es el resultado de la división $17 / 5$. El valor final del resto es $2$, que es el módulo de la división.
 
+¿Qué sucede si el dividendo es menor que el divisor? En este caso, el cociente es $0$ y el resto es el valor del dividendo. Por ejemplo, si dividimos $3$ entre $5$, el cociente es $0$ y el resto es $3$.
+
 Un ejemplo de código en Python que implementa el anterior proceso es el siguiente:
 
 ```python
 def division(dividend, divisor):
+    if divisor == 0:
+        raise ValueError("Divisor cannot be zero")
+
+    if dividend < divisor:
+        return 0, dividend
+
     quotient = 0
     remainder = dividend
     while remainder >= divisor:

@@ -38,11 +38,18 @@ To do this, before we start implementing the algorithm, let's see how a division
 
 7. The final value of the quotient is 3, which is the result of the division 17 / 5. The final value of the remainder is 2, which is the modulo of the division.
 
+What happens if the dividend is less than the divisor? In this case, the quotient is 0 and the remainder is the value of the dividend. For example, if we divide 3 by 5, the quotient is 0 and the remainder is 3.
 
 An example of code in Python that implements the above process is as follows:
 
 ```python
 def division(dividend, divisor):
+    if divisor == 0:
+        raise ValueError("Divisor cannot be zero")
+
+    if dividend < divisor:
+        return 0, dividend
+        
     quotient = 0
     remainder = dividend
     while remainder >= divisor:
