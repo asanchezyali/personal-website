@@ -50,7 +50,7 @@ This table clearly shows how the remainder decreases and the quotient increases 
 
 What happens if the dividend is less than the divisor? In this case, the quotient is $0$ and the remainder is the value of the dividend. For example, if we divide $3$ by $5$, the quotient is $0$ and the remainder is $3$.
 
-In the next step, we will implement the division algorithm in Python. To do this, we need a systematic and repetitive approach that allows us to divide two numbers and get the quotient and remainder of the division. To do this, we must first define the values of the dividend and divisor. Then, we must check if the divisor is equal to $0$. If it is, the algorithm cannot continue and must raise an exception. If the divisor is different from $0$, we must check if the dividend is less than the divisor.If the dividend is greater than the divisor, we should initialize the quotient to be $0$ and the remainder equal to the dividend. Then, we should use a while loop that runs while the remainder is greater than or equal to the divisor. In each iteration, we should subtract the divisor from the remainder and increase the value of the quotient by one. Finally, we should return the values of the quotient and remainder as the result of the function.
+In the next step, we will implement the division algorithm in Python. To do this, we need a systematic and repetitive approach that allows us to divide two numbers and get the quotient and remainder of the division. To do this, we must first define the values of the dividend and divisor. Then, we must check if the divisor is equal to $0$. If it is, the algorithm cannot continue and must raise an exception. If the divisor is different from $0$, we must initialize the quotient to $0$ and the remainder to the value of the dividend. Then, we must use a `while` loop that runs while the remainder is greater than or equal to the divisor. In each iteration, we must subtract the divisor from the remainder and increase the value of the quotient by one. Finally, we must return the values of the quotient and remainder as the result of the division algorithm.
 
 An example of code in Python that implements the above process is as follows:
 
@@ -58,9 +58,6 @@ An example of code in Python that implements the above process is as follows:
 def division(dividend, divisor):
     if divisor == 0:
         raise ValueError("Divisor cannot be zero")
-
-    if dividend < divisor:
-        return 0, dividend
 
     quotient = 0
     remainder = dividend
