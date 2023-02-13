@@ -36,9 +36,9 @@ To do this, before we start implementing the algorithm, let's see how a division
 
 6. We repeat steps 3 and 4 until the dividend is less than the divisor. In this case, after two additional iterations, the dividend becomes $2$.
 
-7. The final value of the quotient is 3, which is the result of the division 17 / 5. The final value of the remainder is 2, which is the modulo of the division.
+7. The final value of the quotient is $3$, which is the result of the division $17 / 5$. The final value of the remainder is $2$, which is the modulo of the division.
 
-What happens if the dividend is less than the divisor? In this case, the quotient is 0 and the remainder is the value of the dividend. For example, if we divide 3 by 5, the quotient is 0 and the remainder is 3.
+What happens if the dividend is less than the divisor? In this case, the quotient is $0$ and the remainder is the value of the dividend. For example, if we divide $3$ by $5$, the quotient is $0$ and the remainder is $3$.
 
 An example of code in Python that implements the above process is as follows:
 
@@ -49,7 +49,7 @@ def division(dividend, divisor):
 
     if dividend < divisor:
         return 0, dividend
-        
+
     quotient = 0
     remainder = dividend
     while remainder >= divisor:
@@ -66,36 +66,7 @@ print("Remainder: ", remainder)
 
 This code performs the division of two numbers entered by the user. First, the variables  `quotient`  y `remainder`,  are defined, and the value of the dividend is assigned to `remainder`. hen, a `while` loop is used that runs while `remainder` is greater than or equal to `divisor`. EOn each iteration, `divisor`  is subtracted from `remainder` and the value of `quotient` s increased by one. Finally, the values of `quotient` and `remainder` are returned as the result of the `division()`  function.
 
-When this code is executed and two numbers are provided as input, we will obtain the quotient and the remainder of the division. For example, if we divide 15 by 3, the result would be a quotient of 5 and a remainder of 0. If we divide 17 by 3, the result would be a quotient of 5 and a remainder of 2.
-
-It is important to note that the division algorithm we have implemented is a basic and effective way of performing divisions, but there are other more advanced and efficient ways. However, this example is useful for understanding the basic concepts behind division and how to apply them in practice with a programming language.
-
-I hope this helps you understand how a division algorithm works and how to implement it in Python without using libraries. If you have any additional questions, feel free to ask.
-
-## Patrocinio
-
-"Return the result and the modulo"
-
-An example of code in Python that implements the above process is as follows:
-
-python
-Copy code
-def division(dividend, divisor):
-    quotient = 0
-    remainder = dividend
-    while remainder >= divisor:
-        remainder = remainder - divisor
-        quotient += 1
-    return quotient, remainder
-
-dividend = int(input("Enter the dividend: "))
-divisor = int(input("Enter the divisor: "))
-quotient, remainder = division(dividend, divisor)
-print("Quotient: ", quotient)
-print("Remainder: ", remainder)
-This code performs the division of two numbers entered by the user. First, the variables quotient (quotient) and remainder (remainder) are defined, and the value of the dividend is assigned to remainder. Then, a while loop is used that runs while remainder is greater than or equal to divisor. On each iteration, divisor is subtracted from remainder and the value of quotient is increased by one. Finally, the values of quotient and remainder are returned as the result of the division() function.
-
-When this code is executed and two numbers are provided as input, we will obtain the quotient and the remainder of the division. For example, if we divide 15 by 3, the result would be a quotient of 5 and a remainder of 0. If we divide 17 by 3, the result would be a quotient of 5 and a remainder of 2.
+When this code is executed and two numbers are provided as input, we will obtain the quotient and the remainder of the division. For example, if we divide $15$ by $3$, the result would be a quotient of $5$ and a remainder of $0$. If we divide $17$ by $3$, the result would be a quotient of $5$ and a remainder of $2$.
 
 It is important to note that the division algorithm we have implemented is a basic and effective way of performing divisions, but there are other more advanced and efficient ways. However, this example is useful for understanding the basic concepts behind division and how to apply them in practice with a programming language.
 
