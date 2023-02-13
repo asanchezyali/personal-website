@@ -1,0 +1,80 @@
+---
+title: 'Algoritmo de la división'
+date: '2023/01/10'
+tags: ['algoritmos', 'matemáticas', 'teoría de numeros', 'python']
+draft: false
+summary: 'Un algoritmo de división es un proceso que divide un número (llamado el dividendo) por otro número (llamado el divisor) y obtiene el cociente y el resto de la división. Se puede implementar un algoritmo de división en Python utilizando un ciclo while y restando el divisor del dividendo en cada iteración. Conocer cómo funciona un algoritmo de división y cómo implementarlo por nuestra cuenta es útil para entender mejor cómo funcionan las divisiones y puede ser útil en situaciones donde no podemos utilizar librerías o funciones predefinidas.'
+bibliography: references-data.bib
+canonicalUrl: 'https://www.asanchezyali.com/blog/20230108DivisionAlgorithm/'
+headerImage: '/images/division-algorithm.jpg'
+language: 'es'
+---
+
+La división es una operación matemática básica que utilizamos a menudo en nuestro día a día. Aunque podemos realizar divisiones de manera sencilla utilizando funciones o librerías predefinidas, es importante conocer cómo funciona un algoritmo de división y cómo implementarlo por nuestra cuenta. 
+
+En matemáticas el algoritmo de la division es enunciado como sigue:
+
+#### Teorema del algoritmo de la division
+<div className="italic text-gray-50">Dados dos números enteros $a$ y $b$, con $b\neq 0$, se puede encontrar un número entero $q$ y un número entero $r$ tales que $a = bq + r$ y $0 \leq r <|b|$. El entero $q$ se llama cociente y el entero $r$ se llama resto de la division de $a$ por $b$. En el caso de que $b$ sea negativo, el cociente $q$ es negativo y el resto $r$ es positivo.</div>
+
+El teorema anterior define una forma de calcular el cociente y el resto de una división, pero no parece ser un algoritmo en sí mismo. Sin embargo, su enfoque matemático puede ser útil para desarrollar un algoritmo eficiente de división. La idea es aplicar los conceptos del teorema para crear un proceso sistemático y repetitivo que permita dividir dos números y obtener el resultado deseado. De esta manera, podemos utilizar la lógica y las matemáticas para resolver problemas prácticos y aplicar la teoría en la práctica.
+
+#### Algoritmo de la division
+
+Comenzaremos con la implementación del algoritmo de división a partir de los conceptos del teorema anterior. Para ello, necesitamos un enfoque sistemático y repetitivo que permita dividir dos números y obtener el cociente y el resto de la división.
+
+Para hacer esto, antes de comenzar a implementar el algoritmo, veamos cómo se realizaría una división a mano para entender mejor el proceso. Por ejemplo, si dividimos 17 entre 5, podemos realizar la división de la siguiente manera:
+
+1. Inicializar dos variables, una para el dividendo y otra para el divisor. En este caso, el dividendo es 17 y el divisor es 5.
+
+2. Inicializar una variable para almacenar el cociente y otra para el resto. Establecer ambas variables en 0 inicialmente.
+
+3. Realizar un ciclo mientras el dividendo sea mayor o igual al divisor. En cada iteración, multiplicar el cociente por 10 y sumar 1.
+
+4. Restar el divisor del dividendo y actualizar el valor del dividendo con el resultado.
+
+5. Repetir los pasos 3 y 4 hasta que el dividendo sea menor al divisor.
+
+6. El valor final del cociente es el resultado de la división y el valor final del resto es el módulo.
+
+Un ejemplo de código en Python que implementa el anterior proceso es el siguiente:
+
+```python
+def division(dividend, divisor):
+    quotient = 0
+    remainder = dividend
+    while remainder >= divisor:
+        remainder = remainder - divisor
+        quotient += 1
+    return quotient, remainder
+
+dividend = int(input("Enter the dividend: "))
+divisor = int(input("Enter the divisor: "))
+quotient, remainder = division(dividend, divisor)
+print("Quotient: ", quotient)
+print("Remainder: ", remainder)
+```
+
+Este código realiza la división de dos números introducidos por el usuario. En primer lugar, se definen las variables `quotient` (cociente) y `remainder` (resto), y se asigna el valor del `dividend` (dividendo) a `remainder`. Luego, se utiliza un bucle `while` que se ejecuta mientras `remainder` sea mayor o igual que `divisor`. En cada iteración, se resta `divisor` a `remainder` y se aumenta en uno el valor de `quotient`. Finalmente, se retornan los valores de `quotient` y `remainder` como resultado de la función `division()`.
+
+Al ejecutar este código y proporcionar dos números como entrada, obtendremos el cociente y el resto de la división. Por ejemplo, si dividimos 15 por 3, el resultado sería un cociente de 5 y un resto de 0. Si dividimos 17 por 3, el resultado sería un cociente de 5 y un resto de 2.
+
+Es importante destacar que el algoritmo de división que hemos implementado es una forma básica y efectiva de realizar divisiones, pero existen otras formas más avanzadas y eficientes. Sin embargo, este ejemplo es útil para entender los conceptos básicos detrás de la división y cómo aplicarlos en la práctica con un lenguaje de programación.
+
+Espero que esto te ayude a entender cómo funciona un algoritmo de división y cómo implementarlo en Python sin utilizar librerías. Si tienes alguna pregunta adicional, no dudes en hacerla.
+
+## Patrocinio
+
+Por último, si deseas apoyarnos económicamente, te dejamos nuestras direcciones de criptomonedas en Bitcoin, Solana y Ethereum, así como nuestra cuenta de PayPal. Muchas gracias por tu apoyo:
+
+₿itcoin: [bc1qrcecrz47ywrcnyuqknzgzzz2t3lwawyjnl4t7f](https://www.exodus.com/)
+
+Solana: [Ft8A8t3UyGZHjWNvtgruADnUgrij3uaFe7pLj9QNG44N](https://phantom.app/)
+
+Ethereum: [0x886ce8Cc54cd0964E6939c5290242b1135D10C7f](https://metamask.io/)
+
+Paypal: [@asanchezyali](https://paypal.me/asanchezyali?country.x=CO&locale.x=es_XC)
+
+## Referencias
+
+1. [Felipe Zaldivar. 2012. Introducción a la teoría de números.](http://cbt1.edu.mx/Educacion/OC/Matematicas/Recursos/publication.pdf)

@@ -1,0 +1,108 @@
+---
+title: 'Division Algorithm'
+date: '2023/01/10'
+tags:  ['algorithms', 'mathematics', 'number theory', 'python']
+draft: false
+summary: 'A division algorithm is a process that divides one number (called the dividend) by another number (called the divisor) and obtains the quotient and remainder of the division. A division algorithm can be implemented in Python using a while loop and subtracting the divisor from the dividend in each iteration. Knowing how a division algorithm works and how to implement it on our own is useful for understanding better how divisions work and can be useful in situations where we cannot use predefined libraries or functions.'
+bibliography: references-data.bib
+canonicalUrl: 'https://www.asanchezyali.com/blog/20230108DivisionAlgorithm/'
+headerImage: '/images/division-algorithm.jpg'
+language: 'en'
+---
+
+Division is a basic mathematical operation that we often use in our daily lives. Although we can easily perform divisions using predefined functions or libraries, it is important to know how a division algorithm works and how to implement it on our own.
+
+#### Division Algorithm Theorem
+
+<div className="italic text-gray-50">Given two integers $a$ and $b$, with $b\neq 0$, we can find an integer $q$ and an integer $r$ such that $a = bq + r$ and $0 \leq r <|b|$. The integer $q$ is called the quotient and the integer $r$ is called the remainder of the division of $a$ by $b$. In the case where $b$ is negative, the quotient $q$ is negative and the remainder $r$ is positive.</div>
+
+The above theorem defines a way to calculate the quotient and remainder of a division, but it does not seem to be an algorithm itself. However, its mathematical approach can be useful in developing an efficient division algorithm. The idea is to apply the concepts of the theorem to create a systematic and repetitive process that allows dividing two numbers and obtaining the desired result. In this way, we can use logic and mathematics to solve practical problems and apply theory in practice.
+
+#### Division Algorithm
+
+We will begin with the implementation of the division algorithm from the concepts of the previous theorem. To do this, we need a systematic and repetitive approach that allows dividing two numbers and obtaining the quotient and remainder of the division.
+
+To do this, before we start implementing the algorithm, let's see how a division would be done by hand to better understand the process. For example, if we divide 17 by 5, we can perform the division as follows:
+
+1. Initialize two variables, one for the dividend and one for the divisor. In this case, the dividend is 17 and the divisor is 5.
+
+2. Initialize a variable to store the quotient and another for the remainder. Set both variables to 0 initially.
+
+3. Perform a loop while the dividend is greater than or equal to the divisor. In each iteration, multiply the quotient by 10 and add 1.
+
+4. Subtract the divisor from the dividend and update the value of the dividend with the result.
+
+5. Repeat steps 3 and 4 until the dividend is less than the divisor.
+
+6. The final value of the quotient will be the result of the division. The final value of the remainder will be the remainder of the division.
+
+
+An example of code in Python that implements the above process is as follows:
+
+```python
+def division(dividend, divisor):
+    quotient = 0
+    remainder = dividend
+    while remainder >= divisor:
+        remainder = remainder - divisor
+        quotient += 1
+    return quotient, remainder
+
+dividend = int(input("Enter the dividend: "))
+divisor = int(input("Enter the divisor: "))
+quotient, remainder = division(dividend, divisor)
+print("Quotient: ", quotient)
+print("Remainder: ", remainder)
+```
+
+This code performs the division of two numbers entered by the user. First, the variables  `quotient`  y `remainder`,  are defined, and the value of the dividend is assigned to `remainder`. hen, a `while` loop is used that runs while `remainder` is greater than or equal to `divisor`. EOn each iteration, `divisor`  is subtracted from `remainder` and the value of `quotient` s increased by one. Finally, the values of `quotient` and `remainder` are returned as the result of the `division()`  function.
+
+When this code is executed and two numbers are provided as input, we will obtain the quotient and the remainder of the division. For example, if we divide 15 by 3, the result would be a quotient of 5 and a remainder of 0. If we divide 17 by 3, the result would be a quotient of 5 and a remainder of 2.
+
+It is important to note that the division algorithm we have implemented is a basic and effective way of performing divisions, but there are other more advanced and efficient ways. However, this example is useful for understanding the basic concepts behind division and how to apply them in practice with a programming language.
+
+I hope this helps you understand how a division algorithm works and how to implement it in Python without using libraries. If you have any additional questions, feel free to ask.
+
+## Patrocinio
+
+"Return the result and the modulo"
+
+An example of code in Python that implements the above process is as follows:
+
+python
+Copy code
+def division(dividend, divisor):
+    quotient = 0
+    remainder = dividend
+    while remainder >= divisor:
+        remainder = remainder - divisor
+        quotient += 1
+    return quotient, remainder
+
+dividend = int(input("Enter the dividend: "))
+divisor = int(input("Enter the divisor: "))
+quotient, remainder = division(dividend, divisor)
+print("Quotient: ", quotient)
+print("Remainder: ", remainder)
+This code performs the division of two numbers entered by the user. First, the variables quotient (quotient) and remainder (remainder) are defined, and the value of the dividend is assigned to remainder. Then, a while loop is used that runs while remainder is greater than or equal to divisor. On each iteration, divisor is subtracted from remainder and the value of quotient is increased by one. Finally, the values of quotient and remainder are returned as the result of the division() function.
+
+When this code is executed and two numbers are provided as input, we will obtain the quotient and the remainder of the division. For example, if we divide 15 by 3, the result would be a quotient of 5 and a remainder of 0. If we divide 17 by 3, the result would be a quotient of 5 and a remainder of 2.
+
+It is important to note that the division algorithm we have implemented is a basic and effective way of performing divisions, but there are other more advanced and efficient ways. However, this example is useful for understanding the basic concepts behind division and how to apply them in practice with a programming language.
+
+I hope this helps you understand how a division algorithm works and how to implement it in Python without using libraries. If you have any additional questions, feel free to ask.
+
+## Sponsorship
+Finally, if you want to support us financially, we leave you our cryptocurrency addresses in Bitcoin, Solana and Ethereum, as well as our PayPal account. Thank you very much for your support:
+
+₿itcoin: [bc1qrcecrz47ywrcnyuqknzgzzz2t3lwawyjnl4t7f](https://www.exodus.com/)
+
+Solana: [Ft8A8t3UyGZHjWNvtgruADnUgrij3uaFe7pLj9QNG44N](https://phantom.app/)
+
+Ethereum: [0x886ce8Cc54cd0964E6939c5290242b1135D10C7f](https://metamask.io/)
+
+Paypal: [@asanchezyali](https://paypal.me/asanchezyali?country.x=CO&locale.x=es_XC)
+
+## References
+
+1. [Felipe Zaldivar. 2012. Introducción a la teoría de números.](http://cbt1.edu.mx/Educacion/OC/Matematicas/Recursos/publication.pdf)
