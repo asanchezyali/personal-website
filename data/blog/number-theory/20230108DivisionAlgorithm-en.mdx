@@ -23,21 +23,34 @@ We will begin with the implementation of the division algorithm from the concept
 
 To do this, before we start implementing the algorithm, let's see how a division would be done by hand to better understand the process. For example, if we divide $17$ by $5$, we can perform the division as follows:
 
-1. We initialize the dividend with the value $17$ and the divisor with the value $5$. We also initialize the quotient to 0 and the remainder to $0$.
+1. We initialize the dividend with the value $17$ and the divisor with the value $5$. We also initialize the quotient to 0 and the remainder equal to the dividend.
 
-2. We check if the dividend is greater than or equal to the divisor. Since $17$ is greater than $5$, we enter the next loop defined by steps 3 and 4.
+2. We check if the remainder is greater than or equal to the divisor. Since $17$ is greater than $5$, we enter the next loop defined by steps 3 and 4.
 
-3. We subtract the divisor from the dividend and obtain a new value for the dividend: $17 - 5 = 12$.
+3. We subtract the divisor from the remainder and obtain a new value for the remainder: $17 - 5 = 12$.
 
 4. We increase the value of the quotient by one: $0 + 1 = 1$.
 
-5. We again check if the dividend is greater than or equal to the divisor. Since $12$ is greater than $5$, we repeat steps 3 and 4.
+5. We again check if the remainder is greater than or equal to the divisor. Since $12$ is greater than $5$, we repeat steps (3) and (4).
 
-6. We repeat steps 3 and 4 until the dividend is less than the divisor. In this case, after two additional iterations, the dividend becomes $2$.
+6. We repeat steps 3 and 4 until the remainder is less than the divisor. In this case, after two additional iterations, the dividend becomes $2$.
 
-7. The final value of the quotient is $3$, which is the result of the division $17 / 5$. The final value of the remainder is $2$, which is the modulo of the division.
+7. The final value of the quotient is $3$, which is the result of the division $17 / 5$, and the final value of the remainder is $2$, which is the modulo of the division.
+
+To better visualize the process, we add a process table to the previous steps:
+
+| Iteration | Dividend  | Divisor | Quotient | Remainder |
+|-----------|-----------|---------|----------|-------|
+| 1         | 17        | 5       | 0        | 17    |
+| 2         | 17        | 5       | 1        | 12    |
+| 3         | 17        | 5       | 2        | 7     |
+| 4         | 17        | 5       | 3        | 2     |
+
+This table clearly shows how the remainder decreases and the quotient increases in each iteration until the dividend is less than the divisor and the final result is obtained.
 
 What happens if the dividend is less than the divisor? In this case, the quotient is $0$ and the remainder is the value of the dividend. For example, if we divide $3$ by $5$, the quotient is $0$ and the remainder is $3$.
+
+In the next step, we will implement the division algorithm in Python. To do this, we need a systematic and repetitive approach that allows us to divide two numbers and get the quotient and remainder of the division. To do this, we must first define the values of the dividend and divisor. Then, we must check if the divisor is equal to $0$. If it is, the algorithm cannot continue and must raise an exception. If the divisor is different from $0$, we must check if the dividend is less than the divisor. If it is, the quotient is $0$ and the remainder is the value of the dividend. If the dividend is greater than the divisor, we must subtract the divisor from the dividend in each iteration until the dividend is less than the divisor. In this case, the quotient is the number of iterations and the remainder is the value of the dividend.
 
 An example of code in Python that implements the above process is as follows:
 

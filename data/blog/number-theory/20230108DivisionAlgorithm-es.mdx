@@ -22,21 +22,36 @@ Comenzaremos con la implementación del algoritmo de división a partir de los c
 
 Para hacer esto, antes de comenzar a implementar el algoritmo, veamos cómo se realizaría una división a mano para entender mejor el proceso. Por ejemplo, si dividimos $17$ entre $5$, podemos realizar la división de la siguiente manera:
 
-1. Inicializamos el dividendo con el valor $17$ y el divisor con el valor $5$. También inicializamos el cociente en $0$ y el resto en $0$.
+1. Inicializamos el dividendo con el valor $17$ y el divisor con el valor $5$. También inicializamos el cociente en $0$ y el resto igual al dividendo.
 
-2. Verificamos si el dividendo es mayor o igual al divisor. Como $17$ es mayor que $5$, entramos en el siguiente ciclo definido por los pasos $3$ y $4$.
+2. Verificamos si el resto es mayor o igual al divisor. Como $17$ es mayor que $5$, entramos en el siguiente ciclo definido por los pasos $3$ y $4$.
 
-3. Restamos el divisor del dividendo y obtenemos un nuevo valor para el dividendo: $17 - 5 = 12$.
+3. Restamos el divisor del resto y obtenemos un nuevo valor para el resto: $17 - 5 = 12$.
 
 4. Aumentamos el valor del cociente en una unidad: $0 + 1 = 1$.
 
-5. Verificamos de nuevo si el dividendo es mayor o igual al divisor. Como $12$ es mayor que $5$, repetimos los pasos $3$ y $4$.
+5. Verificamos de nuevo si el resto es mayor o igual al divisor. Como $12$ es mayor que $5$, repetimos los pasos (3) y (4).
 
-6. Repetimos los pasos $3$ y $4$ hasta que el dividendo sea menor al divisor. En este caso, después de dos iteraciones adicionales, el dividendo se convierte en $2$.
+6. Repetimos los pasos $3$ y $4$ hasta que el resto sea menor al divisor. En este caso, después de dos iteraciones adicionales, el resto se convierte en $2$.
 
-7. El valor final del cociente es $3$, que es el resultado de la división $17 / 5$. El valor final del resto es $2$, que es el módulo de la división.
+7. El valor final del cociente es $3$, que es el resultado de la división $17 / 5$, y el valor final del resto es $2$, que es el módulo de la división.
+
+Para visualizar mejor el proceso, agregamos una tabla que muestra el valor de las variables en cada iteración:
+
+
+| Iteración | Dividendo | Divisor | Cociente | Resto |
+|-----------|-----------|---------|----------|-------|
+| 1         | 17        | 5       | 0        | 17    |
+| 2         | 17        | 5       | 1        | 12    |
+| 3         | 17        | 5       | 2        | 7     |
+| 4         | 17        | 5       | 3        | 2     |
+
+Esta tabla muestra claramente cómo el resto disminuye y el cociente aumenta en cada iteración hasta que el dividendo es menor que el divisor y se obtiene el resultado final.
 
 ¿Qué sucede si el dividendo es menor que el divisor? En este caso, el cociente es $0$ y el resto es el valor del dividendo. Por ejemplo, si dividimos $3$ entre $5$, el cociente es $0$ y el resto es $3$.
+
+
+En el siguiente paso, implementaremos el algoritmo de división en Python. Para ello, necesitamos un enfoque sistemático y repetitivo que permita dividir dos números y obtener el cociente y el resto de la división. Para hacer esto, primero debemos definir los valores del dividendo y el divisor. Luego, debemos verificar si el divisor es igual a $0$. Si es así, el algoritmo no puede continuar y debe lanzar una excepción. Si el divisor es diferente de $0$, debemos verificar si el dividendo es menor que el divisor. Si es así, el cociente es $0$ y el resto es el valor del dividendo. Si el dividendo es mayor que el divisor, debemos restar el divisor del dividendo en cada iteración hasta que el dividendo sea menor que el divisor. En este caso, el cociente es el número de iteraciones y el resto es el valor del dividendo.
 
 Un ejemplo de código en Python que implementa el anterior proceso es el siguiente:
 
