@@ -71,7 +71,7 @@ export default function Blog({
   let prev = null
   let next = null
   if (filteredPosts?.length > 0) {
-    prev = filteredPosts[postIndex + 2] || null
+    prev = filteredPosts[postIndex] || null
     next = filteredPosts[postIndex - 2] || null
   }
 
