@@ -6,6 +6,9 @@ const metaLabels = {
     searchArticles: 'Search articles',
     readMore: 'Read more ...',
     aboutMe: 'About',
+    previousArticle: 'Previous Article',
+    nextArticle: 'Next Article',
+    backToBlog: 'Back to the blog',
   },
   es: {
     title: 'Todos los artículos',
@@ -14,6 +17,9 @@ const metaLabels = {
     searchArticles: 'Buscar artículos',
     readMore: 'Leer más ...',
     aboutMe: 'Bio',
+    previousArticle: 'Artículo anterior',
+    nextArticle: 'Artículo siguiente',
+    backToBlog: 'Volver al blog',
   },
 }
 

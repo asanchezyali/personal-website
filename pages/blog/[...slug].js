@@ -1,8 +1,10 @@
+import React from 'react'
 import fs from 'fs'
 import PageTitle from '@/components/PageTitle'
 import generateRss from '@/lib/generate-rss'
 import { MDXLayoutRenderer } from '@/components/MDXComponents'
 import { formatSlug, getAllFilesFrontMatter, getFileBySlug, getFiles } from '@/lib/mdx'
+import { LanguageContext } from '@/providers/LanguageProvider'
 
 const DEFAULT_LAYOUT = 'PostLayout'
 
@@ -21,9 +23,9 @@ export async function getStaticPaths() {
 export async function getStaticProps({ params }) {
   const allPosts = await getAllFilesFrontMatter('blog')
   const postIndex = allPosts.findIndex((post) => formatSlug(post.slug) === params.slug.join('/'))
-  const prev = allPosts[postIndex + 1] || null
-  const next = allPosts[postIndex - 1] || null
   const post = await getFileBySlug('blog', params.slug.join('/'))
+  const postInEnglish = await getFileBySlug('blog', params.slug.join('/').replace('.es', '.en'))
+  const postInSpanish = await getFileBySlug('blog', params.slug.join('/').replace('.en', '.es'))
   const authorList = post.frontMatter.authors || ['default']
   const authorPromise = authorList.map(async (author) => {
     const authorResults = await getFileBySlug('authors', [author])
@@ -37,11 +39,41 @@ export async function getStaticProps({ params }) {
     fs.writeFileSync('./public/feed.xml', rss)
   }
 
-  return { props: { post, authorDetails, prev, next } }
+  return {
+    props: { allPosts, post, postIndex, postInEnglish, postInSpanish, authorDetails },
+  }
 }
 
-export default function Blog({ post, authorDetails, prev, next }) {
-  const { mdxSource, toc, frontMatter } = post
+export default function Blog({
+  allPosts,
+  post,
+  postIndex,
+  postInEnglish,
+  postInSpanish,
+  authorDetails,
+}) {
+  const { language } = React.useContext(LanguageContext)
+  const getPostVersion = () => {
+    const options = {
+      en: postInEnglish,
+      es: postInSpanish,
+      default: post,
+    }
+    return options[language] || options.default
+  }
+
+  const filteredPosts = allPosts?.filter(
+    (frontMatter) => frontMatter.draft !== true && frontMatter.language === language
+  )
+
+  let prev = null
+  let next = null
+  if (filteredPosts?.length > 0) {
+    prev = filteredPosts[postIndex + 2] || null
+    next = filteredPosts[postIndex - 2] || null
+  }
+
+  const { mdxSource, toc, frontMatter } = getPostVersion()
 
   return (
     <>

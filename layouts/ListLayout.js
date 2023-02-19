@@ -8,7 +8,11 @@ import { LanguageContext } from '@/providers/LanguageProvider'
 export default function ListLayout({ posts, title, initialDisplayPosts = [], pagination }) {
   const [searchValue, setSearchValue] = useState('')
   const { language } = React.useContext(LanguageContext)
-  const filteredBlogPosts = posts.filter((frontMatter) => {
+
+  const filteredPosts = posts.filter(
+    (frontMatter) => frontMatter.draft !== true && frontMatter.language === language
+  )
+  const filteredBlogPosts = filteredPosts.filter((frontMatter) => {
     const searchContent = frontMatter.title + frontMatter.summary + frontMatter.tags.join(' ')
     return searchContent.toLowerCase().includes(searchValue.toLowerCase())
   })
