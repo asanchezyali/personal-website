@@ -11,7 +11,7 @@ const siteMetadata = {
   siteLogo: '/static/images/logo.png',
   image: '/static/images/avatar.png',
   socialBanner: '/static/images/twitter-card.png',
-  email: '',
+  email: 'asanchezyali@gmail.com',
   github: 'https://github.com/asanchezyali',
   twitter: 'https://twitter.com/asanchezyali',
   linkedin: 'https://www.linkedin.com/in/asanchezyali',
