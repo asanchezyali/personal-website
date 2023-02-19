@@ -9,14 +9,18 @@ import { LanguageContext } from '@/providers/LanguageProvider'
 import metaLabels from '@/data/metaLabels'
 
 export async function getStaticProps() {
-  const tags = await getAllTags('blog')
+  const tagsInSpanish = await getAllTags('blog', 'es')
+  const tagsInEnglish = await getAllTags('blog', 'en')
+  const tags = { es: tagsInSpanish, en: tagsInEnglish }
 
   return { props: { tags } }
 }
 
 export default function Tags({ tags }) {
-  const sortedTags = Object.keys(tags).sort((a, b) => tags[b] - tags[a])
   const { language } = React.useContext(LanguageContext)
+  const sortedTags = Object.keys(tags[language]).sort(
+    (a, b) => tags[language][b] - tags[language][a]
+  )
   return (
     <>
       <PageSEO title={`Tags - ${siteMetadata.author}`} description="Things I blog about" />
@@ -27,7 +31,7 @@ export default function Tags({ tags }) {
           </h1>
         </div>
         <div className="flex max-w-lg flex-wrap">
-          {Object.keys(tags).length === 0 && 'No tags found.'}
+          {Object.keys(tags[language]).length === 0 && 'No tags found.'}
           {sortedTags.map((t) => {
             return (
               <div key={t} className="mt-2 mb-2 mr-5">
@@ -36,7 +40,7 @@ export default function Tags({ tags }) {
                   href={`/tags/${kebabCase(t)}`}
                   className="ml-1 text-sm font-semibold uppercase text-gray-600 dark:text-gray-300"
                 >
-                  {` (${tags[t]})`}
+                  {` (${tags[language][t]})`}
                 </Link>
               </div>
             )
