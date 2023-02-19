@@ -1,13 +1,22 @@
 import React from 'react'
+import useSWR from 'swr'
 import Image from '@/components/Image'
 import Link from '@/components/Link'
 import formatDate from '@/lib/utils/formatDate'
 import Tag from '@/components/Tag'
 import metaLabels from '@/data/metaLabels'
 import { LanguageContext } from '@/providers/LanguageProvider'
+import { removeSlashAndPoint } from '@/lib/utils/strings'
 
-export default function ArticleOverview({ title, summary, date, headerImage, slug, tags }) {
+async function fetcher(...args) {
+  const res = await fetch(...args)
+  return res.json()
+}
+
+export default function ArticleOverview({ title, summary, date, headerImage, slug, tags, time }) {
   const { language } = React.useContext(LanguageContext)
+  const { data } = useSWR(`/api/views/${removeSlashAndPoint(slug)}`, fetcher)
+  const views = new Number(data?.total)
   return (
     <div className="flex flex-col border-b border-dashed border-slate-200 py-8 dark:border-slate-700">
       <Link href={`/blog/${slug}`}>
@@ -52,10 +61,10 @@ export default function ArticleOverview({ title, summary, date, headerImage, slu
           </div>
           <div className="flex flex-col justify-self-end">
             <p className="text-right text-base font-bold text-slate-800 dark:text-slate-300">
-              5 min read
+              {time ? time : '16 min'} {metaLabels[language].read}
             </p>
             <p className="text-right text-base font-light text-slate-800 dark:text-slate-300">
-              5 views
+              {views ? views.toLocaleString() : 0} {metaLabels[language].views}
             </p>
           </div>
         </div>

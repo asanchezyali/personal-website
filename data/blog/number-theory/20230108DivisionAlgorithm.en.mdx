@@ -1,8 +1,9 @@
 ---
 title: 'Division Algorithm'
 date: '2023/01/10'
-tags:  ['algorithms', 'mathematics', 'number theory', 'python']
+tags: ['algorithms', 'mathematics', 'number theory', 'python']
 draft: false
+time: '15 min'
 summary: 'A division algorithm is a process that divides one number (called the dividend) by another number (called the divisor) and obtains the quotient and remainder of the division. A division algorithm can be implemented in Python using a while loop and subtracting the divisor from the dividend in each iteration. Knowing how a division algorithm works and how to implement it on our own is useful for understanding better how divisions work and can be useful in situations where we cannot use predefined libraries or functions.'
 bibliography: references-data.bib
 canonicalUrl: 'https://www.asanchezyali.com/blog/20230108DivisionAlgorithm/'
@@ -36,12 +37,12 @@ Before we start implementing the algorithm, let's see how a division would be do
 
 To better visualize the process, we add a process table to the previous steps:
 
-| Iteration | Dividend  | Divisor | Quotient | Remainder |
-|-----------|-----------|---------|----------|-------|
-| 1         | 17        | 5       | 0        | 17    |
-| 2         | 17        | 5       | 1        | 12    |
-| 3         | 17        | 5       | 2        | 7     |
-| 4         | 17        | 5       | 3        | 2     |
+| Iteration | Dividend | Divisor | Quotient | Remainder |
+| --------- | -------- | ------- | -------- | --------- |
+| 1         | 17       | 5       | 0        | 17        |
+| 2         | 17       | 5       | 1        | 12        |
+| 3         | 17       | 5       | 2        | 7         |
+| 4         | 17       | 5       | 3        | 2         |
 
 This table clearly shows how the remainder decreases and the quotient increases in each iteration until the dividend is less than the divisor and the final result is obtained.
 
@@ -70,7 +71,7 @@ print("Quotient: ", quotient)
 print("Remainder: ", remainder)
 ```
 
-This code performs the division of two numbers entered by the user. First, the variables  `quotient`  y `remainder`,  are defined, and the value of the dividend is assigned to `remainder`. hen, a `while` loop is used that runs while `remainder` is greater than or equal to `divisor`. EOn each iteration, `divisor`  is subtracted from `remainder` and the value of `quotient` s increased by one. Finally, the values of `quotient` and `remainder` are returned as the result of the `division()`  function.
+This code performs the division of two numbers entered by the user. First, the variables `quotient` y `remainder`, are defined, and the value of the dividend is assigned to `remainder`. hen, a `while` loop is used that runs while `remainder` is greater than or equal to `divisor`. EOn each iteration, `divisor` is subtracted from `remainder` and the value of `quotient` s increased by one. Finally, the values of `quotient` and `remainder` are returned as the result of the `division()` function.
 
 When this code is executed and two numbers are provided as input, we will obtain the quotient and the remainder of the division. For example, if we divide $15$ by $3$, the result would be a quotient of $5$ and a remainder of $0$. If we divide $17$ by $3$, the result would be a quotient of $5$ and a remainder of $2$.
 
@@ -79,9 +80,11 @@ It is important to note that the division algorithm we have implemented is a bas
 I hope this helps you understand how a division algorithm works and how to implement it in Python without using libraries. If you have any additional questions, feel free to ask.
 
 ## Consultancy
+
 If you need additional help, we offer personalized consultancy on [Classgap](https://www.classgap.com/es-co/tutor/alejandro-sanchez-yali), you can check our available schedules and schedule a session with us.
 
 ## Sponsorship
+
 Finally, if you want to support us financially, we leave you our cryptocurrency addresses in Bitcoin, Solana and Ethereum, as well as our PayPal account. Thank you very much for your support:
 
 ₿itcoin: [bc1qrcecrz47ywrcnyuqknzgzzz2t3lwawyjnl4t7f](https://www.exodus.com/)

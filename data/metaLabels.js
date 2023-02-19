@@ -9,6 +9,8 @@ const metaLabels = {
     previousArticle: 'Previous Article',
     nextArticle: 'Next Article',
     backToBlog: 'Back to the blog',
+    read: 'Read',
+    views: 'Views',
   },
   es: {
     title: 'Todos los artículos',
@@ -20,6 +22,8 @@ const metaLabels = {
     previousArticle: 'Artículo anterior',
     nextArticle: 'Artículo siguiente',
     backToBlog: 'Volver al blog',
+    read: 'de lectura',
+    views: ' visitas',
   },
 }
 

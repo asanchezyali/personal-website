@@ -4,6 +4,7 @@ date: '2022/03/10'
 lastmod: '2021-02-01'
 tags: ['solana', 'anchor', 'phantom wallet', 'dapps']
 draft: false
+time: '40 min'
 summary: 'Solana es una blockchain de alto rendimiento que permite el desarrollo de aplicaciones descentralizadas (Dapps) mediante herramientas como Anchor y la criptocartera Phantom. En este tutorial, aprenderás a construir el código base para tu propia Dapp en Solana.'
 layout: PostLayout
 bibliography: references-data.bib
@@ -12,7 +13,7 @@ headerImage: '/images/post-solana.webp'
 language: 'es'
 ---
 
-En este artículo, te mostraré cómo construir el código base para una __dapp__ en la cadena de bloque de Solana. 
+En este artículo, te mostraré cómo construir el código base para una **dapp** en la cadena de bloque de Solana.
 
 <TOCInline toc={props.toc} exclude="Overview" toHeading={2} asDisclosure />
 
@@ -35,7 +36,6 @@ En cada uno de los puntos anteriores se proporciona un enlace a la documentació
 4.  [Solana Tech](https://discord.gg/solana)
 
 Si deseas profundizar en el aprendizaje sobre blockchain, te invito a visitar mi canal de discord [CODE & MATH](https://discord.gg/eeZgZaWNRu). Allí encontrarás contenido de calidad sobre blockchain, matemáticas, programación y desarrollo de software. Espero que el contenido que te presentaré a continuación sea de tu agrado y te permita incrementar tu _Qi_ como desarrollador de _Blockchain_.
-
 
 ## Solana CLI
 
@@ -88,6 +88,7 @@ El par de claves se generará en la siguiente ubicación:
 ```shell
 /home/<your user>/.config/solana/«MY_PAPER_WALLET».json
 ```
+
 Una vez que hayas generado tu criptocartera de papel, asegúrate de almacenar tu frase semilla en algún lugar seguro. Si pierdes tu frase semilla, no podrás recuperar tus fondos. El nombre del archivo json puse ser cualquier cosa, pero asegúrate de recordar el nombre que le hayas dado.
 
 Para utilizar tu nueva criptocartera, escribe el siguiente comando:
@@ -119,7 +120,6 @@ Commitment: confirmed
 ```
 
 Para verificar la configuración actual de la red, así como otra información relevante, podemos utilizar el siguiente comando:
-
 
 ```shell
 solana config get
@@ -1087,7 +1087,8 @@ A partir de aquí, el despliegue en una red activa es bastante sencillo. Las pri
 3.  En el archivo `Anchor.toml` actualizar el cluster de `localnet` a `devnet`.
 4.  Compilar el programa nuevamente. Asegurate que el ID del programa en `Anchor.toml` se igual al ID actual del programa
 5.  En archivo `app/src/App.js`, también es necesario actualizar la red, para esto debemos remplazar la red de localhost: `http://127.0.0.1:8899` por la red de desarrollo: `devnet`.
-    ```javascript showLineNumbers
+
+    ````javascript showLineNumbers
     /_ Before _/
     <ConnectionProvider endpoint="http://127.0.0.1:8899">
 
@@ -1103,6 +1104,7 @@ A partir de aquí, el despliegue en una red activa es bastante sencillo. Las pri
         ```
 
     A partir de aquí, deberías poder desplegar y probar como hemos hecho en los pasos anteriores.
+    ````
 
 ## El siguiente paso para no parar de aprender
 
@@ -1115,7 +1117,6 @@ Si necesitas ayuda adicional, ofrecemos asesorías personalizadas en [Classgap](
 ## Patrocinio
 
 Por último, si deseas apoyarnos económicamente, te dejamos nuestras direcciones de criptomonedas en Bitcoin, Solana y Ethereum, así como nuestra cuenta de PayPal. Muchas gracias por tu apoyo:
-
 
 ₿itcoin: [bc1qrcecrz47ywrcnyuqknzgzzz2t3lwawyjnl4t7f](https://www.exodus.com/)
 

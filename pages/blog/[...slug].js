@@ -1,10 +1,12 @@
 import React from 'react'
+import useSWR from 'swr'
 import fs from 'fs'
 import PageTitle from '@/components/PageTitle'
 import generateRss from '@/lib/generate-rss'
 import { MDXLayoutRenderer } from '@/components/MDXComponents'
 import { formatSlug, getAllFilesFrontMatter, getFileBySlug, getFiles } from '@/lib/mdx'
 import { LanguageContext } from '@/providers/LanguageProvider'
+import { removeSlashAndPoint } from '@/lib/utils/strings'
 
 const DEFAULT_LAYOUT = 'PostLayout'
 
@@ -74,6 +76,22 @@ export default function Blog({
   }
 
   const { mdxSource, toc, frontMatter } = getPostVersion()
+  const visitedPost = getPostVersion()
+  console.log('visitedPost', visitedPost.frontMatter.slug)
+
+  React.useEffect(() => {
+    const slug = removeSlashAndPoint(visitedPost.frontMatter.slug)
+    console.log('slug', slug)
+    const registerView = () =>
+      fetch(`/api/views/${slug}`, {
+        method: 'POST',
+      })
+
+    if (visitedPost) {
+      console.log('REGISTER VIEW')
+      registerView()
+    }
+  }, [visitedPost])
 
   return (
     <>

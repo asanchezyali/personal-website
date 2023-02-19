@@ -54,7 +54,7 @@ export default function ListLayout({ posts, title, initialDisplayPosts = [], pag
         <ul>
           {!filteredBlogPosts.length && 'No posts found.'}
           {displayPosts.map((frontMatter) => {
-            const { slug, date, title, summary, tags, headerImage } = frontMatter
+            const { slug, date, title, summary, tags, headerImage, time } = frontMatter
             return (
               <ArticleOverview
                 key={slug}
@@ -64,6 +64,7 @@ export default function ListLayout({ posts, title, initialDisplayPosts = [], pag
                 headerImage={headerImage}
                 slug={slug}
                 tags={tags}
+                time={time}
               />
             )
           })}
