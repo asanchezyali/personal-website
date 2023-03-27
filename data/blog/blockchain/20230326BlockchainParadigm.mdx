@@ -24,17 +24,25 @@ language: 'es'
 
 Blockchain, criptomonedas, Dapps, wallets, tokens, NFTs, etc. Son términos que se han vuelto comunes en los últimos años, pero ¿qué es realmente el blockchain? ¿Cómo funciona? La idea de esta serie de articulos (siete en total) es explicar el paradigma del blockchain en siete pasos, de una manera sencilla y práctica, para que puedas entenderlo y aplicarlo en tus proyectos.
 
-## ¿Qué es el blockchain?
+## ¿Qué es la blockchain?
 
 El termino blockchain es un acrónimo de la frase en inglés “block chain”, que significa “cadena de bloques”. En términos simples, un blockchain es una base de datos distribuida, que almacena información de manera segura y confiable, y que es compartida por todos los nodos de la red. La información se almacena en bloques, que son registros de datos que se agregan a la cadena de bloques. Cada bloque contiene información sobre el bloque anterior, y así sucesivamente. La información que se almacena en los bloques puede ser cualquier cosa, desde texto, hasta archivos, hasta datos de una base de datos, hasta código ejecutable, etc. La información que se almacena en los bloques se almacena en forma de hash, que es una cadena de caracteres que representa un valor único. Los bloques se almacenan en una estructura de datos llamada blockchain, que es una lista enlazada de bloques. La blockchain es una estructura de datos que se puede utilizar para almacenar cualquier tipo de información, pero es más común que se utilice para almacenar información financiera, como transacciones de criptomonedas, o información de identidad, como datos biométricos.
 
-## ¿Cómo funciona el blockchain?
+## ¿Cómo funciona la blockchain?
 
 De acuerdo con los autores del artículo [Ethereum: A secure decentralised generalised transaction ledger](https://ethereum.github.io/yellowpaper/paper.pdf) una blockchain se puede entender como una **maquina de estados basada en transacciones**. Desde las ciencias de la computación una **maquina de estados** es un modelo matemático que describe el comportamiento de una sistema en términos de una serie de estados y transiciones. En este contexto, **estado** se refiere a una situación en la que se encuentra un sistema en un momento determinado y **transacción** se refiere al cambio del sistema de un estado a otro en respuesta a un evento o acción.
 
 ![Blockchain](/images/blockchain1.png#center 'Figura 1. Blockchain como maquina de estados basado en transacciones')
 
-En el caso de una Blockchain, por ejemplo Ethereum, se utiliza una máquina de estados para representar el estado actual de la red (ver Figura 1), es decir, quienes son los nodos que la conforman, cuál es el estado de sus cuentas, cuáles son los contratos activos, etc. Cada transacción en la red es una acción que modifica el estado de la red, por ejemplo, una transacción de transferencia de tokens, una transacción de creación de un contrato, etc. Por lo tanto, se puede entender una blockchain como una maquina de estados basada en transacciones, ya que el estado actual de la red es determinado por el historial de transacciones que se han tenido lugar en ella.
+En el caso de una Blockchain, por ejemplo Ethereum, se utiliza una máquina de estados para representar el estado actual de la red (ver Figura 1), es decir, quienes son los nodos que la conforman, cuál es el estado de sus cuentas, cuáles son los contratos activos, etc. Cada transacción en la red es una acción que modifica el estado de la red, por ejemplo, una transacción de transferencia de tokens, una transacción de creación de un contrato, etc. En el formalismo matemático presentado en el artículo: [Ethereum: A secure decentralised generalised transaction ledger](https://ethereum.github.io/yellowpaper/paper.pdf), una blockchain como una maquina de estados basada en transacciones luce así:
+
+$$
+\begin{equation}
+\sigma_{t+1} = \Gamma(\sigma_{t}, T)
+\end{equation}
+$$
+
+En donde $\sigma_{t}$ es el estado de la red en el tiempo $t$, $\Gamma$ es la función de transición que describe el comportamiento de la red, y $T$ es la transacción que se ejecuta en el tiempo $t$. Toda esta ecuación nos está diciendo que el estado de la red en el tiempo $t+1$ es el resultado de ejecutar la función de transición $\Gamma$ sobre el estado de la red en el tiempo $t$ y la transacción $T$ que se ejecuta en el tiempo $t$.
 
 ## ¿Cómo se almacena la información en el blockchain?
 
