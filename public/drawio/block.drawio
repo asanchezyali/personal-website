@@ -1,0 +1,73 @@
+<mxfile host="app.diagrams.net" modified="2023-04-23T21:46:37.787Z" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36" etag="JCluT3ndBmMdtFWhGrf2" version="21.1.5">
+  <diagram id="I6mTqNFxRkKGehe-mBBv" name="Page-1">
+    <mxGraphModel dx="794" dy="792" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="1" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="V63_s2LG4lqJ5SyutdPh-11" value="" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="350" y="500" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="zo57rYDBXkr2cIbhuNEA-1" value="" style="group" parent="1" vertex="1" connectable="0">
+          <mxGeometry x="80" y="40" width="680" height="270" as="geometry" />
+        </mxCell>
+        <mxCell id="tZ6kM5p4ubWwltsxfKJq-12" value="" style="rounded=1;whiteSpace=wrap;html=1;sketch=1;fillStyle=solid;fontFamily=Times New Roman;fontSize=15;" parent="zo57rYDBXkr2cIbhuNEA-1" vertex="1">
+          <mxGeometry width="679.9999999999999" height="270" as="geometry" />
+        </mxCell>
+        <mxCell id="tZ6kM5p4ubWwltsxfKJq-1" value="&lt;font style=&quot;font-size: 13px;&quot; face=&quot;Courier New&quot;&gt;Blockchain State `\sigma_t`&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillStyle=solid;fillColor=#d5e8d4;strokeColor=#82b366;sketch=1;" parent="zo57rYDBXkr2cIbhuNEA-1" vertex="1">
+          <mxGeometry x="109.84615384615385" y="105" width="104.61538461538461" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="tZ6kM5p4ubWwltsxfKJq-8" value="&lt;font style=&quot;font-size: 13px;&quot; face=&quot;Courier New&quot;&gt;Blockchain State `\sigma_{t+1}`&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillStyle=solid;fillColor=#d5e8d4;strokeColor=#82b366;sketch=1;" parent="zo57rYDBXkr2cIbhuNEA-1" vertex="1">
+          <mxGeometry x="444.61538461538464" y="105" width="104.61538461538461" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="tZ6kM5p4ubWwltsxfKJq-9" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontFamily=Courier New;strokeColor=#660033;curved=1;dashed=1;" parent="zo57rYDBXkr2cIbhuNEA-1" source="tZ6kM5p4ubWwltsxfKJq-1" target="tZ6kM5p4ubWwltsxfKJq-8" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="tZ6kM5p4ubWwltsxfKJq-10" value="Transaction" style="shape=step;perimeter=stepPerimeter;whiteSpace=wrap;html=1;fixedSize=1;sketch=1;fillStyle=solid;fontFamily=Courier New;fillColor=#f8cecc;strokeColor=#b85450;" parent="zo57rYDBXkr2cIbhuNEA-1" vertex="1">
+          <mxGeometry x="266.7692307692308" y="45" width="146.46153846153845" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="tZ6kM5p4ubWwltsxfKJq-11" value="&lt;font style=&quot;font-size: 15px;&quot; face=&quot;Times New Roman&quot;&gt;Figura 1. Una Blockchain se puede entender como una maquina de estados basada en transacciones&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;sketch=1;fillStyle=solid;fontFamily=Courier New;fontSize=13;" parent="zo57rYDBXkr2cIbhuNEA-1" vertex="1">
+          <mxGeometry x="141.23076923076923" y="205" width="397.53846153846155" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="V63_s2LG4lqJ5SyutdPh-1" value="" style="group" vertex="1" connectable="0" parent="1">
+          <mxGeometry x="80" y="368" width="680" height="432" as="geometry" />
+        </mxCell>
+        <mxCell id="V63_s2LG4lqJ5SyutdPh-2" value="" style="rounded=1;whiteSpace=wrap;html=1;sketch=1;fillStyle=solid;fontFamily=Times New Roman;fontSize=15;" vertex="1" parent="V63_s2LG4lqJ5SyutdPh-1">
+          <mxGeometry width="680" height="395.2340425531915" as="geometry" />
+        </mxCell>
+        <mxCell id="V63_s2LG4lqJ5SyutdPh-7" value="&lt;font style=&quot;font-size: 15px;&quot; face=&quot;Times New Roman&quot;&gt;Figura 1. Las transacciones son almacenadas en bloques. Cada bloque es un paquete de información.&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;sketch=1;fillStyle=solid;fontFamily=Courier New;fontSize=13;" vertex="1" parent="V63_s2LG4lqJ5SyutdPh-1">
+          <mxGeometry x="141.23076923076923" y="330.8936170212766" width="397.53846153846155" height="27.574468085106382" as="geometry" />
+        </mxCell>
+        <mxCell id="V63_s2LG4lqJ5SyutdPh-8" value="" style="group" vertex="1" connectable="0" parent="V63_s2LG4lqJ5SyutdPh-1">
+          <mxGeometry x="120.30615384615385" y="238.9787234042553" width="439.3846153846154" height="55.148936170212764" as="geometry" />
+        </mxCell>
+        <mxCell id="V63_s2LG4lqJ5SyutdPh-3" value="&lt;font style=&quot;font-size: 13px;&quot; face=&quot;Courier New&quot;&gt;Blockchain State `\sigma_t`&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillStyle=solid;fillColor=#d5e8d4;strokeColor=#82b366;sketch=1;" vertex="1" parent="V63_s2LG4lqJ5SyutdPh-8">
+          <mxGeometry width="104.61538461538461" height="55.148936170212764" as="geometry" />
+        </mxCell>
+        <mxCell id="V63_s2LG4lqJ5SyutdPh-4" value="&lt;font style=&quot;font-size: 13px;&quot; face=&quot;Courier New&quot;&gt;Blockchain State `\sigma_{t+1}`&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillStyle=solid;fillColor=#d5e8d4;strokeColor=#82b366;sketch=1;" vertex="1" parent="V63_s2LG4lqJ5SyutdPh-8">
+          <mxGeometry x="334.7692307692308" width="104.61538461538461" height="55.148936170212764" as="geometry" />
+        </mxCell>
+        <mxCell id="V63_s2LG4lqJ5SyutdPh-5" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontFamily=Courier New;strokeColor=#660033;curved=1;dashed=1;" edge="1" parent="V63_s2LG4lqJ5SyutdPh-8" source="V63_s2LG4lqJ5SyutdPh-3" target="V63_s2LG4lqJ5SyutdPh-4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="V63_s2LG4lqJ5SyutdPh-15" value="&lt;font face=&quot;Courier New&quot;&gt;Block&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontStyle=1" vertex="1" parent="V63_s2LG4lqJ5SyutdPh-1">
+          <mxGeometry x="310" y="18.382978723404257" width="60" height="27.574468085106382" as="geometry" />
+        </mxCell>
+        <mxCell id="V63_s2LG4lqJ5SyutdPh-16" value="" style="group" vertex="1" connectable="0" parent="V63_s2LG4lqJ5SyutdPh-1">
+          <mxGeometry x="240" y="48.714893617021275" width="210" height="156.25531914893617" as="geometry" />
+        </mxCell>
+        <mxCell id="V63_s2LG4lqJ5SyutdPh-14" value="" style="group;sketch=1;curveFitting=1;jiggle=2;fillColor=#b1ddf0;strokeColor=#10739e;container=0;rounded=1;" vertex="1" connectable="0" parent="V63_s2LG4lqJ5SyutdPh-16">
+          <mxGeometry width="210" height="156.25531914893617" as="geometry" />
+        </mxCell>
+        <mxCell id="V63_s2LG4lqJ5SyutdPh-6" value="Transaction `T_1`" style="shape=step;perimeter=stepPerimeter;whiteSpace=wrap;html=1;fixedSize=1;sketch=1;fillStyle=solid;fontFamily=Courier New;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="V63_s2LG4lqJ5SyutdPh-16">
+          <mxGeometry x="23.389999999999986" y="22.97872340425532" width="163.23" height="27.574468085106382" as="geometry" />
+        </mxCell>
+        <mxCell id="V63_s2LG4lqJ5SyutdPh-9" value="Transaction `T_2`" style="shape=step;perimeter=stepPerimeter;whiteSpace=wrap;html=1;fixedSize=1;sketch=1;fillStyle=solid;fontFamily=Courier New;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="V63_s2LG4lqJ5SyutdPh-16">
+          <mxGeometry x="23.389999999999986" y="55.148936170212764" width="163.23" height="27.574468085106382" as="geometry" />
+        </mxCell>
+        <mxCell id="V63_s2LG4lqJ5SyutdPh-10" value="Transaction `T_n`" style="shape=step;perimeter=stepPerimeter;whiteSpace=wrap;html=1;fixedSize=1;sketch=1;fillStyle=solid;fontFamily=Courier New;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="V63_s2LG4lqJ5SyutdPh-16">
+          <mxGeometry x="23.389999999999986" y="110.29787234042553" width="163.23" height="27.574468085106382" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
