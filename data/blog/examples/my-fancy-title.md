@@ -5,8 +5,8 @@ tags: ['hello']
 draft: true
 summary:
 images: []
-headerImage: "/images/post-solanaNFTandIPFS.webp"
-language: "en"
+headerImage: '/images/post-solanaNFTandIPFS.webp'
+language: 'en'
 ---
 
 Draft post which should not display

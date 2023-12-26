@@ -2,7 +2,6 @@
 import db from '@/lib/firebase'
 
 export default async (req, res) => {
-  console.log('req.method', req.method)
   if (req.method === 'POST') {
     const ref = db.ref('views').child(req.query.slug)
     const { snapshot } = await ref.transaction((currentViews) => {
