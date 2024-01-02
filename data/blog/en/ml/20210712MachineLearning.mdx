@@ -1,0 +1,146 @@
+---
+title: 'Explorando el aprendizaje de máquinas y humanos: principios y procesos'
+date: '2021/07/12'
+lastmod: '2021-02-01'
+tags: ['machine learning', 'tareas de aprendizaje', 'regresión', 'clasificación']
+draft: false
+time: '20 min'
+summary: '¿Qué es lo que nos permite aprender como seres humanos? En general, adquirimos gran parte de nuestros conocimientos a través de nuestra experiencia con los objetos y el mundo que nos rodea. Esto significa que aprendemos a partir de la información y los datos que recopilamos sobre ellos, en lugar de depender de definiciones matemáticas abstractas.'
+layout: PostLayout
+bibliography: references-data.bib
+canonicalUrl: https://www.asanchezyali.com/blog/20210712MachineLearning
+headerImage: '/images/post-ml.png'
+language: 'es'
+---
+
+¿Qué es lo que nos permite aprender como seres humanos? En general, adquirimos gran parte de nuestros conocimientos a través de nuestra experiencia con los objetos y el mundo que nos rodea. Esto significa que aprendemos a partir de la información y los datos que recopilamos sobre ellos, en lugar de depender de definiciones matemáticas abstractas.
+
+Esta capacidad de aprender a través de la observación y el análisis de datos nos ha resultado muy útil a lo largo de la historia, ya que hay muchos problemas que no se pueden abordar de manera analítica o teórica. En estos casos, los datos nos permiten encontrar soluciones empíricas, aunque no necesariamente nos brinden una comprensión profunda del por qué de las cosas. Sin embargo, estas soluciones basadas en datos pueden ser muy útiles en la práctica. Por esta razón, la habilidad de aprender de los datos es fundamental para muchas profesiones y disciplinas científicas.
+
+En esta oportunidad, queremos abordar brevemente los principales aspectos que conforman el problema del aprendizaje a partir de los datos. Luego, profundizaremos en cómo las máquinas también pueden aprender utilizando este enfoque.
+
+<TOCInline toc={props.toc} exclude="Overview" toHeading={2} asDisclosure />
+
+## El problema del aprendizaje
+
+La capacidad de aprender a partir de los datos es un proceso que puede automatizarse mediante el uso de algoritmos diseñados específicamente para este fin. Estos algoritmos buscan encontrar la solución más precisa para predecir resultados, pero no necesariamente buscan entender el por qué de las cosas. En su lugar, se basan en los datos para construir una fórmula que ofrezca las mejores aplicaciones prácticas. Es importante tener en cuenta que estos algoritmos de aprendizaje de datos solo buscan mejorar su precisión a medida que obtienen más información, pero no siempre brindan una comprensión profunda del fenómeno subyacente.
+
+Desde una perspectiva más matemática, **el problema del aprendizaje** puede formularse utilizando tres espacios medibles $\mathcal{X}$, $\mathcal{Y}$ y $\mathcal{Z}$. El conjunto $\mathcal{Z}$ es un subconjunto de $\mathcal{X} \times \mathcal{Y}$ y representa una relación entre los datos de $\mathcal{X}$ e $\mathcal{Y}$. En este contexto, la **tarea de aprendizaje** consiste en intentar describir la relación $\mathcal{Z}$ a partir de una **muestra de datos** $S=(s_{i})_{i\in [m]}$ con $s{i} \in \mathcal{Z}^{m}$ y una **función de pérdida** $\mathcal{L}: \mathcal{M}( \mathcal{X}, \mathcal{Y} )\times \mathcal{Z} \to \mathbb{R}$ definida sobre el producto cartesiano entre el conjunto $\mathcal{M}( \mathcal{X}, \mathcal{Y} )$ de todas las funciones medibles de $\mathcal{X}$ a $\mathcal{Y}$ y el conjunto $\mathcal{Z}$, con imagen en los números reales. La función $\mathcal{L}$ se utiliza principalmente para evaluar el rendimiento del aprendizaje en el algoritmo.
+
+Para abordar esta tarea es necesario seleccionar un **conjunto de hipótesis** $\mathcal{H} \subset \mathcal{M}( \mathcal{X}, \mathcal{Y} )$ y desarrollar un **algoritmo de aprendizaje**, es decir, encontrar un mapeo:
+
+$$
+\mathcal{A}: \bigcup_{ m\in \mathbb{N} } \mathcal{Z}^{m} \to \mathcal{H}.
+$$
+
+El objetivo de un algoritmo de aprendizaje es, a partir de una muestra de datos $S = (s_i){i\in[m]}$ de cierto tamaño $m$, encontrar un **modelo** $h_S = \mathcal{A}(S)\in \mathcal{H}$ que tenga un buen rendimiento en la muestra de datos y también tenga la capacidad de generalizar ese rendimiento a datos desconocidos en $\mathcal{Z} \setminus {s_i}{i\in[m]}$. El rendimiento del modelo se evalúa mediante la función de pérdida $\mathcal{L}$, y se mide a través de la pérdida $\mathcal{L}(h_S, z)$. La capacidad de generalizar implica que el modelo $h_S$ tendrá un comportamiento similar en el conjunto de datos desconocidos $z\in \mathcal{Z} \setminus {s_i}_{i\in[m]}$ al que tiene en el conjunto de datos conocidos, $z\in \mathcal{S}$.
+
+En este punto podemos estar de acuerdo en que los términos _buen rendimiento_ y _capacidad de generalizar_ son bastante ambiguos. Sin embargo, podemos tratar de precisar estos conceptos examinando los conceptos de riesgo real y riesgo empírico, que veremos a continuación:
+
+El **riesgo real** de una hipótesis $h\in \mathcal{H}$ con respecto una distribucción de probabilidad $\mathcal{D}$ sobre $\mathcal{Z}$, se define como:
+
+$$
+\begin{equation}
+L_{D}(h) = \mathbb{E}_{z\sim \mathcal{D}}[\mathcal{L}(h, z)].
+\end{equation}
+$$
+
+En esta definición, la esperanza de la función de pérdida de $h$ se calcula sobre los datos $z$ muestreados aleatoriamente de acuerdo con la distribución $\mathcal{D}$. Cabe destacar que, en la práctica, la distribución $\mathcal{D}$ es esencialmente desconocida.
+
+Por otro lado, el **riesgo empírico** es la pérdida esperada sobre una muestra de datos $S = (s_i)_{i \in[m]}$, es decir:
+
+$$
+\begin{equation}
+L_{S}(h) = \frac{1}{m}\sum_{i=1}^{m}\mathcal{L}(h, s_i).
+\end{equation}
+$$
+
+Es deseable encontrar un modelo $h\in \mathcal{H}$ que tenga un riesgo real de cero, ya que significaría que el modelo no cometería errores en su tarea de predicción. Sin embargo, es raro encontrar un modelo con estas características en la práctica. Por lo tanto, en lugar de eso, se enfoca en encontrar un modelo $h_s\in \mathcal{H}$ que cumpla con la siguiente condición:
+
+$$
+\begin{equation}
+h_s \in \operatorname*{argmin}_{h\in \mathcal{H}} L_{S}(h).
+\end{equation}
+$$
+
+Aunque la condición mencionada garantiza el buen rendimiento del modelo $h_s$ en el conjunto de datos de entrenamiento $S$, este enfoque tiene el peligro de llevar al **sobreentrenamiento**. En la práctica, es posible encontrar modelos que tienen un riesgo empírico de cero en el conjunto de entrenamiento $S$, pero que tienen una pérdida significativa en datos no vistos previamente. Esto significa que el modelo no tiene la capacidad de generalizar bien a nuevos conjuntos de datos y, por lo tanto, carece de utilidad práctica. Para evitar el sobreentrenamiento, es común dividir el conjunto de datos de entrenamiento $S$ en dos subconjuntos: uno para entrenar el modelo y otro para evaluar su rendimiento. El subconjunto utilizado para el entrenamiento se denomina $S_{train}$ y el subconjunto utilizado para la evaluación se denomina $S_{test}$. El objetivo es encontrar un modelo que tenga un rendimiento similar en ambos subconjuntos, $L_{S_{train}}(h)\approx L_{S_{test}}(h)$, lo que indica una buena capacidad de generalización. Si el rendimiento del modelo es significativamente peor en el conjunto de pruebas que en el conjunto de entrenamiento, es probable que el modelo se haya sobreentrenado en el conjunto de entrenamiento.
+
+¿Cómo asegurar que un modelo tiene una buena capacidad de generalización? Este es un problema complejo que, en primer lugar, implica elegir el conjunto de hipótesis adecuado $\mathcal{H}$. De esta manera, para cualquier valor de $\epsilon > 0$, debemos encontrar un conjunto de datos de entrenamiento $S$ que garantice que:
+
+$$
+\begin{equation}
+\forall h\in \mathcal{H}, \; \;|L_{S}(h) - L_{D}(h)| \leq \epsilon.
+\end{equation}
+$$
+
+Una vez que hemos encontrado el conjunto de hipótesis $\mathcal{H}$ que cumple con la ecuación (4), podemos proceder a encontrar la hipótesis $h$ en $\mathcal{H}$ que cumple con la ecuación (3). Si logramos encontrar un conjunto de hipótesis $\mathcal{H}$ y un modelo $h$ con estas características, podemos decir que nuestro modelo tiene una buena capacidad de generalización y, por lo tanto, tiene un buen rendimiento.
+
+## Tareas de predicción y clasificación
+
+Aquí hay algunos ejemplos de problemas de aprendizaje basados en datos:
+
+Clasificación multiclase. Imagina que quieres diseñar un programa para clasificar documentos en diferentes categorías, como noticias, deportes, biología y medicina. Un algoritmo de aprendizaje para esta tarea tendría acceso a un conjunto de documentos correctamente clasificados, denotado como $S$, y utilizaría estos ejemplos para entrenar un modelo que pueda clasificar nuevos documentos que se le presenten. En este ejemplo, el **dominio** $\mathcal{X}$ es el conjunto de todos los posibles documentos. Es importante tener en cuenta que los documentos deben representarse mediante un conjunto de características, como el número de palabras diferentes, el tamaño del documento, el autor y el origen. Las etiquetas $\mathcal{Y}$ son el conjunto de todos los posibles tópicos (en este caso, sería un conjunto finito). Una vez que hemos definido el dominio y las **etiquetas**, necesitamos determinar una función de pérdida adecuada para medir el rendimiento de nuestro algoritmo.
+
+Para el problema de clasificación multiclase, podemos utilizar una variable aleatoria $z$ en el dominio $\mathcal{X} \times \mathcal{Y}$ y una función de pérdida de la siguiente forma:
+
+$$
+\begin{equation}
+\mathcal{L}(h, (x, y)) = \begin{cases}
+0 \;\;si\; h(x) = y, \newline \newline
+1 \;\;si\; h(x)\neq y.
+\end{cases}
+\end{equation}
+$$
+
+Esta función se usa en general para problemas de clasificación binaria o multiclase.
+
+En la tarea de regresión, se busca encontrar una relación funcional simple entre los componentes de los datos $\mathcal{X}$ e $\mathcal{Y}$. Por ejemplo, se puede tratar de predecir el peso de nacimiento de un bebé en función de las medidas obtenidas por ultrasonido del diámetro de su cabeza, el diámetro abdominal y la longitud de su fémur. En este caso, el **dominio** es un subconjunto de $\mathbb{R}^{3}$ (las tres medidas obtenidas por el ultrasonido) y las **etiquetas** son números reales (el peso en gramos). El conjunto de entrenamiento es un subconjunto $S \subseteq \mathcal{X} \times \mathcal{Y}$. La calidad de la hipótesis $h: \mathcal{X} \to \mathcal{Y}$ se puede evaluar utilizando el valor esperado del cuadrado de la diferencia entre las etiquetas correctas y la predicción de $h$, es decir:
+
+$$
+\begin{equation}
+\mathcal{L}(h, (x,y)) = (h(x)-y)^2.
+\end{equation}
+$$
+
+## ¿Cómo aprenden las maquinas?
+
+Como se mencionó anteriormente, el problema del aprendizaje involucra la selección de un conjunto de hipótesis $\mathcal{H}$ y la búsqueda de la hipótesis $h_{s}$ que cumpla con la siguiente condición:
+
+$$
+\begin{equation}
+h_s \in \operatorname*{argmin}_{h\in \mathcal{H}} L_{S}(h).
+\end{equation}
+$$
+
+En otras palabras, el problema del aprendizaje se reduce a optimizar el riesgo empírico $\mathcal{L}_{S}(h)$. Hay una gran variedad de algoritmos de optimización disponibles para resolver este tipo de problemas, pero uno de los más populares es el **algoritmo del descenso del gradiente**. Este algoritmo se basa en iterar la siguiente operación:
+
+$$
+\begin{equation}
+h \leftarrow h - \lambda \nabla L_{D}(h).
+\end{equation}
+$$
+
+para encontrar una hipótesis $h_s$. Este es un proceso que puede ser automatizable en casi cualquier computadora. Por lo tanto, para que una computadora pueda aprender a clasificar y predecir a partir de datos, es necesario programarle una serie de instrucciones que le indiquen cómo optimizar las diferentes funciones de pérdida según la tarea de aprendizaje que deseamos que realice. Este proceso puede ser automatizado y ejecutado en casi cualquier computadora. Una vez que los algoritmos se hayan ejecutado, la computadora debería tener la capacidad de clasificar y predecir, aunque esto no es una tarea sencilla. Con el adecuado programado y configuración, cualquier máquina con la capacidad de ejecutar iteraciones de este tipo puede aprender a realizar tareas de aprendizaje.
+
+Espero que hayas disfrutado este post y que hayas encontrado la información útil. Nos vemos en próximos contenidos. ¡Hasta luego!
+
+## Asesorías
+
+Si necesitas ayuda adicional, ofrecemos asesorías personalizadas en [Classgap](https://www.classgap.com/es-co/tutor/alejandro-sanchez-yali), puedes consultar nuestros horarios disponibles y agendar una sesión con nosotros.
+
+## Patrocinio
+
+Por último, si deseas apoyarnos económicamente, te dejamos nuestras direcciones de criptomonedas en Bitcoin, Solana y Ethereum, así como nuestra cuenta de PayPal. Muchas gracias por tu apoyo:
+
+₿itcoin: [bc1qrcecrz47ywrcnyuqknzgzzz2t3lwawyjnl4t7f](https://www.exodus.com/)
+
+Solana: [Ft8A8t3UyGZHjWNvtgruADnUgrij3uaFe7pLj9QNG44N](https://phantom.app/)
+
+Ethereum: [0x886ce8Cc54cd0964E6939c5290242b1135D10C7f](https://metamask.io/)
+
+Paypal: [@asanchezyali](https://paypal.me/asanchezyali?country.x=CO&locale.x=es_XC)
+
+## Referencias
+
+1. [Julius Berner. 2021. The Modern Mathematics of deep learning.](https://deepai.org/publication/the-modern-mathematics-of-deep-learning)
+2. [Yaser Abu-Mostafa Data. 2012 - 2015. Learning From Data.](https://work.caltech.edu/telecourse)
