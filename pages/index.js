@@ -42,17 +42,17 @@ export default function Blog({ posts }) {
       <div className="flex flex-col items-center justify-center pt-20 pb-20">
         <div className="duration-500 ease-in hover:translate-y-[-3px] hover:scale-[1.01]">
           <Image
-            src="/avatar.jpeg"
+            src="/avatar.avif"
             alt="Avatar"
             width={200}
             height={200}
-            className="h-40 w-40 rounded-full"
+            className="rounded-full"
           />
         </div>
         <h1 className="my-2 text-lg text-slate-800 dark:text-slate-300">
           {metaLabels[language].lema}
         </h1>
-        <div className="mb-3 flex space-x-4">
+        <div className="flex space-x-4">
           <SocialIcon kind="mail" href={`mailto:${siteMetadata.email}`} size="6" />
           <SocialIcon kind="github" href={siteMetadata.github} size="6" />
           <SocialIcon kind="facebook" href={siteMetadata.facebook} size="6" />
