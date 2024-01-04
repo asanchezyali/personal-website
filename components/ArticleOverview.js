@@ -34,7 +34,7 @@ export default function ArticleOverview({ title, summary, date, headerImage, slu
       <h2 className="pt-4">
         <Link
           href={`/blog/${slug}`}
-          className="text-xl font-bold text-slate-800 dark:text-slate-300 md:text-2xl"
+          className="text-xl font-bold text-slate-800 md:text-2xl dark:text-slate-300"
         >
           {title}
         </Link>
@@ -52,10 +52,10 @@ export default function ArticleOverview({ title, summary, date, headerImage, slu
         </div>
         <div className="flex w-full flex-row justify-between">
           <div className="flex flex-col">
-            <p className="px-0 text-base font-bold text-slate-800 dark:text-slate-300 md:px-4">
+            <p className="px-0 text-base font-bold text-slate-800 md:px-4 dark:text-slate-300">
               Alejandro Sánchez Yalí
             </p>
-            <p className="px-0 text-base font-light text-slate-800 dark:text-slate-300 md:px-4">
+            <p className="px-0 text-base font-light text-slate-800 md:px-4 dark:text-slate-300">
               {formatDate(date)}
             </p>
           </div>

@@ -37,7 +37,7 @@ export default function Blog({ posts }) {
   return (
     <>
       <PageSEO title={`Blog - ${siteMetadata.author}`} description={siteMetadata.description} />
-      <div className="flex flex-col items-center justify-center pt-20 pb-20">
+      <div className="flex flex-col items-center justify-center pb-20 pt-20">
         <div className="duration-500 ease-in hover:translate-y-[-3px] hover:scale-[1.01]">
           <Image
             src="/avatar.avif"
