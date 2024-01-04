@@ -6,7 +6,7 @@ import formatDate from '@/lib/utils/formatDate'
 import Tag from '@/components/Tag'
 import metaLabels from '@/data/metaLabels'
 import { LanguageContext } from '@/providers/LanguageProvider'
-import { removeSlashAndPoint } from '@/lib/utils/strings'
+import { extractLastSegment } from '@/lib/utils/strings'
 
 async function fetcher(...args) {
   const res = await fetch(...args)
@@ -15,7 +15,7 @@ async function fetcher(...args) {
 
 export default function ArticleOverview({ title, summary, date, headerImage, slug, tags, time }) {
   const { language } = React.useContext(LanguageContext)
-  const { data } = useSWR(`/api/views/${removeSlashAndPoint(slug)}`, fetcher)
+  const { data } = useSWR(`/api/views/${extractLastSegment(slug)}`, fetcher)
   const views = new Number(data?.total)
   return (
     <div className="flex flex-col border-b border-dashed border-slate-200 py-8 dark:border-slate-700">

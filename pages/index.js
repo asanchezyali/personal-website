@@ -34,8 +34,6 @@ export default function Blog({ posts }) {
     })
   }, [posts, language])
 
-  console.log(process.env.NEXT_PUBLIC_GISCUS_REPO)
-
   return (
     <>
       <PageSEO title={`Blog - ${siteMetadata.author}`} description={siteMetadata.description} />

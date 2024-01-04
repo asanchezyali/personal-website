@@ -5,6 +5,7 @@ import generateRss from '@/lib/generate-rss'
 import { MDXLayoutRenderer } from '@/components/MDXComponents'
 import { formatSlug, getAllFilesFrontMatter, getFileBySlug, getFiles } from '@/lib/mdx'
 import { LanguageContext } from '@/providers/LanguageProvider'
+import { extractLastSegment } from '@/lib/utils/strings'
 
 const DEFAULT_LAYOUT = 'PostLayout'
 
@@ -100,8 +101,6 @@ export default function Blog({
 }) {
   const { language } = React.useContext(LanguageContext)
   const postVersion = language === 'en' ? postEnglish : postSpanish
-  console.log(postEnglish)
-  console.log(postSpanish)
   const postsByLanguage = language === 'en' ? allPostsEN : allPostsES
   const postsNonDraft = postsByLanguage?.filter((frontMatter) => frontMatter.draft !== true)
   const postIndex = language === 'en' ? postIndexEN : postIndexES
@@ -117,8 +116,9 @@ export default function Blog({
 
   React.useEffect(() => {
     const slug = visitedPost.frontMatter.slug
+    const articleName = extractLastSegment(slug)
     const registerView = () =>
-      fetch(`/api/views/${slug}`, {
+      fetch(`/api/views/${articleName}`, {
         method: 'POST',
       })
 
