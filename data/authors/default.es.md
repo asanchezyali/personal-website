@@ -5,6 +5,7 @@ occupation: Matematico y Desarrollador de Software
 company: Actualmente trabajo en Monadical
 email: asanchezyali@gmail.com
 twitter: https://twitter.com/asanchezyali
+instagram: https://www.instagram.com/asanchezyali/
 linkedin: https://www.linkedin.com/in/asanchezyali
 github: https://github.com/asanchezyali
 language: en

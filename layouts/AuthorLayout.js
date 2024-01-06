@@ -6,7 +6,8 @@ import { LanguageContext } from '@/providers/LanguageProvider'
 import metaLabels from '@/data/metaLabels'
 
 export default function AuthorLayout({ children, frontMatter }) {
-  const { name, avatar, occupation, company, email, twitter, linkedin, github } = frontMatter
+  const { name, avatar, occupation, company, email, twitter, linkedin, github, instagram } =
+    frontMatter
   const { language } = React.useContext(LanguageContext)
   return (
     <>
@@ -32,6 +33,7 @@ export default function AuthorLayout({ children, frontMatter }) {
             <div className="flex space-x-3 pt-6">
               <SocialIcon kind="mail" href={`mailto:${email}`} />
               <SocialIcon kind="github" href={github} />
+              <SocialIcon kind="instagram" href={instagram} />
               <SocialIcon kind="linkedin" href={linkedin} />
               <SocialIcon kind="twitter" href={twitter} />
             </div>
