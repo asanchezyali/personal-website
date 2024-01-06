@@ -42,7 +42,7 @@ export default function ArticleOverview({ title, summary, date, headerImage, slu
       <div className="flex w-full flex-row py-4">
         <div className="hidden md:block">
           <Image
-            src="/avatar.jpeg"
+            src="/avatar.png"
             alt="Avatar"
             height={50}
             width={50}

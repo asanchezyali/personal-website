@@ -14,6 +14,7 @@ const siteMetadata = {
   email: 'asanchezyali@gmail.com',
   github: 'https://github.com/asanchezyali',
   twitter: 'https://twitter.com/asanchezyali',
+  instagram: 'https://www.instagram.com/asanchezyali',
   linkedin: 'https://www.linkedin.com/in/asanchezyali',
   locale: 'en-US',
   analytics: {

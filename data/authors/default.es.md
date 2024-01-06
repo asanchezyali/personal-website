@@ -1,6 +1,6 @@
 ---
 name: Alejandro Sánchez Yalí
-avatar: /avatar.jpeg
+avatar: /avatar.png
 occupation: Matematico y Desarrollador de Software
 company: Actualmente trabajo en Monadical
 email: asanchezyali@gmail.com
