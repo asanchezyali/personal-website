@@ -11,7 +11,9 @@ import path from 'path'
 const root = process.cwd()
 
 export async function getStaticPaths() {
-  const tags = await getAllTags('blog')
+  const tagsES = await getAllTags('blog', 'es')
+  const tagsEN = await getAllTags('blog', 'en')
+  const tags = { ...tagsES, ...tagsEN }
 
   return {
     paths: Object.keys(tags).map((tag) => ({

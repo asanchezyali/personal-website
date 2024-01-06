@@ -7,6 +7,7 @@ module.exports = {
   },
   content: [
     './pages/**/*.js',
+    './tags/**/*.js',
     './components/**/*.js',
     './layouts/**/*.js',
     './lib/**/*.js',
