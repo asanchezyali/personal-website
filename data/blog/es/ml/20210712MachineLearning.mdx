@@ -8,7 +8,7 @@ time: '20 min'
 summary: '¿Qué es lo que nos permite aprender como seres humanos? En general, adquirimos gran parte de nuestros conocimientos a través de nuestra experiencia con los objetos y el mundo que nos rodea. Esto significa que aprendemos a partir de la información y los datos que recopilamos sobre ellos, en lugar de depender de definiciones matemáticas abstractas.'
 layout: PostLayout
 bibliography: references-data.bib
-canonicalUrl: https://www.asanchezyali.com/blog/20210712MachineLearning
+canonicalUrl: https://www.asanchezyali.com/blog/es/20210712MachineLearning
 headerImage: '/images/post-ml.png'
 language: 'es'
 ---
@@ -25,7 +25,7 @@ En esta oportunidad, queremos abordar brevemente los principales aspectos que co
 
 La capacidad de aprender a partir de los datos es un proceso que puede automatizarse mediante el uso de algoritmos diseñados específicamente para este fin. Estos algoritmos buscan encontrar la solución más precisa para predecir resultados, pero no necesariamente buscan entender el por qué de las cosas. En su lugar, se basan en los datos para construir una fórmula que ofrezca las mejores aplicaciones prácticas. Es importante tener en cuenta que estos algoritmos de aprendizaje de datos solo buscan mejorar su precisión a medida que obtienen más información, pero no siempre brindan una comprensión profunda del fenómeno subyacente.
 
-Desde una perspectiva más matemática, **el problema del aprendizaje** puede formularse utilizando tres espacios medibles $\mathcal{X}$, $\mathcal{Y}$ y $\mathcal{Z}$. El conjunto $\mathcal{Z}$ es un subconjunto de $\mathcal{X} \times \mathcal{Y}$ y representa una relación entre los datos de $\mathcal{X}$ e $\mathcal{Y}$. En este contexto, la **tarea de aprendizaje** consiste en intentar describir la relación $\mathcal{Z}$ a partir de una **muestra de datos** $S=(s_{i})_{i\in [m]}$ con $s{i} \in \mathcal{Z}^{m}$ y una **función de pérdida** $\mathcal{L}: \mathcal{M}( \mathcal{X}, \mathcal{Y} )\times \mathcal{Z} \to \mathbb{R}$ definida sobre el producto cartesiano entre el conjunto $\mathcal{M}( \mathcal{X}, \mathcal{Y} )$ de todas las funciones medibles de $\mathcal{X}$ a $\mathcal{Y}$ y el conjunto $\mathcal{Z}$, con imagen en los números reales. La función $\mathcal{L}$ se utiliza principalmente para evaluar el rendimiento del aprendizaje en el algoritmo.
+Desde una perspectiva más matemática, **el problema del aprendizaje** puede formularse utilizando tres espacios medibles $\mathcal{X}$, $\mathcal{Y}$ y $\mathcal{Z}$. El conjunto $\mathcal{Z}$ es un subconjunto de $\mathcal{X} \times \mathcal{Y}$ y representa una relación entre los datos de $\mathcal{X}$ e $\mathcal{Y}$. En este contexto, la **tarea de aprendizaje** consiste en intentar describir la relación $\mathcal{Z}$ a partir de una **muestra de datos** $S=(s_{i})_{i\in [m]}$ con $s_{i} \in \mathcal{Z}^{m}$ y una **función de pérdida** $\mathcal{L}: \mathcal{M}( \mathcal{X}, \mathcal{Y} )\times \mathcal{Z} \to \mathbb{R}$ definida sobre el producto cartesiano entre el conjunto $\mathcal{M}( \mathcal{X}, \mathcal{Y} )$ de todas las funciones medibles de $\mathcal{X}$ a $\mathcal{Y}$ y el conjunto $\mathcal{Z}$, con imagen en los números reales. La función $\mathcal{L}$ se utiliza principalmente para evaluar el rendimiento del aprendizaje en el algoritmo.
 
 Para abordar esta tarea es necesario seleccionar un **conjunto de hipótesis** $\mathcal{H} \subset \mathcal{M}( \mathcal{X}, \mathcal{Y} )$ y desarrollar un **algoritmo de aprendizaje**, es decir, encontrar un mapeo:
 
@@ -33,7 +33,7 @@ $$
 \mathcal{A}: \bigcup_{ m\in \mathbb{N} } \mathcal{Z}^{m} \to \mathcal{H}.
 $$
 
-El objetivo de un algoritmo de aprendizaje es, a partir de una muestra de datos $S = (s_i){i\in[m]}$ de cierto tamaño $m$, encontrar un **modelo** $h_S = \mathcal{A}(S)\in \mathcal{H}$ que tenga un buen rendimiento en la muestra de datos y también tenga la capacidad de generalizar ese rendimiento a datos desconocidos en $\mathcal{Z} \setminus {s_i}{i\in[m]}$. El rendimiento del modelo se evalúa mediante la función de pérdida $\mathcal{L}$, y se mide a través de la pérdida $\mathcal{L}(h_S, z)$. La capacidad de generalizar implica que el modelo $h_S$ tendrá un comportamiento similar en el conjunto de datos desconocidos $z\in \mathcal{Z} \setminus {s_i}_{i\in[m]}$ al que tiene en el conjunto de datos conocidos, $z\in \mathcal{S}$.
+El objetivo de un algoritmo de aprendizaje es, a partir de una muestra de datos $S = (s_i)_{i\in[m]}$ de cierto tamaño $m$, encontrar un **modelo** $h_S = \mathcal{A}(S)\in \mathcal{H}$ que tenga un buen rendimiento en la muestra de datos y también tenga la capacidad de generalizar ese rendimiento a datos desconocidos en $\mathcal{Z} \setminus \{s_i\}_{i\in[m]}$. El rendimiento del modelo se evalúa mediante la función de pérdida $\mathcal{L}$, y se mide a través de la pérdida $\mathcal{L}(h_S, z)$. La capacidad de generalizar implica que el modelo $h_S$ tendrá un comportamiento similar en el conjunto de datos desconocidos $z\in \mathcal{Z} \setminus \{s_i\}_{i\in[m]}$ al que tiene en el conjunto de datos conocidos, $z\in \mathcal{S}$.
 
 En este punto podemos estar de acuerdo en que los términos _buen rendimiento_ y _capacidad de generalizar_ son bastante ambiguos. Sin embargo, podemos tratar de precisar estos conceptos examinando los conceptos de riesgo real y riesgo empírico, que veremos a continuación:
 
@@ -123,22 +123,6 @@ $$
 para encontrar una hipótesis $h_s$. Este es un proceso que puede ser automatizable en casi cualquier computadora. Por lo tanto, para que una computadora pueda aprender a clasificar y predecir a partir de datos, es necesario programarle una serie de instrucciones que le indiquen cómo optimizar las diferentes funciones de pérdida según la tarea de aprendizaje que deseamos que realice. Este proceso puede ser automatizado y ejecutado en casi cualquier computadora. Una vez que los algoritmos se hayan ejecutado, la computadora debería tener la capacidad de clasificar y predecir, aunque esto no es una tarea sencilla. Con el adecuado programado y configuración, cualquier máquina con la capacidad de ejecutar iteraciones de este tipo puede aprender a realizar tareas de aprendizaje.
 
 Espero que hayas disfrutado este post y que hayas encontrado la información útil. Nos vemos en próximos contenidos. ¡Hasta luego!
-
-## Asesorías
-
-Si necesitas ayuda adicional, ofrecemos asesorías personalizadas en [Classgap](https://www.classgap.com/es-co/tutor/alejandro-sanchez-yali), puedes consultar nuestros horarios disponibles y agendar una sesión con nosotros.
-
-## Patrocinio
-
-Por último, si deseas apoyarnos económicamente, te dejamos nuestras direcciones de criptomonedas en Bitcoin, Solana y Ethereum, así como nuestra cuenta de PayPal. Muchas gracias por tu apoyo:
-
-₿itcoin: [bc1qrcecrz47ywrcnyuqknzgzzz2t3lwawyjnl4t7f](https://www.exodus.com/)
-
-Solana: [Ft8A8t3UyGZHjWNvtgruADnUgrij3uaFe7pLj9QNG44N](https://phantom.app/)
-
-Ethereum: [0x886ce8Cc54cd0964E6939c5290242b1135D10C7f](https://metamask.io/)
-
-Paypal: [@asanchezyali](https://paypal.me/asanchezyali?country.x=CO&locale.x=es_XC)
 
 ## Referencias
 

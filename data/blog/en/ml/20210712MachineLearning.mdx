@@ -1,0 +1,202 @@
+---
+title: 'Exploring Machine and Human Learning: Principles and Processes'
+date: '2021/07/12'
+lastmod: '2021-02-01'
+tags: ['machine-learning', 'mathematics']
+draft: false
+time: '20 min'
+summary: 'What allows us to learn as human beings? In general, we acquire much of our knowledge through our experience with objects and the world around us. This means that we learn from the information and data we gather about them, rather than relying on abstract mathematical definitions.'
+layout: PostLayout
+bibliography: references-data.bib
+canonicalUrl: https://www.asanchezyali.com/blog/en/20210712MachineLearning
+headerImage: '/images/post-ml.png'
+language: 'en'
+---
+
+What allows us to learn as human beings? In general, we acquire a large part of our knowledge through our experience
+with objects and the world around us. This means that we learn from the information and data we gather about them,
+rather than relying on abstract mathematical definitions.
+
+This ability to learn through observation and data analysis has been very useful throughout history, as there are many
+problems that cannot be approached analytically or theoretically. In these cases, data allows us to find empirical
+solutions, although they may not necessarily provide us with a deep understanding of why things work the way they do.
+However, these data-driven solutions can be very practical. For this reason, the ability to learn from data is
+fundamental in many professions and scientific disciplines.
+
+In this opportunity, we want to briefly address the main aspects that make up the problem of learning from data. Then,
+we will delve into how machines can also learn using this approach.
+
+<TOCInline toc={props.toc} exclude="Overview" toHeading={2} asDisclosure />
+
+## The problem of learning
+
+The ability to learn from data is a process that can be automated through the use of algorithms designed specifically
+for this purpose. These algorithms aim to find the most accurate solution for predicting outcomes, but they don't
+necessarily seek to understand the underlying reasons. Instead, they rely on the data to construct a formula that offers
+the best practical applications. It's important to note that these data learning algorithms only seek to improve their
+accuracy as they gather more information, but they don't always provide a deep understanding of the underlying
+phenomenon.
+
+From a more mathematical perspective, the **problem of learning** can be formulated using three measurable spaces
+$\mathcal{X}$, $\mathcal{Y}$, and $\mathcal{Z}$. The set $\mathcal{Z}$ is a subset of $\mathcal{X} \times \mathcal{Y}$
+and represents a relationship between the data from $\mathcal{X}$ and $\mathcal{Y}$. In this context, the **learning
+task** consists of trying to describe the relationship $\mathcal{Z}$ from a **data sample** $S=(s_{i})_{i\in [m]}$ with
+$s_{i} \in \mathcal{Z}^{m}$ and a **loss function** $\mathcal{L}: \mathcal{M}( \mathcal{X}, \mathcal{Y} )\times
+\mathcal{Z} \to \mathbb{R}$ defined on the cartesian product between the set $\mathcal{M}( \mathcal{X}, \mathcal{Y} )$
+of all measurable functions from $\mathcal{X}$ to $\mathcal{Y}$ and the set $\mathcal{Z}$, with values in real numbers.
+The function $\mathcal{L}$ is mainly used to evaluate the performance of the learning algorithm.
+
+To address this task, it is necessary to select a **hypothesis set** $\mathcal{H} \subset \mathcal{M}( \mathcal{X},
+\mathcal{Y} )$ and develop a **learning algorithm**, that is, to find a mapping:
+
+$$
+\mathcal{A}: \bigcup_{ m\in \mathbb{N} } \mathcal{Z}^{m} \to \mathcal{H}.
+$$
+
+The goal of a learning algorithm is, given a data sample $S = (s_i)_{i\in[m]}$ of a certain size $m$, to find a **model**
+$h_S = \mathcal{A}(S)\in \mathcal{H}$ that performs well on the data sample and also has the ability to generalize that
+performance to unknown data in $\mathcal{Z} \setminus \{s_i\}_{i\in[m]}$. The performance of the model is evaluated using
+the loss function $\mathcal{L}$, and it is measured through the loss $\mathcal{L}(h_S, z)$. The ability to generalize
+implies that the model $h_S$ will exhibit a similar behavior on the unknown data set $z\in \mathcal{Z} \setminus
+\{s_i\}_{i\in[m]}$ as it does on the known data set $z\in \mathcal{S}$.
+
+To address this task, it is necessary to select a **hypothesis set** $\mathcal{H} \subset \mathcal{M}( \mathcal{X},
+\mathcal{Y} )$ and develop a **learning algorithm**, which means finding a mapping:
+
+$$
+\mathcal{A}: \bigcup_{ m\in \mathbb{N} } \mathcal{Z}^{m} \to \mathcal{H}.
+$$
+
+The goal of a learning algorithm is, given a data sample $S = (s_i)_{i\in[m]}$ of a certain size $m$, to find a
+**model** $h_S = \mathcal{A}(S)\in \mathcal{H}$ that performs well on the data sample and also has the ability to
+generalize that performance to unknown data in $\mathcal{Z} \setminus \{s_i\}_{i\in[m]}$. The performance of the model
+is evaluated using the loss function $\mathcal{L}$, and it is measured through the loss $\mathcal{L}(h_S, z)$. The
+ability to generalize implies that the model $h_S$ will exhibit a similar behavior on the unknown data set $z\in
+\mathcal{Z} \setminus \{s_i\}_{i\in[m]}$ as it does on the known data set $z\in \mathcal{S}$.
+
+At this point, we can agree that the terms "good performance" and "ability to generalize" are quite ambiguous. However,
+we can try to clarify these concepts by examining the concepts of real risk and empirical risk, which we will see below:
+
+The **real risk** of a hypothesis $h\in \mathcal{H}$ with respect to a probability distribution $\mathcal{D}$ over
+$\mathcal{Z}$ is defined as:
+
+$$
+\begin{equation}
+L_{D}(h) = \mathbb{E}_{z\sim \mathcal{D}}[\mathcal{L}(h, z)].
+\end{equation}
+$$
+
+In this definition, the expectation of the loss function of $h$ is calculated over data $z$ randomly sampled according
+to the distribution $\mathcal{D}$. It is worth noting that, in practice, the distribution $\mathcal{D}$ is essentially
+unknown.
+
+On the other hand, the **empirical risk** is the expected loss over a data sample $S = (s_i)_{i \in[m]}$, that is:
+
+$$
+\begin{equation}
+L_{S}(h) = \frac{1}{m}\sum_{i=1}^{m}\mathcal{L}(h, s_i).
+\end{equation}
+$$
+
+It is desirable to find a model $h\in \mathcal{H}$ that has a real risk of zero, as it would mean that the model would
+make no errors in its prediction task. However, it is rare to find a model with these characteristics in practice.
+Therefore, instead, the focus is on finding a model $h_s\in \mathcal{H}$ that satisfies the following condition:
+
+$$
+\begin{equation}
+h_s \in \operatorname*{argmin}_{h\in \mathcal{H}} L_{S}(h).
+\end{equation}
+$$
+
+Although the mentioned condition guarantees good performance of the model $h_s$ on the training data set $S$, this
+approach carries the risk of **overfitting**. In practice, it is possible to find models that have an empirical risk of
+zero on the training data set $S$, but have a significant loss on previously unseen data. This means that the model
+lacks the ability to generalize well to new data sets and, therefore, lacks practical utility. To avoid overfitting, it
+is common to split the training data set $S$ into two subsets: one for training the model and another for evaluating its
+performance. The subset used for training is called $S_{train}$ and the subset used for evaluation is called $S_{test}$.
+The goal is to find a model that has similar performance on both subsets, $L_{S_{train}}(h)\approx L_{S_{test}}(h)$,
+indicating good generalization ability. If the model's performance is significantly worse on the test set than on the
+training set, it is likely that the model has overfit the training set.
+
+How can we ensure that a model has good generalization ability? This is a complex problem that involves first choosing
+the appropriate hypothesis set $\mathcal{H}$. In this way, for any value of $\epsilon > 0$, we must find a training data
+set $S$ that guarantees:
+
+$$
+\begin{equation}
+\forall h\in \mathcal{H}, \; \;|L_{S}(h) - L_{D}(h)| \leq \epsilon.
+\end{equation}
+$$
+
+Once we have found the hypothesis set $\mathcal{H}$ that satisfies equation (4), we can proceed to find the hypothesis
+$h$ in $\mathcal{H}$ that satisfies equation (3). If we manage to find a hypothesis set $\mathcal{H}$ and a model $h$
+with these characteristics, we can say that our model has good generalization ability and, therefore, performs well.
+
+## Prediction and Classification Tasks
+
+Here are some examples of data-driven learning problems:
+
+Multiclass classification. Imagine you want to design a program to classify documents into different categories, such as
+news, sports, biology, and medicine. A learning algorithm for this task would have access to a set of correctly
+classified documents, denoted as $S$, and would use these examples to train a model that can classify new documents that
+are presented to it. In this example, the **domain** $\mathcal{X}$ is the set of all possible documents. It is important
+to note that the documents should be represented using a set of features, such as the number of different words,
+document size, author, and origin. The labels $\mathcal{Y}$ are the set of all possible topics (in this case, it would
+be a finite set). Once we have defined the domain and the **labels**, we need to determine a suitable loss function to
+measure the performance of our algorithm.
+
+For the multiclass classification problem, we can use a random variable $z$ in the domain $\mathcal{X} \times
+\mathcal{Y}$ and a loss function as follows:
+
+$$
+\begin{equation}
+\mathcal{L}(h, (x, y)) = \begin{cases}
+0 \;\;if\; h(x) = y, \newline \newline
+1 \;\;if\; h(x)\neq y.
+\end{cases}
+\end{equation}
+$$
+
+This function is generally used for binary or multiclass classification problems.
+
+In the regression task, we aim to find a simple functional relationship between the components of the data $\mathcal{X}$
+and $\mathcal{Y}$. For example, it could be trying to predict the birth weight of a baby based on ultrasound
+measurements of their head circumference, abdominal circumference, and femur length. In this case, the **domain** is a
+subset of $\mathbb{R}^{3}$ (the three ultrasound measurements) and the **labels** are real numbers (weight in grams).
+The training set is a subset $S \subseteq \mathcal{X} \times \mathcal{Y}$. The quality of the hypothesis $h: \mathcal{X}
+\to \mathcal{Y}$ can be evaluated using the expected value of the squared difference between the correct labels and the
+prediction of $h$, i.e.:
+
+$$
+\begin{equation}
+\mathcal{L}(h, (x,y)) = (h(x)-y)^2.
+\end{equation}
+$$
+
+## How do machines learn?
+
+As mentioned before, the learning problem involves selecting a hypothesis set $\mathcal{H}$ and finding the hypothesis
+$h_s$ that satisfies the following condition:
+
+$$
+\begin{equation}
+h_s \in \operatorname*{argmin}_{h\in \mathcal{H}} L_{S}(h).
+\end{equation}
+$$
+
+In other words, the learning problem reduces to optimizing the empirical risk $\mathcal{L}_{S}(h)$. There are a variety
+of optimization algorithms available to solve such problems, but one of the most popular ones is the **gradient descent
+algorithm**. This algorithm is based on iterating the following operation:
+
+$$
+\begin{equation}
+h \leftarrow h - \lambda \nabla L_{D}(h).
+\end{equation}
+$$
+
+I hope you enjoyed this post and found the information useful. See you in upcoming content. Goodbye!
+
+## References
+
+1. [Julius Berner. 2021. The Modern Mathematics of deep learning.](https://deepai.org/publication/the-modern-mathematics-of-deep-learning)
+2. [Yaser Abu-Mostafa Data. 2012 - 2015. Learning From Data.](https://work.caltech.edu/telecourse)
