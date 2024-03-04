@@ -85,3 +85,7 @@ input:-webkit-autofill:focus {
     background-position: 0% 50%;
   }
 }
+
+.giscus-frame {
+  width: 100%;
+}
