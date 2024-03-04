@@ -13,7 +13,7 @@ const LifeLineEN = [
     date: 'Feb. 2024 - Current',
     description: (
       <p>
-        This year, I am back at the
+        This year, I am back at the{' '}
         <Link href={'https://www.udea.edu.co/'}>
           <a
             target="_blank"
@@ -29,7 +29,7 @@ const LifeLineEN = [
     logo: (
       <Link href="https://www.udea.edu.co/">
         <a target="_blank" rel="noopener noreferrer">
-          <Image src="/logos/UdeA.svg" alt="UdeA" width={570} height={570} />
+          <Image src="/logos/UdeA.png" alt="UdeA" width={200} height={500} />
         </a>
       </Link>
     ),
@@ -172,7 +172,7 @@ const LifeLineEN = [
         >
           Category Theory Applied to Supervised Learning Algorithms
         </a>{' '}
-        at the{' '}
+        (in Spanish) at the{' '}
         <Link href={'https://www.udea.edu.co/'}>
           <a
             target="_blank"
@@ -208,24 +208,22 @@ const LifeLineEN = [
               BCFort
             </a>
           </Link>
-          , I was in charge of Backend Software Development for various projects, using Python,
-          Node.js, MongoDB, IPFS and Blockchain; analyze data using Pandas, JupyterLab Hub, and
-          MongoDB; manage servers on AWS, GCLOUD, and IBM CLOUD; monitor and manage tasks for
-          various development teams; and train and select junior software developers.I participated
-          in the following projects:
+          , I led Backend Software Development for various projects, utilizing Python, Node.js,
+          MongoDB, IPFS, and Blockchain technologies. My responsibilities included data analysis
+          using Pandas, JupyterLab Hub, and MongoDB; server administration on AWS, GCLOUD, and IBM
+          CLOUD; overseeing and managing tasks for multiple development teams; as well as training
+          and selecting junior software developers. I contributed to the following projects:
         </p>
         <br />
         <ul className="ml-8 list-outside list-disc">
           <li>
-            Private blockchain for mineral traceability using Hyperledger Fabric and IBM blockchain
-            Platform.
+            Private blockchain for mineral traceability using Hyperledger Fabric and the IBM
+            blockchain platform.
           </li>
           <li>
-            {' '}
-            Blockchain of documents and voting system using Python, Node.js, Ethereum and Telegram
+            Document blockchain and voting system utilizing Python, Node.js, Ethereum, and Telegram
             Bots.
           </li>
-          <li>Theory of Relativity</li>
         </ul>
       </>
     ),
@@ -600,7 +598,7 @@ const LifeLineES = [
     description: (
       <>
         <p>
-          En{' '}
+          Durante mi tiempo en{' '}
           <Link href="https://www.bcfort.com/">
             <a
               target="_blank"
@@ -610,24 +608,22 @@ const LifeLineES = [
               BCFort
             </a>
           </Link>
-          , estuve a cargo del Desarrollo de Software de Backend para varios proyectos, utilizando
-          Python, Node.js, MongoDB, IPFS y Blockchain; analizar datos utilizando Pandas, JupyterLab
-          Hub y MongoDB; administrar servidores en AWS, GCLOUD e IBM CLOUD; supervisar y gestionar
-          tareas para varios equipos de desarrollo; y formar y seleccionar desarrolladores de
-          software junior. Participé en los siguientes proyectos:
+          , lideré el desarrollo de software backend para varios proyectos. Esto implicó el uso de
+          tecnologías como Python, Node.js, MongoDB, IPFS y Blockchain. Además, me encargué de
+          analizar datos utilizando herramientas como Pandas, JupyterLab Hub y MongoDB. Asimismo,
+          gestioné servidores en plataformas como AWS, GCLOUD e IBM CLOUD, supervisé tareas y
+          equipos de desarrollo, y contribuí a la formación y selección de desarrolladores junior.
         </p>
         <br />
         <ul className="ml-8 list-outside list-disc">
           <li>
-            Blockchain privada para la trazabilidad de minerales utilizando Hyperledger Fabric y la
-            plataforma de blockchain de IBM.
+            Desarrollé una blockchain privada para la trazabilidad de minerales utilizando
+            Hyperledger Fabric y la plataforma de blockchain de IBM.
           </li>
           <li>
-            {' '}
-            Blockchain de documentos y sistema de votación utilizando Python, Node.js, Ethereum y
-            Bots de Telegram.
+            Implementé un sistema de blockchain para documentos y votaciones, empleando Python,
+            Node.js, Ethereum y Bots de Telegram.
           </li>
-          <li>Teoría de la Relatividad</li>
         </ul>
       </>
     ),
@@ -754,9 +750,9 @@ const LifeLineES = [
           download
         >
           Inmersiones Afines en Variedades Homogéneas
-        </a>{' '}
-        (en español). Durante este período, también trabajé como profesor en la Universidad de
-        Antioquia y tuve la oportunidad de conocer a uno de mis mejores amigos,{' '}
+        </a>
+        . Durante este período, también trabajé como profesor en la Universidad de Antioquia y tuve
+        la oportunidad de conocer a uno de mis mejores amigos,{' '}
         <Link href={'https://github.com/juanArias8'}>
           <a
             target="_blank"
