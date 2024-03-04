@@ -29,7 +29,7 @@ const LifeLineEN = [
     logo: (
       <Link href="https://www.udea.edu.co/">
         <a target="_blank" rel="noopener noreferrer">
-          <Image src="/logos/UdeA.png" alt="UdeA" width={570} height={570} />
+          <Image src="/logos/UdeA.svg" alt="UdeA" width={570} height={570} />
         </a>
       </Link>
     ),
