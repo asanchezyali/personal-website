@@ -8,6 +8,7 @@ import { PageSEO } from '@/components/SEO'
 import SocialIcon from '@/components/social-icons'
 import { LanguageContext } from '@/providers/LanguageProvider'
 import { quotes } from '@/lib/quotes'
+import Link from 'next/link'
 
 export const POSTS_PER_PAGE = 5
 
@@ -22,6 +23,7 @@ export default function Blog({ posts }) {
     currentPage: 1,
     totalPages: 1,
   })
+  const [postByLanguage, setPostByLanguage] = React.useState([])
   const { language } = React.useContext(LanguageContext)
 
   React.useEffect(() => {
@@ -33,6 +35,7 @@ export default function Blog({ posts }) {
       currentPage: 1,
       totalPages: Math.ceil(filteredPosts.length / POSTS_PER_PAGE),
     })
+    setPostByLanguage(filteredPosts)
   }, [posts, language])
 
   const { quote, author } = quotes({ language })
@@ -41,10 +44,19 @@ export default function Blog({ posts }) {
     <>
       <PageSEO title={`Blog - ${siteMetadata.author}`} description={siteMetadata.description} />
       <div className="flex flex-col items-center justify-center pb-20 pt-20">
-        <div className="duration-500 ease-in hover:translate-y-[-3px] hover:scale-[1.01]">
-          <Image src="/avatar.png" alt="Avatar" width={200} height={200} className="rounded-full" />
-        </div>
-        <h1 className="my-2 max-w-[600px] text-center text-lg text-slate-800 dark:text-slate-300">
+        <Link href="/about" passHref>
+          <div className="image-wrapper flex cursor-pointer items-center justify-center duration-500 ease-in hover:translate-y-[-3px] hover:scale-[1.01]">
+            <Image
+              src="/avatar-v2.jpeg"
+              alt="Avatar"
+              width={200}
+              height={200}
+              className="flex-none rounded-full"
+            />
+            <div className="image-bg flex-none rounded-full"></div>
+          </div>
+        </Link>
+        <h1 className="my-8 max-w-[600px] text-center text-lg text-slate-800 dark:text-slate-300">
           {quote && author ? `«${quote}» - ${author}` : null}
         </h1>
         <div className="flex space-x-4">
@@ -57,7 +69,7 @@ export default function Blog({ posts }) {
         </div>
       </div>
       <ListLayout
-        posts={posts}
+        posts={postByLanguage}
         initialDisplayPosts={initialDisplayPosts}
         pagination={pagination}
         title={metaLabels[language].title}

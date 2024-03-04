@@ -23,7 +23,7 @@ const LifeLineEN = [
             University of Antioquia
           </a>
         </Link>
-        , where I am currently working on give a course on the Mathematics Laboratory with Python.
+        , where I am currently working as a professor of the Mathematics Laboratory with Python
       </p>
     ),
     logo: (
@@ -420,7 +420,8 @@ const LifeLineES = [
             Universidad de Antioquia
           </a>
         </Link>
-        , donde actualmente trabajo en el curso de Laboratorio de Matemáticas con Python.
+        , donde actualmente trabajo como profesor del curso de Laboratorio de Matemáticas con
+        Python.
       </p>
     ),
     logo: (
