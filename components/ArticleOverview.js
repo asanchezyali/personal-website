@@ -34,7 +34,7 @@ export default function ArticleOverview({ title, summary, date, headerImage, slu
       <h2 className="pt-4">
         <Link
           href={`/blog/${slug}`}
-          className="text-xl font-bold text-slate-800 md:text-2xl dark:text-slate-300"
+          className="cursor-pointer text-xl font-bold text-slate-800 hover:text-primary-500 md:text-2xl dark:text-slate-300"
         >
           {title}
         </Link>

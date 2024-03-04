@@ -14,20 +14,28 @@ export default function Pagination({ totalPages, currentPage }) {
         )}
         {prevPage && (
           <Link href={currentPage - 1 === 1 ? `/` : `/blog/page/${currentPage - 1}`}>
-            <button rel="previous">Previous</button>
+            <button rel="previous" className="hover:text-primary-500">
+              Previous
+            </button>
           </Link>
         )}
         <span>
           {currentPage} of {totalPages}
         </span>
         {!nextPage && (
-          <button rel="next" className="cursor-auto disabled:opacity-50" disabled={!nextPage}>
+          <button
+            rel="next"
+            className="cursor-auto hover:text-primary-500 disabled:opacity-50"
+            disabled={!nextPage}
+          >
             Next
           </button>
         )}
         {nextPage && (
           <Link href={`/blog/page/${currentPage + 1}`}>
-            <button rel="next">Next</button>
+            <button rel="next" className=" hover:text-primary-500">
+              Next
+            </button>
           </Link>
         )}
       </nav>

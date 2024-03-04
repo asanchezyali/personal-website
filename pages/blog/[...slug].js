@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import fs from 'fs'
 import PageTitle from '@/components/PageTitle'
 import generateRss from '@/lib/generate-rss'
