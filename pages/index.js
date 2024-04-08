@@ -45,7 +45,7 @@ export default function Blog({ posts }) {
       <PageSEO title={`Blog - ${siteMetadata.author}`} description={siteMetadata.description} />
       <div className="flex flex-col items-center justify-center pb-20 pt-20">
         <Link href="/about" passHref>
-          <div className="image-wrapper flex cursor-pointer items-center justify-center duration-500 ease-in hover:translate-y-[-3px] hover:scale-[1.01]">
+          <div className="flex cursor-pointer items-center justify-center duration-500 ease-in hover:translate-y-[-3px] hover:scale-[1.01]">
             <Image
               src="/avatar-v2.jpeg"
               alt="Avatar"
@@ -53,7 +53,6 @@ export default function Blog({ posts }) {
               height={200}
               className="flex-none rounded-full"
             />
-            <div className="image-bg flex-none rounded-full"></div>
           </div>
         </Link>
         <h1 className="my-8 max-w-[600px] text-center text-lg text-slate-800 dark:text-slate-300">
