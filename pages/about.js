@@ -26,13 +26,7 @@ const LifeLineEN = [
         , where I am currently working as a professor of the Mathematics Laboratory with Python
       </p>
     ),
-    logo: (
-      <Link href="https://www.udea.edu.co/">
-        <a target="_blank" rel="noopener noreferrer">
-          <Image src="/logos/UdeA.svg" alt="UdeA" width={570} height={570} />
-        </a>
-      </Link>
-    ),
+    company: 'Universidad de Antioquia',
   },
   {
     date: 'Apr. 2021 - Current',
@@ -140,13 +134,7 @@ const LifeLineEN = [
         </ul>
       </>
     ),
-    logo: (
-      <Link href="https://monadical.com/">
-        <a target="_blank" rel="noopener noreferrer">
-          <MonadicalLogo className="w-16" />
-        </a>
-      </Link>
-    ),
+    company: 'Monadical',
   },
   {
     date: 'Sep. 2021 - Apr. 2023',
@@ -185,13 +173,7 @@ const LifeLineEN = [
         .
       </p>
     ),
-    logo: (
-      <Link href="https://www.udea.edu.co/">
-        <a target="_blank" rel="noopener noreferrer">
-          <Image src="/logos/UdeA.svg" alt="UdeA" width={570} height={570} />
-        </a>
-      </Link>
-    ),
+    company: 'Universidad de Antioquia',
   },
   {
     date: 'Agu. 2018 - Oct. 2020',
@@ -227,19 +209,7 @@ const LifeLineEN = [
         </ul>
       </>
     ),
-    logo: (
-      <Link href="https://www.bcfort.com/">
-        <a target="_blank" rel="noopener noreferrer">
-          <Image
-            src="/logos/BCFort.jpeg"
-            alt="UdeA"
-            width={570}
-            height={570}
-            className="rounded-lg"
-          />
-        </a>
-      </Link>
-    ),
+    company: 'BCFort',
   },
 
   {
@@ -254,11 +224,10 @@ const LifeLineEN = [
               rel="noopener noreferrer"
               className="cursor-pointer text-primary-500 underline"
             >
-              University of Antioquia
+              University of San Buenaventura
             </a>
           </Link>
-          , Mathematics professor at the University of San Buenaventura, I had the opportunity to
-          teach several courses including:
+          , I had the opportunity to teach several courses including:
         </p>
         <br />
         <ul className="ml-8 list-inside list-disc">
@@ -271,13 +240,7 @@ const LifeLineEN = [
         </ul>
       </>
     ),
-    logo: (
-      <Link href="https://www.usbmed.edu.co/">
-        <a target="_blank" rel="noopener noreferrer">
-          <Image src="/logos/USB.svg" alt="UdeA" width={570} height={570} className="rounded-lg" />
-        </a>
-      </Link>
-    ),
+    company: 'USB MED',
   },
   {
     date: 'Jan. 2010 - Oct. 2021',
@@ -309,13 +272,7 @@ const LifeLineEN = [
         </ul>
       </>
     ),
-    logo: (
-      <Link href="https://www.udea.edu.co/">
-        <a target="_blank" rel="noopener noreferrer">
-          <Image src="/logos/UdeA.svg" alt="UdeA" width={570} height={570} />
-        </a>
-      </Link>
-    ),
+    company: 'Universidad de Antioquia',
   },
 
   {
@@ -366,13 +323,7 @@ const LifeLineEN = [
         , with whom I began to program and explore the world of machine learning.
       </p>
     ),
-    logo: (
-      <Link href="https://www.udea.edu.co/">
-        <a target="_blank" rel="noopener noreferrer">
-          <Image src="/logos/UdeA.svg" alt="UdeA" width={570} height={570} />
-        </a>
-      </Link>
-    ),
+    company: 'Universidad de Antioquia',
   },
   {
     date: 'Jan. 2004 - Oct. 2009',
@@ -393,13 +344,7 @@ const LifeLineEN = [
         thesis focused on teaching fluid mechanics, combining my passion for physics with education.
       </p>
     ),
-    logo: (
-      <Link href="https://www.udea.edu.co/">
-        <a target="_blank" rel="noopener noreferrer">
-          <Image src="/logos/UdeA.svg" alt="UdeA" width={570} height={570} />
-        </a>
-      </Link>
-    ),
+    company: 'Universidad de Antioquia',
   },
 ]
 
@@ -422,13 +367,7 @@ const LifeLineES = [
         Python.
       </p>
     ),
-    logo: (
-      <Link href="https://www.udea.edu.co/">
-        <a target="_blank" rel="noopener noreferrer">
-          <Image src="/logos/UdeA.svg" alt="UdeA" width={570} height={570} />
-        </a>
-      </Link>
-    ),
+    company: 'Universidad de Antioquia',
   },
   {
     date: 'Abr. 2021 - Actual',
@@ -540,13 +479,7 @@ const LifeLineES = [
         </ul>
       </>
     ),
-    logo: (
-      <Link href="https://monadical.com/">
-        <a target="_blank" rel="noopener noreferrer">
-          <MonadicalLogo className="w-16" />
-        </a>
-      </Link>
-    ),
+    company: 'Monadical',
   },
   {
     date: 'Sep. 2021 - Abr. 2023',
@@ -585,13 +518,7 @@ const LifeLineES = [
         .
       </p>
     ),
-    logo: (
-      <Link href="https://www.udea.edu.co/">
-        <a target="_blank" rel="noopener noreferrer">
-          <Image src="/logos/UdeA.svg" alt="UdeA" width={570} height={570} />
-        </a>
-      </Link>
-    ),
+    company: 'Universidad de Antioquia',
   },
   {
     date: 'Ago. 2018 - Oct. 2020',
@@ -627,19 +554,7 @@ const LifeLineES = [
         </ul>
       </>
     ),
-    logo: (
-      <Link href="https://www.bcfort.com/">
-        <a target="_blank" rel="noopener noreferrer">
-          <Image
-            src="/logos/BCFort.jpeg"
-            alt="UdeA"
-            width={570}
-            height={570}
-            className="rounded-lg"
-          />
-        </a>
-      </Link>
-    ),
+    company: 'BCFort',
   },
 
   {
@@ -654,11 +569,10 @@ const LifeLineES = [
               rel="noopener noreferrer"
               className="cursor-pointer text-primary-500 underline"
             >
-              Universidad de Antioquia
+              Universidad de San Buenaventura
             </a>
           </Link>
-          , Profesor de Matemáticas en la Universidad de San Buenaventura, tuve la oportunidad de
-          enseñar varios cursos incluyendo:
+          , tuve la oportunidad de enseñar varios cursos incluyendo:
           <br />{' '}
         </p>
         <ul className="ml-8 list-inside list-disc">
@@ -671,13 +585,7 @@ const LifeLineES = [
         </ul>
       </>
     ),
-    logo: (
-      <Link href="https://www.usbmed.edu.co/">
-        <a target="_blank" rel="noopener noreferrer">
-          <Image src="/logos/USB.svg" alt="UdeA" width={570} height={570} className="rounded-lg" />
-        </a>
-      </Link>
-    ),
+    company: 'USB MED',
   },
   {
     date: 'Ene. 2010 - Oct. 2021',
@@ -708,13 +616,7 @@ const LifeLineES = [
         </ul>
       </>
     ),
-    logo: (
-      <Link href="https://www.udea.edu.co/">
-        <a target="_blank" rel="noopener noreferrer">
-          <Image src="/logos/UdeA.svg" alt="UdeA" width={570} height={570} />
-        </a>
-      </Link>
-    ),
+    company: 'Universidad de Antioquia',
   },
 
   {
@@ -765,13 +667,7 @@ const LifeLineES = [
         , con quien comencé a programar y explorar el mundo del aprendizaje automático.
       </p>
     ),
-    logo: (
-      <Link href="https://www.udea.edu.co/">
-        <a target="_blank" rel="noopener noreferrer">
-          <Image src="/logos/UdeA.svg" alt="UdeA" width={570} height={570} />
-        </a>
-      </Link>
-    ),
+    company: 'Universidad de Antioquia',
   },
   {
     date: 'Ene. 2004 - Oct. 2009',
@@ -793,17 +689,11 @@ const LifeLineES = [
         física con la educación.
       </p>
     ),
-    logo: (
-      <Link href="https://www.udea.edu.co/">
-        <a target="_blank" rel="noopener noreferrer">
-          <Image src="/logos/UdeA.svg" alt="UdeA" width={570} height={570} />
-        </a>
-      </Link>
-    ),
+    company: 'Universidad de Antioquia',
   },
 ]
 
-const EventCard = ({ date, description, logo }) => {
+const EventCard = ({ date, description, company }) => {
   return (
     <div className="flex flex-col xl:flex-row">
       <div className="hidden xl:block">
@@ -816,21 +706,17 @@ const EventCard = ({ date, description, logo }) => {
             <div className="h-4 w-4 flex-shrink-0 flex-grow-0 rounded-full bg-primary-500"></div>
             <div className="w-[2px] flex-grow bg-primary-500"></div>
           </div>
-          <div className="mr-11 mt-[-30px] flex h-20 w-20 flex-none items-center justify-center rounded-md bg-gray-100 p-3">
-            {logo}
-          </div>
         </div>
       </div>
       <div className="block xl:hidden">
-        <div className="mb-4 flex flex-row items-end">
-          <div className="flex h-20 w-20 items-center justify-center rounded-md bg-gray-100 p-3">
-            {logo}
-          </div>
-          <p className="ml-4 text-gray-500 dark:text-gray-400">{date}</p>
+        <div className="mb-4 flex flex-col">
+          <p className="text-xl font-bold">{company}</p>
+          <p className=" text-gray-500 dark:text-gray-400">{date}</p>
         </div>
       </div>
 
       <div className="mb-16 w-auto border-b-[1px] border-gray-200  pb-8 leading-[1.75] text-gray-600 xl:mt-[-35px] dark:border-gray-700 dark:text-gray-300">
+        <p className="hidden text-xl font-bold xl:block">{company}</p>
         {description}
       </div>
     </div>
@@ -856,7 +742,7 @@ export default function About({ authorDetails }) {
         mdxSource={mdxSource}
         frontMatter={frontMatter}
       />
-      <h2 className="my-12 w-full text-center text-2xl font-bold text-gray-900 xl:w-[320px] dark:text-gray-100">
+      <h2 className="mb-20 mt-12 w-full text-center text-2xl font-bold text-gray-900 xl:w-[320px] dark:text-gray-100">
         Mi Carrera y Educación
       </h2>
       {LifeLine.map((event, index) => (
@@ -864,7 +750,7 @@ export default function About({ authorDetails }) {
           key={index}
           date={event.date}
           description={event.description}
-          logo={event.logo}
+          company={event.company}
         />
       ))}
     </>
