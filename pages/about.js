@@ -10,25 +10,6 @@ const DEFAULT_LAYOUT = 'AuthorLayout'
 
 const LifeLineEN = [
   {
-    date: 'Feb. 2024 - Jun. 2024',
-    description: (
-      <p>
-        This year, I am back at the{' '}
-        <Link href={'https://www.udea.edu.co/'}>
-          <a
-            target="_blank"
-            rel="noopener noreferrer"
-            className="cursor-pointer text-primary-500 underline"
-          >
-            University of Antioquia
-          </a>
-        </Link>
-        , where I was working as a professor of the Mathematics Laboratory with Python.
-      </p>
-    ),
-    company: 'Universidad de Antioquia',
-  },
-  {
     date: 'Apr. 2021 - Current',
     description: (
       <>
@@ -135,6 +116,25 @@ const LifeLineEN = [
       </>
     ),
     company: 'Monadical',
+  },
+  {
+    date: 'Feb. 2024 - Jun. 2024',
+    description: (
+      <p>
+        This year, I am back at the{' '}
+        <Link href={'https://www.udea.edu.co/'}>
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            className="cursor-pointer text-primary-500 underline"
+          >
+            University of Antioquia
+          </a>
+        </Link>
+        , where I was working as a professor of the Mathematics Laboratory with Python.
+      </p>
+    ),
+    company: 'Universidad de Antioquia',
   },
   {
     date: 'Sep. 2021 - Apr. 2023',
@@ -350,25 +350,6 @@ const LifeLineEN = [
 
 const LifeLineES = [
   {
-    date: 'Feb. 2024 - Jun. 2024',
-    description: (
-      <p>
-        Este año, estoy de vuelta en la{' '}
-        <Link href={'https://www.udea.edu.co/'}>
-          <a
-            target="_blank"
-            rel="noopener noreferrer"
-            className="cursor-pointer text-primary-500 underline"
-          >
-            Universidad de Antioquia
-          </a>
-        </Link>
-        , donde trabajé como profesor del Laboratorio de Matemáticas con Python.
-      </p>
-    ),
-    company: 'Universidad de Antioquia',
-  },
-  {
     date: 'Abr. 2021 - Actual',
     description: (
       <>
@@ -479,6 +460,25 @@ const LifeLineES = [
       </>
     ),
     company: 'Monadical',
+  },
+  {
+    date: 'Feb. 2024 - Jun. 2024',
+    description: (
+      <p>
+        Este año, estoy de vuelta en la{' '}
+        <Link href={'https://www.udea.edu.co/'}>
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            className="cursor-pointer text-primary-500 underline"
+          >
+            Universidad de Antioquia
+          </a>
+        </Link>
+        , donde trabajé como profesor del Laboratorio de Matemáticas con Python.
+      </p>
+    ),
+    company: 'Universidad de Antioquia',
   },
   {
     date: 'Sep. 2021 - Abr. 2023',
@@ -697,7 +697,7 @@ const EventCard = ({ date, description, company }) => {
     <div className="flex flex-col xl:flex-row">
       <div className="hidden xl:block">
         <div className=" flex  h-full flex-row">
-          <p className="mt-[-5px] w-[180px] flex-none text-right text-gray-500 dark:text-gray-400">
+          <p className="mt-[-5px] w-[300px] flex-none text-right text-gray-500 dark:text-gray-400">
             {date}
           </p>
 
@@ -741,7 +741,7 @@ export default function About({ authorDetails }) {
         frontMatter={frontMatter}
       />
       <h2 className="mb-20 mt-12 w-full text-center text-2xl font-bold text-gray-900 xl:w-[320px] dark:text-gray-100">
-        Mi Carrera y Educación
+        {language === 'en' ? 'Professional Life Line' : 'Línea de Vida Profesional'}
       </h2>
       {LifeLine.map((event, index) => (
         <EventCard
