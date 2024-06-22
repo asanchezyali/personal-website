@@ -10,7 +10,7 @@ const DEFAULT_LAYOUT = 'AuthorLayout'
 
 const LifeLineEN = [
   {
-    date: 'Feb. 2024 - Current',
+    date: 'Feb. 2024 - Jun. 2024',
     description: (
       <p>
         This year, I am back at the{' '}
@@ -23,7 +23,7 @@ const LifeLineEN = [
             University of Antioquia
           </a>
         </Link>
-        , where I am currently working as a professor of the Mathematics Laboratory with Python
+        , where I was working as a professor of the Mathematics Laboratory with Python.
       </p>
     ),
     company: 'Universidad de Antioquia',
@@ -350,7 +350,7 @@ const LifeLineEN = [
 
 const LifeLineES = [
   {
-    date: 'Feb. 2024 - Actual',
+    date: 'Feb. 2024 - Jun. 2024',
     description: (
       <p>
         Este año, estoy de vuelta en la{' '}
@@ -363,8 +363,7 @@ const LifeLineES = [
             Universidad de Antioquia
           </a>
         </Link>
-        , donde actualmente trabajo como profesor del curso de Laboratorio de Matemáticas con
-        Python.
+        , donde trabajé como profesor del Laboratorio de Matemáticas con Python.
       </p>
     ),
     company: 'Universidad de Antioquia',
@@ -734,7 +733,6 @@ export default function About({ authorDetails }) {
   const { language } = React.useContext(LanguageContext)
   const { mdxSource, frontMatter } = authorDetails[`AboutIn${language.toUpperCase()}`]
   const LifeLine = language === 'en' ? LifeLineEN : LifeLineES
-  console.log(language)
   return (
     <>
       <MDXLayoutRenderer
