@@ -17,14 +17,12 @@ const LayoutWrapper = ({ children }) => {
         <header className="flex items-center justify-between pt-10">
           <div>
             <Link href="/" aria-label={siteMetadata.headerTitle}>
-              <div className="hidden sm:block">
-                <div className="flex h-6 cursor-pointer items-center text-2xl font-semibold hover:text-primary-500">
-                  {siteMetadata.headerTitle}
-                </div>
+              <div className="flex h-6 cursor-pointer items-center text-[16px]  font-semibold hover:text-primary-500 md:text-2xl">
+                {siteMetadata.headerTitle}
               </div>
             </Link>
           </div>
-          <div className="mt-3 flex items-center text-base">
+          <div className="flex items-center text-base">
             <div className="hidden sm:block">
               {headerNavLinks[language].map((link) => (
                 <Link

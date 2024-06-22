@@ -22,8 +22,8 @@ export default function ListLayout({ posts, title, initialDisplayPosts = [], pag
 
   return (
     <>
-      <div className="space-y-2 pb-8 md:space-y-5">
-        <div className="relative max-w-lg">
+      <div className="space-y-2 pb-8 pt-2 md:space-y-5">
+        <div className="relative max-w-full lg:max-w-lg">
           <input
             aria-label="Search articles"
             type="text"
