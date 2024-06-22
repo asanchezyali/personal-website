@@ -18,14 +18,14 @@ const HEADING_LEVELS = ['h2', 'h3', 'h4']
 const HeadingLink = (props) => {
   const headingStyles = {
     container: {
-      [HEADING_LEVELS[0]]: props.active ? 'text-primary-500 py-1' : 'text-slate-500 py-1',
-      [HEADING_LEVELS[1]]: props.active ? 'text-primary-500 py-1' : 'text-slate-500 py-1',
-      [HEADING_LEVELS[2]]: props.active ? 'text-primary-500 py-1' : 'text-slate-500 py-1',
+      [HEADING_LEVELS[0]]: props.active ? 'text-primary-500 py-1' : 'text-slate-200 py-1',
+      [HEADING_LEVELS[1]]: props.active ? 'text-primary-500 py-1' : 'text-slate-200 py-1',
+      [HEADING_LEVELS[2]]: props.active ? 'text-primary-500 py-1' : 'text-slate-200 py-1',
     },
     text: {
-      [HEADING_LEVELS[0]]: props.active ? 'text-primary-500' : 'text-slate-500',
-      [HEADING_LEVELS[1]]: props.active ? 'text-primary-500' : 'text-slate-500',
-      [HEADING_LEVELS[2]]: props.active ? 'text-primary-500' : 'text-slate-500',
+      [HEADING_LEVELS[0]]: props.active ? 'text-primary-500' : 'text-slate-200',
+      [HEADING_LEVELS[1]]: props.active ? 'text-primary-500' : 'text-slate-200',
+      [HEADING_LEVELS[2]]: props.active ? 'text-primary-500' : 'text-slate-200',
     },
   }
   return (
@@ -122,6 +122,7 @@ export default function PostLayout({ frontMatter, authorDetails, next, prev, chi
             style={{ gridTemplateRows: 'auto 1fr' }}
           >
             <div className="divide-y divide-gray-200 xl:col-span-3 xl:row-span-2 xl:pb-0 dark:divide-gray-700">
+              <h2 id="skip" className="sr-only"></h2>
               <div className="prose max-w-none pb-8 pt-10 dark:prose-dark">{children}</div>
               <Comments frontMatter={frontMatter} />
             </div>
