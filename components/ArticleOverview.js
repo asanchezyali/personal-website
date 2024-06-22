@@ -39,37 +39,9 @@ export default function ArticleOverview({ title, summary, date, headerImage, slu
           {title}
         </Link>
       </h2>
-      <div className="flex w-full flex-row py-4">
-        <div className="hidden md:block">
-          <Image
-            src="/avatar-v2.jpeg"
-            alt="Avatar"
-            height={50}
-            width={50}
-            className="h-10 w-10 rounded-full "
-            loading="lazy"
-          />
-        </div>
-        <div className="flex w-full flex-row justify-between">
-          <div className="flex flex-col">
-            <p className="px-0 text-base font-bold text-slate-800 md:px-4 dark:text-slate-300">
-              Alejandro Sánchez Yalí
-            </p>
-            <p className="px-0 text-base font-light text-slate-800 md:px-4 dark:text-slate-300">
-              {formatDate(date)}
-            </p>
-          </div>
-          <div className="flex flex-col justify-self-end">
-            <p className="text-right text-base font-bold text-slate-800 dark:text-slate-300">
-              {time ? time : '16 min'} {metaLabels[language].read}
-            </p>
-            <p className="text-right text-base font-light text-slate-800 dark:text-slate-300">
-              {views ? views.toLocaleString() : 0} {metaLabels[language].views}
-            </p>
-          </div>
-        </div>
-      </div>
-
+      <p className="mb-4 text-[14px] font-light  text-slate-800 dark:text-slate-300">
+        {formatDate(date)} - {views ? views.toLocaleString() : 0} {metaLabels[language].views}
+      </p>
       <p className="text-justify text-base text-slate-800 dark:text-slate-300">{summary}</p>
 
       <div className="flex w-full flex-row justify-between pt-2">
