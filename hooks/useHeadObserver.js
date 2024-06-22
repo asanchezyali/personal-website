@@ -17,7 +17,7 @@ function useHeadsObserver() {
       rootMargin: '-20% 0% -35% 0px',
     })
 
-    const elements = document.querySelectorAll('h1, h2, h3, h4')
+    let elements = document.querySelectorAll('h1, h2, h3, h4')
     elements.forEach((elem) => {
       if (observer.current) {
         observer.current.observe(elem)

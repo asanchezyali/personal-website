@@ -29,9 +29,25 @@ input:-webkit-autofill:focus {
 
 .icon-link {
   text-decoration: none !important;
-  margin-left: 10px;
+  margin-right: 10px;
 }
 
 a:has(> span.icon-link) {
   text-decoration: none !important;
+}
+
+.icon.icon-link {
+  display: inline-block;
+  margin-right: 8px;
+  color: #14b8a6;
+  cursor: pointer;
+}
+
+.icon.icon-link:hover {
+  color: #0056b3;
+}
+
+.icon.icon-link::before {
+  content: '#';
+  margin-right: 4px;
 }
