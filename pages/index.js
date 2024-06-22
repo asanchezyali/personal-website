@@ -43,30 +43,6 @@ export default function Blog({ posts }) {
   return (
     <>
       <PageSEO title={`Blog - ${siteMetadata.author}`} description={siteMetadata.description} />
-      <div className="flex flex-col items-center justify-center pb-20 pt-20">
-        <Link href="/about" passHref>
-          <div className="flex cursor-pointer items-center justify-center duration-500 ease-in hover:translate-y-[-3px] hover:scale-[1.01]">
-            <Image
-              src="/avatar-v2.jpeg"
-              alt="Avatar"
-              width={200}
-              height={200}
-              className="flex-none rounded-full"
-            />
-          </div>
-        </Link>
-        <h1 className="my-8 max-w-[600px] text-center text-lg text-slate-800 dark:text-slate-300">
-          {quote && author ? `«${quote}» - ${author}` : null}
-        </h1>
-        <div className="flex space-x-4">
-          <SocialIcon kind="mail" href={`mailto:${siteMetadata.email}`} size="6" />
-          <SocialIcon kind="github" href={siteMetadata.github} size="6" />
-          <SocialIcon kind="instagram" href={siteMetadata.instagram} size="6" />
-          <SocialIcon kind="youtube" href={siteMetadata.youtube} size="6" />
-          <SocialIcon kind="linkedin" href={siteMetadata.linkedin} size="6" />
-          <SocialIcon kind="twitter" href={siteMetadata.twitter} size="6" />
-        </div>
-      </div>
       <ListLayout
         posts={postByLanguage}
         initialDisplayPosts={initialDisplayPosts}
