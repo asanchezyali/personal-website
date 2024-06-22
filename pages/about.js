@@ -350,26 +350,6 @@ const LifeLineEN = [
 
 const LifeLineES = [
   {
-    date: 'Feb. 2024 - Actual',
-    description: (
-      <p>
-        Este año, estoy de vuelta en la{' '}
-        <Link href={'https://www.udea.edu.co/'}>
-          <a
-            target="_blank"
-            rel="noopener noreferrer"
-            className="cursor-pointer text-primary-500 underline"
-          >
-            Universidad de Antioquia
-          </a>
-        </Link>
-        , donde actualmente trabajo como profesor del curso de Laboratorio de Matemáticas con
-        Python.
-      </p>
-    ),
-    company: 'Universidad de Antioquia',
-  },
-  {
     date: 'Abr. 2021 - Actual',
     description: (
       <>
