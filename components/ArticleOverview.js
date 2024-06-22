@@ -18,8 +18,8 @@ export default function ArticleOverview({ title, summary, date, headerImage, slu
   const { data } = useSWR(`/api/views/${extractLastSegment(slug)}`, fetcher)
   const views = new Number(data?.total)
   return (
-    <div className="flex flex-col border-b border-dashed border-slate-200 py-8 dark:border-slate-700">
-      <Link href={`/blog/${slug}`}>
+    <Link href={`/blog/${slug}`}>
+      <div className="flex flex-col border-b border-dashed border-slate-200 py-8 dark:border-slate-700">
         <div className="relative h-[300px] w-full duration-500 ease-in hover:scale-[1.005]">
           <Image
             src={`${headerImage}`}
@@ -30,34 +30,35 @@ export default function ArticleOverview({ title, summary, date, headerImage, slu
             alt={title}
           />
         </div>
-      </Link>
-      <h2 className="pt-4">
-        <Link
-          href={`/blog/${slug}`}
-          className="cursor-pointer text-xl font-bold text-slate-800 hover:text-primary-500 md:text-2xl dark:text-slate-300"
-        >
-          {title}
-        </Link>
-      </h2>
-      <p className="mb-4 text-[14px] font-light  text-slate-800 dark:text-slate-300">
-        {formatDate(date)} - {views ? views.toLocaleString() : 0} {metaLabels[language].views}
-      </p>
-      <p className="text-justify text-base text-slate-800 dark:text-slate-300">{summary}</p>
 
-      <div className="flex w-full flex-row justify-between pt-2">
-        <Link
-          href={`/blog/${slug}`}
-          className="text-base text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
-        >
-          {metaLabels[language].readMore}
-        </Link>
-        <div className="space-x-2 text-base text-slate-800 dark:text-slate-300">
-          {metaLabels[language].tags}
-          {tags.map((tag) => (
-            <Tag key={tag} text={tag} />
-          ))}
+        <h2 className="pt-4">
+          <Link
+            href={`/blog/${slug}`}
+            className="cursor-pointer text-xl font-bold text-slate-800 hover:text-primary-500 md:text-2xl dark:text-slate-300"
+          >
+            {title}
+          </Link>
+        </h2>
+        <p className="mb-4 text-[14px] font-light  text-slate-800 dark:text-slate-300">
+          {formatDate(date)} - {views ? views.toLocaleString() : 0} {metaLabels[language].views}
+        </p>
+        <p className="text-justify text-base text-slate-800 dark:text-slate-300">{summary}</p>
+
+        <div className="flex w-full flex-row justify-between pt-2">
+          <Link
+            href={`/blog/${slug}`}
+            className="hidden text-base text-primary-500 hover:text-primary-600 md:block dark:hover:text-primary-400"
+          >
+            {metaLabels[language].readMore}
+          </Link>
+          <div className="space-x-2 text-base text-slate-800 dark:text-slate-300">
+            {metaLabels[language].tags}
+            {tags.map((tag) => (
+              <Tag key={tag} text={tag} />
+            ))}
+          </div>
         </div>
       </div>
-    </div>
+    </Link>
   )
 }
