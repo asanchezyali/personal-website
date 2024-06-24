@@ -7,11 +7,13 @@ import TOCInline from './TOCInline'
 import PageTitle from './PageTitle'
 import Pre from './Pre'
 import { BlogNewsletterForm } from './NewsletterForm'
+import HighlightBox from './HighlightBox'
 
 export const MDXComponents = {
   Image: Image,
   TOCInline,
   PageTitle,
+  HighlightBox,
   a: CustomLink,
   pre: Pre,
   BlogNewsletterForm: BlogNewsletterForm,
