@@ -1,0 +1,38 @@
+---
+title: 'Programas Diferenciables: Una Introducción a la Diferenciación Automática'
+date: '2024/06/23'
+tags: ['matemáticas', 'ciencias de la computación']
+draft: false
+time: '15 min'
+summary: 'Las redes neuronales pueden ser pensados como programas parametrizados: programas con parámetros ajustables. En este artículo, exploraremos como representar los programas matemática. En particular, veremos como los programas pueden ser representados como grafos de computación y como la diferenciación automática puede ser utilizada para calcular derivadas de programas de manera eficiente.'
+bibliography: references-data.bib
+canonicalUrl: 'https://www.asanchezyali.com/blog/es/number-theory/20230108DivisionAlgorithm/'
+headerImage: '/images/differentiable-programs/header.avif'
+language: 'es'
+---
+
+Trabajo en progreso ...
+
+Las redes neuronales pueden ser pensados como programas parametrizados: programas con parámetros ajustables. En este
+artículo, exploraremos como representar los programas matemática. En particular, veremos como los programas pueden ser
+representados como grafos de computación y como la diferenciación automática puede ser utilizada para calcular derivadas
+de programas de manera eficiente.
+
+## Cadenas de computación
+
+Para comenzar, consideremos programas simples que aplican una **secuencia** de funciones $f_1, \ldots, f_n$ a una entrada
+$s_0 \in S_{0}.$ A estos programas los llamaremos **cadenas de computación** y los denotaremos como $f = f_n \circ \cdots
+\circ f_1.$ Por ejemplo, una imagen puede pasar a través de una secuencia de transformaciones tales como recortar,
+rotar, normalizar, etc. En redes neuronales, las transformaciones son usualmente parametrizadas y los parámetros son
+aprendidos a través de un proceso de optimización. Otro ejemplo de sequence de función aplicada repetidamente en un
+bucle.
+
+![Computation Chain](/images/differentiable-programs/figure1.svg#center 'Figura 1. Computation Chain')
+
+## Imágenes
+
+- [Unplash](https://unsplash.com/photos/blue-neurons-with-glowing-segments-over-blue-background-neuron-interface-and-computer-science-concept-3d-rendering-copy-space-G1FpRJcLoCw) - Getty Images - Neurons.
+
+## Referencias
+
+1. [Mathieu Blondel and Vincent Roulet. 2024. The Elements of Differentiable Programming.](https://arxiv.org/pdf/2403.14606)

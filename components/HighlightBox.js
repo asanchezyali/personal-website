@@ -1,5 +1,5 @@
-export default function HighlightBox({ title, children, type }) {
-  const types = {
+export default function MathBox({ title, children, variant }) {
+  const variants = {
     info: 'border-blue-500',
     warning: 'border-yellow-500',
     danger: 'border-red-500',
@@ -10,7 +10,7 @@ export default function HighlightBox({ title, children, type }) {
   }
   return (
     <div
-      className={`flex w-full flex-col rounded-[4px] border-l-2 border-solid bg-gray-800 ${types[type]}`}
+      className={`flex w-full flex-col rounded-[4px] border-l-2 border-solid bg-gray-800 ${variants[variant]}`}
     >
       <div className="w-full bg-gray-800 py-2 pl-4 text-lg font-semibold">{title}</div>
       <div className="w-full bg-gray-900 px-4">{children}</div>
