@@ -2,7 +2,7 @@
 title: 'Programas Parametrizados: Una Introducción a la Diferenciación Automática'
 date: '2024/06/23'
 tags: ['matemáticas', 'ciencias de la computación']
-draft: false
+draft: false.
 time: '15 min'
 summary: 'Las redes neuronales pueden ser pensadas como programas parametrizados: programas con parámetros por aprender. En este artículo, exploraremos cómo representar los programas parametrizados matemáticamente. En particular, veremos como los programas pueden ser representados como grafos de computación y como la diferenciación automática puede ser utilizada para calcular derivadas de programas de manera eficiente.'
 bibliography: references-data.bib
@@ -10,8 +10,6 @@ canonicalUrl: 'https://www.asanchezyali.com/blog/es/number-theory/20230108Divisi
 headerImage: '/images/differentiable-programs/header.avif'
 language: 'es'
 ---
-
-Trabajo en progreso ...
 
 Las redes neuronales pueden ser pensadas como programas parametrizados, es decir, programas con parámetros ajustables
 que se aprenden. En este
@@ -28,7 +26,49 @@ $s_0 \in S_{0}.$ A estos programas los llamaremos **cadenas de computación** y 
 rotar, normalizar, etc. En el caso de las redes neuronales, las transformaciones suelen estar parametrizadas y los
 parámetros se aprenden a través de un proceso de optimización.
 
-![Computation Chain](/images/differentiable-programs/figure1.svg#center 'Figura 1. Computation Chain')
+<ImageBox
+  src="/images/differentiable-programs/figure1.svg"
+  alt="Computation Chain"
+  width="700px"
+  height="150px"
+>
+  Figura 1. Una cadena de computación es una secuencia de composiciones de funciones. En el gráfico
+  anterior, cada nodo intermedio representa una función. La primera flecha representa la entrada, y
+  la última la salida. Las flechas interiores representan las dependencias de las funciones con
+  respecto a las salidas previas o el entrada inicial.
+</ImageBox>
+
+Formalmente, una cadena de computación puede ser escrita como:
+
+$$
+\begin{equation}
+\begin{aligned}
+s_0 &\in S_{0}, \\
+s_{1} &= f_{1}(s_{0}) \in S_{1}, \\
+s_{2} &= f_{2}(s_{1}) \in S_{2}, \\
+&\vdots \\
+s_{n} &= f_{n}(s_{n-1}) = f(s_0) \in S_{n}.\\
+\end{aligned}
+\end{equation}
+$$
+
+Donde $s_0$ es la **entrada**, $s_k\in S_k$ para $k = 1, \ldots,
+ n-1,$ son los **estados intermedios** del programa y $s_n\in S_n$ es la
+**salida**. Por supuesto, el dominio (espacios de entrada) de $f_k$ debe ser compatible con la imagen (espacio de
+salida) de $f_{k-1}$ para que la composición tenga sentido. Es decir, que $f_k: S_{k-1} \to S_k$ para $k = 1, \ldots,
+ n.$ De manera equivalente a la ecuación (1), podemos escribir la cadena de computación como:
+
+$$
+\begin{equation}
+s_n = f(s_0) = f_n \circ \cdots \circ f_1(s_0).
+\end{equation}
+$$
+
+Una cadena de computación puede ser representada como un **grafo dirigido acíclico (DAG)**, donde los nodos representan
+las funciones y las aristas representan las dependencias entre las funciones. Además las aristas define un **orden
+total**. El orden es total, porque dos nodos estarán siempre conectados por un camino.
+
+## Grafos acíclicos dirigidos
 
 ## Imágenes
 
