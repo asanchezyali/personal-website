@@ -65,10 +65,34 @@ s_n = f(s_0) = f_n \circ \cdots \circ f_1(s_0).
 $$
 
 Una cadena de computación puede ser representada como un **grafo dirigido acíclico (DAG)**, donde los nodos representan
-las funciones y las aristas representan las dependencias entre las funciones. Además las aristas define un **orden
-total**. El orden es total, porque dos nodos estarán siempre conectados por un camino.
+las funciones y las aristas representan las dependencias entre las funciones.
 
 ## Grafos acíclicos dirigidos
+
+En un programa genérico, las funciones intermedias pueden depender de las salidas de otras funciones. Tales dependencias
+pueden ser representadas como un grafo dirigido acíclico (DAG). Un **grafo dirigido** $G = (V, E)$ consiste de un
+conjunto de nodos $V$ y un conjunto de aristas $E\subseteq V \times V.$ Un arista $(u, v) \in E$ es un par ordenad de
+vertices $u, v\in V$. Es también representado como $u \to v.$, para indicar que $u$ depende de $v.$ Para representar las
+entradas y las salidas, será conveniente usar **semi-aristas entrantes** $\to j$ y **semi-aristas salientes** $i \to.$
+
+En un grafo $G = (V, E)$, los **padres** de un nodo $v\in V$ son los nodos $u\in V$ tales que $(u, v)\in E,$ denotado
+por
+
+$$
+\begin{equation}
+\text{Padres}(v) = \{u\in V: (u, v)\in E\}.
+\end{equation}
+$$
+
+De manera similar, los **hijos** de un nodo $v\in V$ son los nodos $w\in V$ tales que $(v, w)\in E,$ denotado por
+
+$$
+\begin{equation}
+\text{Hijos}(v) = \{w\in V: (v, w)\in E\}.
+\end{equation}
+$$
+
+Los vertices sin padres son llamados **raíces** y los vertices sin hijos son llamados **hojas**.
 
 ## Imágenes
 
