@@ -8,8 +8,11 @@ import Pre from './Pre'
 import { BlogNewsletterForm } from './NewsletterForm'
 import MathBox from './HighlightBox'
 import ImageBox from './ImageBox'
+import { PseudoCodeLine, PseudoCode } from './PseudoCode'
 
 export const MDXComponents = {
+  PseudoCode,
+  PseudoCodeLine,
   ImageBox,
   TOCInline,
   PageTitle,

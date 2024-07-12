@@ -122,7 +122,28 @@ Debido al tercer supuesto, aparte de $s_0$, cada variable $s_k$ está en biyecci
 el node $0$ representa la entrada $s_0$, y los nodos $1, \ldots, n$ representan las funciones $f_1, \ldots,
 f_n$ y salidas $s_1, \ldots, s_n,$ es decir un nodo $k$ representa la función $f_k$ y la salida $s_k.$
 
-Las aristas de un DAG representan las dependencias. Los padres
+Las aristas de un DAG representan las dependencias. Los padres $\{i_1, \ldots, i_{p_k}\} := \text{Padres}(k)$ de un nodo
+$k,$ donde $p_k:=|\text{Padres}(k)|,$ indican las variables $s_{\text{padres}(k)} := \{s_{i_1}, \ldots, s_{i_{p_k}}\}$
+que la función $f_k$ necesita para computar su salida $s_k$. Dicho de otro modo, los padres $\{i_1, \ldots, i_{p_k}\}$
+indican funciones $f_{i_1}, \ldots, f_{i_{p_k}}$ que son necesarias para computar $f_k.$
+
+<PseudoCode title="Algoritmo 1. Programa computacional como un DAG">
+  <PseudoCodeLine showNumber={false} indent={0}>
+    **Entrada:** $s_0 \in S_0$
+  </PseudoCodeLine>
+  <PseudoCodeLine number={1}>
+    <span>Salida:</span> $s_n = f(s_0)$
+  </PseudoCodeLine>
+  <PseudoCodeLine number={2}>
+    <span>Para</span> $k = 1, \ldots, n$
+  </PseudoCodeLine>
+  <PseudoCodeLine number={3}>
+    <span></span> $s_k = f_k(s_{i_1}, \ldots, s_{i_{p_k}})$
+  </PseudoCodeLine>
+  <PseudoCodeLine number={4}>
+    <span>Fin</span>  $s_k = f_k(s_{i_1}, \ldots, s_{i_{p_k}})$
+  </PseudoCodeLine>
+</PseudoCode>
 
 ## Imágenes
 

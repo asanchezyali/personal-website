@@ -6,7 +6,7 @@ const ImageBox = ({ src, alt, width, height, children }) => {
       <Image src={src} alt={alt} width={width} height={height} className="rounded-lg" />
       <div
         className="mt-[-10px] text-[14px] text-gray-800 dark:text-gray-200"
-        style={{ width: width }}
+        style={{ maxWidth: width }}
       >
         {children}
       </div>
