@@ -19,8 +19,8 @@ const HeadingLink = (props) => {
   const headingStyles = {
     container: {
       [HEADING_LEVELS[0]]: props.active ? 'text-primary-500 py-1' : 'text-slate-200 py-1',
-      [HEADING_LEVELS[1]]: props.active ? 'text-primary-500 py-1' : 'text-slate-200 py-1',
-      [HEADING_LEVELS[2]]: props.active ? 'text-primary-500 py-1' : 'text-slate-200 py-1',
+      [HEADING_LEVELS[1]]: props.active ? 'text-primary-500 py-1 pl-4' : 'text-slate-200 py-1 pl-4',
+      [HEADING_LEVELS[2]]: props.active ? 'text-primary-500 py-1 pl-8' : 'text-slate-200 py-1 pl-8',
     },
     text: {
       [HEADING_LEVELS[0]]: props.active ? 'text-primary-500' : 'text-slate-200',
@@ -175,7 +175,7 @@ export default function PostLayout({ frontMatter, authorDetails, next, prev, chi
                   </div>
                 </div>
               )}
-              <div className={`py-8 ${headings.length === 0 ? 'hidden' : ''}`}>
+              <div className={`py-8 pr-2${headings.length === 0 ? 'hidden' : ''}`}>
                 <h2
                   className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400"
                   id="tableOfContents"

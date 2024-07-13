@@ -17,7 +17,9 @@ artículo, exploraremos cómo representar matemáticamente estos programas. En p
 representados como grafos dirigidos no cíclicos y cómo la diferenciación automática puede ser utilizada para calcular derivadas
 de programas de manera eficiente.
 
-## Cadenas de computación
+## Representación de programas computacionales
+
+### Cadenas de computación
 
 Para comenzar, consideremos programas simples dados por una **secuencia** de funciones $f_1, \ldots, f_n$ que se aplican
 de forma secuencial a una entrada
@@ -67,7 +69,7 @@ $$
 Una cadena de computación puede ser representada como un **grafo dirigido acíclico (DAG)**, donde los nodos representan
 las funciones y las aristas representan las dependencias entre las funciones.
 
-## Grafos acíclicos dirigidos
+### Grafos acíclicos dirigidos
 
 En un programa genérico, las funciones intermedias pueden depender de las salidas de otras funciones. Tales dependencias
 pueden ser representadas como un grafo dirigido acíclico (DAG). Un **grafo dirigido** $G = (V, E)$ consiste de un
@@ -80,7 +82,7 @@ por
 
 $$
 \begin{equation}
-\text{Padres}(v) = \{u\in V: (u, v)\in E\}.
+\text{padres}(v) = \{u\in V: (u, v)\in E\}.
 \end{equation}
 $$
 
@@ -88,7 +90,7 @@ De manera similar, los **hijos** de un nodo $v\in V$ son los nodos $w\in V$ tale
 
 $$
 \begin{equation}
-\text{Hijos}(v) = \{w\in V: (v, w)\in E\}.
+\text{hijos}(v) = \{w\in V: (v, w)\in E\}.
 \end{equation}
 $$
 
@@ -104,7 +106,7 @@ $i$ a $j.$ Un orden parcial es una relación reflexiva, transitiva y antisimétr
 los nodos están relacionados entre sí. No obstante, podemos definir un **orden total** llamado **orden topológico**:
 cualquier orden tal que $i \preceq j$ si y solo si no hay un camino de $j$ a $i.$
 
-## Programas computacionales como DAGs
+### Programas computacionales como DAGs
 
 Nosotros que un programa computacional es una función valida en el sentido matemático, es decir, el programa debería
 retornar valores idénticos para las mismas entradas y no debería tener efectos secundarios. También asumimos que el
@@ -122,28 +124,86 @@ Debido al tercer supuesto, aparte de $s_0$, cada variable $s_k$ está en biyecci
 el node $0$ representa la entrada $s_0$, y los nodos $1, \ldots, n$ representan las funciones $f_1, \ldots,
 f_n$ y salidas $s_1, \ldots, s_n,$ es decir un nodo $k$ representa la función $f_k$ y la salida $s_k.$
 
-Las aristas de un DAG representan las dependencias. Los padres $\{i_1, \ldots, i_{p_k}\} := \text{Padres}(k)$ de un nodo
-$k,$ donde $p_k:=|\text{Padres}(k)|,$ indican las variables $s_{\text{padres}(k)} := \{s_{i_1}, \ldots, s_{i_{p_k}}\}$
+Las aristas de un DAG representan las dependencias. Los padres $\{i_1, \ldots, i_{p_k}\} := \text{padres}(k)$ de un nodo
+$k,$ donde $p_k:=|\text{padres}(k)|,$ indican las variables $s_{\text{padres}(k)} := \{s_{i_1}, \ldots, s_{i_{p_k}}\}$
 que la función $f_k$ necesita para computar su salida $s_k$. Dicho de otro modo, los padres $\{i_1, \ldots, i_{p_k}\}$
 indican funciones $f_{i_1}, \ldots, f_{i_{p_k}}$ que son necesarias para computar $f_k.$
 
-<PseudoCode title="Algoritmo 1. Programa computacional como un DAG">
+<PseudoCode title="Algoritmo 1. Ejecución de un programa">
   <PseudoCodeLine showNumber={false} indent={0}>
-    **Entrada:** $s_0 \in S_0$
+    $\text{\textbf{Funciones:}}$ $f_1, \ldots, f_n \text{ en orden topológico}$
+  </PseudoCodeLine>
+  <PseudoCodeLine showNumber={false} indent={0}>
+    $\text{\textbf{Entrada:}}$ $s_0\in S_0$
   </PseudoCodeLine>
   <PseudoCodeLine number={1}>
-    <span>Salida:</span> $s_n = f(s_0)$
+    $\text{\textbf{Para} } k = 1, \ldots, n$ $\text{\textbf{hacer}}$
   </PseudoCodeLine>
-  <PseudoCodeLine number={2}>
-    <span>Para</span> $k = 1, \ldots, n$
+  <PseudoCodeLine number={2} indent={2}>
+    <span>Encontrar los nodos padres</span> $\{i_1, \ldots, i_{p_k}\} := \text{padres}(k)$
   </PseudoCodeLine>
-  <PseudoCodeLine number={3}>
-    <span></span> $s_k = f_k(s_{i_1}, \ldots, s_{i_{p_k}})$
+  <PseudoCodeLine number={3} indent={2}>
+    <span>Calcular</span> $s_k :=f_k\big(s_{padres(k)}\big):= f_k(s_{i_1}, \ldots, s_{i_{p_k}})$
   </PseudoCodeLine>
-  <PseudoCodeLine number={4}>
-    <span>Fin</span>  $s_k = f_k(s_{i_1}, \ldots, s_{i_{p_k}})$
+  <PseudoCodeLine howNumber={false} indent={0}>
+    $\text{\textbf{Fin:} } f(s_0) = s_n$
   </PseudoCodeLine>
 </PseudoCode>
+
+#### Ejecución de un programa
+
+Para ejecutar un programa, nosotros necesitamos asegurar que las funciones intermedias son evaluadas en un orden en el
+orden correcto. Por lo tanto, nosotros asumimos que los nodos $V=\{0, 1, \ldots, n\}$ están ordenados en un **orden
+topológico**, (si este no es el caso, entonces el programa no puede ser ejecutado). Nosotros podemos ejecutar un
+programa para evaluar la salida $s_k \in [n]$
+
+$$
+\begin{equation}
+s_k := f_k\big(s_{\text{padres}(k)}\big):=f_k(s_{i_1}, \ldots, s_{i_{p_k}})\in S_k.
+\end{equation}
+$$
+
+Obsérvese que podemos ver $f_k$ como una función de una sola entrada de $s_{\text{padres}(k)},$ el cual es una tupla de
+elementos, o como una función de múltiples entradas $s_{i_1}, \ldots, s_{i_{p_k}}.$ Los dos puntos de vistas son
+esencialmente equivalentes. El proceso de ejecución de un programa es descrito en el Algoritmo 1.
+
+#### Tratamiento de múltiples entradas o salidas del programa
+
+Cuando un programa tiene múltiples entradas, los agrupamos siempre en una sola entrada $s_0 \in S_0.$ como $s_0 = (s_{0,
+1}, \ldots, s_{0, m_0})$ con $S_0 = S_{0, 1} \times \cdots \times S_{0, m_0},$ ya que las funciones posteriores siempre
+pueden filtrar los elementos de $s_0$ que necesitan. Del mismo modo, si una función intermedia $f_k$ tiene varias
+salidas, siempre las agrupamos en una sola salida $s_k \in S_k$ como $s_k = (s_{k, 1}, \ldots, s_{k, m_k})$ con $S_k =
+S_{k, 1} \times \cdots \times S_{k, m_k},$ ya que las funciones posteriores siempre pueden filtrar los elementos de
+$s_k$.
+
+<ImageBox
+  src="/images/differentiable-programs/figure2.svg"
+  alt="Computation Chain"
+  width="700px"
+  height="150px"
+>
+  Figura 2. Dos posibles representaciones de un programa. **Izquierda:** La funciones son
+  representadas como nodos y las dependencias como aristas. **Derecha:** Las funciones son
+  representadas como nodos y las dependencias como un conjunto de nodos disjuntos. En ambos casos,
+  la entrada es representada por un nodo raíz y la salida por un nodo hoja.
+</ImageBox>
+
+#### Representación alternativa de programas: grafos bipartitos
+
+En nuestro formalismo, dado que una función $f_k$ siempre tiene una única salida $s_k,$ se puede considerar que un nodo
+$k$ representa tanto la función $f_k$ como la salida $s_k.$ Sin embargo, también es posible considerar dos conjuntos de
+nodos disjuntos: uno para las funciones y otro para las salidas, es decir, un grafo bipartito. Este formalimso es
+similar a los grafos factoriales (Frey et al.,
+[1997](chrome-extension://nacjakoppgmdcpemlfnfegmlhipddanj/https://arxiv.org/pdf/2403.14606#cite.0@frey1997factor);
+Loeliger,
+[2004](chrome-extension://nacjakoppgmdcpemlfnfegmlhipddanj/https://arxiv.org/pdf/2403.14606#cite.0@loeliger2004introduction))
+utilizados en la modelización probabilísticas, pero con aristas dirigidas. Una ventaja de este formalismo es que permite
+que las funciones tengan múltiples salidas. Por simplicidad, nos centraremos en la representación de un solo conjunto de nodos.
+
+### Circuitos aritméticos
+
+Los circuitos aritméticos son uno de los ejemplos más sencillos de computación grafo, originarios de **la teoría de la
+complejidad computacional**.
 
 ## Imágenes
 
