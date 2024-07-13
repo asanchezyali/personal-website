@@ -1,10 +1,10 @@
 ---
-title: 'Programas Parametrizados: Una Introducción a la Diferenciación Automática'
+title: 'Redes neuronales como programas parametrizados'
 date: '2024/06/23'
 tags: ['matemáticas', 'ciencias de la computación']
 draft: false.
 time: '15 min'
-summary: 'Las redes neuronales pueden ser pensadas como programas parametrizados: programas con parámetros por aprender. En este artículo, exploraremos cómo representar los programas parametrizados matemáticamente. En particular, veremos como los programas pueden ser representados como grafos de computación y como la diferenciación automática puede ser utilizada para calcular derivadas de programas de manera eficiente.'
+summary: 'Las redes neuronales pueden ser pensadas como programas parametrizados: programas con parámetros por aprender. En este artículo, exploraremos cómo representar los programas parametrizados matemáticamente. En particular, veremos como los programas pueden ser representados como grafos de computación.'
 bibliography: references-data.bib
 canonicalUrl: 'https://www.asanchezyali.com/blog/es/number-theory/20230108DivisionAlgorithm/'
 headerImage: '/images/differentiable-programs/header.avif'
@@ -34,10 +34,10 @@ parámetros se aprenden a través de un proceso de optimización.
   width="700px"
   height="150px"
 >
-  Figura 1. Una cadena de computación es una secuencia de composiciones de funciones. En el gráfico
-  anterior, cada nodo intermedio representa una función. La primera flecha representa la entrada, y
-  la última la salida. Las flechas interiores representan las dependencias de las funciones con
-  respecto a las salidas previas o el entrada inicial.
+  **Figura 1**. Una cadena de computación es una secuencia de composiciones de funciones. En el
+  gráfico anterior, cada nodo intermedio representa una función. La primera flecha representa la
+  entrada, y la última la salida. Las flechas interiores representan las dependencias de las
+  funciones con respecto a las salidas previas o el entrada inicial.
 </ImageBox>
 
 Formalmente, una cadena de computación puede ser escrita como:
@@ -182,7 +182,7 @@ $s_k$.
   width="700px"
   height="150px"
 >
-  Figura 2. Dos posibles representaciones de un programa. **Izquierda:** La funciones son
+  **Figura 2**. Dos posibles representaciones de un programa. **Izquierda:** La funciones son
   representadas como nodos y las dependencias como aristas. **Derecha:** Las funciones son
   representadas como nodos y las dependencias como un conjunto de nodos disjuntos. En ambos casos,
   la entrada es representada por un nodo raíz y la salida por un nodo hoja.
@@ -193,17 +193,70 @@ $s_k$.
 En nuestro formalismo, dado que una función $f_k$ siempre tiene una única salida $s_k,$ se puede considerar que un nodo
 $k$ representa tanto la función $f_k$ como la salida $s_k.$ Sin embargo, también es posible considerar dos conjuntos de
 nodos disjuntos: uno para las funciones y otro para las salidas, es decir, un grafo bipartito. Este formalimso es
-similar a los grafos factoriales (Frey et al.,
-[1997](chrome-extension://nacjakoppgmdcpemlfnfegmlhipddanj/https://arxiv.org/pdf/2403.14606#cite.0@frey1997factor);
-Loeliger,
-[2004](chrome-extension://nacjakoppgmdcpemlfnfegmlhipddanj/https://arxiv.org/pdf/2403.14606#cite.0@loeliger2004introduction))
+similar a los grafos factoriales (_Frey et al_.,
+[1997](https://people.ee.ethz.ch/~loeliger/localpapers/FG_Allerton1997.pdf);
+_Loeliger_,
+[2004](https://ieeexplore.ieee.org/document/1267047))
 utilizados en la modelización probabilísticas, pero con aristas dirigidas. Una ventaja de este formalismo es que permite
 que las funciones tengan múltiples salidas. Por simplicidad, nos centraremos en la representación de un solo conjunto de nodos.
 
 ### Circuitos aritméticos
 
 Los circuitos aritméticos son uno de los ejemplos más sencillos de computación grafo, originarios de **la teoría de la
-complejidad computacional**.
+complejidad computacional**. Formalmente, un circuito aritmético sobre un campo $\mathbb{F}$, como por ejemplo los
+número reales $\mathbb{R}$ o los números complejos $\mathbb{C},$ es un grafo dirigido acíclico (DAG) donde los nodos
+raíces son elementos del campo $\mathbb{F}$ y las funciones intermedias son operaciones aritmética como la suma o la
+multiplicación. Estas últimas suelen denominarse **compuertas aritméticas**. Contrariamente al caso general de grafos
+computacionales, cada función sea una suma o un producto puede tener múltiples nodos raíces. Los nodos raíces pueden ser
+variables o constantes, y deben pertenecer al campo $\mathbb{F}.$ Los circuitos aritméticos puede utilizarse para
+calcular polinomios. Puede existir múltiples circuitos aritméticos para representar un polinomio dado. Para comparar dos
+circuitos aritméticos que representan el mismo polinomio, una noción intuitiva de la **complejidad** es el **tamaño del
+circuito**, como se define a continuación.
+
+<MathBox title="Definición 1. Circuito y tamaño polinomial" variant="definition">
+  El **tamaño** $S(C)$ de un circuito aritmético $C$ es el número de aristas en el grafo dirigido
+  acíclico (DAG) que representa al circuito. EL **tamaño del polinomio** $S(f)$ de un polinomio $f$
+  es el tamaño del circuito aritmético $C$ más pequeño que representa a $f.$
+</MathBox>
+
+Para más información sobre circuitos aritméticos, se puede consultar el libro de _Chen et al_.
+[2011](https://www.math.ias.edu/~avi/PUBLICATIONS/ChenKaWi2011.pdf).
+
+## Redes de alimentación hacia adelante
+
+Una red de alimentación hacia adelante (_feedforward network_) es un tipo de cadena de computación con funciones parametrizadas $f_1, \ldots, f_n$ que se aplican de forma secuencial a una
+entrada $s_0 \in S_0.$ En este caso, las funciones $f_k$ son usualmente funciones parametrizadas que dependen de un
+vector de parámetros $\theta_k \in \Theta_k,$ donde $\Theta_k$ es el espacio de parámetros de la función $f_k.$ Por lo
+tanto,
+
+$$
+\begin{equation}
+\begin{aligned}
+s_0 &\in S_{0}, \\
+s_{1} &= f_{1}(s_{0}; \theta_1) \in S_{1}, \\
+s_{2} &= f_{2}(s_{1}; \theta_2) \in S_{2}, \\
+&\vdots \\
+s_{n} &= f_{n}(s_{n-1}; \theta_n) = f(s_0; \theta) \in S_{n}.\\
+\end{aligned}
+\end{equation}
+$$
+
+para una entrada $s_0\in S_0$ y para los **parámetros entrenables** $\theta = (\theta_1, \ldots, \theta_n) \in \Theta =
+\Theta_1 \times \cdots \times \Theta_n.$ Cada función $f_k$ es una **capa** de la red y cada $s_k \in S_k$ es
+una **representación intermedia** de la entrada $s_0.$ la dimension de $S_k$ se conoce como la **dimensión de la capa**
+(o número de unidades ocultas) de la capa $k.$ Una red de alimentación hacia adelante puede ser definida como una
+función $f:S_0 \times \Theta \to S_n$ que mapea una entrada $s_0$ y parámetros $\theta$ a una salida $s_n.$
+
+Dado un programa parametrizado de este tipo, los parametros $\theta$ podemos aprender los parámetros ajustando $\theta$
+de acuerdo a un conjunto de datos de entrenamiento. Por ejemplo, dado un conjunto de datos de pares $(x_i, y_i),$ podemos
+minimizar la función de pérdida $L(\theta) = \sum_{i=1}^{m} \ell(f(x_i; \theta), y_i).$ La minimización de la función de
+pérdida se puede hacer utilizando un algoritmo de optimización como el descenso de gradiente.
+
+## Perceptrones multicapa
+
+### Combinación de capas afines y funciones de activación
+
+En la sección anterior
 
 ## Imágenes
 
