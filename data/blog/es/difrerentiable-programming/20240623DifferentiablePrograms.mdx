@@ -358,7 +358,7 @@ también conocido como **max-pooling**. Dado un vector $x\in \mathbb{R}^d,$ la f
 
 $$
 \begin{equation}
-\text{max-pooling}(x) = \max_{j \in [\,d\,]} x_j.
+\text{maxpooling}(x) = \max_{j \in [\,d\,]} x_j.
 \end{equation}
 $$
 
@@ -367,24 +367,24 @@ como una versión suavizada de la función max-pooling:
 
 $$
 \begin{equation}
-\text{log-sum-exp}(x) = \log\sum_{j=1}^{d} \exp(x_j).
+\text{logsumexp}(x) := \text{softmax}(x) := \log\sum_{j=1}^{d} \exp(x_j).
 \end{equation}
 $$
 
-La función **log-sum-exp** puede ser vista como una generalización de la función **softplus** a vectores, en efecto para
+La función log-sum-exp puede ser vista como una generalización de la función **softplus** a vectores, en efecto para
 todo $x \in \mathbb{R}$
 
 $$
 \begin{equation}
-\operatorname*{softplus}((x, 0)) = \operatorname*{softplus}(x).
+\operatorname*{logsumexp}((x, 0)) = \operatorname*{softplus}(x).
 \end{equation}
 $$
 
-Una implementación númericamente estable de la función **log-sum-exp** es la siguiente:
+Una implementación númericamente estable de la función log-sum-exp es la siguiente:
 
 $$
 \begin{equation}
-\text{log-sum-exp}(x) = \text{logsumexp}(x - c\mathbf{1}) + c,
+\text{logsumexp}(x) = \text{logsumexp}(x - c\mathbf{1}) + c,
 \end{equation}
 $$
 

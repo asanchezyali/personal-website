@@ -173,14 +173,14 @@ export default function PostLayout({ frontMatter, authorDetails, next, prev, chi
                   </div>
                 </div>
               )}
-              <div className={`py-8 pr-2${headings.length === 0 ? 'hidden' : ''} custom-scroll`}>
+              <div className={`py-8 pr-2${headings.length === 0 ? 'hidden' : ''}`}>
                 <h2
                   className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400"
                   id="tableOfContents"
                 >
                   {metaLabels[language].tableOfContents}
                 </h2>
-                {getHeadings(headings)}
+                <div className="custom-scroll mt-4">{getHeadings(headings)}</div>
               </div>
               {(next || prev) && (
                 <div className="flex justify-between py-4 xl:block xl:space-y-8 xl:py-8">
