@@ -89,7 +89,7 @@ export default function PostLayout({ frontMatter, authorDetails, next, prev, chi
       />
       <ScrollTopAndComment />
       <article>
-        <header className="w-full pt-6 xl:w-[760px] xl:pb-6">
+        <header className="w-full pt-6 xl:w-[760px]">
           <div className="relative mb-10 h-[200px] w-full duration-500 ease-in hover:scale-[1.005] sm:h-[500px]">
             <Image
               src={frontMatter.headerImage}
@@ -101,16 +101,9 @@ export default function PostLayout({ frontMatter, authorDetails, next, prev, chi
             />
           </div>
           <div className="space-y-1 text-center">
-            <dl className="space-y-10">
-              <div>
-                <dt className="sr-only">Published on</dt>
-                <dd className="text-base font-medium leading-6 text-gray-500 dark:text-gray-400">
-                  <time dateTime={date}>
-                    {new Date(date).toLocaleDateString(siteMetadata.locale, postDateTemplate)}
-                  </time>
-                </dd>
-              </div>
-            </dl>
+            <time dateTime={date}>
+              {new Date(date).toLocaleDateString(siteMetadata.locale, postDateTemplate)}
+            </time>
             <div>
               <PageTitle>{title}</PageTitle>
             </div>

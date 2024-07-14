@@ -56,7 +56,7 @@ a:has(> span.icon-link) {
   max-height: 400px;
   overflow-y: auto;
   scrollbar-width: 0px;
-  scrollbar-color: transparent transparent;
+  scrollbar-color: #2c2c2c transparent;
 }
 
 .custom-scroll::-webkit-scrollbar {
