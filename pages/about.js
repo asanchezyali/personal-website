@@ -697,7 +697,7 @@ const EventCard = ({ date, description, company }) => {
     <div className="flex flex-col xl:flex-row">
       <div className="hidden xl:block">
         <div className=" flex  h-full flex-row">
-          <p className="mt-[-5px] w-[300px] flex-none text-right text-gray-500 dark:text-gray-400">
+          <p className="mt-[-5px] w-[304px] flex-none text-right text-gray-500 dark:text-gray-400">
             {date}
           </p>
 
