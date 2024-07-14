@@ -35,7 +35,11 @@ const HeadingLink = (props) => {
         className={headingStyles.text[props.level]}
         onClick={(e) => {
           e.preventDefault()
-          document.getElementById(props.id)?.scrollIntoView({ block: 'center', behavior: 'smooth' })
+          const element = document.getElementById(props.id)
+          if (element) {
+            const top = element.getBoundingClientRect().top + window.scrollY - 20
+            window.scrollTo({ top: top, behavior: 'smooth' })
+          }
         }}
       >
         {props.text}
@@ -45,6 +49,7 @@ const HeadingLink = (props) => {
 }
 
 const getHeadings = (props) => {
+  console.log(props)
   const headings = props.map((heading, index) => {
     return <HeadingLink key={index} {...heading} />
   })
@@ -69,7 +74,7 @@ export default function PostLayout({ frontMatter, authorDetails, next, prev, chi
     elements = elements.filter((element) => element.id)
     elements = Array.from(elements).filter((elem) => elem.id !== 'tableOfContents')
 
-    let isActiveFound = true
+    let isActiveFound = false
 
     for (let element of elements) {
       if (element.id === activeId) {
