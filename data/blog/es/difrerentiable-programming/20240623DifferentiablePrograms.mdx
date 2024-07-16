@@ -318,14 +318,14 @@ activación.
 ### Funciones de activación de escalares a escalares nolineales
 
 La función **ReLU** (_Rectified Linear Unit_) es una función de activación no lineal que se define como la parte no
-negativa de su argumento. Es decir, la función ReLU es la función identidad en los valores positivos y cero en los
+negativa de su argumento. Es decir, la función ReLU es la función identidad en los valores no negativos y cero en los
 valores negativos:
 
 $$
 \begin{equation}
 \text{ReLU}(x) = \max(0, x) = \begin{cases}
-x & \text{si } x > 0, \\
-0 & \text{si } x \leq 0.
+x & \text{si } x \geq 0, \\
+0 & \text{si } x < 0.
 \end{cases}
 \end{equation}
 $$
@@ -389,6 +389,26 @@ $$
 $$
 
 donde $\mathbf{1}$ es un vector de unos y $c = \max_{j\in [\,d\,]} x_j.$
+
+### Mapeos des probabilidad de escalar a escalar
+
+En algunas ocasiones queremos mapear algún número real en un número entre 0 y 1, que puede representar la probabilidad
+de un evento. Para se propósito se usa con frecuencia las **sigmoides**. Una sigmoide es una función cuya curva se
+caracteriza por tener forma de «S». Estas funciones se utilizan para comprimir valores reales en un intervalo. Un
+ejemplo es la función paso binaria, también conocida como la función de paso de Heaviside,
+
+$$
+\begin{equation}
+\text{step}(x) = \begin{cases}
+1 & \text{si } x \geq 0, \\
+0 & \text{si } x < 0.
+\end{cases}
+\end{equation}
+$$
+
+Es un mapeo de $\mathbb{R}$ a $\{0, 1\}.$ Desafortunadamente, la función de paso binaria no es discontinua en $x=0.$
+Además, debido a que la función es constante en todos los demás puntos, tiene derivada cero en estos puntos, lo que
+dificulta su uso como parte de una red neuronal con retropropagación.
 
 ## Imágenes
 
