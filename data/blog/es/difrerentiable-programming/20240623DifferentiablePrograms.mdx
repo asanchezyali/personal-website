@@ -410,6 +410,59 @@ Es un mapeo de $\mathbb{R}$ a $\{0, 1\}.$ Desafortunadamente, la función de pas
 Además, debido a que la función es constante en todos los demás puntos, tiene derivada cero en estos puntos, lo que
 dificulta su uso como parte de una red neuronal con retropropagación.
 
+Una mejor sigmoide es la **función logítica**, la cual mapea de $\mathbb{R}$ a $(0, 1)$ y es definida como:
+
+$$
+\begin{equation}
+\begin{aligned}
+\text{logistic}(x) &= \frac{1}{1 + \exp(-x)} \\
+&= \frac{\exp(x)}{1 + \exp(x)} \\
+&= \frac{1}{2} + \frac{1}{2}\tanh\left(\frac{x}{2}\right).
+\end{aligned}
+\end{equation}
+$$
+
+Ella mapea $(-\infty, 0)$ a $(0, 0.5)$ y $\lbrack 0, \infty \rparen$ a $\lbrack 0.5, 1\rparen.$ y satisface que $\text{logistic}(0) = 0.5.$ Por lo
+tanto puede ser vista como una función de probabilidad. La función logística puede ser vista como una versión suavizada
+de la función de paso $\text{step}(x).$ Además la función logística se puede obtener como la derivada de la función
+$\text{softplus}(x),$ es decir, para todo $x \in \mathbb{R}$
+
+$$
+\begin{equation}
+\text{logistic}(x) = \frac{d}{dx}\text{softplus}(x).
+\end{equation}
+$$
+
+Dos propiedades importantes de la función logística es que para todo $x \in \mathbb{R}$
+
+$$
+\begin{equation}
+\text{logistic}(-x) = 1 - \text{logistic}(x),
+\end{equation}
+$$
+
+y
+
+$$
+\begin{equation}
+\begin{aligned}
+\frac{d}{dx}\text{logistic}(x) &= \text{logistic}(x)(1 - \text{logistic}(x)) \\
+&= \text{logistic}(x)\text{logistic}(-x).
+\end{aligned}
+\end{equation}
+$$
+
+### Mapeos de probabilidad de vectores a vectores
+
+En algunas ocasiones queremos mapear un vector en un vector de probabilidades. Este es una mapero de $\mathbb{R}^d$ a un
+simplex de probabilidad, definido por:
+
+$$
+\begin{equation}
+\Delta^{d} = \left\{p\in \mathbb{R}^d: \forall j \in [\,d\,], p_j \geq 0 \text{ y } \sum_{j=1}^{d} p_j = 1\right\}.
+\end{equation}
+$$
+
 ## Imágenes
 
 - [Unplash](https://unsplash.com/photos/blue-neurons-with-glowing-segments-over-blue-background-neuron-interface-and-computer-science-concept-3d-rendering-copy-space-G1FpRJcLoCw) - Getty Images - Neurons.
