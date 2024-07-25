@@ -180,7 +180,7 @@ export default function PostLayout({ frontMatter, authorDetails, next, prev, chi
                 >
                   {metaLabels[language].tableOfContents}
                 </h2>
-                <div className="custom-scroll mt-4 pr-8">{getHeadings(headings)}</div>
+                <div className="custom-scroll mt-4 max-w-[400px] pr-8">{getHeadings(headings)}</div>
               </div>
               {(next || prev) && (
                 <div className="flex justify-between py-4 xl:block xl:space-y-8 xl:py-8">

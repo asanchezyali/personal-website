@@ -8,6 +8,7 @@ summary: 'Las redes neuronales pueden ser pensadas como programas parametrizados
 bibliography: references-data.bib
 canonicalUrl: 'https://www.asanchezyali.com/blog/es/number-theory/20230108DivisionAlgorithm/'
 headerImage: '/images/differentiable-programs/header.avif'
+images: ['/images/differentiable-programs/header.avif']
 language: 'es'
 ---
 
@@ -462,6 +463,103 @@ $$
 \Delta^{d} = \left\{p\in \mathbb{R}^d: \forall j \in [\,d\,], p_j \geq 0 \text{ y } \sum_{j=1}^{d} p_j = 1\right\}.
 \end{equation}
 $$
+
+Dos ejemplos de funciones de mapeo de probabilidad de vector a vector son la función **$\text{argmax}$ y la función
+**$\text{softargmax}.$ La función $\text{argmax}$ mapea un vector a un vector de probabilidad que es cero en todas las
+entradas excepto en la entrada con el valor máximo que lo hace uno. En efecto,
+
+$$
+\begin{equation}
+\text{argmax}(x) = \phi(\arg\max_{j\in [\,d\,]} x_j),
+\end{equation}
+$$
+
+donde $\phi(j)$ denota el _one-hot encoding_ de un entero $j\in [\,d\,],$ es decir, $\phi(j)_i = 1$ si $i = j$ y cero en
+otro caso, esto es
+
+$$
+\begin{equation}
+\phi(j) = (0, \ldots, 0, 1, 0, \ldots, 0) = e_j \in \{0, 1\}^d.
+\end{equation}
+$$
+
+Este mapeo coloca toda la
+masa de probabilidad en la entrada con el valor máximo, en caso de empate, se selecciona la primera entrada con el valor
+máximo. Desafortunadamente, la función $\text{argmax}$ no es diferenciable, lo que dificulta su uso en la
+retropropagación.
+
+Una versión suavizada de la función $\text{argmax}$ es la función \*\*$\text{softargmax}$. La función $\text{softargmax}$
+está definida como
+
+$$
+\begin{equation}
+\text{softargmax}(x) = \frac{\exp(x)}{\sum_{j=1}^{d} \exp(x_j)}.
+\end{equation}
+$$
+
+Este operador es comúnmente conocido en la literatura como la función _softmax_, pero esta denominación es errónea: este
+operadora realmente define una versión suavizada de la función $\text{argmax}.$ La salida de $\text{softargmax}$
+pertenece al interior relativo del simplex de probabilidad $\Delta^{d},$ lo que significa que nunca puede alcanzar los
+bordes del simplex. Si denotamos $\pi = \text{softargmax}(x),$ entonces $\pi_j \in (0, 1),$ es decir $0 < \pi_j < 1$
+para todo $j \in [\,d\,].$ La función $\text{softargmax}$ es el gradiente de la función $\text{log-sum-exp}$, es decir,
+para todo $x \in \mathbb{R}^d$
+
+$$
+\begin{equation}
+\text{softargmax}(x) = \nabla \text{log-sum-exp}(x).
+\end{equation}
+$$
+
+La función $\text{softargmax}$ se puede ver como una generalización de la función $\text{logistic}$ a vectores, en
+efecto
+
+$$
+\begin{equation}
+\text{softargmax}(x) = \begin{bmatrix}
+\text{logistic}(x_1) \\
+\vdots \\
+\text{logistic}(x_d)
+\end{bmatrix}.
+\end{equation}
+$$
+
+<MathBox title="Remark 2. Grados de libertad e inversa de la función softargmax" variant="remark">
+  La función $\text{softargmax}$ satisface la propiedad que para todo $x \in \mathbb{R}^d$ y para todo $c \in
+  \mathbb{R},$
+  
+  $$
+  \begin{equation}
+  \pi = \text{softargmax}(x + c\mathbf{1}) = \text{softargmax}(x).
+  \end{equation}
+  $$
+  Esto quiere decir que la función $\text{softargmax}$ tiene $d-1$ grados de libertad y que no es invertible. Sin
+  embargo, debido a la anterior propiedad, sin perdida de generalidad, nosotros podemos imponer que $\pmb{x}^\top
+  \pmb{1} = \sum_{j=1}^{d} x_j = 0$ (si no es el caso, podemos simplemente hacer $\pmb{x} \leftarrow x_i - \bar{x}$, en
+  donde $\bar{x} = \frac{1}{d}\sum_{j=1}^{d} x_j$ es la media de $x$). Con esta restricción y junto con el hecho de
+
+$$
+\begin{equation}
+\log(\pi_i) = x_i - \log\sum_{j=1}^{d} \exp(x_j),
+\end{equation}
+$$
+
+obtenemos
+
+$$
+\begin{equation}
+\sum_{j=1}^{d} \log(\pi_j) = - d \log \sum_{j=1}^{d} \exp(x_j).
+\end{equation}
+$$
+
+Por lo tanto, la función $\text{softargmax}$ es invertible en el sentido de que podemos recuperar $x$ a partir de
+
+$$
+\begin{equation}
+x_i = [\text{softargmax}^{-1}(\pi)]_i = \log(\pi_i) - \frac{1}{d}\sum_{j=1}^{d} \log(\pi_j).
+\end{equation}
+$$
+
+</MathBox>
 
 ## Imágenes
 
