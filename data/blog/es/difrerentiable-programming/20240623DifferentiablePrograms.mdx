@@ -559,6 +559,56 @@ x_i = [\text{softargmax}^{-1}(\pi)]_i = \log(\pi_i) - \frac{1}{d}\sum_{j=1}^{d} 
 \end{equation}
 $$
 
+## Redes neuronales residuales
+
+Como se mencionó anteriormente, las redes de alimentación hacia adelante son un tipo de cadena de computación. En este
+caso, las funciones intermedias son funciones parametrizadas que se aplican de forma secuencial a una entrada. En
+efecto, consideremos una red de alimentación hacia adelante con $n+1$ capas $f_1, \ldots, f_{n+1}$. Seguramente, siempre
+que $f_{n+1}$ sea la función identidad, el conjunto de funciones que esta red puede representar es el mismo que el de
+una red de $n$ capas $f_1, \ldots, f_n.$ Por lo tanto, podemos considerar una red de $n+1$ capas como una red de $n$. En
+otras palabras,la profundidad, en teoría, no debería perjudicar el poder expresivo de las redes de alimentación hacia
+adelante. Desafortunadamente, la suposición de que cada $f_k$ es una función identidad no es realista. Esto significa
+que la redes más profundas a veces pueden ser más difíciles de entrenar que las más superficiales, haciendo que la
+precisión se sature o degrade en función de la profundidad.
+
+La idea clave de las redes neuronales residuales (_residual neural networks_ o ResNets) (_He et al._,
+[2016](https://arxiv.org/pdf/1512.03385)) es introducir **bloques residuales** entre las capas, de tal forma que la salida
+de una capa se convierte en la entrada de una capa posterior. Formalmente, un bloque residual es una función de la forma
+
+$$
+\begin{equation}
+s_{k} = f_k(s_{k-1}; w_k):= s_{k-1} + h_k(s_{k-1}; w_k).
+\end{equation}
+$$
+
+La función $h_k$ es la **función residual**, dado que modela la diferencia entre la entrada y la salida, es decir,
+$h_k(s_{k-1}; w_k) = s_{k} - s_{k-1}.$ La función $h_k$ puede ser vista como una **corrección** que se suma a la entrada
+$s_{k-1}$ para obtener la salida $s_k.$ La suma con $s_{k-1}$ se conoce como **conexión de salto** (_skip connection_ o
+_shortcut_). Siempre que se posible ajusta $w_k$ para que $h_k(s_{k-1}; w_k) = 0,$ entonces la función $f_k$ se
+convierte en la función identidad. Por ejemplo, si nosotros usamos:
+
+$$
+\begin{equation}
+h_k(s_{k-1}; w_k) = C_ka_k(W_ks_{k-1} + b_k) + d_k,
+\end{equation}
+$$
+
+donde $w_k = (W_k, b_k, C_k, d_k)$ son los parámetros de la capa $k,$ entonces basta con ajustar $C_k = 0$ y $d_k = 0$
+para que $h_k(s_{k-1}; w_k) = 0.$ Los bloque residuales son conocidos para remediar el problema de gradiente de fuga.
+
+En muchos artículos y paquetes de software se incluye una activación adicional y en su lugar se define el bloque
+residual como:
+
+$$
+\begin{equation}
+s_{k} = f_k(s_{k-1}; w_k):= a_k(s_{k-1} + h_k(s_{k-1}; w_k)),
+\end{equation}
+$$
+
+donde $a_k$ es usualmente la función ReLU. Si se debe incluir esta activación adicional o no, es esencialmente una
+decisión de modelado. En la práctica, los bloques residuales también pueden incluir operaciones adicionales como
+normalización por lotes (batch norm) y capa convolucionales.
+
 </MathBox>
 
 ## Imágenes
