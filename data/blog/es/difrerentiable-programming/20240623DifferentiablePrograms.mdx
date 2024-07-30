@@ -614,7 +614,35 @@ normalización por lotes (batch norm) y capa convolucionales.
 ## Redes neuronales recurrentes
 
 La redes neuronales recurrentes (_recurrent neural networks_ o RNNs) (_Rumelhart et al._,
-[1986](https://www.nature.com/articles/323533a0)) son un tipo de red neuronal que se utiliza para modelar secuencias de
+[1986](https://www.nature.com/articles/323533a0)) son un tipo de red neuronal que
+operan con secuencias de vectores, ya sea como entrada, salida o ambas. Su parametrización real depende de la
+configuración, pero la idea central es mantener un vector de estado que se actualiza paso a paso mediante una función
+recursiva que utiliza parámetros compartidos a través de los pasos. Distinguimos entre las siguientes configuraciones:
+
+1. Vector a secuencia (uno a muchos):
+   $$
+   \begin{equation}
+   f^d:\mathbb{R}^d \times \mathbb{R}^{p} \to \mathbb{R}^{l\times m }.
+   \end{equation}
+   $$
+2. Secuencia a vector (muchos a uno):
+   $$
+   \begin{equation}
+   f^e:\mathbb{R}^{l\times d} \times \mathbb{R}^{p} \to \mathbb{R}^{m}.
+   \end{equation}
+   $$
+3. Secuencia a secuencia (muchos a muchos, alineados):
+   $$
+   \begin{equation}
+   f^a:\mathbb{R}^{l\times d} \times \mathbb{R}^{p} \to \mathbb{R}^{l\times m}.
+   \end{equation}
+   $$
+4. Secuencia a secuencia (muchos a muchos, no alineados):
+   $$
+   \begin{equation}
+   f^u:\mathbb{R}^{l\times d} \times \mathbb{R}^{p} \to \mathbb{R}^{l'\times m}.
+   \end{equation}
+   $$
 
 ## Imágenes
 
