@@ -10,10 +10,12 @@ export default function MathBox({ title, children, variant }) {
   }
   return (
     <div
-      className={`flex w-full flex-col rounded-[4px] border-l-2 border-solid bg-gray-800 ${variants[variant]}`}
+      className={`flex w-full flex-col rounded-[4px] border-l-2 border-solid dark:bg-gray-800 ${variants[variant]}`}
     >
-      <div className="w-full bg-gray-800 py-2 pl-4 text-lg font-semibold">{title}</div>
-      <div className="w-full bg-gray-900 px-4">{children}</div>
+      <div className="w-full bg-slate-200 py-2 pl-4 text-lg font-semibold dark:bg-gray-800">
+        {title}
+      </div>
+      <div className="w-full px-4 dark:bg-gray-900">{children}</div>
     </div>
   )
 }
