@@ -23,9 +23,9 @@ const HeadingLink = (props) => {
       [HEADING_LEVELS[2]]: props.active ? 'py-1 pl-8' : 'py-1 pl-8',
     },
     text: {
-      [HEADING_LEVELS[0]]: props.active ? 'text-primary-500' : 'text-slate-200',
-      [HEADING_LEVELS[1]]: props.active ? 'text-primary-500' : 'text-slate-200',
-      [HEADING_LEVELS[2]]: props.active ? 'text-primary-500' : 'text-slate-200',
+      [HEADING_LEVELS[0]]: props.active ? 'text-primary-500' : 'dark:text-slate-200 text-slate-600',
+      [HEADING_LEVELS[1]]: props.active ? 'text-primary-500' : 'dark:text-slate-200 text-slate-600',
+      [HEADING_LEVELS[2]]: props.active ? 'text-primary-500' : 'dark:text-slate-200 text-slate-600',
     },
   }
   return (
@@ -49,7 +49,6 @@ const HeadingLink = (props) => {
 }
 
 const getHeadings = (props) => {
-  console.log(props)
   const headings = props.map((heading, index) => {
     return <HeadingLink key={index} {...heading} />
   })
@@ -121,7 +120,6 @@ export default function PostLayout({ frontMatter, authorDetails, next, prev, chi
           <div className="xl:col-span-3 xl:row-span-2 xl:pb-0">
             <h2 id="skip" className="sr-only"></h2>
             <div className="prose max-w-none pb-8 pt-10 dark:prose-dark">{children}</div>
-            <Comments frontMatter={frontMatter} />
           </div>
 
           <footer className="fixed top-[60px] ml-[785px] hidden xl:block">
