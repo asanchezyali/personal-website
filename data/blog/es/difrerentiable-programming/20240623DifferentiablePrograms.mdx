@@ -32,7 +32,7 @@ parámetros se aprenden a través de un proceso de optimización.
 <ImageBox
   src="/images/differentiable-programs/figure1.svg"
   alt="Computation Chain"
-  width="700px"
+  width="750px"
   height="150px"
 >
   **Figura 1**. Una cadena de computación es una secuencia de composiciones de funciones. En el
@@ -180,7 +180,7 @@ $s_k$.
 <ImageBox
   src="/images/differentiable-programs/figure2.svg"
   alt="Computation Chain"
-  width="700px"
+  width="750px"
   height="150px"
 >
   **Figura 2**. Dos posibles representaciones de un programa. **Izquierda:** La funciones son
@@ -644,34 +644,80 @@ recursiva que utiliza parámetros compartidos a través de los pasos. Distinguim
    \end{equation}
    $$
 
+donde $l$ es la longitud de la secuencia de entrada y $l'$ es la longitud de la secuencia de salida. Observe que se usa
+el mismo número de parámetros $p$ para cada una de las configuraciones, pero esto por supuesto no es necesario. A lo
+largo de este post, usaremos la notación $p_{1:l} := (p_1, \ldots, p_l)$ para denotar una secuencia de $l$ vectores.
+
+### Vector a secuencia
+
+En esta configuración, una función decodificadora $p_{1:l} = f^d(x; w)$ mapea un vector $x \in \mathbb{R}^d$ y un vector de
+parámetros $w \in \mathbb{R}^p$ a una secuencia de vectores $p_{1:l} \in \mathbb{R}^{l\times m}.$
+
 <ImageBox
   src="/images/differentiable-programs/RNNv1.svg"
   alt="Computation Chain"
-  width="700px"
+  width="500px"
   height="350px"
 >
-  **Figura 2**. Dos posibles representaciones de un programa. **Izquierda:** La funciones son
-  representadas como nodos y las dependencias como aristas. **Derecha:** Las funciones son
-  representadas como nodos y las dependencias como un conjunto de nodos disjuntos. En ambos casos,
-  la entrada es representada por un nodo raíz y la salida por un nodo hoja.
+  **Figura 3**. Uno a muchos (decodificación). Un vector $x \in \mathbb{R}^d$ es mapeado a una secuencia de vectores $p_{1:l} \in \mathbb{R}^{l\times m}.$
 </ImageBox>
+
+Esto es útil para la generación de subtítulos de imágenes, donde se genera una oración (una secuencia de palabras) a
+partir de una imagen (un vector de píxeles). Formalmente, podemos definir $p_{1:l} = f^d(x; w)$ a través de la
+recursión:
+
+$$
+\begin{equation}
+\begin{aligned}
+s_i &:= g(x, s_{i-1}; w_g), \quad i \in [\,l\,], \\
+p_i &:= h(s_i; w_h), \quad i \in [\,l\,].
+\end{aligned}
+\end{equation}
+$$
+
+donde $w ;= (w_g, w_h, s_0)$ son los parámetros de la red, $s_0$ es el estado inicial. El objetivo de $g$ es actualizar
+el estado $s_i$ en función de la entrada $x$ y el estado anterior $s_{i-1},$ mientras que el objetivo de $h$ es mapear
+el estado $s_i$ a un vector $p_i$ dado el estado $s_i.$. Es importante destacar que los parámetros de $g$ y $h$ se
+cruzan a los largo de los pasos de tiempo. Típicamente, $g$ y $h$ se parametrizan utilizando MLPs de una capa oculta.
+Nótese que $g$ tiene múltiples entradas.
+
+### Secuencia a vector
+
+En esta configuración, se define una función codificadora $p = f^e(x_{1:l}; w)$ que mapea una secuencia de vectores
+$x_{1:l} \in \mathbb{R}^{l\times d}$ y un vector de parámetros $w \in \mathbb{R}^p$ a un vector $p \in \mathbb{R}^m.$
 
 <ImageBox
   src="/images/differentiable-programs/RNNv2.svg"
   alt="Computation Chain"
-  width="700px"
+  width="500px"
   height="350px"
 >
-  **Figura 2**. Dos posibles representaciones de un programa. **Izquierda:** La funciones son
-  representadas como nodos y las dependencias como aristas. **Derecha:** Las funciones son
-  representadas como nodos y las dependencias como un conjunto de nodos disjuntos. En ambos casos,
-  la entrada es representada por un nodo raíz y la salida por un nodo hoja.
+  **Figura 4**. Muchos a uno (codificación). Una secuencia de vectores $x_{1:l} \in \mathbb{R}^{l\times d}$ es mapeada a un vector $p \in \mathbb{R}^m.$
 </ImageBox>
+
+Esto resulta útil para la clasificación de secuencias, donde se clasifica la secuencia completa en una sola categoría,
+por ejemplo en el análisis de sentimientos. Formalmente, podemos definir $p = f^e(x_{1:l}; w)$ a través de la recursión:
+
+$$
+\begin{equation}
+\begin{aligned}
+s_i &:= \gamma(x_i, s_{i-1}; w_g), \quad i \in [\,l\,], \\
+p &:= \text{pooling}(s_{1:l}),
+\end{aligned}
+\end{equation}
+$$
+
+donde $w := (w_g, s_0)$ son los parámetros de la red, $s_0$ es el estado inicial y $\gamma$ es una función similar a
+$g$, excepto que ahora actualiza los estados del codificador y no toma predicciones anteriores como entrada. La función
+de agrupamiento ($\text{pooling}$) típicamente no tiene parámetros y se utiliza para reducir la secuencia de estados a
+un solo vector. Ejemplos comunes de funciones de agrupamiento son la media, la suma y la función de max-pooling.
+
+### Secuencia a secuencia (alineada)
 
 <ImageBox
   src="/images/differentiable-programs/RNNv3.svg"
   alt="Computation Chain"
-  width="700px"
+  width="500px"
   height="350px"
 >
   **Figura 2**. Dos posibles representaciones de un programa. **Izquierda:** La funciones son
@@ -683,7 +729,7 @@ recursiva que utiliza parámetros compartidos a través de los pasos. Distinguim
 <ImageBox
   src="/images/differentiable-programs/RNNv4.svg"
   alt="Computation Chain"
-  width="700px"
+  width="500px"
   height="600px"
 >
   **Figura 2**. Dos posibles representaciones de un programa. **Izquierda:** La funciones son
