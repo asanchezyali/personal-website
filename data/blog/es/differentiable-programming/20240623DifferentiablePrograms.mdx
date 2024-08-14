@@ -714,17 +714,42 @@ un solo vector. Ejemplos comunes de funciones de agrupamiento son la media, la s
 
 ### Secuencia a secuencia (alineada)
 
+En esta configuración, se define una función de alineación $p_{1:l} = f^a(x_{1:l}; w)$ que mapea una secuencia de
+vectores $x_{1:l} \in \mathbb{R}^{l\times d}$ y un vector de parámetros $w \in \mathbb{R}^p$ a una secuencia de vectores
+$p_{1:l} \in \mathbb{R}^{l\times m}.$ La longitud de la secuencia de entrada y la secuencia de salida son iguales.
+
 <ImageBox
   src="/images/differentiable-programs/RNNv3.svg"
   alt="Computation Chain"
   width="500px"
   height="350px"
 >
-  **Figura 2**. Dos posibles representaciones de un programa. **Izquierda:** La funciones son
-  representadas como nodos y las dependencias como aristas. **Derecha:** Las funciones son
-  representadas como nodos y las dependencias como un conjunto de nodos disjuntos. En ambos casos,
-  la entrada es representada por un nodo raíz y la salida por un nodo hoja.
+  **Figura 4**. Muchos a muchos (alineados). Una secuencia de vectores $x_{1:l} \in \mathbb{R}^{l\times d}$ es mapeada a una secuencia de vectores $p_{1:l} \in \mathbb{R}^{l\times m}.$
 </ImageBox>
+
+Un
+ejemplo de aplicación es **POS-tagging**, donde se asigna una etiqueta a cada palabra en una oración. Formalmente, esto
+se puede definir como $p_{1:l} = f^a(x_{1:l}; w)$ a través de la recursión:
+
+$$
+\begin{equation}
+\begin{aligned}
+s_i &:= g(x_i, s_{i-1}; w_g), \quad i \in [\,l\,], \\
+p_i &:= h(s_i; w_h), \quad i \in [\,l\,].
+\end{aligned}
+\end{equation}
+$$
+
+donde $w := (w_g, w_h, s_0)$ son los parámetros de la red, $s_0$ es el estado inicial y $g$ y $h$ son funciones
+similares a las definidas en la configuración uno a muchos. La función $g$ actualiza el estado $s_i$ en función de la
+entrada $x_i$ y el estado anterior $s_{i-1},$ mientras que la función $h$ mapea el estado $s_i$ a un vector $p_i$ dado
+el estado $s_i.$
+
+### Secuencia a secuencia (no alineada)
+
+En esta configuración, se define una función de alineación $p_{1:l'} = f^u(x_{1:l}; w)$ que mapea una secuencia de
+vectores $x_{1:l} \in \mathbb{R}^{l\times d}$ y un vector de parámetros $w \in \mathbb{R}^p$ a una secuencia de vectores
+$p_{1:l'} \in \mathbb{R}^{l'\times m}.$
 
 <ImageBox
   src="/images/differentiable-programs/RNNv4.svg"
@@ -732,11 +757,52 @@ un solo vector. Ejemplos comunes de funciones de agrupamiento son la media, la s
   width="500px"
   height="600px"
 >
-  **Figura 2**. Dos posibles representaciones de un programa. **Izquierda:** La funciones son
-  representadas como nodos y las dependencias como aristas. **Derecha:** Las funciones son
-  representadas como nodos y las dependencias como un conjunto de nodos disjuntos. En ambos casos,
-  la entrada es representada por un nodo raíz y la salida por un nodo hoja.
+  **Figura 5**. Muchos a muchos (no alineados). Una secuencia de vectores $x_{1:l} \in \mathbb{R}^{l\times d}$ es mapeada a una secuencia de vectores $p_{1:l'} \in \mathbb{R}^{l'\times m}.$
 </ImageBox>
+
+La longitud de la secuencia de entrada y la secuencia de salida no
+necesariamente son iguales. Un ejemplo de aplicación es la traducción automática, donde una oración en un idioma se
+traduce a una oración en otro idioma. Formalmente, esto se puede definir como $p_{1:l'} = f^u(x_{1:l}; w)$ a través de
+la recursión:
+
+$$
+\begin{equation}
+\begin{aligned}
+c &:= f^e(x_{1:l}; w_e), \\
+p_{1:l} &:= f^d(c, w_d),
+\end{aligned}
+\end{equation}
+$$
+
+donde $w := (w_e, w_d)$ son los parámetros de la red, $f^e$ es una función codificadora que mapea la secuencia de
+entrada a un vector de contexto $c,$ y $f^d$ es una función decodificadora que mapea el vector de contexto a la
+secuencia de salida. La función de codificación $f^e$ y la función de decodificación $f^d$ pueden ser implementadas como
+RNNs. Los pasos en detalle, serían:
+
+$$
+\begin{equation}
+\begin{aligned}
+s_i &:= g(x_i, s_{i-1}; w_g), \quad i \in [\,l\,], \\
+c &:= \text{pooling}(s_{1:l}), \\
+z_i &:= g(c, p_{i-1}, z_{i-1}; w_g), \quad i \in [\,l'\,], \\
+p_i &:= h(z_i; w_h), \quad i \in [\,l'\,].
+\end{aligned}
+\end{equation}
+$$
+
+Esta arquitectura se denomina acertadamente arquitectura codificador-decodificador (_encoder-decoder_). Tenga en cuenta
+que denotamos la longitud de la secuencia objetivo como $l'$ en lugar de $l$ para evitar confusiones. Sin embargo, en la
+práctica, la longitud puede depender de la entrada y a menudo no se conoce de antemano. Para abordar este problema, el
+vocabulario (de tamaño $D$ en nuestra notación) se aumenta típicamente con un token de «final de secuencia» (EOS, por
+sus siglas en inglés), para que, en el momento de la inferencia, sepamos cuándo dajar de generar la secuencia de salida.
+Una desventaja de esta arquitectura, es que toda la información sobre la secuencia de entrada esta contenida en el
+vector de contexto $c,$ que por lo tanto puede convertirse en un cuello de botella.
+
+## Conclusiones
+
+Las redes neuronales, concebidas como programas parametrizados, proporcionan un marco poderoso y flexible para abordar una amplia gama de problemas en aprendizaje automático y procesamiento de datos. A lo largo de este artículo, hemos explorado diversas arquitecturas y configuraciones, desde redes de alimentación hacia adelante hasta redes neuronales recurrentes y redes residuales. La representación de estas arquitecturas como grafos dirigidos acíclicos (DAGs) no solo facilita su análisis y optimización, sino que también permite la aplicación eficiente de técnicas como la diferenciación automática. Las diferentes configuraciones discutidas demuestran la versatilidad de estos modelos para tareas que van desde la generación de subtítulos de imágenes hasta la traducción automática.
+
+Este enfoque de ver las redes neuronales como programas parametrizados no solo permite diseñar modelos más eficientes y efectivos, sino que también abre caminos para mejorar la interpretabilidad y explicabilidad de estos modelos, un área de creciente importancia en la inteligencia artificial. Aunque hemos cubierto varios tipos de redes neuronales, es importante destacar que el campo está en constante evolución, con nuevas arquitecturas y técnicas desarrollándose continuamente. En resumen, esta perspectiva proporciona una base sólida para el desarrollo futuro de modelos de aprendizaje automático más avanzados, interpretables y adaptables a una amplia gama de aplicaciones en el mundo real.
 
 ## Imágenes
 
