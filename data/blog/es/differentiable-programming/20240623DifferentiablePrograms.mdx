@@ -1,10 +1,10 @@
 ---
-title: 'Redes neuronales representados como DAGs de programas computacionales parametrizados'
+title: 'Redes neuronales representadas como DAGs de programas computacionales parametrizados'
 date: '2024/06/23'
 tags: ['matemáticas', 'ciencias de la computación']
 draft: false.
 time: '15 min'
-summary: 'Las redes neuronales pueden ser pensadas como programas computacionales parametrizados: programas con parámetros por aprender. En este artículo, exploraremos cómo representar los programas parametrizados matemáticamente. En particular, veremos como los programas pueden ser representados como grafos de computación.'
+summary: 'Las redes neuronales se pueden ver como algoritmos con parámetros ajustables, optimizados mediante aprendizaje automatizado. Este enfoque nos permite abordarlas desde una perspectiva matemática y computacional más amplia. En este artículo, exploraremos cómo representar estos algoritmos como grafos dirigidos acíclicos (DAG).'
 bibliography: references-data.bib
 canonicalUrl: 'https://www.asanchezyali.com/blog/es/number-theory/20230108DivisionAlgorithm/'
 headerImage: '/images/differentiable-programs/header.avif'
@@ -12,29 +12,16 @@ images: ['/images/differentiable-programs/header.avif']
 language: 'es'
 ---
 
-Las redes neuronales pueden ser pensadas como programas parametrizado, es decir, algoritmos
-con parámetros ajustables que se optimizan a través de un proceso de aprendizaje automatizado. Esta perspectiva nos
-permite abordar las redes neuronales desde un punto de vista matemático y computacional más amplio. En este artículo,
-exploraremos cómo representar matemáticamente estos programas como grafos dirigidos no cíclicos (DAG, por sus siglas en
-inglés).
+Las redes neuronales se pueden ver como algoritmos con parámetros ajustables, optimizados mediante aprendizaje automatizado. Este enfoque nos permite abordarlas desde una perspectiva matemática y computacional más amplia. En este artículo, exploraremos cómo representar estos algoritmos como grafos dirigidos acíclicos (DAG).
 
-La representación de redes neuronales como DAGs ofrece varias ventajas:
+La representación de redes neuronales como DAGs tiene varias ventajas:
 
-1. **Interpretación**: Los DAGs proporcionan una forma intuitiva de visualizar y comprender la estructura de un
-   programa.
+1. **Visualización**: Los DAGs ofrecen una forma clara de entender la estructura de un programa.
+2. **Optimización**: Los DAGs permiten optimizar programas mediante técnicas de optimización de grafos.
+3. **Diferenciación automática**: Facilitan la implementación de algoritmos como la retropropagación.
+4. **Paralelización**: Los DAGs permiten ejecutar programas en paralelo en hardware especializado como GPUs y TPUs.
 
-2. **Optimización**: Los DAGs permiten la optimización de programas mediante técnicas de optimización de grafos.
-
-3. **Diferenciación automática**: Los DAGs facilitan la implementación de algoritmos de diferenciación automática, como
-   la retropropagación.
-
-4. **Paralelización**: Los DAGs permiten la paralelización de la evaluación de programas en hardware especializado, como
-   GPUs y TPUs.
-
-A lo largo de este artículo, examinaremos cómo representar programas computacionales como grafos dirigidos acíclicos,
-cómo interpretarlos y utilizarlos para mejorar nuestra comprensión y diseño de redes neuronales complejas. También
-discutiremos cómo esta representación se relaciona con técnicas avanzadas en aprendizaje profundo, como las
-arquitecturas de redes residuales y las redes neuronales recurrentes.
+Este artículo examinará cómo los DAGs mejoran la comprensión y diseño de redes neuronales complejas y su relación con técnicas avanzadas de aprendizaje profundo, como las redes residuales y recurrentes.
 
 ## Programas computacionales parametrizados
 
