@@ -119,25 +119,26 @@ cualquier orden tal que $i \preceq j$ si y solo si no hay un camino de $j$ a $i.
 
 ### Programas computacionales como DAGs
 
-Nosotros que un programa computacional es una función valida en el sentido matemático, es decir, el programa debería
-retornar valores idénticos para las mismas entradas y no debería tener efectos secundarios. También asumimos que el
-programa se detiene en un número finito de pasos. Por lo tanto, un programa puede estar hecho de un número finito de
-funciones intermedias y variables intermedias, de tal forma que las dependencias entres las funciones y las variables
-pueden ser representados como un grafo dirigido acíclico. Sin perdida de generalidad, podemos hacer las siguientes
-suposiciones:
+Un programa computacional se puede pensar como una función válida en términos matemáticos, lo que significa que el
+programa debería devolver los mismos valores para las mismas entradas y no debería tener efectos secundarios. Además, asumimos
+que el
+programa se detiene después de un número finito de pasos. Dado esto, un programa puede descomponerse en un conjunto finito de
+funciones y variables intermedias, donde las dependencias entre estas pueden representarse mediante un grafo dirigido
+acíclico (DAG).
+
+Bajo estas condicione, podemos hacer las siguientes suposiciones sobre un programa computacional:
 
 1. Existe un nodo **entrada** $s_0$ y un nodo **salida** $s_n.$
-2. Cada función intermedia $f_k$ produce un solo valor $s_k \in S_k.$
+2. Cada función intermedia $f_k$ produce un único valor $s_k \in S_k.$
 
-Con un número finito de nodos como $V = \{0, 1, \ldots, n\}$. El node $0$ es una raíz, correspondiente a la
-entrada del programa, y el nodo $n$ es una hoja, correspondiente a la salida del programa. Las funciones intermedias.
-Debido al tercer supuesto, aparte de $s_0$, cada variable $s_k$ está en biyección con una función $f_k.$ Por lo tanto,
-el node $0$ representa la entrada $s_0$, y los nodos $1, \ldots, n$ representan las funciones $f_1, \ldots,
-f_n$ y salidas $s_1, \ldots, s_n,$ es decir un nodo $k$ representa la función $f_k$ y la salida $s_k.$
+Con un número finito de nodos como $V = \{0, 1, \ldots, n\},$ donde el nodo $0$ es la raíz, correspondiente a la
+entrada del programa, y el nodo $n$ es una hoja, correspondiente a la salida del programa. Según estas suposiciones,
+excepto por $s_0$, cada variable $s_k$ está en biyección con una función $f_k.$ Por lo tanto,
+el nodo $0$ representa la entrada $s_0$, mientras que los nodos $1, \ldots, n$ representan las funciones $f_1, \ldots,
+f_n$ y salidas $s_1, \ldots, s_n.$ Es decir, cada nodo $k$ representa tanto la función $f_k$ y la salida $s_k.$
 
-Las aristas de un DAG representan las dependencias. Los padres $\{i_1, \ldots, i_{p_k}\} := \text{padres}(k)$ de un nodo
-$k,$ donde $p_k:=|\text{padres}(k)|,$ indican las variables $s_{\text{padres}(k)} := \{s_{i_1}, \ldots, s_{i_{p_k}}\}$
-que la función $f_k$ necesita para computar su salida $s_k$. Dicho de otro modo, los padres $\{i_1, \ldots, i_{p_k}\}$
+Las aristas de un DAG representan las dependencias entre los nodos. Los padres de un nodo $k,$ denotados como $\{i_1, \ldots, i_{p_k}\} := \text{padres}(k),$ donde $p_k:=|\text{padres}(k)|,$ indican las variables $s_{\text{padres}(k)} := \{s_{i_1}, \ldots, s_{i_{p_k}}\}$
+que la función $f_k$ necesita para calcular su salida $s_k$. En otras palabras, los padres $\{i_1, \ldots, i_{p_k}\}$
 indican funciones $f_{i_1}, \ldots, f_{i_{p_k}}$ que son necesarias para computar $f_k.$
 
 <PseudoCode title="Algoritmo 1. Ejecución de un programa">
