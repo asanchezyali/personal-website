@@ -82,14 +82,14 @@ las funciones individuales y las aristas representan las dependencias y el flujo
 
 ### Grafos acíclicos dirigidos
 
-En un **programa computacional genérico**, las funciones intermedias pueden depender de las salidas de otras funciones. Tales dependencias
-pueden ser representadas como un DAG. Un **grafo dirigido** $G = (V, E)$ consiste de un
-conjunto de nodos $V$ y un conjunto de aristas $E\subseteq V \times V.$ Un arista $(u, v) \in E$ es un par ordenado de
-vertices $u, v\in V$. Una arista también es representada como $u \to v.$, para indicar que $v$ depende de $u.$ Para representar las
-entradas y las salidas, será conveniente usar **semi-aristas entrantes** $\to j$ y **semi-aristas salientes** $i \to.$
+En un **programa computacional genérico**, las funciones intermedias pueden depender de las salidas de otras funciones.
+Estas dependencias se
+pueden representar mediante un Grafo Acíclico Dirigido (DAG). Un **grafo dirigido** $G = (V, E)$ se compone de un conjunto de nodos $V$ y un conjunto de aristas $E\subseteq V \times V.$ Una arista $(u, v) \in E$ es un par ordenado de
+vertices $u, v\in V,$ y se puede representar como $u \to v.$ para indicar que $v$ depende de $u.$ Para representar las
+entradas y las salidas, es conveniente utilizar **semi-aristas entrantes** $\to j$ y **semi-aristas salientes** $i \to.$
 
-En un grafo $G = (V, E)$, los **padres** de un nodo $v\in V$ son los nodos $u\in V$ tales que $(u, v)\in E,$ denotado
-por
+En un grafo $G = (V, E)$, los **padres** de un nodo $v\in V$ son aquellos nodos $u\in V$ tales que $(u, v)\in E,$
+denotados como:
 
 $$
 \begin{equation}
@@ -97,7 +97,7 @@ $$
 \end{equation}
 $$
 
-De manera similar, los **hijos** de un nodo $v\in V$ son los nodos $w\in V$ tales que $(v, w)\in E,$ denotado por
+De manera similar, los **hijos** de un nodo $v\in V$ son los nodos $w\in V$ tales que $(v, w)\in E,$ representados por:
 
 $$
 \begin{equation}
@@ -105,16 +105,16 @@ $$
 \end{equation}
 $$
 
-Los vertices sin padres son llamados **raíces** y los vertices sin hijos son llamados **hojas**.
+Los vertices sin padres son llamados **raíces** y los vertices sin hijos se conocen como **hojas**.
 
 Un **camino** de $i$ a $j$ en un grafo $G = (V, E)$ es una secuencia de nodos $v_1, \ldots, v_k$ tal que $i \to v_1 \to
 \cdots \to v_k \to j.$ Un camino es **simple** si no contiene nodos repetidos. Un grafo es **acíclico** si no contiene
-ciclos, es decir, no hay caminos simples de un nodo a sí mismo. Un grafo acíclico dirigido (DAG) es un grafo dirigido
-que es acíclico.
+ciclos, es decir, no existen caminos simples de un nodo a sí mismo. Un grafo acíclico dirigido (DAG) es un grafo
+dirigido que carece de ciclos.
 
-La aristas de un DAG inducen un **orden parcial** en los nodos, que denotaremos por $i \preceq j$ si existe un camino de
-$i$ a $j.$ Un orden parcial es una relación reflexiva, transitiva y antisimétrica. El orden es parcial porque no todos
-los nodos están relacionados entre sí. No obstante, podemos definir un **orden total** llamado **orden topológico**:
+La aristas de un DAG inducen un **orden parcial** entre los nodos, que se denota como $i \preceq j$ si existe un camino de
+$i$ a $j.$ Este orden parcial es una relación reflexiva, transitiva y antisimétrica. Se denomina «parcial» porque no todos
+los nodos están relacionados entre sí. Sin embargo, es posible definir un **orden total** llamado **orden topológico**:
 cualquier orden tal que $i \preceq j$ si y solo si no hay un camino de $j$ a $i.$
 
 ### Programas computacionales como DAGs
