@@ -13,7 +13,7 @@ language: 'en'
 
 Python is an object-oriented programming language and one of its features is that it supports operator overloading, that is, it allows us to redefine the behavior of native operators (`+`,`-`, `\*`, `/`, `+=`, `-=`, `\*\*`, etc.).1 This means we can create code with greater readability, since we use native operators to define new representations, comparisons, and operations between objects that we have created.
 
-To illustrate how operator overloading works, I’ll walk you through how to redefine the behavior of the + and - operators using the special **add** and **sub** methods of Python classes.
+To illustrate how operator overloading works, I’ll walk you through how to redefine the behavior of the `+` and `-` operators using the special **add** and **sub** methods of Python classes.
 
 ## Using operator overloading
 
@@ -164,7 +164,7 @@ time_1 - time_2 + time_3
 
 ## Methods for overloading operators
 
-As we saw in the previous section, operator overloading allows us to redefine the behavior of arithmetic operators (`+`, `-`) and in fact, it can be done with any of Python’s arithmetic, binary, comparison, and logical operators. We can use the following special methods to redefine any of the operators:
+As we saw in the previous section, operator overloading [^1] allows us to redefine the behavior of arithmetic operators (`+`, `-`) and in fact, it can be done with any of Python’s arithmetic, binary, comparison, and logical operators. We can use the following special methods to redefine any of the operators:
 
 | Operation             | Syntax              | Function                            |
 | --------------------- | ------------------- | ----------------------------------- |
@@ -240,4 +240,4 @@ If you need additional help, we offer personalized consultancy on
 3. [Special Method names.](https://docs.python.org/3/reference/datamodel.html#special-method-names)
 4. [Operators.](https://docs.python.org/3/library/operator.html)
 
-[1] Not all languages support operator overloading. Though operator overloading can be more convenient and allow for more elegant code, it’s not essential for object-oriented programming. C, Java and Pascal do not suppose operator overloading. Python, C++, C#, Perl, and Ruby do support operator overloading.
+[^1] Not all languages support operator overloading. Though operator overloading can be more convenient and allow for more elegant code, it’s not essential for object-oriented programming. C, Java and Pascal do not suppose operator overloading. Python, C++, C#, Perl, and Ruby do support operator overloading.
