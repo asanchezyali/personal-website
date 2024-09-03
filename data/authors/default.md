@@ -11,12 +11,12 @@ github: https://github.com/asanchezyali
 language: en
 ---
 
-Hello, my name is Alejandro Sanchez Yalí and I am passionate about technology and programming. Since I was a child, I have always been fascinated with understanding how things work and how new things can be created through programming.
+Hi, I'm Alejandro Sánchez Yalí, and I'm passionate about technology and programming. Ever since I was a kid, I've been fascinated by how things work, taking them apart and uncovering their secrets. This curiosity naturally led me to explore programming as a powerful way to create and bring ideas to life.
 
-For me, programming is more than just a job or a hobby, it is a way of expression and making my ideas a reality. As a mathematician and programmer, I have had the opportunity to work on interesting and challenging projects, and have learned many new things along the way.
+For me, programming is not just a job or a hobby; it's a way to express myself and satisfy my curiosity about the world around me. As a mathematician and programmer, I've had the chance to work on exciting and challenging projects that have allowed me to learn and grow continuously.
 
-My motto is "If I code, then I exist," because I believe that through programming I can do incredible things and shape my world.
+My motto is: "If I program, then I exist?" I believe that through programming, I can do amazing things and shape my world, turning complex problems into creative solutions.
 
-I love learning new technologies and constantly improving my skills, and enjoy sharing my knowledge and passion for technology through writing. Currently, I write about technology and computer science on my personal blog and on various websites, and I hope to continue exploring new topics and sharing my ideas with others.
+I love learning about new technologies and constantly improving my skills. I also enjoy sharing my knowledge and passion for technology through writing. I write about technology and computer science topics on my personal blog and other platforms, always looking for new ideas and ways to inspire others.
 
-I hope you enjoyed getting to know me a little more. If you want to know more about me, you can follow me on my social media or visit my LinkedIn profile. See you soon!
+I hope this brief introduction gives you a sense of who I am and what drives me. If you want to know more about me or connect, feel free to follow me on my social media or visit my LinkedIn profile. See you soon!
