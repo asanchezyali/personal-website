@@ -171,7 +171,7 @@ export default function PostLayout({ frontMatter, authorDetails, next, prev, chi
                   </div>
                 </div>
               )}
-              <div className={`py-8 pr-2${headings.length === 0 ? 'hidden' : ''}`}>
+              <div className={`py-8 pr-2 ${headings.length === 0 ? 'hidden' : ''}`}>
                 <h2
                   className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400"
                   id="tableOfContents"
