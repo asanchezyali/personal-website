@@ -1,13 +1,14 @@
-import React from 'react'
-import { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import Pagination from '@/components/Pagination'
 import ArticleOverview from '@/components/ArticleOverview'
 import metaLabels from '@/data/metaLabels'
 import { LanguageContext } from '@/providers/LanguageProvider'
 
-export default function ListLayout({ posts, title, initialDisplayPosts = [], pagination }) {
+const ListLayout = ({ posts, title, initialDisplayPosts = [], pagination }) => {
   const [searchValue, setSearchValue] = useState('')
-  const { language } = React.useContext(LanguageContext)
+  const [currentPage, setCurrentPage] = useState(1)
+  const { language } = useContext(LanguageContext)
+  const postsPerPage = 9
 
   const filteredPosts = posts.filter(
     (frontMatter) => frontMatter.draft !== true && frontMatter.language === language
@@ -17,8 +18,11 @@ export default function ListLayout({ posts, title, initialDisplayPosts = [], pag
     return searchContent.toLowerCase().includes(searchValue.toLowerCase())
   })
 
-  const displayPosts =
-    initialDisplayPosts.length > 0 && !searchValue ? initialDisplayPosts : filteredBlogPosts
+  const indexOfLastPost = currentPage * postsPerPage
+  const indexOfFirstPost = indexOfLastPost - postsPerPage
+  const currentPosts = filteredBlogPosts.slice(indexOfFirstPost, indexOfLastPost)
+
+  const paginate = (pageNumber) => setCurrentPage(pageNumber)
 
   return (
     <>
@@ -47,28 +51,36 @@ export default function ListLayout({ posts, title, initialDisplayPosts = [], pag
           </svg>
         </div>
 
-        <ul>
-          {!filteredBlogPosts.length && 'No posts found.'}
-          {displayPosts.map((frontMatter) => {
+        {!filteredBlogPosts.length && <p>No posts found.</p>}
+
+        <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {currentPosts.map((frontMatter) => {
             const { slug, date, title, summary, tags, headerImage, time } = frontMatter
             return (
-              <ArticleOverview
-                key={slug}
-                title={title}
-                summary={summary}
-                date={date}
-                headerImage={headerImage}
-                slug={slug}
-                tags={tags}
-                time={time}
-              />
+              <li key={slug}>
+                <ArticleOverview
+                  title={title}
+                  summary={summary}
+                  date={date}
+                  headerImage={headerImage}
+                  slug={slug}
+                  tags={tags}
+                  time={time}
+                />
+              </li>
             )
           })}
         </ul>
       </div>
-      {pagination && pagination.totalPages > 1 && !searchValue && (
-        <Pagination currentPage={pagination.currentPage} totalPages={pagination.totalPages} />
+      {filteredBlogPosts.length > postsPerPage && (
+        <Pagination
+          currentPage={currentPage}
+          totalPages={Math.ceil(filteredBlogPosts.length / postsPerPage)}
+          onPageChange={paginate}
+        />
       )}
     </>
   )
 }
+
+export default ListLayout
