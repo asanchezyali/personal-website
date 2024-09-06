@@ -75,3 +75,13 @@ a:has(> span.icon-link) {
 .custom-scroll::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
+
+@media only screen and (max-width: 600px) {
+  .math-display {
+    .base {
+      overflow-x: auto;
+      overflow-y: hidden;
+      width: 250px !important;
+    }
+  }
+}
