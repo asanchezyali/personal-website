@@ -13,7 +13,10 @@ language: 'en'
 
 _Written by Alejandro Sánchez Yalí. Originally published 2021-06-15 on the [Monadical blog](https://monadical.com/blog.html)._
 
-Python is an object-oriented programming language and one of its features is that it supports operator overloading, that is, it allows us to redefine the behavior of native operators (`+`,`-`, `\*`, `/`, `+=`, `-=`, `\*\*`, etc.).1 This means we can create code with greater readability, since we use native operators to define new representations, comparisons, and operations between objects that we have created.
+Python is an object-oriented programming language and one of its features is that it supports operator overloading, that
+is, it allows us to redefine the behavior of native operators (`+`,`-`, `\*`, `/`, `+=`, `-=`, `\*\*`, etc.). This means
+we can create code with greater readability, since we use native operators to define new representations, comparisons,
+and operations between objects that we have created.
 
 To illustrate how operator overloading works, I’ll walk you through how to redefine the behavior of the `+` and `-` operators using the special **add** and **sub** methods of Python classes.
 
@@ -96,7 +99,7 @@ def __add__(self, other: Clock) -> Clock:
        return self.__class__(str(hour) + ':' + str(min))
 ```
 
-Notice how divmod is used here. This function performs a division–the same operation that we do with the division operator (`/`)–but it returns two values: the quotient and the residue. `divmod` converts the total number of minutes into the format HH:MM. The number of minutes is divided by 60 so that the quotient represents the hours and the residue represents the minutes. Since the clock uses the digits 0, 1, 2 … 24 to represent hours, we calculate the total number of hours modulo 24.
+Notice how `divmod` is used here. This function performs a division–the same operation that we do with the division operator (`/`)–but it returns two values: the quotient and the residue. `divmod` converts the total number of minutes into the format HH:MM. The number of minutes is divided by 60 so that the quotient represents the hours and the residue represents the minutes. Since the clock uses the digits 0, 1, 2 … 24 to represent hours, we calculate the total number of hours modulo 24.
 
 Finally, at the end the expression, `self.__class__(str(hour) + ':' + str(min))` is used to create a new instance of the `Clock` class so that the result can be reused in subsequent calculations.
 

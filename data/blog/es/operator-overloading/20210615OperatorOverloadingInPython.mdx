@@ -1,0 +1,237 @@
+---
+title: 'Sobrecarga de operadores en Python'
+date: '2021/06/15'
+tags: ['python', 'operadores', 'sobrecarga-de-operadores', 'clases']
+draft: false
+time: '10 min'
+summary: '¿Qué es la sobrecarga de operadores y cómo funciona en Python?'
+bibliography: references-data.bib
+canonicalUrl: 'https://www.asanchezyali.com/blog/es/sobrecarga-de-operadores/20210615SobrecargaDeOperadoresEnPython'
+headerImage: '/images/operator-overloading-python/time-header.avif'
+language: 'es'
+---
+
+_Escrito por Alejandro Sánchez Yalí. Publicado originalmente el 2021-06-15 en el [blog de Monadical](https://monadical.com/blog.html)._
+
+Python es un lenguaje de programación orientado a objetos y una de sus características es que soporta la sobrecarga de operadores, es decir, nos permite redefinir el comportamiento de los operadores nativos (`+`,`-`, `*`, `/`, `+=`, `-=`, `**`, etc.). Esto significa que podemos crear código con mayor legibilidad, ya que usamos operadores nativos para definir nuevas representaciones, comparaciones y operaciones entre objetos que hemos creado.
+
+Para ilustrar cómo funciona la sobrecarga de operadores, te guiaré a través de cómo redefinir el comportamiento de los operadores `+` y `-` utilizando los métodos especiales **add** y **sub** de las clases de Python.
+
+## Usando la sobrecarga de operadores
+
+La mejor manera de entender una idea como esta es verla en práctica. Así que, comencemos con un ejercicio que hace necesario redefinir el comportamiento de los operadores `+` y `-` de Python.
+
+Digamos que tenemos un reloj de 24 horas, y necesitamos saber qué hora mostrará el reloj dentro de 10 horas. Por ejemplo, si ahora son las 18:00 de la tarde, 10 horas más tarde el reloj indicará que son las 4:00 de la mañana–18:00 horas + 10:00 horas = 4:00 horas. Así, la suma del tiempo en un reloj de 24 horas no es como la suma habitual de números naturales, enteros o reales.
+
+<ImageBox
+  src="/images/operator-overloading-python/clocks.png"
+  alt="Relojes - Operación Aritmética Modular 24"
+  width="700px"
+  height="350px"
+>
+  **Figura 1**. Relojes - Operación Aritmética Modular 24.
+</ImageBox>
+
+El objetivo de este ejercicio es entender cómo se puede redefinir el comportamiento de los operadores de suma y resta (`+`, `-`) para capturar adecuadamente la aritmética del reloj, de modo que se pueda sumar y restar el "tiempo del reloj" (en horas) para dar resultados apropiados. Empecemos.
+
+Inicialmente, vamos a tener una clase llamada Clock en la que representaremos el tiempo con el formato HH:MM:
+
+```python showLineNumbers
+class Clock:
+
+   def __init__(self, time: str):
+       self.hour, self.min = [int(i) for i in time.split(':')]
+
+   def __repr__(self) -> str:
+       min = '0' + str(self.min)
+       return str(self.hour) + ':' + min[-2:]
+```
+
+Ten en cuenta que esperamos que el usuario ingrese la variable `time` como una cadena en el formato HH:MM. También hemos hecho uso del método `__repr__` para definir la representación en consola de nuestra clase, nuevamente en el formato HH:MM. Vamos a instanciarla y ejecutarla:
+
+```python showLineNumbers
+time_1 = Clock('10:30')
+time_1
+```
+
+La salida de la consola será:
+
+```python
+10:30
+```
+
+Ahora podemos crear dos instancias de la clase `Clock`:
+
+```python showLineNumbers
+time_1 = Clock('10:30')
+time_2 = Clock('19:45')
+```
+
+Si intentamos en este punto sumar estas instancias, encontramos el siguiente error:
+
+```python
+time_1 + time_2
+```
+
+```python
+---------------------------------------------------------------------------
+TypeError                                 Traceback (most recent call last)
+<ipython-input-17-9693c7986cbd> in <module>()
+----> 1 time_1 + time_2
+
+TypeError: unsupported operand type(s) for +: 'Clock' and 'Clock'
+```
+
+El problema aquí es que el operador `+` no entiende los operandos de la clase `Clock`.
+
+Podemos corregir este error añadiendo un método asociado a la suma a la clase `Clock`. En Python, este método se llama `__add__` y requiere dos parámetros. El primero, self, siempre es requerido, y el segundo, other, representa otra instancia de la misma clase. Por ejemplo, `a.__add__(b)` le pedirá al `objeto Clock a` que se sume al `objeto Clock b`. Esto se puede escribir en la notación estándar, `a + b`. Para nuestro caso, la suma se puede definir de la siguiente manera:
+
+```python showLineNumbers
+def __add__(self, other: Clock) -> Clock:
+       hour, min = divmod(self.min + other.min, 60)
+       hour = (hour + self.hour + other.hour) % 24
+       return self.__class__(str(hour) + ':' + str(min))
+```
+
+Observa cómo se usa `divmod` aquí. Esta función realiza una división–la misma operación que hacemos con el operador de división (`/`)–pero devuelve dos valores: el cociente y el residuo. `divmod` convierte el número total de minutos al formato HH:MM. El número de minutos se divide por 60 de modo que el cociente representa las horas y el residuo representa los minutos. Como el reloj usa los dígitos 0, 1, 2 … 24 para representar las horas, calculamos el número total de horas módulo 24.
+
+Finalmente, al final de la expresión, se usa `self.__class__(str(hour) + ':' + str(min))` para crear una nueva instancia de la clase `Clock` de modo que el resultado pueda ser reutilizado en cálculos posteriores.
+
+Hagamos dos instancias de la clase `Clock`:
+
+```python showLineNumbers
+time_1 = Clock('10:30')
+time_2 = Clock('19:45')
+```
+
+Si las sumamos, obtenemos:
+
+```python
+time_1 + time_2
+```
+
+```python
+6:15
+```
+
+Este es exactamente el resultado que queremos. De manera similar, podemos redefinir el comportamiento del operador (`-`) usando el método `__sub__`:
+
+```python showLineNumbers
+def __sub__(self, other: Clock) -> Clock:
+        hour, min = divmod(self.min - other.min, 60)
+        hour = (hour + self.hour - other.hour) % 24
+        return self.__class__(str(hour) + ':' + str(min))
+```
+
+Podemos hacerlo de tal manera que la clase final será:
+
+```python showLineNumbers
+Class Clock:
+
+   def __init__(self, time):
+       self.hour, self.min = [int(i) for i in time.split(':')]
+
+   def __repr__(self) -> str:
+       min = '0' + str(self.min)
+       return str(self.hour) + ':' + min[-2:]
+
+   def __add__(self, other: Clock) -> Clock:
+       hour, min = divmod(self.min + other.min, 60)
+       hour = (hour + self.hour + other.hour) % 24
+       return self.__class__(str(hour) + ':' + str(min))
+
+   def __sub__(self, other: Clock) -> Clock:
+       hour, min = divmod(self.min - other.min, 60)
+       hour = (hour + self.hour - other.hour) % 24
+       return self.__class__(str(hour) + ':' + str(min))
+```
+
+Ahora es posible operar directamente sobre objetos `Clock` usando los operadores `+` y `-`, en lugar de llamar a métodos:
+
+```python showLineNumbers
+time_1 = Clock('10:30')
+time_2 = Clock('19:45')
+time_3 = Clock('16:16')
+
+time_1 - time_2 + time_3
+```
+
+```python
+7:01
+```
+
+## Métodos para sobrecargar operadores
+
+Como vimos en la sección anterior, la sobrecarga de operadores[^1] nos permite redefinir el comportamiento de los operadores aritméticos (`+`, `-`) y de hecho, se puede hacer con cualquiera de los operadores aritméticos, binarios, de comparación y lógicos de Python. Podemos usar los siguientes métodos especiales para redefinir cualquiera de los operadores:
+
+| Operación                     | Sintaxis            | Función                             |
+| ----------------------------- | ------------------- | ----------------------------------- |
+| Adición                       | `a + b`             | `add(a, b)`                         |
+| Concatenación                 | `seq1 + seq2`       | `concat(seq1, seq2)`                |
+| Prueba de contención          | `obj in seq`        | `contains(seq, obj)`                |
+| División                      | `a / b`             | `truediv(a, b)`                     |
+| División                      | `a // b`            | `floordiv(a, b)`                    |
+| División                      | `divmod(a, b)`      | `divmod(a, b)`                      |
+| AND a nivel de bits           | `a & b`             | `and_(a, b)`                        |
+| XOR a nivel de bits           | `a ^ b`             | `xor(a, b)`                         |
+| Inversión a nivel de bits     | `~ a`               | `invert(a)`                         |
+| OR a nivel de bits            | `a \| b`            | `or_(a, b)`                         |
+| Exponenciación                | `a ** b`            | `pow(a, b)`                         |
+| Identidad                     | `a is b`            | `is_(a, b)`                         |
+| Identidad                     | `a is not b`        | `is_not(a, b)`                      |
+| Asignación indexada           | `obj[k] = v`        | `setitem(obj, k, v)`                |
+| Eliminación indexada          | `del obj[k]`        | `delitem(obj, k)`                   |
+| Indexación                    | `obj[k]`            | `getitem(obj, k)`                   |
+| Desplazamiento a la izquierda | `a << b`            | `lshift(a, b)`                      |
+| Módulo                        | `a % b`             | `mod(a, b)`                         |
+| Multiplicación                | `a * b`             | `mul(a, b)`                         |
+| Negación (Aritmética)         | `- a`               | `neg(a)`                            |
+| Negación (Lógica)             | `not a`             | `not_(a)`                           |
+| Positivo                      | `+ a`               | `pos(a)`                            |
+| Desplazamiento a la derecha   | `a >> b`            | `rshift(a, b)`                      |
+| Asignación de rebanada        | `seq[i:j] = values` | `setitem(seq, slice(i, j), values)` |
+| Eliminación de rebanada       | `del seq[i:j]`      | `delitem(seq, slice(i, j))`         |
+| Rebanado                      | `seq[i:j]`          | `getitem(seq, slice(i, j))`         |
+| Formateo de cadenas           | `s % obj`           | `mod(s, obj)`                       |
+| Sustracción                   | `a - b`             | `sub(a, b)`                         |
+| Prueba de verdad              | `obj`               | `truth(obj)`                        |
+| Ordenamiento                  | `a < b`             | `lt(a, b)`                          |
+| Ordenamiento                  | `a <= b`            | `le(a, b)`                          |
+| Igualdad                      | `a == b`            | `eq(a, b)`                          |
+| Diferencia                    | `a != b`            | `ne(a, b)`                          |
+| Ordenamiento                  | `a >= b`            | `ge(a, b)`                          |
+| Ordenamiento                  | `a > b`             | `gt(a, b)`                          |
+
+<div className="px-4 text-center text-sm text-gray-50">
+  **Figura 2**. [Documentación oficial de Python](https://docs.python.org/3/library/operator.html)
+</div>
+
+Cada objeto tiene varios métodos especializados que se utilizan para interactuar con otros objetos o con operadores nativos de Python. Al igual que con el ejemplo de la aritmética del reloj, cada uno de estos métodos puede ser implementado de acuerdo con el siguiente esquema de implementación:
+
+```python showLineNumbers
+def __«operador»__(self, other: Object) -> Object:
+       «instrucciones»
+       return «salida»
+```
+
+Aquí necesitamos seleccionar el «operador» y definir las «instrucciones» internas y la «salida» para personalizar su comportamiento.
+
+La sobrecarga de operadores nos permite definir nuevas estructuras matemáticas, como grupos cíclicos, campos finitos, espacios vectoriales, grupos, anillos y módulos. Hay aplicaciones útiles para esto en criptografía, matemáticas discretas y cálculo avanzado. Echa un vistazo a la [documentación de Python](https://docs.python.org/3/reference/datamodel.html#special-method-names) para aprender más sobre este tema y cómo se pueden sobrecargar los otros operadores.
+
+Finalmente, si hay algún error, omisión o inexactitud en este artículo, no dudes en contactarnos a través del siguiente canal de Discord: [Math & Code](https://discord.gg/gJ3vCgSWeh)
+
+## Consultoría
+
+Si necesitas ayuda adicional, ofrecemos consultoría personalizada en [Classgap](https://www.classgap.com/es-co/tutor/alejandro-sanchez-yali), puedes consultar nuestros horarios disponibles y programar una sesión con nosotros.
+
+## Imágenes
+
+- Austin Connolly - [8 Mejores Software de Seguimiento de Tiempo para Pequeñas Empresas en 2024](https://hubstaff.com/blog/time-tracking-software-for-small-business/).
+
+## Referencias
+
+1. [Modelo de Datos de Python.](https://docs.python.org/3/reference/datamodel.html#data-model)
+2. [Nombres de Métodos Especiales.](https://docs.python.org/3/reference/datamodel.html#special-method-names)
+3. [Operadores.](https://docs.python.org/3/library/operator.html)
+
+[^1]: No todos los lenguajes soportan la sobrecarga de operadores. Aunque la sobrecarga de operadores puede ser más conveniente y permitir un código más elegante
