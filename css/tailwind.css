@@ -77,11 +77,9 @@ a:has(> span.icon-link) {
 }
 
 @media only screen and (max-width: 600px) {
-  .math-display {
-    .base {
-      overflow-x: auto;
-      overflow-y: hidden;
-      width: 250px !important;
-    }
+  .math-display .base {
+    overflow-x: auto;
+    overflow-y: hidden;
+    width: 250px !important;
   }
 }

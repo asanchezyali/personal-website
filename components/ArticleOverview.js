@@ -38,13 +38,6 @@ export default function ArticleOverview({ title, summary, date, headerImage, slu
               {title}
             </h2>
           </Link>
-          <p className="mb-3 text-sm text-gray-500 dark:text-gray-400">
-            {formatDate(date)} - {views ? views.toLocaleString() : 0} {metaLabels[language].views}
-          </p>
-          <p className="mb-3 line-clamp-3 text-sm text-gray-700 dark:text-gray-300">{summary}</p>
-        </div>
-
-        <div className="mt-auto">
           <div className="mb-2 flex flex-wrap gap-1">
             {tags.slice(0, 2).map((tag) => (
               <Tag key={tag} text={tag} />
@@ -55,6 +48,13 @@ export default function ArticleOverview({ title, summary, date, headerImage, slu
               </span>
             )}
           </div>
+          <p className="mb-3 text-sm text-gray-500 dark:text-gray-400">
+            {formatDate(date)} - {views ? views.toLocaleString() : 0} {metaLabels[language].views}
+          </p>
+          <p className="mb-3 line-clamp-3 text-sm text-gray-700 dark:text-gray-300">{summary}</p>
+        </div>
+
+        <div className="mt-auto">
           <Link
             href={`/blog/${slug}`}
             className="text-sm font-medium text-primary-600 hover:underline dark:text-primary-500"
