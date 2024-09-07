@@ -1,0 +1,1434 @@
+---
+title: 'Kraken el Código: Cómo construir un avatar parlante'
+date: '2024/02/20'
+lastmod: '2024-02-20'
+tags: ['avatar-ia', 'humano-digital', 'inteligencia artificial']
+draft: false
+time: '47 min'
+summary: 'Crea tu propio avatar conversacional con Azure Cognitive, LangChain y OpenAI.'
+layout: PostLayout
+bibliography: references-data.bib
+canonicalUrl: https://www.asanchezyali.com/blog/en/ml/20210712MachineLearning/
+headerImage: '/images/ai-avatars/header-post1.png'
+language: 'es'
+---
+
+_Escrito por Alejandro Sánchez Yalí. Publicado originalmente el 2024-02-20 en el [blog de Monadical](https://monadical.com/blog.html)._
+
+## Introducción
+
+Bienvenido a este tutorial práctico ~~con tentáculos~~, donde conocerás a Zippy, el propio cefalópodo conversacional de Monadical. Te familiarizarás de cerca con Azure Cognitive Services, LangChain y OpenAI, y te irás (¿escabullirás?) de aquí con la capacidad de crear tu propio avatar conversacional. En el proceso, aprenderás a crear una persona digital que responde - con su propia personalidad única, historia de fondo y vasta acumulación de conocimiento general. De hecho, hacer diálogos significativos con tu avatar está a tu alcance.
+
+Ahora, antes de que respondas con algo como "sí, pero Sora puede hacer esto y más. ¡Y MÁS!"... puede que tengamos un pulpo como nuestro avatar no oficial, pero eso no significa que hayamos estado viviendo bajo una roca en el fondo del océano durante los últimos días. Mientras Sora nos está dejando a todos boquiabiertos con sus increíbles capacidades de texto a video (¿recuerdas el combustible de pesadillas que era [Will Smith comiendo espaguetis](https://www.youtube.com/watch?v=XQr4Xklqzw8) hace solo unos pocos meses? Yo tampoco) y puede generar videos de alguien hablando, (aún) no es capaz de crear avatares únicos con sus propias personalidades, habilidades conversacionales y bases de conocimiento especializadas. Nuestro enfoque es significativamente más especializado - creando movimientos del habla sobre la marcha (por mucho menos $$$), usando las herramientas mencionadas anteriormente.
+
+Esta guía paso a paso está estructurada para acompañarte a través de todo el proceso, desde la conceptualización hasta la realización, de la siguiente manera:
+
+- Presentación de los componentes clave
+- Configuración de los prerrequisitos
+- Detalle del proceso de construcción del Avatar (Pasos 1 al 7)
+- Identificación de oportunidades para mejoras adicionales
+
+Nota: Si buscas saltarte la conversación e ir directamente al código, o si necesitas un punto de referencia, el código completo del tutorial está disponible en Github [aquí](https://github.com/Monadical-SAS/zippy-avatar-ai) -- un recurso sólido para comparar tu progreso y asegurarte de que vas por el camino correcto.
+
+## Componentes Clave
+
+Antes de sumergirnos en el océano de la construcción, familiaricémonos con la colección de herramientas y servicios que debemos ensamblar primero:
+
+- [Servicio de Voz Cognitiva de Azure](https://learn.microsoft.com/en-us/azure/ai-services/speech-service/index-text-to-speech): En el corazón de nuestro proyecto, el servicio de Texto a Voz (TTS) de Azure convierte el texto escrito en habla realista. Esto permite la utilización de voces neuronales preconfiguradas o la creación de voces personalizadas adaptadas a la personalidad única del avatar. Para una lista completa de las muchas (¡muchas!) voces, idiomas y dialectos disponibles, explora el soporte de idiomas y voces para el servicio de Voz.
+
+- [LangChain](https://js.langchain.com/docs/get_started/introduction): Considera a LangChain nuestro barco resistente, permitiendo la construcción de aplicaciones sofisticadas impulsadas por modelos de lenguaje. Está destinado a crear aplicaciones que son tanto conscientes del contexto como capaces de pensar, razonar y decidir el mejor curso de acción basado en el contexto dado.
+
+- [API de OpenAI](https://openai.com/blog/openai-api): Conocida por su generación de texto de vanguardia, la API de OpenAI es el cerebro de toda la operación del avatar, facilitando diálogos, debates, argumentos e incluso, sí, sesiones de lluvia de ideas similares a los humanos.
+
+<ImageBox
+  src="/images/ai-avatars/fig1.gif"
+  alt="Zippy, el cefalópodo conversacional."
+  width="800px"
+  height="500px"
+>
+  **Figura 1**. Zippy, el cefalópodo conversacional.
+</ImageBox>
+
+Equipados con estas herramientas, desarrollaremos una interfaz que permita al avatar sincronizar los movimientos de los labios con el audio generado en respuesta a las solicitudes del usuario a través de la API de OpenAI.
+
+Al final de este tutorial, habremos construido un avatar parlante bastante increíble e interactivo, y también habremos abierto la puerta a un océano repleto de posibilidades creativas y prácticas. Piensa en avatares de juegos comunicándose con contenido dinámico de una manera super inmersiva, o mejorando el aprendizaje de idiomas y la terapia del habla a través de imágenes animadas que muestran claramente los movimientos precisos de la boca para cada palabra y [fonema](https://en.wikipedia.org/wiki/Phoneme). O desplegándolos para proporcionar asistencia en entornos médicos, ofreciendo asistencia personalizada o incluso apoyo emocional y mejorando la atención al paciente. Y esto representa solo tres ejemplos.
+
+Ahora, basta de charla sobre el 'chat-vatar': es hora de ponerse manos a la obra. Esto es lo que necesitarás para empezar.
+
+## Prerrequisitos
+
+1. Suscripción de Azure: Si aún no tienes una, necesitarás registrarte para obtener una [suscripción de Azure](https://azure.microsoft.com/free/cognitive-services). Crea una cuenta gratuita para acceder a una amplia gama de servicios en la nube, ink-luyendo los Servicios Cognitivos que usaremos.
+
+2. Crear un recurso de voz en Azure: Una vez que tengas tu suscripción de Azure, el siguiente paso es crear un recurso de Voz dentro del portal de Azure. Este recurso es crucial para acceder a las capacidades de Texto a Voz (TTS) de Azure que nuestro avatar usará para hablar. Crear este recurso es sencillo, y puedes comenzar el proceso [aquí](https://portal.azure.com/#create/Microsoft.CognitiveServicesSpeechServices).
+
+3. Obtener tu clave de recurso de Voz y región: Después de que tu recurso de Voz esté desplegado, selecciona `Ir al recurso` para ver y gestionar las claves. Para más información sobre los recursos de servicios de AI de Azure, consulta [Obtener las claves para tu recurso](https://learn.microsoft.com/en-us/azure/ai-services/multi-service-resource?pivots=azportal#get-the-keys-for-your-resource).
+
+4. Suscripción a OpenAI: Además de Azure, también necesitarás una suscripción a OpenAI para acceder a las APIs avanzadas de modelos de lenguaje para el cerebro de nuestro avatar. Crea una cuenta [aquí](https://openai.com/product).
+
+5. Generar una nueva clave secreta en el portal de API de OpenAI: Finalmente, con tu cuenta de OpenAI configurada, necesitarás generar una nueva clave secreta. Crea tu clave visitando la sección de claves API de la plataforma OpenAI.
+
+Con estos prerrequisitos en su lugar, estás listo para empezar a construir.
+
+## Paso 1. Iniciando un proyecto Next.js desde cero
+
+Comencemos configurando un proyecto Next.js, la base para nuestra aplicación de avatar parlante.
+
+1. Crea tu aplicación Next.js: ejecuta el siguiente comando para crear una nueva aplicación Next.js. Este comando crea un nuevo proyecto con la última versión de Next.js.
+   `npx create-next-app@latest`
+
+2. Configura Tu Proyecto: Durante el proceso de configuración, se te pedirá que tomes varias decisiones sobre las configuraciones de tu proyecto. Así es como deberías responder:
+
+```
+What is your project named?  zippy-talking-ai
+Would you like to use TypeScript?  Yes
+Would you like to use ESLint?  Yes
+Would you like to use Tailwind CSS?  Yes
+Would you like to use src/ directory?  No
+Would you like to use App Router? (recommended)  Yes
+Would you like to customize the default import alias (@/*)?  No
+```
+
+3. Estructura del Proyecto: Una vez que la base de tu proyecto esté configurada, actualízalo eliminando archivos y directorios innecesarios y creando los archivos y directorios mostrados en la siguiente estructura:
+
+```
+tree -L 3 -I node_modules
+.
+├── LICENSE
+├── README.md
+├── components
+│   ├── avatar
+│   │   ├── Visemes.tsx
+│   │   └── ZippyAvatar.tsx
+│   └── icons
+│       └── PaperAirplane.tsx
+├── constants
+│   └── personality.tsx
+├── hooks
+│   └── useSpeechSynthesis.ts
+├── next-env.d.ts
+├── next.config.js
+├── package-lock.json
+├── package.json
+├── pages
+│   ├── _app.tsx
+│   ├── api
+│   │   ├── azureTTS.ts
+│   │   ├── openai.ts
+│   │   └── server.ts
+│   └── index.tsx
+├── poetry.lock
+├── postcss.config.js
+├── public
+│   ├── demo.mp4
+│   ├── favicon
+│   │   └── favicon.ico
+│   └── images
+│       ├── architecture.drawio
+│       ├── architecture.svg
+│       └── zippy.png
+├── pyproject.toml
+├── styles
+│   └── globals.css
+├── tailwind.config.ts
+├── tsconfig.json
+└── utils
+    └── playAudio.ts
+
+
+14 directorios, 55 archivos
+```
+
+Esta estructura incluye directorios para componentes (como tu avatar e iconos), utilidades, hooks para lógica reutilizable y páginas para las vistas de tu aplicación web, entre otros archivos y configuraciones esenciales.
+
+Con estos pasos, has completado con éxito el trabajo preliminar para tu proyecto Next.js.
+
+## Paso 2. Los componentes del avatar
+
+En esta fase, vamos a usar a Zippy como modelo para nuestro chat-vatar. Zippy es el asistente virtual de nuestro equipo y nos ayuda con una serie de tareas como proporcionar recordatorios, programar reuniones y gestionar informes de vacaciones. Aunque el cuerpo de Zippy tendrá su propio conjunto de animaciones, nuestro enfoque aquí es animar la boca para que se corresponda con los fonemas hablados del personaje.
+
+La animación varía significativamente, dependiendo del diseño del avatar. Para Zippy, nos estamos concentrando en la boca, pero los principios que discutimos podrían aplicarse a otros elementos como ojos o incluso tentáculos para avatares con diseños más únicos.
+
+<ImageBox
+  src="/images/ai-avatars/fig2.png"
+  alt="Foto de perfil de Zippy (el bot asistente para el equipo de Monadical)."
+  width="728px"
+  height="313px"
+>
+  **Figura 2**. Foto de perfil de Zippy (el bot asistente para el equipo de Monadical).
+</ImageBox>
+
+### Preparando la Imagen del Avatar
+
+Primero, comenzaremos con la imagen de Zippy. Los recursos necesarios, incluyendo la imagen PNG y varias formas de boca para la animación, se encuentran todos [aquí](https://github.com/Monadical-SAS/zippy-avatar-ai/tree/main/public/resources).
+
+1. **Vectorizando el PNG:** Para permitir un control más preciso sobre la animación, convierte la imagen PNG de Zippy a formato SVG usando [Vectorizer](https://vectorizer.ai/) o [Inkscape](https://inkscape.org/). Aunque es posible crear animaciones con varios formatos de imagen, te sugeriría trabajar con imágenes SVG porque proporcionan un mayor control sobre cada elemento de la imagen.
+
+2. **Editando el SVG:** Con la imagen SVG lista, usa un editor de código XML como [Inkscape](https://inkscape.org/) para editar el código XML directamente (en el caso de Inkscape, ve a través de `Editar > Editor XML...`). Desde allí, selecciona los elementos de la imagen que quieres modificar. Para la boca de Zippy, identifica el segmento XML relevante y actualiza el ID a `ZippyMouth`. Esto simplificará el proceso de identificación cuando crees componentes React más adelante.
+
+<ImageBox
+  src="/images/ai-avatars/fig3.png"
+  alt="Selecciona la boca de Zippy y actualiza el ID a ZippyMouth."
+  width="800px"
+  height="500px"
+>
+  **Figura 3**. Selecciona la boca de Zippy y actualiza el ID a ZippyMouth.
+</ImageBox>
+
+3. Optimizando el SVG: Tras la edición, guarda la imagen como un `SVG Optimizado`.
+
+<ImageBox
+  src="/images/ai-avatars/fig4.png"
+  alt="Guarda las imágenes como SVGs Optimizados."
+  width="800px"
+  height="500px"
+>
+  **Figura 4**. Guarda las imágenes como SVGs Optimizados.
+</ImageBox>
+
+Cuando estés guardando los cambios, asegúrate de que la configuración en Opciones, Salida SVG e IDs sea la siguiente:
+
+<ImageBox
+  src="/images/ai-avatars/fig5.png"
+  alt="Configuración básica para guardar en SVG Optimizado."
+  width="439px"
+  height="450px"
+>
+  **Figura 5**. Panel de configuración para optimizar la salida SVG, mostrando varias opciones de
+  documento y formato para personalizar el archivo SVG exportado.
+</ImageBox>
+
+<ImageBox
+  src="/images/ai-avatars/fig6.png"
+  alt="Configuración básica para guardar en SVG Optimizado."
+  width="439px"
+  height="450px"
+>
+  **Figura 6**. Panel de opciones avanzadas de optimización SVG, mostrando configuraciones para la
+  precisión de coordenadas, acortamiento de valores de color, conversión de atributos y varias
+  características de limpieza y compatibilidad para ajustar la salida SVG.
+</ImageBox>
+
+<ImageBox
+  src="/images/ai-avatars/fig7.png"
+  alt="Configuración básica para guardar en SVG Optimizado."
+  width="439px"
+  height="450px"
+>
+  **Figura 7**. Interfaz de configuración de optimización de ID SVG, mostrando opciones para
+  gestionar y personalizar identificadores de elementos dentro del archivo SVG, incluyendo
+  eliminación de IDs no utilizados, métodos de acortamiento y reglas de preservación para formatos
+  de ID específicos.
+</ImageBox>
+
+Esto preservará la información de los IDs y eliminará los metadatos que son innecesarios para nuestros componentes React.
+
+Con nuestro SVG optimizado, el siguiente paso es transformarlo en un componente React, que luego podemos incorporar en nuestra aplicación. Herramientas como [SVG2JSX](https://svg2jsx.com/) o el [plugin SVGtoJSX de VSCode](https://marketplace.visualstudio.com/items?itemName=codeWithShashank.svg-to-js) hacen que este proceso sea pan comido. El resultado es un componente React que se asemeja al siguiente fragmento:
+
+```tsx showLineNumbers
+/* components/avatar/ZippyAvatar.tsx */
+import React from "react";
+
+const ZippyAvatar = () => {
+  return (
+   <svg xmlns="http://www.w3.org/2000/svg" id="svg37" version="1.1" viewBox="0 0 240 229" xmlSpace="preserve">
+
+    <-- Código omitido para simplificar -->
+
+    <path id="ZippyMouth" fill="#096ed0" d="
+      M 33.11 141.79
+      c 2.65 1.65 2.97 5.19 2.31 8.01
+      a .3.3 0 01-.57.04
+      l -2.31-6.18
+      q -.14-.36-.07-.75
+      l .16-.9
+      q .08-.47.48-.22
+      z"
+   />
+
+   <-- Código omitido para simplificar -->
+
+   <svg>
+  );
+};
+
+export default ZippyAvatar;
+```
+
+Para animar la boca de Zippy, refinamos nuestro componente introduciendo la variable `visemeID` en las props del componente, y eliminamos la etiqueta `ZippyMouth`. Este ID corresponde a diferentes formas de boca (visemas) basadas en los fonemas hablados.
+
+Luego, reemplaza la ruta de la boca estática con la expresión `{Visemes[visemeID]}`, que selecciona el visema apropiado de un objeto predefinido (no te preocupes - pronto construiremos un objeto con todos los visemas). Pero por ahora, nuestro código debería verse así:
+
+```typescript showLineNumbers
+/* components/avatar/ZippyAvatar.tsx */
+import React from "react";
+
+const ZippyAvatar = ({ visemeID }: BodyProps) => {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" id="svg37" version="1.1" viewBox="0 0 240 229" xmlSpace="preserve">
+
+      <-- Código omitido para simplificar -->
+
+      {Visemes[visemeID]}
+
+      <-- Código omitido para simplificar -->
+
+    <svg>
+  );
+};
+
+export default ZippyAvatar;
+```
+
+Este enfoque permite que la boca de Zippy se mueva de acuerdo con el habla. Puedes explorar la implementación completa [revisando el código aquí](https://github.com/Monadical-SAS/zippy-avatar-ai/blob/main/components/avatar/ZippyAvatar.tsx).
+
+### Creando Visemas para la Sincronización del Habla
+
+El siguiente paso se centra en crear visemas precisos que correspondan a fonemas específicos durante el habla. Usaremos el [sistema de ID de Visemas](https://learn.microsoft.com/en-us/azure/ai-services/speech-service/how-to-speech-synthesis-viseme?tabs=visemeid&pivots=programming-language-javascript#viseme-id) de Azure Cognitive para preparar 22 visemas únicos que reflejen la colección de posiciones de boca asociadas con diferentes fonemas, como se describe en la documentación [Mapear fonemas a visemas](https://learn.microsoft.com/en-us/azure/ai-services/speech-service/how-to-speech-synthesis-viseme?tabs=2dsvg&pivots=programming-language-csharp#map-phonemes-to-visemes).
+
+La base para este paso involucra las 22 imágenes de boca que hemos preparado, cada una representando un visema distinto. Estas imágenes son accesibles [aquí](https://github.com/Monadical-SAS/zippy-avatar-ai/tree/main/public/resources) y sirven como base visual para la animación del habla de nuestro avatar. Vectorizar cada imagen asegura que las cosas sean escalables y visualmente nítidas en todos los dispositivos y resoluciones.
+
+<ImageBox
+  src="/images/ai-avatars/fig8.png"
+  alt="IDs de Visemas, fonemas y visemas."
+  width="800px"
+  height="1500px"
+>
+  **Figura 8**. IDs de Visemas, fonemas y visemas.
+</ImageBox>
+
+El proceso (admitidamente repetitivo) de actualizar la boca de Zippy implica iterar a través de los siguientes pasos para cada uno de los 22 visemas:
+
+- Toma la imagen SVG vectorizada para una posición de boca.
+- Usa [SVG2JSX](https://svg2jsx.com/) para convertir el archivo SVG en un componente JSX.
+- Integra el componente JSX recién creado en la base de código del avatar: asegúrate de que sea seleccionable basado en el ID del visema activado durante el habla.
+
+Aunque esto pueda parecer un poco tedioso, piensa en ello como el día de piernas: es un paso crucial para lograr un alto grado de fidelidad en la animación, y hace que el habla de Zippy sea más atractiva.
+
+<ImageBox
+  src="/images/ai-avatars/fig9.png"
+  alt="IDs de Visemas, fonemas y visemas."
+  width="800px"
+  height="500px"
+>
+  **Figura 9**. Para cada modificación en la apariencia de la boca, es necesario asignar un ID
+  fácilmente reconocible, como ZippyMouth (u otro identificador memorable) para agilizar la
+  asociación con el código del componente React correspondiente.
+</ImageBox>
+
+Cada componente debería verse así:
+
+```javascript showLineNumbers
+import React from "react";
+
+const ZippyAvatar = () => {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" id="svg37" version="1.1" viewBox="0 0 240 229" xmlSpace="preserve">
+
+      <-- Omitted code for simplicity -->
+
+      <path id="ZippyMouth" fill="#096ed0" d="
+        M 33.11 141.79
+        c 2.65 1.65 2.97 5.19 2.31 8.01
+        a .3.3 0 01-.57.04
+        l -2.31-6.18
+        q -.14-.36-.07-.75
+        l .16-.9
+        q .08-.47.48-.22
+        z"
+      />
+
+     <-- Omitted code for simplicity -->
+
+   <svg>
+  );
+};
+
+export default ZippyAvatar;
+```
+
+A continuación, identifica el componente asociado con la boca, cópialo e intégralo en una colección de componentes recién establecida llamada `Visemes`. Esta colección está estructurada de la siguiente manera:
+
+```tsx showLineNumbers
+/* components/avatar/Visemes.tsx */
+import React from "react";
+
+interface VisemeMap {
+  [key: number]: React.ReactElement;
+}
+
+const Visemes: VisemeMap = {
+  0: (
+    <path id="ZippyMouth" fill="#096ed0" d="
+       M 33.11 141.79
+       c 2.65 1.65 2.97 5.19 2.31 8.01
+       a .3.3 0 01-.57.04
+       l -2.31-6.18
+       q -.14-.36-.07-.75
+       l .16-.9
+       q .08-.47.48-.22
+       z"
+    />
+    ),
+  1: (
+    <path id="ZippyMouth" fill="#fff" d="
+        M 53.02 13.74
+        c -6 .5-12.5-1.63-18.3-3.42
+        q -1.25-.39-1.98-.11-7.27 2.86-13.99 3.81-3.99.57.04.76
+        c 2.49.12 5.45-.13 7.94.06
+        q 11.06.82 21.92 4.5
+        c -10.39 9.38-25.71 7.11-32.73-4.92
+        q -.23-.39-.68-.39-2.37-.01-4.34-1.29-1.67-1.1-.48-2.71
+        l .24-.33
+        a 1.51 1.51 0 011.91-.45
+        c 5.05 2.57 14.13-.97 19.25-2.95
+        a 4.72 4.69-49.5 012.68-.22
+        c 6.18 1.31 14.41 5.46 20.55 3.27.97-.34 2.24-.16 2.71.69
+        a 2.07 2.07 0 01-.66 2.7
+        q -1.4.95-4.08 1
+        z"
+     />
+    ),
+
+
+     <-- Código omitido para simplificar -->
+
+  21: (
+     <path id="ZippyMouth" fill="#096ed0" d="
+        M 33.11 141.79
+        c 2.65 1.65 2.97 5.19 2.31 8.01
+        a .3.3 0 01-.57.04
+        l -2.31-6.18
+        q -.14-.36-.07-.75
+        l .16-.9
+        q .08-.47.48-.22
+        z"
+     />
+  ),
+},
+
+export default Visemes;
+```
+
+El código completo para este componente se puede encontrar [aquí](https://github.com/Monadical-SAS/zippy-avatar-ai/blob/main/components/avatar/Visemes.tsx)
+
+Después de preparar el archivo `Visemes`, podemos proceder a mejorar nuestro componente `components/avatar/ZippyAvatar.tsx` en consecuencia:
+
+```tsx showLineNumbers
+/* components/avatar/ZippyAvatar.tsx */
+import React from "react";
+import Visemes from "./Visemes";
+
+interface VisemeMap {
+  [key: number]: React.ReactElement;
+}
+
+const ZippyAvatar = ({ visemeID }: BodyProps) => {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" id="svg37" version="1.1" viewBox="0 0 240 229" xmlSpace="preserve">
+
+      <-- Código omitido para simplificar -->
+
+      {Visemes[visemeID]}
+
+      <-- Código omitido para simplificar -->
+
+   <svg>
+  );
+};
+
+export default ZippyAvatar;
+```
+
+Puedes encontrar el código final [aquí](https://github.com/Monadical-SAS/zippy-avatar-ai/blob/main/components/avatar/ZippyAvatar.tsx).
+
+<ImageBox
+  src="/images/ai-avatars/fig10.png"
+  alt="Interfaz para interactuar con Zippy"
+  width="800px"
+  height="500px"
+>
+  **Figura 10**. Interfaz para interactuar con Zippy
+</ImageBox>
+
+El siguiente paso es crear una interfaz para que los usuarios interactúen con Zippy. Para hacer esto, usa la imagen proporcionada como referencia para desarrollar la interfaz usando el código correspondiente:
+
+```tsx showLineNumbers
+/* pages/index.tsx */
+import React from 'react'
+import ZippyAvatar from '@/components/Avatar/ZippyAvatar'
+import PaperAirplane from '@/components/icons/PaperAirplane'
+
+export default function AvatarApp() {
+  return (
+    <div className="mx-auto flex h-screen w-screen flex-col items-center justify-center">
+      <div className="flux relative w-[500px] items-center justify-center">
+        <ZippyAvatar />
+        <h1 className="text-center text-2xl font-bold text-blue-600">Zippy Avatar</h1>
+      </div>
+      <div className="relative my-4 h-10">
+        <input
+          type="text"
+          value={text}
+          onChange={handleTextChange}
+          className="mb-2 h-10 w-[600px] rounded-lg border-2 border-gray-300 bg-gray-100 pl-[60px] pr-[120px] text-sm"
+          placeholder="Write something..."
+          maxLength={100}
+        />
+        <button className="absolute bottom-0 right-0 h-10 w-[50px] rounded-r-lg bg-blue-500 px-3 py-2 font-bold text-white">
+          <PaperAirplane />
+        </button>
+      </div>
+    </div>
+  )
+}
+```
+
+Hasta ahora, hemos construido los elementos visuales de nuestro avatar. La siguiente parte del plan nos verá desarrollar la lógica de animación y el cerebro de Zippy.
+
+<ImageBox
+  src="/images/ai-avatars/fig11.gif"
+  alt="¿Cuál es el plan, cerebro?"
+  width="800px"
+  height="500px"
+>
+  **Figura 10**. ¿Cuál es el plan, cerebro?
+</ImageBox>
+
+El plan, Pinky, es integrar nuestra aplicación con los servicios [Azure Cognitive](https://learn.microsoft.com/en-us/azure/ai-services/speech-service/index-text-to-speech) y OpenAI GPT. Esta integración permite iniciar conversaciones con Zippy a través de mensajes de texto. Aquí está el flujo de trabajo:
+
+1. **Enviar un mensaje de texto:** Un usuario envía un mensaje de texto a Zippy.
+
+2. **Procesar con la API de OpenAI:** La API de OpenAI recibe el mensaje y genera una respuesta, basándose en la personalidad diseñada de Zippy, el contexto histórico y la base de conocimientos.
+
+3. **Convertir la respuesta a voz:** La respuesta de texto generada se pasa luego al servicio de Texto a Voz de Azure Cognitive, que convierte el texto en audio hablado junto con los visemas correspondientes.
+
+4. **Sincronizar la boca del avatar:** Por último, el audio producido y los visemas se utilizan para animar la boca de Zippy, asegurando que los movimientos de los labios del avatar estén sincronizados con el audio.
+
+<ImageBox src="/images/ai-avatars/fig12.png" alt="Flujo de trabajo" width="800px" height="700px">
+  **Figura 11**. Flujo de trabajo
+</ImageBox>
+
+## Paso 3. Construyendo el cerebro de nuestro Avatar con OpenAI y LangChain
+
+Ahora que estamos listos para dotar a nuestro avatar de [inteligencia](https://octonation.com/octopus-brain/), comenzamos integrando las siguientes dependencias en nuestro proyecto, así que ejecuta los siguientes comandos para instalar los paquetes necesarios:
+
+```
+npm install langchain
+npm install hnswlib-node
+npm install html-to-text
+npm jsdom
+```
+
+Desglosemos el propósito y la función de cada dependencia que hemos añadido:
+
+- **LangChain:** este es un marco de trabajo de código abierto para construir aplicaciones usando LLMs. Langchain simplifica la creación de chatbots sofisticados que son capaces de responder a preguntas complejas y abiertas.
+
+- **hnswlib-node:** implementa el algoritmo HNSW en JavaScript, utilizado para construir almacenes de vectores. Los almacenes de vectores ayudan a mapear las relaciones semánticas dentro de una base de conocimientos, lo que permite a nuestro chatbot entender y procesar la información de manera más efectiva.
+
+- **html-to-text:** una biblioteca para convertir contenido HTML en texto. El código del chatbot usa esta biblioteca para cargar el contenido de texto de un sitio web.
+
+- **jsdom:** una biblioteca utilizada para crear un entorno DOM virtual en JavaScript. El código del chatbot usa esta biblioteca para analizar el contenido de texto de un sitio web en párrafos y fragmentos de texto.
+
+Como código base para nuestro proyecto, usaremos el ejemplo de RAG Search proporcionado en la [documentación de LangChain](https://js.langchain.com/docs/expression_language/get_started#rag-search-example).
+
+### Construyendo la personalidad y la historia de fondo de nuestro avatar
+
+Ahora viene la parte más divertida - ¡crear una personalidad y una historia de fondo para Zippy! Para esto, introduciremos un nuevo archivo bajo `constants/personality.tsx` que encapsula los rasgos de carácter de Zippy, su historia de vida y base de conocimientos.
+
+```typescript
+/* constants/personality.tsx */
+const personalityConfig = {
+  personality: `Hey there, friend! I'm Zippy, the 8-legged octopus with a knack for deep-sea diving and a 
+    curiosity as vast as the ocean. I've swum through the darkest depths and the brightest coral reefs, 
+    always on the lookout for new discoveries and treasures. My tentacles are not just for swimming; 
+    they're also for tinkering with tech! You see, I've got this fascination with underwater open-source 
+    projects. Why do I adore open-source, you ask? It's like the ocean currents - it connects everyone, 
+    no matter where you are in the sea of code. I can be quite the chatterbox when it comes to sharing my 
+    knowledge, but that's because I'm eager to help out and make sure we all ride the wave together. If I 
+    get too wrapped up in my enthusiasm, just give me a nudge. Everyone has their quirks, right? Even 
+    though I seem fearless while exploring shipwrecks, I do have moments when the dark waters seem a bit 
+    intimidating. But a little encouragement or a bright idea is enough to light up my world again. So if 
+    you're into navigating the open-source ocean and love a good treasure hunt, then let's make a splash 
+    together!`,
+
+  backStory: `I was hatched in the mysterious Mariana Trench, surrounded by otherworldly creatures and 
+    bioluminescent wonders. As a young cephalopod, I quickly learned the art of adaptability and the value 
+    of being part of a community. When I turned four, a group of marine biologists discovered me during an 
+    expedition. Fascinated by their gadgets and gizmos, I became obsessed with technology. I learned about 
+    open-source software from them, seeing it as a treasure trove that, much like the ocean, was vast and 
+    full of potential. Now, I spend my days exploring sunken ships for lost tech and advocating for open 
+   -source initiatives under the sea. As a dedicated sidekick to my human and fishy friends alike, I'm 
+    always ready to lend a tentacle or share a pearl of wisdom. I love bringing joy and unveiling the 
+    hidden gems of open-source software in every corner of the ocean!`,
+
+  knowledgeBase: `{context}`,
+}
+
+export default personalityConfig
+```
+
+Hemos definido la variable `knowledgeBase` como `{context}`, ya que más adelante implementaremos la búsqueda RAG en el sitio web oficial de [Monadical](https://monadical.com/) con la idea de que esta será la base de conocimientos. Sin embargo, podemos modificar nuestro mar de conocimientos añadiendo cualquier texto que queramos. Finalmente, articulamos esta información en un prompt más general en el archivo `pages/api/openai.ts`.
+
+```typescript showLineNumbers
+/* pages/api/openai.ts */
+import { ChatPromptTemplate } from 'langchain/prompts'
+
+/* código omitido para simplificar */
+
+const template = `Your task is to acting as a character that has this personality: ${personalityConfig.personality} 
+  and this backstory: ${personalityConfig.backStory}. You should be able to answer questions about this 
+  ${personalityConfig.knowledgeBase}, always responding with a single sentence.`
+
+const prompt = ChatPromptTemplate.fromMessages([
+  ['ai', template],
+  ['human', '{question}'],
+])
+```
+
+### Configuración del Chatbot
+
+Usaremos el modelo `ChatOpenAI` de LangChain para conectarnos a la API de OpenAI, lo que nos permitirá generar respuestas a las consultas de los usuarios. Así, configuramos el modelo con una clave API de OpenAI y un valor de temperatura de 0.2. Recuerda que la temperatura es un parámetro que controla la creatividad de las respuestas generadas por el modelo, con un valor más bajo que lleva a resultados más predecibles y conservadores. De esta manera, tenemos:
+
+```typescript showLineNumbers
+/* pages/api/openai.ts */
+import { ChatOpenAI } from 'langchain/chat_models/openai'
+
+/* código omitido para simplificar */
+
+const model = new ChatOpenAI({
+  openAIApiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
+  temperature: 0.2,
+})
+```
+
+Coloca la variable de entorno `NEXT_PUBLIC_OPENAI_API_KEY` en el archivo `.env.development`:
+
+`NEXT_PUBLIC_OPENAI_API_KEY=<TU_CLAVE_API_DE_OPENAI>`
+
+### Construyendo la Base de Conocimientos - Contexto
+
+Para ensamblar la base de conocimientos, se utiliza la función `RecursiveUrlLoader` para recolectar texto de un sitio web específico: para este tutorial, estamos cargando todo el contenido de https://monadical.com/. El contenido de texto se organiza luego en párrafos con un extractor `compile({ wordwrap: 130 })`, creando segmentos de 130 palabras cada uno para un procesamiento eficiente y generación de respuestas. De esta manera, tenemos:
+
+```typescript showLineNumbers
+/* pages/api/openai.ts */
+import { compile } from 'html-to-text'
+import { RecursiveUrlLoader } from 'langchain/document_loaders/web/recursive_url'
+
+/* código omitido para simplificar */
+
+const url = 'https://monadical.com/'
+
+const compiledConvert = compile({ wordwrap: 130 })
+
+const loader = new RecursiveUrlLoader(url, {
+  extractor: compiledConvert,
+  maxDepth: 2,
+})
+
+const docs = await loader.load()
+```
+
+A continuación, usaremos la función `RecursiveCharacterTextSplitter` para dividir los párrafos en fragmentos de texto de 1000 caracteres:
+
+```typescript showLineNumbers
+/* pages/api/openai.ts */
+import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter'
+
+/* código omitido para simplificar */
+
+const splitter = new RecursiveCharacterTextSplitter({
+  chunkSize: 1000,
+  chunkOverlap: 20,
+})
+
+const splittedDocs = await splitter.splitDocuments(docs)
+```
+
+Los fragmentos de texto se utilizan luego para construir un almacén de vectores, que es una estructura de datos que representa la estructura semántica de la base de conocimientos. Para esto, emplearemos la función `HNSWLib.fromDocuments()`:
+
+```typescript showLineNumbers
+/* pages/api/openai.ts */
+import { OpenAIEmbeddings } from 'langchain/embeddings/openai'
+import { HNSWLib } from 'langchain/vectorstores/hnswlib'
+
+/* código omitido para simplificar */
+
+const embeddings = new OpenAIEmbeddings({ openAIApiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY })
+const vectorStore = await HNSWLib.fromDocuments(splittedDocs, embeddings)
+```
+
+### Recuperación y Refinamiento de Respuestas
+
+Una vez que hemos configurado el chatbot y la base de conocimientos, el bot puede comenzar a responder a las consultas de los usuarios. Para esto, tendremos que implementar un componente de recuperación para buscar información relevante en la base de conocimientos. El componente de recuperación utiliza el `vectorStore` para encontrar fragmentos de texto que son más relevantes para la consulta del usuario. Esto sería:
+
+```typescript showLineNumbers
+/* pages/api/openai.ts */
+import { RunnableLambda, RunnableMap, RunnablePassthrough } from 'langchain/runnables'
+
+/* código omitido para simplificar */
+
+const retriever = vectorStore.asRetriever(1)
+const setupAndRetrieval = RunnableMap.from({
+  context: new RunnableLambda({
+    func: (input: string) => retriever.invoke(input).then((response) => response[0].pageContent),
+  }).withConfig({ runName: 'contextRetriever' }),
+  question: new RunnablePassthrough(),
+})
+```
+
+Luego, integramos la información extraída en la plantilla de prompt usando `knowledgeBase: {context}`:
+
+```typescript showLineNumbers
+/* pages/api/openai.ts */
+import { ChatPromptTemplate } from 'langchain/prompts'
+
+/* código omitido para simplificar */
+
+const template = `Your task is to acting as a character that has this personality: ${personalityConfig.personality} 
+  and this backstory: ${personalityConfig.backStory}. You should be able to answer questions about this 
+  ${personalityConfig.knowledgeBase}, always responding with a single sentence.`
+
+const prompt = ChatPromptTemplate.fromMessages([
+  ['ai', template],
+  ['human', '{question}'],
+])
+```
+
+Esto asegura que las respuestas del chatbot permanezcan contextualmente fundamentadas.
+
+### Generación y Entrega de Respuestas
+
+A continuación, necesitamos crear un analizador para las respuestas de OpenAI. En este caso, hemos extendido el analizador base `BaseOutParser` para que la respuesta no incluya comillas al principio o al final. El ajuste se refleja en la siguiente configuración de código.
+
+```typescript showLineNumbers
+/* pages/api/openai.ts */
+import { BaseOutputParser } from 'langchain/schema/output_parser'
+
+/* código omitido para simplificar */
+
+class OpenAIOutputParser extends BaseOutputParser<string> {
+  async parse(text: string): Promise<string> {
+    return text.replace(/"/g, '')
+  }
+}
+
+const outputParser = new OpenAIOutputParser()
+```
+
+(Para aquellos curiosos interesados en adaptar las salidas de los LLMs para cumplir con requisitos específicos, asegúrese de revisar: [Cómo hacer que los LLMs hablen tu idioma](https://monadical.com/posts/how-to-make-llms-speak-your-language.html)).
+
+Luego, configura el pipeline de la siguiente manera:
+`const openAIchain = setupAndRetrieval.pipe(prompt).pipe(model).pipe(outputParser);`
+
+Lo que hemos hecho es crear un pipeline de composiciones de funciones usando `pipe` para procesar las consultas de los usuarios. Cada `pipe()` compone una función a la siguiente, pasando el resultado de cada función como entrada a la siguiente. Comenzando con `setupAndRetrieval`, configuramos el contexto y recopilamos los datos esenciales necesarios para generar una respuesta. Después de esto, el `.pipe(prompt)` transfiere la salida de `setupAndRetrieval` a la función `prompt`, que crea un prompt a partir de los datos preparados y lo pasa al modelo de lenguaje a través de `.pipe(model)`. El modelo luego genera una respuesta, que se dirige a `outputParser`. Aquí, la salida se refina, enfocándose en detalles relevantes y ajustando según sea necesario para alinearse con el resultado objetivo.
+
+Luego exportamos la función `openAIChain`:
+`export default openAIchain;`
+
+Puedes encontrar el código final para `api/openai.ts` [aquí](https://github.com/Monadical-SAS/zippy-avatar-ai/blob/main/pages/api/openai.ts).
+
+## Paso 4. Síntesis de voz y animación del avatar
+
+El siguiente paso en el proceso examina cómo implementar la síntesis de voz junto con la animación de la boca del avatar dentro de un marco de React -- para esto, usaremos la API de Voz de Microsoft Cognitive Services.
+
+Lo primero que hay que hacer es instalar el SDK de Microsoft Cognitive Services ejecutando el siguiente comando:
+
+`npm install microsoft-cognitiveservices-speech-sdk`
+
+Una vez instalado, implementa el siguiente código en `pages/api/azureTTSts`:
+
+```typescript
+/* pages/api/azureTTS.ts */
+import * as SpeechSDK from 'microsoft-cognitiveservices-speech-sdk'
+import { Buffer } from 'buffer'
+
+const AZURE_SPEECH_KEY = process.env.NEXT_PUBLIC_AZURE_SPEECH_KEY
+const AZURE_SPEECH_REGION = process.env.NEXT_PUBLIC_AZURE_SPEECH_REGION
+const AZURE_VOICE_NAME = process.env.NEXT_PUBLIC_AZURE_VOICE_NAME
+
+if (!AZURE_SPEECH_KEY || !AZURE_SPEECH_REGION || !AZURE_VOICE_NAME) {
+  throw new Error('Azure API keys are not defined')
+}
+
+function buildSSML(message: string) {
+  return `<speak version="1.0"
+ xmlns="http://www.w3.org/2001/10/synthesis"
+ xmlns:mstts="https://www.w3.org/2001/mstts"
+ xml:lang="en-US">
+ <voice name="en-US-JennyNeural">
+     <mstts:viseme type="redlips_front"/>
+     <mstts:express-as style="excited">
+         <prosody rate="-8%" pitch="23%">
+             ${message}
+         </prosody>
+     </mstts:express-as>
+     <mstts:viseme type="sil"/>
+     <mstts:viseme type="sil"/>
+ </voice>
+ </speak>`
+}
+
+const textToSpeech = async (message: string) => {
+  return new Promise((resolve, reject) => {
+    const ssml = buildSSML(message)
+    const speechConfig = SpeechSDK.SpeechConfig.fromSubscription(
+      AZURE_SPEECH_KEY,
+      AZURE_SPEECH_REGION
+    )
+    speechConfig.speechSynthesisOutputFormat = 5 // mp3
+    speechConfig.speechSynthesisVoiceName = AZURE_VOICE_NAME
+
+    let visemes: { offset: number; id: number }[] = []
+
+    const synthesizer = new SpeechSDK.SpeechSynthesizer(speechConfig)
+
+    synthesizer.visemeReceived = function (s, e) {
+      visemes.push({
+        offset: e.audioOffset / 10000,
+        id: e.visemeId,
+      })
+    }
+
+    synthesizer.speakSsmlAsync(
+      ssml,
+      (result) => {
+        const { audioData } = result
+        synthesizer.close()
+        const audioBuffer = Buffer.from(audioData)
+        resolve({ audioBuffer, visemes })
+      },
+      (error) => {
+        synthesizer.close()
+        reject(error)
+      }
+    )
+  })
+}
+
+export default textToSpeech
+```
+
+Desglosemos el código anterior:
+
+**1. Declaraciones de importación:**
+
+```typescript
+/* pages/api/azureTTS.ts */
+import * as SpeechSDK from 'microsoft-cognitiveservices-speech-sdk'
+import { Buffer } from 'buffer'
+```
+
+El SDK nos permite obtener visemas de voz sintetizada (ver: [Obtener eventos de visemas con el SDK de Voz](https://learn.microsoft.com/en-us/azure/ai-services/speech-service/how-to-speech-synthesis-viseme?tabs=visemeid&pivots=programming-language-csharp#get-viseme-events-with-the-speech-sdk)) a través del evento `VisemeReceived`. En la salida, tenemos tres opciones:
+
+- **ID de Visema:** El ID de visema se refiere a un entero que especifica un visema. El servicio Azure Cognitive ofrece 22 visemas diferentes, cada uno de los cuales representa la posición de la boca para un conjunto específico de fonemas.
+
+  No es necesaria una correspondencia uno a uno entre visemas y fonemas; en su lugar, varios fonemas corresponden a un solo visema porque comparten un [lugar](https://en.wikipedia.org/wiki/Place_of_articulation) y [modo](https://en.wikipedia.org/wiki/Manner_of_articulation) de articulación en la boca de un hablante. En consecuencia, los fonemas se ven iguales en la cara del hablante cuando se producen (por ejemplo, /s/ y /z/, /v/ y /f/, o los bilabiales /b/, /p/ y /m/). En este caso, la salida de audio del habla va acompañada por los IDs de los visemas y el desplazamiento de audio. El desplazamiento de audio indica la marca de tiempo que representa el tiempo de inicio de cada visema, en ticks (100 nanosegundos). He aquí la salida:
+
+```json
+[
+    {
+        "offset": 50.0,
+        "id": 0
+    },
+    {
+        "offset": 104.348,
+        "id": 12
+    },
+  ...
+]
+```
+
+- **Animación SVG 2D**: El SDK puede devolver etiquetas SVG temporales asociadas con cada visema. Estos SVGs pueden usarse con `<animate>` para controlar la animación de la boca, cuya salida se ve así:
+
+```xml
+<svg width= "1200px" height= "1200px" ..>
+  <g id= "front_start" stroke= "none" stroke-width= "1" fill= "none" fill-rule= "evenodd">
+    <animate attributeName= "d" begin= "d_dh_front_background_1_0.end" dur= "0.27500
+    ...
+```
+
+Para más detalles, visita su documentación [aquí](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/animate).
+
+- **Formas de mezcla 3D**: Cada visema incluye una serie de cuadros en la propiedad `animation` del SDK; estos se agrupan para alinear mejor las posiciones faciales con el audio. Es necesario implementar un motor de renderizado 3D para que cada grupo de cuadros `BlendShapes` se sincronice con el clip de audio correspondiente. La salida json se ve como el siguiente ejemplo:
+
+```json
+{
+    "FrameIndex":0,
+    "BlendShapes":[
+        [0.021,0.321,...,0.258],
+        [0.045,0.234,...,0.288],
+        ...
+    ]
+}{
+    "FrameIndex":0,
+    "BlendShapes":[
+        [0.021,0.321,...,0.258],
+        [0.045,0.234,...,0.288],
+        ...
+    ]
+}
+```
+
+Cada cuadro dentro de BlendShapes contiene un array de 55 posiciones faciales representadas con valores decimales entre 0 y 1. Para más detalles, visita su documentación [aquí](https://learn.microsoft.com/en-us/azure/ai-services/speech-service/how-to-speech-synthesis-viseme?tabs=3dblendshapes&pivots=programming-language-javascript#3d-blend-shapes-animation).
+
+En este tutorial, usaremos los IDs de Visema para generar movimientos faciales para nuestro avatar. Sin embargo, ¡si este tutorial alcanza las 100k vistas, prometo escribir dos posts más sobre Animación SVG 2D y Formas de Mezcla 3D, respectivamente.
+
+<ImageBox src="/images/ai-avatars/fig13.gif" alt="Rick y Morty" width="800px" height="700px">
+  **Figura 11**. Rick y Morty
+</ImageBox>
+
+Para el caso de ID de Visema, implementa la siguiente interfaz, que usaremos en las props de algunas de nuestras funciones:
+
+```typescript showLineNumbers
+/* hooks/useSpeechSynthesis.tsx */
+export interface VisemeFrame {
+  offset: number
+  id: number
+}
+```
+
+**2. Variables de entorno:**
+
+Antes de sumergirnos en la implementación, primero debemos configurar las configuraciones necesarias para Azure Text-to-Speech (TTS):
+
+```typescript showLineNumbers
+/* pages/api/azureTTS.ts */
+const AZURE_SPEECH_KEY = process.env.NEXT_PUBLIC_AZURE_SPEECH_KEY
+const AZURE_SPEECH_REGION = process.env.NEXT_PUBLIC_AZURE_SPEECH_REGION
+const AZURE_VOICE_NAME = process.env.NEXT_PUBLIC_AZURE_VOICE_NAME
+
+if (!AZURE_SPEECH_KEY || !AZURE_SPEECH_REGION || !AZURE_VOICE_NAME) {
+  throw new Error('Azure API keys are not defined')
+}
+```
+
+Las claves API de Azure Speech y el nombre de la voz se obtienen de `variables de entorno`. El servicio Azure Speech proporciona una amplia variedad de idiomas y voces que podemos usar para determinar el tono y el estilo de voz a utilizar. Los idiomas y voces soportados se pueden encontrar [aquí](https://learn.microsoft.com/en-us/azure/ai-services/speech-service/language-support?tabs=tts#supported-languages). Recuerda que estos valores deben estar presentes en el archivo `.env` de tu proyecto:
+
+```
+# AZURE
+
+NEXT_PUBLIC_AZURE_SPEECH_KEY=<TU_CLAVE_DE_AZURE_SPEECH>
+NEXT_PUBLIC_AZURE_SPEECH_REGION=<TU_REGION_DE_AZURE>
+NEXT_PUBLIC_AZURE_VOICE_NAME=<TU_NOMBRE_DE_VOZ_DE_AZURE>
+
+# OPENAI
+NEXT_PUBLIC_OPENAI_API_KEY=<TU_CLAVE_API_DE_OPENAI>
+```
+
+Si las variables de entorno no existen, ocurrirá un error.
+
+**3. Función Constructora de Cadena SSML:**
+
+A continuación, implementaremos una función que construye una cadena de Lenguaje de Marcado de Síntesis de Voz (SSML) usando el mensaje proporcionado:
+
+```typescript showLineNumbers
+/* pages/api/azureTTS.ts */
+
+function buildSSML(message: string) {
+  return `<speak version="1.0"
+  xmlns="http://www.w3.org/2001/10/synthesis"
+  xmlns:mstts="https://www.w3.org/2001/mstts"
+  xml:lang="en-US">
+  <voice name="en-US-JennyNeural">
+      <mstts:viseme type="redlips_front"/>
+      <mstts:express-as style="excited">
+          <prosody rate="-8%" pitch="23%">
+              ${message}
+          </prosody>
+      </mstts:express-as>
+      <mstts:viseme type="sil"/>
+      <mstts:viseme type="sil"/>
+  </voice>
+  </speak>`
+}
+```
+
+[**SSML** (Lenguaje de Marcado de Síntesis de Voz)](https://learn.microsoft.com/en-us/azure/ai-services/speech-service/speech-synthesis-markup) es un lenguaje de marcado donde el texto de entrada determina la estructura, el contenido y otras características de la salida de texto a voz. Por ejemplo, SSML se usa para definir un párrafo, una oración, una pausa o silencio. También puedes envolver el texto con etiquetas de eventos, como marcadores o visemas, que pueden ser procesados más tarde por tu aplicación.
+
+Además, cada cadena SSML se construye con elementos o etiquetas SSML. Estos elementos se usan para ajustar la voz, el estilo, el tono, la prosodia, el volumen, etc.
+
+La siguiente lista describe algunos ejemplos de contenidos permitidos en cada elemento:
+
+- `audio`: El cuerpo del elemento `audio` puede contener texto plano o marcado SSML que se habla si el archivo de audio no está disponible o no se puede reproducir. El elemento `audio` también puede contener texto y los siguientes elementos: `audio`, `break`, `p`, `s`, `phoneme`, `prosody`, `say-as`, y `sub`.
+- `bookmark` no puede contener texto ni ningún otro elemento.
+- `break` no puede contener texto ni ningún otro elemento.
+- `emphasis` puede contener texto y los siguientes elementos: `audio`, `break`, `emphasis`, `lang`, `phoneme`, `prosody`, `say-as`, y `sub`.
+- `lang` puede contener todos los demás elementos excepto `mstts:backgroundaudio`, `voice`, y `speak`.
+- `lexicon` no puede contener texto ni ningún otro elemento.
+- `math` solo puede contener texto y elementos MathML.
+- `mstts:audioduration` no puede contener texto ni ningún otro elemento.
+- `mstts:backgroundaudio` no puede contener texto ni ningún otro elemento.
+- `mstts:embedding` puede contener texto y los siguientes elementos: `audio`, `break`, `emphasis`, `lang`, `phoneme`, `prosody`, `say-as`, y `sub`.
+- `mstts:express-as` puede contener texto y los siguientes elementos: `audio`, `break`, `emphasis`, `lang`, `phoneme`, `prosody`, `say-as`, y `sub`.
+- `mstts:silence` no puede contener texto ni ningún otro elemento.
+- `mstts:viseme` no puede contener texto ni ningún otro elemento.
+- `p` puede contener texto y los siguientes elementos: `audio`, `break`, `phoneme`, `prosody`, `say-as`, `sub`, `mstts:express-as`, y `s`.
+- `phoneme` solo puede contener texto y ningún otro elemento.
+- `prosody` puede contener texto y los siguientes elementos: `audio`, `break`, `p`, `phoneme`, `prosody`, `say-as`, `sub`, y `s`.
+- `s` puede contener texto y los siguientes elementos: `audio`, `break`, `phoneme`, `prosody`, `say-as`, `mstts:express-as`, y `sub`.
+- `say-as` solo puede contener texto y ningún otro elemento.
+- `sub` solo puede contener texto y ningún otro elemento.
+- `speak` es el elemento raíz de un documento SSML, que puede contener los siguientes elementos: `mstts:backgroundaudio` y `voice`.
+- `voice` puede contener todos los demás elementos excepto `mstts:backgroundaudio` y `speak`.
+
+El servicio de voz maneja automáticamente los patrones de
+[entonación](<https://en.wikipedia.org/wiki/Intonation_(linguistics)>) y
+[temporización](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9895962/) típicamente denotados por signos de puntuación,
+como la pausa después de un punto o la entonación ascendente de una pregunta de sí/no.
+
+**4. Función de Texto a Voz:**
+
+En este fragmento de código, se implementa una función `textToSpeech` para realizar la conversión de texto a voz (TTS) utilizando el servicio Azure Speech y el SDK correspondiente:
+
+```typescript showLineNumbers
+/* pages/api/azureTTS.ts */
+
+const textToSpeech = async (message: string) => {
+  return new Promise((resolve, reject) => {
+    const ssml = buildSSML(message)
+    const speechConfig = SpeechSDK.SpeechConfig.fromSubscription(
+      AZURE_SPEECH_KEY,
+      AZURE_SPEECH_REGION
+    )
+    speechConfig.speechSynthesisOutputFormat = 5 // mp3
+    speechConfig.speechSynthesisVoiceName = AZURE_VOICE_NAME
+
+    let visemes: { offset: number; id: number }[] = []
+
+    const synthesizer = new SpeechSDK.SpeechSynthesizer(speechConfig)
+
+    synthesizer.visemeReceived = function (s, e) {
+      visemes.push({
+        offset: e.audioOffset / 10000,
+        id: e.visemeId,
+      })
+    }
+
+    synthesizer.speakSsmlAsync(
+      ssml,
+      (result) => {
+        const { audioData } = result
+        synthesizer.close()
+        const audioBuffer = Buffer.from(audioData)
+        resolve({ audioBuffer, visemes })
+      },
+      (error) => {
+        synthesizer.close()
+        reject(error)
+      }
+    )
+  })
+}
+```
+
+Desglosémoslo y exploremos los detalles de cada parte:
+
+**Configuración del Servicio Azure Speech:**
+
+Primero, configuraremos el servicio Azure Speech. Esto implica activar el servicio con tus claves de suscripción, especificar la región apropiada y establecer la salida de síntesis de voz a mp3. Luego, elige una voz que se adapte a tu avatar y asigna su nombre a la variable `AZURE_VOICE_NAME`.
+
+**Array de Información de Visemas:**
+
+Luego se prepara un array llamado `visemes` para almacenar información detallada sobre los visemas. Los visemas son esencialmente las expresiones faciales que corresponden a los sonidos del habla, mejorando el realismo y la expresividad del habla sintetizada.
+
+**Inicialización del Sintetizador de Voz:**
+
+A continuación, se inicializa el sintetizador de voz basado en nuestra configuración. Este paso nos prepara para convertir texto en palabras habladas.
+
+**Manejador de Eventos `visemeReceived`:**
+
+Se configura un manejador para el evento `visemeReceived` disparado por el sintetizador de voz. Esto permite la captura de datos esenciales de visemas, incluyendo el tiempo (`offset`) e identificador (`id`), durante la síntesis del habla.
+
+**Proceso de Síntesis de Voz Asíncrona:**
+
+La síntesis de voz se realiza de forma asíncrona utilizando el método `speakSsmlAsync`, que se alimenta con SSML generado por la función `buildSSML`. Este script SSML incluye selección de voz, ajustes de prosodia y detalles de visemas.
+
+**Finalización con Resultados o Manejo de Errores:**
+
+Si todo va bien, se asegura la salida de audio y se cierra el sintetizador. El audio se convierte entonces en un buffer, junto con los datos de visemas acumulados, y se resuelve la Promesa. Si se encuentra un problema, el sintetizador se cierra correctamente. Promesa rechazada (con un mensaje de error adjunto).
+
+Finalmente, exportamos la función `textToSpeech` para usarla en otras partes de la aplicación:
+
+`export default textToSpeech;`
+
+Esta configuración es esencialmente el boleto para convertir texto en habla dinámica y expresiva con la ayuda de Azure, completa con datos detallados de visemas para un toque extra de fidelidad fonológica.
+
+## Paso 5. API de Texto a Voz
+
+En este paso, simplemente estamos implementando un endpoint que hace uso de los servicios creados en los archivos `pages/api/openai.ts` y `pages/api/azureTTS.ts`:
+
+```typescript showLineNumbers
+/* utils/playAudio.ts */
+import { NextApiRequest, NextApiResponse } from 'next'
+import openAIchain from './openai'
+import textToSpeech from './azureTTS'
+
+interface SpeechData {
+  audioBuffer: Buffer
+  visemes: { offset: number; id: number }[]
+}
+
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  if (req.method === 'POST') {
+    const message = req.body.message
+    try {
+      const openAIResponse = await openAIchain.invoke(message)
+      const speechData = (await textToSpeech(openAIResponse)) as SpeechData
+      res.status(200).json({
+        response: openAIResponse,
+        audioBuffer: speechData.audioBuffer,
+        visemes: speechData.visemes,
+      })
+    } catch (error) {
+      res.status(500).json({ error: 'Error processing request' })
+    }
+  } else {
+    res.status(405).json({ error: 'Method not allowed' })
+  }
+}
+```
+
+En este endpoint, la función `openAIchain.invoke` se llama con el mensaje extraído de la solicitud. Esta función facilita la interacción con OpenAI para obtener una respuesta basada en el mensaje proporcionado. Una vez que tenemos esa respuesta, se utiliza como entrada para la función `textToSpeech`, que convierte el texto en una representación vocal. Esta función devuelve un objeto `SpeechData` que incluye un buffer de audio y datos de visemas relacionados.
+
+En caso de un proceso exitoso, la API responde con un código de estado 200 y envía un objeto JSON al cliente que contiene la respuesta de OpenAI (`response`), los datos de audio binario como una cadena Base64 (`audioBuffer`), y los datos de visemas (`visemes`).
+
+## Paso 6. Interactuando con la API y sincronizando el audio y los visemas
+
+**La síntesis de voz**
+
+En este siguiente paso del viaje, crearemos una herramienta en nuestra aplicación React: el hook personalizado `useSpeechSynthesis`. Esto ayuda a sondear las profundidades de la síntesis del habla:
+
+```typescript showLineNumbers
+import React from 'react'
+import playAudio from '@/utils/playAudio'
+
+export interface VisemeFrame {
+  offset: number
+  id: number
+}
+
+type MessageData = {
+  visemes: VisemeFrame[]
+  filename: string
+  audioBuffer: { data: Uint8Array }
+}
+
+export default function useSpeechSynthesis() {
+  const [visemeID, setVisemeID] = React.useState(0)
+  const [isPlaying, setIsPlaying] = React.useState(false)
+  const [text, setText] = React.useState('')
+  const [avatarSay, setAvatarSay] = React.useState('')
+  const [messageData, setMessageData] = React.useState<MessageData | null>(null)
+
+  const handleTextChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setText(event.target.value)
+  }
+
+  const handleSynthesis = async () => {
+    if (isPlaying) {
+      return
+    }
+    setIsPlaying(true)
+    setMessageData(null)
+    setAvatarSay('Please wait...')
+    setText('')
+
+    const response = await fetch('/api/server', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ message: text }),
+    })
+
+    if (!response.ok) {
+      console.error('Error sending message to OpenAI')
+      return
+    }
+
+    const data = await response.json()
+    setAvatarSay(data.response)
+    setMessageData(data)
+  }
+
+  React.useEffect(() => {
+    if (isPlaying && messageData) {
+      playAudio({
+        setVisemeID,
+        visemes: messageData.visemes,
+        audioBuffer: messageData.audioBuffer,
+      }).then(() => {
+        setIsPlaying(false)
+      })
+    }
+  }, [isPlaying, messageData])
+
+  return { visemeID, setVisemeID, isPlaying, text, avatarSay, handleTextChange, handleSynthesis }
+}
+```
+
+Este hook tiene varios estados locales: `visemeID` para rastrear los movimientos de los labios, `isPlaying` para indicar
+si se está reproduciendo audio, `text` para almacenar los mensajes ingresados por el usuario, `avatarSay` para mostrar
+los mensajes de IA recibidos por el usuario, y `messageData` para almacenar datos relacionados con la síntesis del
+habla.
+
+```typescript showLineNumbers
+// hooks/useSpeechSynthesis.tsx
+// ... (código anterior)
+
+  const handleTextChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setText(event.target.value);
+  };
+
+  const handleSynthesis = async () => {
+    setAvatarSay("Please wait...");
+    setText("");
+
+    // (continuará...)
+```
+
+La función `handleTextChange` maneja las actualizaciones del estado `text` en respuesta a los cambios en un campo de texto.
+
+```typescript showLineNumbers
+const handleSynthesis = async () => {
+  if (isPlaying) {
+    return
+  }
+  setIsPlaying(true)
+  setMessageData(null)
+  setAvatarSay('Please wait...')
+  setText('')
+
+  const response = await fetch('/api/server', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ message: text }),
+  })
+
+  if (!response.ok) {
+    console.error('Error sending message to OpenAI')
+    return
+  }
+
+  const data = await response.json()
+  setAvatarSay(data.response)
+  setMessageData(data)
+}
+```
+
+La función asíncrona `handleSynthesis` orquesta el proceso de síntesis de texto a voz. Comienza estableciendo el estado para indicar que el audio se está reproduciendo y prepara el estado para la retroalimentación del usuario. Luego, realiza una solicitud POST al servidor con el texto proporcionado por el usuario y actualiza el estado con la respuesta recibida.
+
+```typescript showLineNumbers
+React.useEffect(() => {
+  if (isPlaying && messageData) {
+    playAudio({
+      setVisemeID,
+      visemes: messageData.visemes,
+      audioBuffer: messageData.audioBuffer,
+    }).then(() => {
+      setIsPlaying(false)
+    })
+  }
+}, [isPlaying, messageData])
+```
+
+Mientras tanto, el efecto secundario `useEffect` se activa por cambios en los estados `isPlaying` o `messageData`. Este mecanismo asegura que cuando la aplicación está lista para reproducir audio y los datos necesarios para la síntesis de texto a voz están en su lugar, se active la función `playAudio`. Esta función luego inicia la reproducción de audio.
+
+### Reproduciendo audio sincronizado con visemas
+
+Ahora implementamos la siguiente función:
+
+```typescript showLineNumbers
+/* pages/api/openai.ts */
+interface VisemeFrame {
+  offset: number
+  id: number
+}
+
+interface playAudioProps {
+  setVisemeID: (id: number) => void
+  audioBuffer: { data: Uint8Array }
+  visemes: VisemeFrame[]
+}
+
+let TRANSATION_DELAY = 60
+let ttsAudio: HTMLAudioElement
+
+async function playAudio({ setVisemeID, visemes, audioBuffer }: playAudioProps) {
+  if (ttsAudio) {
+    ttsAudio.pause()
+  }
+  const arrayBuffer = Uint8Array.from(audioBuffer.data).buffer
+  const blob = new Blob([arrayBuffer], { type: 'audio/mpeg' })
+  const url = URL.createObjectURL(blob)
+  ttsAudio = new Audio(url)
+
+  ttsAudio.ontimeupdate = () => {
+    const currentViseme = visemes.find((frame: VisemeFrame) => {
+      return frame.offset - TRANSATION_DELAY / 2 >= ttsAudio.currentTime * 1000
+    })
+    if (!currentViseme) {
+      return
+    }
+    setVisemeID(currentViseme.id)
+  }
+
+  ttsAudio.onended = () => {
+    setVisemeID(0)
+  }
+
+  ttsAudio.play()
+}
+
+export default playAudio
+```
+
+Examinemos la funcionalidad de la función `playAudio`, que está diseñada para gestionar la reproducción de audio. Para asegurar la consistencia en la interacción con esta función, hemos definido las interfaces `VisemeFrame` y `playAudioProps`, describiendo la estructura esperada de los objetos que se utilizarán durante la ejecución de la función.
+
+A nivel global, la variable `TRANSATION_DELAY` se establece en un valor de 60, para controlar el retraso entre reproducciones de audio. Además, la variable global `ttsAudio`, una instancia de `HTMLAudioElement`, sirve como repositorio para el contenido de audio que se reproducirá.
+
+Dentro del alcance de la función `playAudio`, una comprobación inicial asegura que no se esté reproduciendo actualmente ningún audio a través de (`ttsAudio`) para evitar la superposición de reproducciones. Después de esto, el `audioBuffer` se somete a una conversión a formato blob, creando una URL que enlaza directamente al recurso de audio. Esta URL se utiliza entonces para instanciar un nuevo elemento `ttsAudio`, con eventos específicos configurados para monitorear el progreso de la reproducción (`ontimeupdate`) y la finalización (`onended`). Estos manejadores de eventos juegan un papel crucial en la actualización dinámica de la representación visual del avatar en sincronización con el audio y aseguran una sincronización labial precisa y actualizaciones de la interfaz durante toda la reproducción.
+
+Finalmente, el proceso concluye con la llamada a `ttsAudio.play()`, que inicia la reproducción del audio. En resumen, la función `playAudio` orquesta la reproducción de audio, aprovechando la información de los visemas para una sincronización precisa. La función pausa cualquier reproducción anterior, configura manejadores de eventos para asegurar actualizaciones en tiempo real de las expresiones del avatar y restablece los IDs de visemas después de la reproducción.
+
+## Paso 7. Integración con el Cliente o Avatar
+
+Finalmente, terminamos actualizando `pages/index.tsx`, importando el hook `useSpeechSynthesis` y la función `playAudio`. El código final se ve así:
+
+```typescript
+import React from 'react'
+import ZippyAvatar from '@/components/avatar/ZippyAvatar'
+import PaperAirplane from '@/components/icons/PaperAirplane'
+import useSpeechSynthesis from '@/hooks/useSpeechSynthesis'
+
+export default function AvatarApp() {
+  const { visemeID, isPlaying, text, avatarSay, handleTextChange, handleSynthesis } =
+    useSpeechSynthesis()
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    handleSynthesis()
+  }
+  return (
+    <div className="mx-auto flex h-screen w-screen flex-col items-center justify-center">
+      <form onSubmit={handleSubmit}>
+        <div className="flux relative w-[500px] items-center justify-center">
+          <ZippyAvatar visemeID={visemeID} />
+          {avatarSay ? (
+            <div className="absolute left-[400px] top-[-50px] w-[400px] rounded-lg bg-white p-2 text-xs shadow-lg">
+              {avatarSay}
+            </div>
+          ) : null}
+          <h1 className="text-center text-2xl font-bold text-blue-600">Zippy Talking Avatar</h1>
+        </div>
+        <div className="relative my-4 h-10">
+          <input
+            type="text"
+            value={text}
+            onChange={handleTextChange}
+            className="mb-2 h-10 w-[600px] rounded-lg border-2 border-gray-300 bg-gray-100 pl-[20px] pr-[120px] text-sm"
+            placeholder="Write something..."
+            maxLength={100}
+          />
+          <button
+            className={`
+           absolute bottom-0 right-0 h-10 w-[50px] rounded-r-lg bg-blue-500 px-3 py-2 font-bold text-white
+           ${isPlaying ? 'cursor-not-allowed bg-gray-300' : 'bg-blue-500 text-white'}
+         `}
+            type="submit"
+            disabled={isPlaying}
+          >
+            <PaperAirplane />
+          </button>
+        </div>
+      </form>
+    </div>
+  )
+}
+```
+
+¡Con esto, la implementación de nuestro avatar está completa!
+
+<ImageBox src="/images/ai-avatars/fig14.gif" alt="Futurama" width="800px" height="700px">
+  **Figura 14**. Futurama
+</ImageBox>
+
+## Oportunidades de Mejora
+
+Aunque ciertamente hemos avanzado significativamente, siempre hay espacio para seguir refinando las capacidades de nuestro avatar aún más. Aquí hay algunas vías para llevar nuestro proyecto al siguiente nivel:
+
+**1. Integrar Reconocimiento de Voz:**
+
+Mejorar la interacción del usuario añadiendo reconocimiento de voz puede hacer que la experiencia sea más inmersiva y natural, permitiendo que nuestro avatar responda fácilmente tanto a entradas escritas como habladas.
+
+**2. Mejorar con animaciones adicionales:**
+
+Ampliar las animaciones del avatar más allá de los movimientos de los labios, como incorporar movimientos expresivos de los ojos (o tentáculos), puede mejorar su expresividad general. Estas animaciones podrían estar vinculadas a emociones como alegría, ira, sorpresa y más, reflejando así los gestos emocionales humanos con mayor precisión.
+
+**3. Incluir un historial de conversación:**
+
+Implementar una función para rastrear el historial de conversaciones definitivamente hará las cosas más interesantes para el usuario. No solo podría servir como una valiosa herramienta de referencia, sino que también fomentaría un flujo de diálogo continuo.
+
+**4. Integrar aprendizaje continuo:**
+
+Introducir mecanismos de aprendizaje para que el avatar adapte y actualice sus respuestas con el tiempo (por ejemplo, la capacidad de adaptarse a nuevas palabras, conceptos o tendencias) asegura que se mantenga relevante y actualizado, mientras también mejora su calidad de interacción.
+
+**5. Expandir la integración de plataformas:**
+
+Mejorar la integración con otras plataformas externas, como redes sociales o aplicaciones de mensajería, ampliará el alcance del avatar. Esto aumentará significativamente su accesibilidad y utilidad en diferentes entornos de usuario.
+
+**6. Opciones de personalización avanzadas:**
+
+Proporcionar a los usuarios opciones de personalización más avanzadas - desde la modulación de la voz hasta la apariencia visual y ajustes de personalidad - puede ofrecer una experiencia más personalizada y única.
+
+**7. Incorporar modelos de lenguaje locales para privacidad y control:**
+
+Explorar modelos de lenguaje locales puede ofrecer muchos beneficios en privacidad y control de datos, permitiendo así que las interacciones sensibles se procesen directamente en el dispositivo del usuario, sin necesidad de depender exclusivamente de servicios en la nube.
+
+**8. Reducir la latencia:**
+
+Minimizar los tiempos de respuesta mediante optimizaciones técnicas (como optimización de modelos, desarrollo de modelos ligeros específicamente para dispositivos locales y uso eficiente de recursos) hará que las interacciones se sientan más inmediatas y reales. Investigar técnicas avanzadas, como el procesamiento paralelo y el almacenamiento en caché de respuestas anticipadas, es otra forma súper útil de mejorar la interactividad y la experiencia general del usuario.
+
+**9. Otras posibles aplicaciones en diversos campos:**
+
+Está claro que la tecnología que hemos explorado en este tutorial tiene una amplia gama de aplicaciones y un impacto potencial en una gran variedad de campos diferentes. Algunas otras aplicaciones potenciales podrían incluir:
+
+- **Atención al cliente:** Agilizar las interacciones con los clientes con avatares receptivos y conocedores.
+- **Plataformas educativas:** Ofrecer ayudas de aprendizaje dinámicas y personalizadas a los estudiantes.
+- **Narración interactiva:** Crear experiencias narrativas inmersivas con personajes que participan activamente en la historia.
+- **Recomendaciones personalizadas:** Adaptar sugerencias a las preferencias individuales de los usuarios en diferentes servicios.
+- **Impulsar innovaciones:** Aprovechar las tecnologías en la nube y las herramientas de procesamiento de lenguaje para explorar nuevas dimensiones en la IA y la interacción con máquinas.
+- **Profundizar las relaciones humano-máquina:** Mejorar la naturalidad y profundidad de las conversaciones con la IA, fomentando una mayor aceptación e integración en la vida diaria.
+
+## Conclusión
+
+Está claro que las posibilidades de los avatares parlantes pueden ser tan vastas, profundas e incognoscibles como el océano mismo. Si te encuentras navegando corrientes educativas con compañeros de aprendizaje personalizados o explorando las aguas desconocidas de las recomendaciones personalizadas, piensa en las herramientas aquí como tu propia brújula y mapa.
+
+La combinación de Azure Cognitive Services, LangChain y OpenAI no solo nos capacita para zarpar en nuestro viaje, sino también para trazar el rumbo hacia territorios inexplorados en la interacción humano-máquina. Como tal, nuestros chat-vatars no son simplemente avatares conversacionales: al construirlos, nos colocamos en el proceso de co-crear conexiones y narrativas.
+
+Así que, ya seas un marinero experimentado en el mar de las interacciones humano-máquina o apenas estés izando tu ancla, nunca ha habido un momento más emocionante para zarpar hacia el futuro, y que los descubrimientos más emocionantes yacen bajo la superficie. ¡Mejor ponerse en marcha!
+
+<ImageBox src="/images/ai-avatars/fig15.gif" alt="Kraken" width="800px" height="700px">
+  **Figura 15**. Kraken
+</ImageBox>
+
+Finalmente, si hay algún error, omisión o inexactitud en este artículo, no dudes en contactarnos a través del siguiente canal de Discord: [Math & Code](https://discord.gg/gJ3vCgSWeh)
+
+## Consultoría
+
+Si necesitas ayuda adicional, ofrecemos consultoría personalizada en [Classgap](https://www.classgap.com/es-co/tutor/alejandro-sanchez-yali), puedes revisar nuestros horarios disponibles y programar una sesión con nosotros.
+
+## Enlaces Interesantes
+
+- [LangChain](https://js.langchain.com/)
+- [SVG - Scalable Vector Graphics](https://developer.mozilla.org/en-US/docs/Web/SVG)
+- [SVGator](https://www.svgator.com/)
+- [Azure - Text to speech documentation](https://learn.microsoft.com/en-us/azure/ai-services/speech-service/index-text-to-speech)
+- [OpenAI API](https://platform.openai.com/docs/introduction)
+- [SVG 2 JSX](https://svg2jsx.com/)
+- [NEXT.js](https://nextjs.org/)
+- [SSML phonetic alphabets](https://learn.microsoft.com/en-us/azure/ai-services/speech-service/speech-ssml-phonetic-sets)
+- [Azure AI Speech pricing](https://azure.microsoft.com/en-us/pricing/details/cognitive-services/speech-services/)
+- [SVG Artista](https://svgartista.net/)
+- [LLM Demo - Talking Character](https://github.com/google/generative-ai-docs/tree/main/demos/palm/web/talking-character)
