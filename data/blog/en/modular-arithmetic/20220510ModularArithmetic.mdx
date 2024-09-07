@@ -251,7 +251,7 @@ class Zmodn:
         return f'{self.representative} (mod {self.module})'
 ```
 
-Note that Zmodn receives only the variable `module`, which allows defining the set of equivalence classes $\mathbb{Z}/n\mathbb{Z}$ according to the value of the module. To generate the elements of $\mathbb{Z}/n\mathbb{Z}$, we redefine the `__call__` method, which allows us to call our class as a function to build different instances of `Zmodn` by `congruence_class = self.__class__(self.module)`, and calculate the representative (`self.representative`) of the class as the remainder when dividing `integer` by `self.module`. Finally, we redefine the method `__repr__` to be represented by the console `Zmodn` class as `a (mod n)`.
+Note that `Zmodn` receives only the variable `module`, which allows defining the set of equivalence classes $\mathbb{Z}/n\mathbb{Z}$ according to the value of the module. To generate the elements of $\mathbb{Z}/n\mathbb{Z}$, we redefine the `__call__` method, which allows us to call our class as a function to build different instances of `Zmodn` by `congruence_class = self.__class__(self.module)`, and calculate the representative (`self.representative`) of the class as the remainder when dividing `integer` by `self.module`. Finally, we redefine the method `__repr__` to be represented by the console `Zmodn` class as `a (mod n)`.
 
 To see how this works, let’s generate the elements of $\mathbb{Z}/n\mathbb{Z} =\{0\; (mod\; 2), 1\; (mod\; 2)\}$. To do this, we first write:
 
@@ -343,7 +343,7 @@ def __int__(self) -> int:
     return self.representative
 ```
 
-Finally, our Zmodn class would be:
+Finally, our `Zmodn` class would be:
 
 ```python showLineNumbers
 class Zmodn:

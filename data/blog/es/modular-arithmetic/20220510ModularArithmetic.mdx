@@ -1,0 +1,817 @@
+---
+title: 'Cómo construir una biblioteca de aritmética modular en Python'
+date: '2022/10/05'
+tags: ['python', 'sobrecarga-de-operadores', 'teoría-de-números', 'juego-luces-fuera']
+draft: false
+time: '18 min'
+summary: 'En este tutorial, aprenderemos cómo crear una biblioteca para aritmética modular, usando sobrecarga de operadores y redefiniendo las funciones incorporadas de NumPy.'
+bibliography: references-data.bib
+canonicalUrl: 'https://www.asanchezyali.com/blog/es/aritmetica-modular/20220510AritmeticaModular'
+headerImage: '/images/modular-arithmetic-library/header.webp'
+language: 'es'
+---
+
+_Escrito por Alejandro Sánchez Yalí. Publicado originalmente el 2022-10-05 en el [blog de Monadical](https://monadical.com/blog.html)._
+
+Hace años, estaba construyendo mi versión del [Juego Luces Fuera](https://www.lightsout.ir/) usando Python. Para aquellos que no están familiarizados con el juego original, básicamente consiste en una cuadrícula de 5x5 luces. Cuando el juego comienza, un número aleatorio o un patrón almacenado de luces se enciende. Presionar cualquiera de las luces la cambiará de estado, junto con las cuatro luces adyacentes. El objetivo es apagar todas las luces con el menor número posible de pulsaciones.
+
+<ImageBox
+  src="/images/modular-arithmetic-library/modular_fig1.png"
+  alt="Juego Luces Fuera"
+  width="700px"
+  height="250px"
+>
+  **Figura 1**. Juego Luces Fuera. Madsen, 2010.
+  [Fuente](http://cau.ac.kr/~mhhgtx/courses/LinearAlgebra/references/MadsenLightsOut.pdf).
+</ImageBox>
+
+En este juego, un cambio de estado está representado por un cambio de color. En el juego original, los estados solo cambian entre dos estados (dos colores). Al crear mi versión del juego, quería ver si los estados podían cambiar entre más de dos estados, demostrando una secuencia cíclica de estados.
+
+Matemáticamente, el juego puede modelarse como una matriz de 5x5 ([Lights Out: Solutions Using Linear Algebra](http://cau.ac.kr/~mhhgtx/courses/LinearAlgebra/references/MadsenLightsOut.pdf)) donde cada entrada representa el estado de una bombilla. La aritmética modular es una excelente manera de encontrar la estrategia ganadora porque el estado de cada bombilla ocurre cíclicamente. Además, en este caso, las operaciones matriciales habituales son ineficientes debido a su naturaleza no acotada. Esto significa que es posible obtener resultados que están fuera del rango de los estados del juego, como números decimales o números muy grandes que no coinciden con los estados 'encendido', 'apagado' u otros estados en el juego.
+
+Este es el primero de dos artículos. En este blog, demostraré cómo he implementado con éxito la aritmética modular en Python. En el segundo post, demostraré cómo usé la aritmética modular para modelar el cambio de estado del Juego Luces Fuera como una secuencia cíclica.
+
+Al hacerlo, aprenderemos cómo:
+
+- Usar álgebra matricial en aritmética modular
+- Usar conceptos de teoría de grafos para determinar cuándo se puede resolver un Juego Luces Fuera.
+
+En el lado de la programación, aprenderemos cómo:
+
+- Articular estos conceptos matemáticos para extender las capacidades de Python
+- Usar sobrecarga de operadores y funciones incorporadas para redefinir los operadores universales de NumPy.
+
+Al final de este tutorial, tendremos una biblioteca de Python con la capacidad de realizar cálculos usando aritmética modular. Esta herramienta puede usarse efectivamente en otros proyectos relacionados con criptografía, grafos, modelado de procesos de secuencias cíclicas, etc.
+
+## Problema con NumPy
+
+Antes de comenzar nuestro tutorial, me gustaría destacar uno de los problemas que encontré con NumPy mientras construía mi juego. NumPy no tiene soporte para realizar cálculos matriciales con aritmética modular, y este era exactamente el tipo de cálculo que necesitaba hacer. Más específicamente, necesitaba resolver el cálculo de matrices inversas en aritmética modular en cualquier módulo. En este caso, usar solo el operador mod nativo de Python (`%`) no iba a ser suficiente para realizar esta tarea. Veamos por qué en el simple ejemplo a continuación.
+
+Si tenemos, por ejemplo:
+
+```python showLineNumbers
+import numpy as np
+a = np.array([[1, 2], [3, 8]]) % 7
+a
+```
+
+```python
+>>> array([[1,  2],
+       [ 3, 1]])
+```
+
+y calculamos la inversa usando NumPy, obtenemos:
+
+```python showLineNumbers
+np.linalg.inv(a)
+```
+
+```python
+>>> array([[-0.2,  0.4],
+       [ 0.6, -0.2]])
+```
+
+Esta matriz no es la inversa en aritmética modular con módulo 7, principalmente porque el resultado está en decimales y no en enteros. Otra forma en que podríamos intentarlo es:
+
+```python showLineNumbers
+np.linalg.inv(a) % 7
+```
+
+```python
+>>> array([[6.8, 0.4],
+       [0.6, 6.8]])
+```
+
+De nuevo, el resultado es incorrecto porque el resultado esperado en aritmética modular módulo 7 es:
+
+```python
+>>> array([[4 6]
+       [2 4]])
+```
+
+Encontramos este problema porque NumPy no utiliza aritmética modular para realizar sus cálculos internos. Más adelante resolveremos este problema en el paso 3 de este tutorial sobrecargando el operador y redefiniendo el operador universal de NumPy.
+
+Si no entiendes muy bien la aritmética modular, entonces este problema podría ser confuso. Así que tomemos un momento
+para aprender los conceptos básicos de la aritmética modular en la siguiente sección antes de sumergirnos en nuestro
+tutorial.
+
+## Introducción a la aritmética modular
+
+Antes de construir nuestra biblioteca, es importante entender qué es la aritmética modular (también llamada aritmética del reloj). Si ya estás familiarizado con la aritmética modular, siéntete libre de saltar a la [siguiente sección](https://docs.monadical.com/asanchezyali-modular-arithmetic?view#Tutorial-How-to-build-a-modular-arithmetic-library-in-Python).
+
+En matemáticas, la aritmética modular es un sistema de aritmética para enteros que trata principalmente con operaciones y aplicaciones relacionadas con restos. En este sistema, los números "ciclan" o se repiten al alcanzar un cierto valor, llamado el **módulo**. Veamos qué significa esto refiriéndonos a una herramienta que usamos todos los días, ¡un reloj!
+
+Observemos el reloj analógico de 12 horas a continuación. Supongamos que el reloj marca las 5 en punto. Después de 3 horas, el reloj marcaría las 8 en punto. Esto se determina simplemente sumando 5 + 3 = 8.
+
+<ImageBox
+  src="/images/modular-arithmetic-library/modular_fig2.png"
+  alt="Aritmética del reloj"
+  width="700px"
+  height="300px"
+>
+  **Figura 2**. Aritmética del reloj. Universidad de Waterloo, 2019.
+  [Fuente](https://www.cemc.uwaterloo.ca/events/mathcircles/2019-20/Fall/Junior78_Nov12_Soln.pdf).
+</ImageBox>
+
+Ahora, ¿qué hora sería después de 12 horas? Después de 12 horas, serían las 5 en punto de nuevo, ya que el reloj vuelve a su posición original cada 12 horas. Sin embargo, si simplemente sumamos 5 y 12, obtenemos 5 + 12 = 17. Pero, ¡17 no está en el reloj! ¿Qué pasó?
+
+<ImageBox
+  src="/images/modular-arithmetic-library/modular_fig3.png"
+  alt="Aritmética del reloj"
+  width="700px"
+  height="300px"
+>
+  **Figura 3**. Aritmética del reloj. Universidad de Waterloo, 2019.
+  [Fuente](https://www.cemc.uwaterloo.ca/events/mathcircles/2019-20/Fall/Junior78_Nov12_Soln.pdf).
+</ImageBox>
+
+En un reloj analógico, los números van del 1 al 12, pero cuando llegamos a las 13 en punto, aparece de nuevo como 1 en el reloj. Así, 13 se convierte en 1, 14 se convierte en 2, 15 se convierte en 3, y así sucesivamente. Cada vez que pasamos de 12 en el reloj, empezamos a contar las horas desde 1 de nuevo. Por lo tanto, podemos ver las 17 en punto como lo mismo que las 5 en punto. Escribimos esto matemáticamente como:
+
+$$
+\begin{equation}
+17\cong 5\:(mod\;12)
+\end{equation}
+$$
+
+Usamos el operador modular mod para indicar que significan lo mismo en un reloj. Esto significa que las 17 en punto es lo mismo que las 5 en punto en un sistema de 12 horas. El $(mod\; 12)$ indica que el reloj cicla cada 12 horas.
+
+De manera similar, podemos sumar 12 horas de nuevo a 17 (12+17= 29) para obtener las 29 en punto. Aún entendemos que es lo mismo que las 5 en punto. Escribimos esto como:
+
+$$
+\begin{equation}
+29\cong 5\:(mod\;12)
+\end{equation}
+$$
+
+<ImageBox
+  src="/images/modular-arithmetic-library/modular_fig4.png"
+  alt="Aritmética del reloj"
+  width="700px"
+  height="400px"
+>
+  **Figura 4**. Aritmética del reloj. Universidad de Waterloo, 2019.
+  [Fuente](https://www.cemc.uwaterloo.ca/events/mathcircles/2019-20/Fall/Junior78_Nov12_Soln.pdf).
+</ImageBox>
+
+En general, todos aquellos números que dejan el mismo resto que 17 dividido por 12, representan lo mismo en el reloj. De hecho, los números $... -7, 5, 17, 29, ...$ divididos por 12 dejan el resto 5. Por lo tanto, todos representan las 5 en punto. Este conjunto $\{... -7, 5, 17, 29, ...\}$ se llama la clase de congruencia de 5 módulo 12, que generalmente se representa como $5\; (mod\; 12)$. Ten en cuenta que las 12 horas del reloj definen 12 clases de congruencia diferentes, como se muestra en la siguiente figura:
+
+<ImageBox
+  src="/images/modular-arithmetic-library/modular_fig5.png"
+  alt="Aritmética del reloj"
+  width="700px"
+  height="450px"
+>
+  **Figura 5**. Aritmética del reloj. Universidad de Waterloo, 2019.
+  [Fuente](https://www.cemc.uwaterloo.ca/events/mathcircles/2019-20/Fall/Junior78_Nov12_Soln.pdf).
+</ImageBox>
+
+Matemáticamente, nombraremos las horas del reloj como $\mathbb{Z}/12\mathbb{Z}$ y las listaremos así:
+
+$$
+\begin{equation}
+\mathbb{Z}/12\mathbb{Z}  =\{0\;(mod\;12), 1\;(mod\;12), 2\;(mod\;12), ..., 11\;(mod\;12)\}
+\end{equation}
+$$
+
+Los elementos de este conjunto son todos los posibles restos dejados por los enteros cuando se dividen por 12. Observa que en lugar de listar 12 (mod 12), se ha listado 0 (mod 12) porque 0 ≡ 12 (mod 12).
+
+Hay muchas otras cosas en nuestras vidas que se repiten o ciclan después de cierta cantidad de tiempo, como los días de la semana, los meses del año, los grados en un círculo o las estaciones del año. La aritmética modular puede usarse para modelar cualquier evento como este que se repita. Si la longitud del ciclo es n, nos referimos a él como **módulo** n.
+
+Por ejemplo, dado que un reloj cicla cada 12 horas, nos referimos a él como módulo 12. En un círculo donde una revolución completa es de 360 grados, es módulo 360. Dado que una semana tiene 7 días, nos referimos a ella como módulo 7.
+
+En general, para un módulo n, todos los restos pueden listarse como los elementos del conjunto:
+
+$$
+\begin{equation}
+\mathbb{Z}/n\mathbb{Z}  =\{0\;(mod\;n), 1\;(mod\;n), 2\;(mod\;n), ..., n-1\;(mod\;n)\}
+\end{equation}
+$$
+
+Para el Juego Luces Fuera, cada bombilla se modelará como una luz que cambia entre una lista finita de colores en una secuencia cíclica. Por lo tanto, podemos usar la aritmética modular $\mathbb{Z}/n\mathbb{Z}$ para decirle a la computadora en qué estado está cada una de las bombillas.
+
+Como vimos en el ejemplo del reloj (en general en $\mathbb{Z}/n\mathbb{Z}$), es posible sumar horas si tenemos en cuenta el ciclo de las horas. Por ejemplo, si queremos calcular $(13 + 15)\; (mod\; 12)$, sumaremos 13 y 15 para obtener 28. Luego, encontramos que el número 12 se divide en 28 un total de 2 veces con 4 de resto. Podemos escribir esto como:
+
+$$
+\begin{equation}
+(13 + 15)\cong 28 \cong 4\;(mod\;12).
+\end{equation}
+$$
+
+Alternativamente, podemos encontrar el resto de 13 y 15 por separado. Esto facilita los cálculos porque estamos tratando con números más pequeños. Por supuesto, esto es aún más útil cuando se trata de números más grandes. Por ejemplo, primero notamos que:
+
+$$
+\begin{equation}
+13\;(mod\;12)\cong 1 \text{ y } 15 \cong 4\;(mod\;12).
+\end{equation}
+$$
+
+Por lo tanto,
+
+$$
+\begin{equation}
+(13 + 15)\;(mod\;12)\cong 1 + 3 \cong 4\;(mod\;12).
+\end{equation}
+$$
+
+De manera similar, también podemos hacer resta y multiplicación. En general, la suma, resta y multiplicación se definen sobre $\mathbb{Z}/n\mathbb{Z}$ mediante las siguientes fórmulas:
+
+1. $a\;(mod\;n) \pm b\;(mod\;n) \cong (a\pm b)\;(mod\;n)$
+2. $a\;(mod\;n) \times b\;(mod\;n) \cong (a\times b)\;(mod\;n)$
+
+Además, si n es primo, en el conjunto $\mathbb{Z}/n\mathbb{Z}$, podemos calcular las divisiones usando el [algoritmo de Euclides](https://es.wikipedia.org/wiki/Algoritmo_de_Euclides).
+
+Con esta introducción a la aritmética modular, espero que tengas una mejor comprensión de cómo funciona.
+
+Ahora, veamos cómo usé la aritmética modular para construir una biblioteca que me permite modelar las luces en Luces Fuera como una secuencia cíclica de estados. ¡Comencemos!
+
+## Tutorial: Cómo construir una biblioteca de aritmética modular en Python
+
+Para este tutorial necesitaremos:
+
+1. Python 3.10
+2. Familiaridad con la [sobrecarga de operadores](https://docs.python.org/es/3/reference/datamodel.html?highlight=overloading#special-method-names) en Python, o leer mi [artículo](https://monadical.com/posts/operator-overloading-in-python.html) sobre el tema.
+3. Un par de cervezas y mucha paciencia.
+
+### Paso 1: Construir una clase de Python para manipular los elementos de $\mathbb{Z}/n\mathbb{Z}$
+
+Para empezar, definamos una clase llamada `Zmodn` (enteros módulo $n$):
+
+```python showLineNumbers
+class Zmodn:
+    def __init__(self, module: int = 2):
+        self.representative = None
+        self.module = module
+
+    def __call__(self, integer: int):
+        congruence_class = self.__class__(self.module)
+        congruence_class.representative = integer % self.module
+        return congruence_class
+
+    def __repr__(self):
+        return f'{self.representative} (mod {self.module})'
+```
+
+Observa que `Zmodn` recibe solo la variable `module`, que permite definir el conjunto de clases de equivalencia $\mathbb{Z}/n\mathbb{Z}$ según el valor del módulo. Para generar los elementos de $\mathbb{Z}/n\mathbb{Z}$, redefinimos el método `__call__`, que nos permite llamar a nuestra clase como una función para construir diferentes instancias de `Zmodn` mediante `congruence_class = self.__class__(self.module)`, y calcular el representante (`self.representative`) de la clase como el resto al dividir `integer` por `self.module`. Finalmente, redefinimos el método `__repr__` para que la clase `Zmodn` sea representada por la consola como `a (mod n)`.
+
+Para ver cómo funciona esto, generemos los elementos de $\mathbb{Z}/n\mathbb{Z} =\{0\; (mod\; 2), 1\; (mod\; 2)\}$. Para hacer esto, primero escribimos:
+
+```python showLineNumbers
+mod2 = Zmodn(2)
+```
+
+En este punto, mod2 es una función a la que podemos pasar cualquier entero. Veamos algunos ejemplos:
+
+```python
+mod2(-3)
+>>> 1 (mod 2)
+mod2(4)
+>>> 0 (mod 2)
+mod2(5)
+>>> 1 mod(2)
+```
+
+Como vimos, los únicos resultados devueltos por la función son `0 (mod 2)` y `1 (mod 2)`.
+
+Esto es porque cualquier entero dividido por dos tiene un resto de 0 o 1. Podemos probar otras clases modulares como `mod3 = Zmodn(3)`, `mod4 = Zmodn(4)`, etc.
+
+Como vimos en mi publicación sobre [sobrecarga de operadores](https://monadical.com/posts/operator-overloading-in-python.html), es posible redefinir todas las operaciones básicas de Python $+,-,\times,/$.
+
+El siguiente paso es redefinir los métodos `__add__`($+$), `__sub__`($-$), `__mul__`($\times$), y `__truediv__` ($/$). Para esto, haremos uso de lo que aprendimos en la publicación sobre sobrecarga de operadores. Así que tenemos:
+
+````python showLineNumbers
+def __add__(self, other: int):
+    if not self.module == other.module and not isinstance(other, self.__class__):
+        raise ValueError(
+            f'Cannot add {self} and {other}, they are not in the same module'
+        )
+    return self.__call__(self.representative + other.representative)
+
+def __sub__(self, other: int):
+    if not self.module == other.module and not isinstance(other, self.__class__):
+        raise ValueError(
+            f'Cannot subtract {self} and {other}, they are not in the same module'
+        )
+    return self.__call__(self.representative - other.representative)
+
+def __mul__(self, other: int):
+    if not self.module == other.module and not isinstance(other, self.__class__):
+        raise ValueError(
+            f'Cannot multiply {self} and {other}, they are not in the same module'
+        )
+    return self.__call__(self.representative * other.representative)
+
+Observa que antes de calcular cualquier operación, debemos asegurarnos de que los elementos que estamos sumando se calculan con respecto al mismo módulo. Por ejemplo, no tiene sentido sumar un elemento de $\mathbb{Z}/2\mathbb{Z}$ con un elemento de $\mathbb{Z}/3\mathbb{Z}$. También verificamos que `other` sea una instancia de `Zmodn` usando `isinstance(other, self.__class__)`. Luego calculamos las operaciones ($+,-,\times, /$) con respecto a los representantes de clase para finalmente devolver la clase resultante.
+
+En cuanto a la división entre dos elementos $a$ y $b$ de $\mathbb{Z}/n\mathbb{Z}$, solo tiene sentido si $b$ es [coprimo](https://es.wikipedia.org/wiki/N%C3%BAmeros_coprimos) con $n$. En ese caso, primero hacemos uso del [algoritmo de Euclides](https://es.wikipedia.org/wiki/Algoritmo_de_Euclides) para restos y luego calculamos el inverso multiplicativo de $b$. Así que tenemos:
+
+```python showLineNumbers
+def multiplicative_inverse(self):
+    if self.representative == 0:
+        raise ZeroDivisionError('Cannot compute the multiplicative inverse of 0')
+    aux1 = 0
+    aux2 = 1
+    y = self.representative
+    x = self.module
+    while y != 0:
+        q, r = divmod(x, y)
+        x, y = y, r
+        aux1, aux2 = aux2, aux1 - q * aux2
+    if x == 1:
+        return self.__call__(aux1 % self.module)
+    else:
+        raise ValueError(
+            f'{self.representative} is not coprime to {self.module}'
+            )
+````
+
+Y después de esto, podemos definir la división de la siguiente manera:
+
+```python showLineNumbers
+def __truediv__(self, other: int):
+    if not self.module == other.module and not isinstance(other, self.__class__):
+        raise ValueError(
+            f'Cannot divide {self} and {other}, they are not in the same module'
+        )
+    return self.__call__(self.representative) * other.multiplicative_inverse()
+```
+
+En el siguiente paso, necesitaremos la representación entera. Así que definimos el siguiente método:
+
+```python showLineNumbers
+def __int__(self) -> int:
+    return self.representative
+```
+
+Finalmente, nuestra clase `Zmodn` quedaría así:
+
+```python showLineNumbers
+class Zmodn:
+    def __init__(self, module: int = 2):
+        self.representative = None
+        self.module = module
+
+    def __call__(self, integer: int):
+        congruence_class = self.__class__(self.module)
+        congruence_class.representative = integer % self.module
+        return congruence_class
+
+    def __int__(self):
+        return self.representative
+
+    def __repr__(self):
+        return f'{self.representative} (mod {self.module})'
+
+    def __add__(self, other: int):
+        if not self.module == other.module and not isinstance(other, self.__class__):
+            raise ValueError(
+                f'Cannot add {self} and {other}, they are not in the same module'
+            )
+        return self.__call__(self.representative + other.representative)
+
+    def __sub__(self, other: int):
+        if not self.module == other.module and not isinstance(other, self.__class__):
+            raise ValueError(
+                f'Cannot subtract {self} and {other}, they are not in the same module'
+            )
+        return self.__call__(self.representative - other.representative)
+
+    def __mul__(self, other: int):
+        if not self.module == other.module and not isinstance(other, self.__class__):
+            raise ValueError(
+                f'Cannot multiply {self} and {other}, they are not in the same module'
+            )
+        return self.__call__(self.representative * other.representative)
+
+    def multiplicative_inverse(self):
+        if self.representative == 0:
+            raise ZeroDivisionError('Cannot compute the multiplicative inverse of 0')
+        aux1 = 0
+        aux2 = 1
+        y = self.representative
+        x = self.module
+        while y != 0:
+            q, r = divmod(x, y)
+            x, y = y, r
+            aux1, aux2 = aux2, aux1 - q * aux2
+        if x == 1:
+            return self.__call__(aux1 % self.module)
+        else:
+            raise ValueError(
+                f'{self.representative} is not coprime to {self.module}'
+                )
+
+    def __truediv__(self, other: int):
+        if not self.module == other.module and not isinstance(other, self.__class__):
+            raise ValueError(
+                f'Cannot divide {self} and {other}, they are not in the same module'
+            )
+        return self.__call__(self.representative) * other.multiplicative_inverse()
+```
+
+Y por lo tanto, podemos usarla para hacer nuestros cálculos en cualquier conjunto del tipo $\mathbb{Z}/n\mathbb{Z}$. Veamos algunos ejemplos:
+
+```python
+mod5 = Zmodn(5)
+a, b = mod5(7), mod5(9)
+a, b
+>>> (2 (mod 5), 4 (mod 5))
+a + b
+>>> 1 (mod 5)
+a - b
+>>> 3 (mod 5)
+a * b
+>>> 3 (mod 5)
+a / b
+>>> 3 (mod 5)
+c = a.multiplicative_inverse()
+c
+>>> 3 (mod 5)
+a * c
+>>> 1 (mod 5)
+```
+
+Otros métodos que podríamos implementar son: `__eq__`, `__neg__`, `__isub__`, y `__iadd__`.
+
+### Paso 2: Crear arrays usando `Zmodn` y funcionalidades de NumPy
+
+En este paso, vamos a ver cómo crear arrays usando `Zmodn` con algunas de las funcionalidades de NumPy. Para esto, construiremos la siguiente clase:
+
+```python showLineNumbers
+import numpy as np
+class ZmodnArray:
+    def __init__(self, module):
+        self.module = module
+        self.representatives = None
+        self.congruence_class = Zmodn(module)
+
+    def __call__(self, integers: list):
+        congruence_class_array = self.__class__(self.module)
+        congruence_class = np.vectorize(self.congruence_class)
+        congruence_class_array.representatives = np.array(congruence_class(integers))
+        return congruence_class_array
+
+    def __repr__(self):
+        return f'{self.representatives.astype(int)} (mod {self.module})'
+```
+
+Lo nuevo aquí es la línea `congruence_class = np.vectorize(self.congruence_class)`. En esencia, estamos
+[vectorizando](https://numpy.org/doc/stable/reference/generated/numpy.vectorize.html) la función `self.congruence_class`
+usando el método `np.vectorize`. Esto nos permite pasar un array completo a la función `congruence_class` como se hace
+en la línea `congruence_class_array.representatives = congruence_class(integers)`.
+
+Para completar esta clase, añadimos los métodos `__add__`, `__sub__` y `__mul__`. Estos tienen una estructura similar a los métodos ya implementados en `Zmodn`, la única diferencia aquí es que las operaciones ($+,-,\times$) se ejecutan a través de NumPy, y hacemos uso del método `astype(int)` para obtener los representantes enteros de las clases `Zmodn`. Estos métodos serían:
+
+```python showLineNumbers
+def __add__(self, other: list):
+    if not self.module == other.module and not isinstance(other, self.__class__):
+        raise ValueError(
+            f'Cannot add {self} and {other}, they are not in the same module'
+        )
+    return self.__call__((self.representatives + other.representatives).astype(int))
+
+def __sub__(self, other: list):
+    if not self.module == other.module and not isinstance(other, self.__class__):
+        raise ValueError(
+            f'Cannot subtract {self} and {other}, they are not in the same module'
+        )
+    return self.__call__((self.representatives - other.representatives).astype(int))
+
+def __mul__(self, other: list):
+    if not self.module == other.module and not isinstance(other, self.__class__):
+        raise ValueError(
+            f'Cannot multiply {self} and {other}, they are not in the same module'
+        )
+    return self.__call__(
+        (np.dot(self.representatives, other.representatives)).astype(int)
+    )
+```
+
+Hasta ahora, podemos ejecutar algunas operaciones básicas entre arrays de elementos `Zmodn`. Veamos algunos ejemplos:
+
+```python showLineNumbers
+mod7_array = ZmodnArray(7)
+a = mod7_array([[1, 2], [3, 8]])
+b = mod7_array([[10, 7], [3, 8]])
+```
+
+El resultado por consola sería:
+
+```python
+a
+>>> [[1 2]
+ [3 1]] (mod 7)
+b
+>>> [[3 0]
+ [3 1]] (mod 7)
+```
+
+Para operaciones elementales tenemos:
+
+```python
+a + b
+>>> [[4 2]
+ [6 2]] (mod 7)
+a - b
+>>> [[5 2]
+ [0 0]] (mod 7)
+a * b
+>>> [[2 2]
+ [5 1]] (mod 7)
+```
+
+### Paso 3: Calcular la matriz inversa con aritmética modular usando `ZmodnArray`
+
+Ahora veamos cómo implementar operaciones más avanzadas, como calcular la matriz inversa. Una forma rápida de implementar esto es calcular la matriz inversa mediante la [matriz adjunta](https://es.wikipedia.org/wiki/Matriz_adjunta) utilizando la fórmula para la inversa de una matriz:
+
+$$
+\begin{equation}
+A^{-1}=det(A)^{-1}Adj(A).
+\end{equation}
+$$
+
+Para el caso de la aritmética modular con matrices en $\mathbb{Z}/n\mathbb{Z}$, el determinante de una matriz debe ser coprimo con $n$. No necesitamos entrar en los detalles técnicos de las siguientes funciones. Por ahora, lo importante es saber que se utilizan para calcular la inversa de una matriz cuadrada con determinante no nulo y coprimo de $n$.
+
+Aquí está el método para calcular la matriz adjunta:
+
+```python showLineNumbers
+@staticmethod
+def adjoint_of_matrix(matrix):
+    adjoint = np.zeros(matrix.shape, dtype=np.int16)
+    amount_of_rows, amount_of_columns = matrix.shape
+    for i in range(amount_of_rows):
+        for j in range(amount_of_columns):
+            cofactor_i_j = np.delete(np.delete(matrix, i, axis=0), j, axis=1)
+            determinant = int(np.linalg.det(cofactor_i_j))
+            adjoint[i][j] = determinant * (-1) ** (i + j)
+    return np.transpose(adjoint)
+```
+
+Y el método para calcular la matriz inversa:
+
+```python showLineNumbers
+def inv(self):
+    matrix = self.representatives.astype(int)
+    if matrix.shape[0] != matrix.shape[1]:
+        raise ValueError('Matrix is not square')
+    determinant = int(np.linalg.det(matrix))
+    if determinant == 0:
+        raise ValueError('Matrix is not invertible')
+    adjoint = ZmodnArray.adjoint_of_matrix(matrix)
+    return self.__call__(
+        int(self.congruence_class(1) / self.congruence_class(determinant))
+        * adjoint.astype(int)
+    )
+```
+
+Aunque calcular la matriz inversa por el método de la matriz adjunta no es lo más eficiente, nos permite ilustrar las posibilidades que tenemos con las clases `Zmodn`. Si todo va bien, el resultado que deberíamos obtener al usar el método `inv` sería:
+
+```python
+a = mod7_array([[1, 2], [3,8]])
+a * a.inv()
+>>> [[1 0]
+ [0 1]] (mod 7)
+```
+
+Como ejercicio adicional, recomiendo sobrecargar el método `__getitem__` porque nos permitirá leer cada entrada de un array `Zmodn` como se hace en los arrays de NumPy. Si esto aún no está claro, por favor revisa nuevamente mi publicación sobre [sobrecarga de operadores](https://monadical.com/posts/operator-overloading-in-python.html).
+
+### Paso 4: Redefinir las funciones universales de NumPy
+
+Hasta ahora, hemos visto cómo construir una clase `Zmodn` que nos permite trabajar con las clases modulares $\mathbb{Z}/n\mathbb{Z}$, y aprendimos cómo usar estos elementos con NumPy.
+
+A continuación, resolveremos el problema de una manera diferente redefiniendo las funciones universales de NumPy. Para esto, usaremos el método especial `__array_function__`, que nos permite sobrescribir los métodos nativos de NumPy. La estructura de este método es:
+
+```python showLineNumbers
+def __array_ufunc__(self, ufunc, method, *inputs, **kwargs)
+	...
+	return result
+```
+
+Aquí:
+
+- El parámetro `ufunc` es la función universal de NumPy que se va a llamar.
+- `method` es una cadena que indica cómo se va a llamar el parámetro ufunc, ya sea `__call__` para indicar que se llama directamente, o uno de sus métodos como: `reduce`, `accumulate`, `reduceat`, `outer` o `at`.
+- `*inputs` es una tupla para los argumentos de ufunc.
+- `**kwargs` contiene cualquier argumento opcional o de palabra clave pasado a la función. Esto incluye cualquier argumento de salida, que siempre está contenido en una tupla.
+
+Por lo tanto, los argumentos están normalizados; solo los argumentos de entrada necesarios se pasan como argumentos posicionales. Todos los demás se pasan como un `dict` de argumentos de palabra clave (`**kwargs`). En particular, si hay argumentos de salida (posicionales o no) que no son `None`, se pasan como una tupla en el argumento de palabra clave `out`. Esto va incluso para los métodos `reduce`, `accumulate` y `reduceat` donde todos los casos reales tienen sentido como una única salida.
+
+Con esto en mente, podemos construir una clase para trabajar con aritmética modular de la siguiente manera:
+
+```python showLineNumbers
+import numpy as np
+HANDLED_FUNCTIONS = dict()
+
+
+class ZmodnArrays:
+    def __init__(self, intergers, module):
+        self.representatives = np.array(intergers) % module
+        self.module = module
+
+    def __repr__(self):
+        return f'{self.representatives} (mod {self.module})'
+
+    def __array_function__(self, func, types, args, kwargs):
+        if func not in HANDLED_FUNCTIONS:
+            return NotImplemented
+        if not all(issubclass(t, ZmodnArrays) for t in types):
+            return NotImplemented
+        return HANDLED_FUNCTIONS[func](*args, **kwargs)
+
+    def implements(numpy_function):
+        def decorator(method):
+            HANDLED_FUNCTIONS[numpy_function] = method
+            return method
+        return decorator
+```
+
+Observa tres elementos importantes:
+
+1. La variable `HANDLED_FUNCTIONS`, que se utiliza para almacenar las nuevas definiciones de las funciones universales de NumPy.
+2. La implementación del método `__array_function__`, que se encarga de gestionar la ejecución de las definiciones.
+3. El decorador `implements`, que nos permite actualizar la variable `HANDLED_FUNCTIONS` con la implementación de los nuevos métodos.
+
+NumPy tiene una lista de funciones universales que se pueden sobrescribir con esta estrategia. La lista se puede encontrar en la [documentación](https://numpy.org/neps/nep-0013-ufunc-overrides.html#list-of-operators-and-numpy-ufuncs). Para nuestro caso, solo vamos a redefinir `__add__`, `__sub__` y `__mul__`. En efecto, las redefiniciones serían:
+
+```python showLineNumbers
+@implements(np.add)
+def __add__(self, other):
+    if not self.module == other.module and not isinstance(other, self.__class__):
+        raise ValueError(
+            f'Cannot add {self} and {other}, they are not in the same module'
+        )
+    repr_sum = np.array(self.representatives) + np.array(other.representatives)
+    return self.__class__(repr_sum % self.module, self.module)
+
+@implements(np.subtract)
+def __sub__(self, other):
+    if not self.module == other.module and not isinstance(other, self.__class__):
+        raise ValueError(
+            f'Cannot subtract {self} and {other}, they are not in the same module'
+        )
+    repr_sub = np.array(self.representatives) - np.array(other.representatives)
+    return self.__class__(repr_sub % self.module, self.module)
+
+@implements(np.multiply)
+def __mul__(self, other):
+    if not self.module == other.module and not isinstance(other, self.__class__):
+        raise ValueError(
+            f'Cannot multiply {self} and {other}, they are not in the same module'
+        )
+    repr_dot = np.dot(np.array(self.representatives), np.array(other.representatives))
+    return self.__class__(repr_dot % self.module, self.module)
+```
+
+Como podemos ver, la estructura es similar a lo que ya implementamos en las secciones anteriores. Lo nuevo aquí es la implementación del decorador `@implements(numpy_function)`, que lleva el nombre de la función universal que queremos reescribir. Además, en la redefinición, implementamos la suma, resta y multiplicación usando las operaciones nativas de NumPy, pero tenemos cuidado de extraer el resto. Por ejemplo, en el caso de una suma, devolvemos lo siguiente:
+
+```python showLineNumbers
+repr_sum = np.array(self.representatives) + np.array(other.representatives)
+    return self.__class__(repr_sum % self.module, self.module)
+```
+
+Nota que la suma se calcula a través de la suma nativa para objetos de tipo `np.array`, y el resultado es que los restos se calculan usando `%`. Luego, se crea una instancia de la clase con el método `self.__class__`. Lo mismo es cierto para las otras dos operaciones básicas.
+
+Nuestra clase final sería:
+
+```python showLineNumbers
+import numpy as np
+HANDLED_FUNCTIONS = dict()
+
+
+class ZmodnArrays:
+    def __init__(self, intergers, module):
+        self.representatives = np.array(intergers) % module
+        self.module = module
+
+    def __repr__(self):
+        return f'{self.representatives} (mod {self.module})'
+
+    def __array_function__(self, func, types, args, kwargs):
+        if func not in HANDLED_FUNCTIONS:
+            return NotImplemented
+        if not all(issubclass(t, ZmodnArrays) for t in types):
+            return NotImplemented
+        return HANDLED_FUNCTIONS[func](*args, **kwargs)
+
+    def implements(numpy_function):
+        def decorator(method):
+            HANDLED_FUNCTIONS[numpy_function] = method
+            return method
+        return decorator
+
+    @implements(np.add)
+    def __add__(self, other):
+        if not self.module == other.module and not isinstance(other, self.__class__):
+            raise ValueError(
+                f'Cannot add {self} and {other}, they are not in the same module'
+            )
+        repr_sum = np.array(self.representatives) + np.array(other.representatives)
+        return self.__class__(repr_sum % self.module, self.module)
+
+    @implements(np.subtract)
+    def __sub__(self, other):
+        if not self.module == other.module and not isinstance(other, self.__class__):
+            raise ValueError(
+                f'Cannot subtract {self} and {other}, they are not in the same module'
+            )
+        repr_sub = np.array(self.representatives) - np.array(other.representatives)
+        return self.__class__(repr_sub % self.module, self.module)
+
+    @implements(np.multiply)
+    def __mul__(self, other):
+        if not self.module == other.module and not isinstance(other, self.__class__):
+            raise ValueError(
+                f'Cannot multiply {self} and {other}, they are not in the same module'
+            )
+        repr_dot = np.dot(np.array(self.representatives), np.array(other.representatives))
+        return self.__class__(repr_dot % self.module, self.module)
+```
+
+Para probar esta clase, podemos hacer:
+
+```python showLineNumbers
+mod7_array = ZmodnArrays(7)
+a = mod7_array([[1, 2], [3, 8]])
+b = mod7_array([[10, 7], [3, 8]])
+```
+
+Así que para las operaciones elementales tendríamos:
+
+```python
+a + b
+>>> [[4 2]
+ [6 2]] (mod 7)
+a - b
+>>> [[5 2]
+ [0 0]] (mod 7)
+a * b
+>>> [[2 2]
+ [5 1]] (mod 7)
+```
+
+Finalmente, en la documentación del [modelo de datos](https://docs.python.org/3/reference/datamodel.html?highlight=overloading#data-model) podemos explorar qué otras funcionalidades podemos agregar para hacer esta clase más versátil.
+
+## Conclusiones
+
+Resumamos lo que hemos cubierto hoy en nuestros cuatro pasos:
+
+1. Los métodos especiales `__add__`,`__sub__`, `__mul__`, y `__call__` nos permiten redefinir los operadores básicos de Python, lo que nos permite construir otros tipos de aritmética con los que podemos trabajar. Esto es particularmente interesante para problemas relacionados con criptografía, grafos, etc.
+2. Usando el método `__array_function__`, podemos decirle a NumPy cómo ejecutar las operaciones universales de acuerdo a las necesidades de nuestros objetos.
+3. Según la [documentación](https://numpy.org/devdocs/reference/arrays.classes.html#numpy.class.__array_ufunc__) de NumPy, la estructura estándar para construir una clase para redefinir las funciones universales de NumPy es:
+
+```python showLineNumbers
+HANDLED_FUNCTIONS = {}
+
+class MyArray:
+    def __array_function__(self, func, types, args, kwargs):
+        if func not in HANDLED_FUNCTIONS:
+            return NotImplemented
+        # Note: this allows subclasses that don't override
+        # __array_function__ to handle MyArray objects
+        if not all(issubclass(t, MyArray) for t in types):
+            return NotImplemented
+        return HANDLED_FUNCTIONS[func](*args, **kwargs)
+
+def implements(numpy_function):
+    """Register an __array_function__ implementation for MyArray objects."""
+    def decorator(func):
+        HANDLED_FUNCTIONS[numpy_function] = func
+        return func
+    return decorator
+
+@implements(np.concatenate)
+def concatenate(arrays, axis=0, out=None):
+    ...  # implementation of concatenate for MyArray objects
+
+@implements(np.broadcast_to)
+def broadcast_to(array, shape):
+    ...  # implementation of broadcast_to for MyArray objects
+```
+
+Con este enfoque de sobrecarga de operadores y redefinición de las funciones universales de NumPy, hemos construido una biblioteca de aritmética modular que se puede usar con éxito en mi versión del juego Luces Fuera. Tendremos que reunirnos de nuevo en mi próxima publicación para aprender cómo funciona la biblioteca en el juego.
+
+Si eres como yo, puede que estés interesado en construir esta biblioteca para aprender más sobre temas como teoría de grafos, criptografía y teoría de números, entre otros. Para aprender más sobre estos temas en relación con el juego Luces Fuera, por favor revisa estos artículos:
+
+1. "A Survey of the Game "Lights Out!""
+2. "Lights Out: Solutions Using Linear Algebra"
+3. "Lights Out!: A Survey of Parity Domination in Grid Graphs"
+4. "Lights Out on graphs"
+5. "Lights Out on a Random Graph"
+
+El código utilizado en este blog se puede encontrar en este notebook: [Modular Arithmetic with Python](https://colab.research.google.com/drive/1o27dB5ywv2h0jS9KOfOJV4PsdPAPIi4-?usp=sharing#scrollTo=S7AgP0ydmPrK).
+
+Finalmente, si hay algún error, omisión o inexactitud en este artículo, no dudes en contactarnos a través del siguiente canal de Discord: [Math & Code](https://discord.gg/gJ3vCgSWeh)
+
+## Consultoría
+
+Si necesitas ayuda adicional, ofrecemos consultoría personalizada en [Classgap](https://www.classgap.com/es-co/tutor/alejandro-sanchez-yali), puedes consultar nuestros horarios disponibles y programar una sesión con nosotros.
+
+## Imágenes
+
+- George Becker - [Pexels photo 2022](https://i0.wp.com/gestioneducativa.net/wp-content/uploads/2022/09/pexels-photo-374918.jpeg?resize=780%2C470&ssl=1).
+
+## References
+
+1. NumPy Documentation: [Standard array subclasses](https://numpy.org/devdocs/reference/arrays.classes.html#numpy.class.__array_ufunc__)
+2. NumPy Documentation: [NEP 13 - A mechanism for overriding Ufuncs](https://numpy.org/neps/nep-0013-ufunc-overrides.html)
+3. W3schools: [Create your own ufunc](https://www.w3schools.com/python/numpy/numpy_ufunc_create_function.asp)
+4. [Stackoverflow: Python linear algebra in a finite field](https://stackoverflow.com/questions/71078626/python-linear-algebra-in-a-finite-field)
