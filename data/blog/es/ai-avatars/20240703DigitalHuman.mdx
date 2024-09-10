@@ -1,8 +1,9 @@
 ---
-title: 'Revoluciona la Animación: Construye un Humano Digital con Modelos de Lenguaje Grande'
+title: 'Revoluciona la animación: construye un humano digital con LLMs'
+subtitle: 'Una Guía paso a paso para crear tu próximo avatar impulsado por IA.'
 date: '2024/07/03'
 lastmod: '2024-07-03'
-tags: ['avatar-ia', 'humano-digital', 'inteligencia artificial']
+tags: ['avatar-ia', 'humano-digital', 'inteligencia artificial', 'llm', 'lipsync']
 draft: false
 time: '47 min'
 summary: 'Una Guía paso a paso para crear tu próximo avatar impulsado por IA.'
@@ -13,33 +14,45 @@ headerImage: '/images/ai-avatars/header-post2.png'
 language: 'es'
 ---
 
-_Escrito por Alejandro Sánchez Yalí con Jenalee Prentice. Publicado originalmente el 2024-07-03 en el [blog de Monadical](https://monadical.com/blog.html)._
+<div className="text-center text-sm italic text-gray-500">
+  Escrito por Alejandro Sánchez Yalí con Jenalee Prentice. Publicado originalmente el 2024-07-03 en
+  el <a href="https://monadical.com/blog.html">blog de Monadical</a>.
+</div>
 
 ## Introducción
 
-Hay una nueva generación de avatares en escena, comúnmente conocidos como humanos digitales o avatares de IA[^1]. Estos avatares han ganado este nombre algo serio porque simulan la apariencia y el comportamiento humano de una manera notablemente realista. Por ejemplo, a menudo están diseñados con rasgos imperfectos, como un tono de piel desigual o una cara asimétrica. También imitan las habilidades de lenguaje natural de los humanos simulando movimientos y señales no verbales a través del análisis de sentimientos generado por Modelos de Lenguaje Grande (LLMs)[^2].
+Hay una nueva generación de avatares en escena, comúnmente conocidos como humanos digitales o avatares de IA[^1]. Estos
+avatares han ganado este nombre algo serio porque simulan la apariencia y el comportamiento humano de una manera
+notablemente realista. Por ejemplo, a menudo están diseñados con rasgos imperfectos, como un tono de piel desigual o una
+cara asimétrica. También imitan las habilidades de lenguaje natural de los humanos simulando movimientos y señales no
+verbales a través del análisis de sentimientos generado por LLM (_Large Language Models_)[^2].
 
 Durante 2023, la convergencia de tecnologías de modelado 2D y 3D con herramientas de IA como Redes Generativas Antagónicas (GANs), Texto a Voz (TTS), Voz a Texto (STT) y LLMs trajo estos avatares a nuestras vidas, potencialmente redefiniendo nuestra interacción con las computadoras.
 
 Tomemos, por ejemplo, [Victoria Shi](https://cybernews.com/news/ukraine-appoints-ai-avatar-spokesperson/), la ministra digital ucraniana de asuntos exteriores, que ahorra tiempo y recursos a Ucrania proporcionando actualizaciones esenciales sobre asuntos consulares. O los avatares de IA utilizados por empresas para interactuar con clientes en diversas industrias como [consultoría financiera](https://www.deepbrain.io/solutions/finance), [apoyo educativo](https://praktika.ai/), [participación en los medios](https://www.digitalhumans.com/case-studies/digital-einstein), [videojuegos](https://inworld.ai/), y [salud y bienestar](https://www.digitalhumans.com/case-studies/groov).
 
-## Visión General del Tutorial
+## Visión general del tutorial
 
 Para entender mejor el potencial de los avatares de IA, este tutorial te enseñará cómo construir uno de A a Z. Ya seas un apasionado gamer, un emprendedor en busca de innovación o un futuro inversor en avatares de IA, este tutorial te proporcionará todas las herramientas que necesitas para crear y entender cómo funcionan estos fascinantes avatares digitales.
 
-En mi tutorial anterior, [Kraken el Código: Cómo Construir un Avatar Parlante](https://monadical.com/posts/how-to-build-a-talking-avatar-with-azure-cognitive-langchain-and-openai.html), expliqué cómo implementar un avatar parlante en 2D. Esta vez, subiremos la apuesta y aprenderemos cómo implementar un avatar de IA parlante en 3D con características mejoradas.
+En mi tutorial anterior, [El código Kraken: cómo construir un ai-avatar parlante](https://monadical.com/posts/how-to-build-a-talking-avatar-with-azure-cognitive-langchain-and-openai.html), expliqué cómo implementar un ai-avatar parlante en 2D. Esta vez, subiremos la apuesta y aprenderemos cómo implementar un avatar de IA parlante en 3D con características mejoradas.
 
 El código final de este tutorial se puede encontrar en este repositorio: [Humano Digital](https://github.com/asanchezyali/talking-avatar-with-ai/tree/article-1.0).
 
-## Elementos Clave de Nuestro Avatar de IA
+## Elementos clave de nuestro avatar de IA
 
 Al final de este tutorial, habremos creado un avatar de IA que destaca entre sus contrapartes. Esto se logrará utilizando modelos [GLTF](https://es.wikipedia.org/wiki/GlTF), [Mixamo](https://www.mixamo.com/) y LLMs para animar y mejorar la sincronización labial y las habilidades de comunicación de nuestro avatar. En otras palabras, nuestro objetivo es construir un avatar que se vea y suene como un humano al conversar. Veamos las características específicas que incorporaremos en nuestro avatar para alcanzar este objetivo:
 
 - **Apariencia hiperrealista:** Los avatares de IA se están volviendo cada vez más realistas. Aunque a menudo se crean en un estudio y luego se sintetizan utilizando programas de aprendizaje automático, cada vez es más fácil y rápido crear avatares digitales utilizando solo modelos [GLTF](https://es.wikipedia.org/wiki/GlTF), fotos o videos grabados por uno mismo ([ver editor Meshcapade](https://me.meshcapade.com/editor)). Para nuestro tutorial, utilizaremos un avatar en formato GLTF generado por [Ready Player Me](https://readyplayer.me/) renderizado a través de React.js con [React Three Fiber](https://docs.pmnd.rs/react-three-fiber/getting-started/introduction).
 
-- **Movimientos corporales naturales:** Para generar algunos movimientos corporales del avatar, utilizaremos [Mixamo](https://www.mixamo.com/). En cuanto a sincronizar la voz con movimientos de boca suaves y naturales, utilizaremos [Rhubarb lip-sync](https://github.com/DanielSWolf/rhubarb-lip-sync/releases). Es un comando CLI que genera [fonemas](https://en.wikipedia.org/wiki/Phoneme) localmente, y luego lo usamos para sincronizar los movimientos de la boca con la voz.
+- **Movimientos corporales naturales:** Para generar algunos movimientos corporales del avatar, utilizaremos [Mixamo](https://www.mixamo.com/). En cuanto a sincronizar la voz con movimientos de boca suaves y naturales, utilizaremos [Rhubarb lip-sync](https://github.com/DanielSWolf/rhubarb-lip-sync/releases). Es un CLI que genera [fonemas](https://en.wikipedia.org/wiki/Phoneme) localmente, y luego lo usamos para sincronizar los movimientos de la boca con la voz.
 
-- **Texto a voz (TTS):** La tecnología de texto a voz (TTS) ha avanzado mucho desde los primeros días de asistentes de voz como el [Agente de Microsoft](https://en.wikipedia.org/wiki/Microsoft_Agent) y [DECtalk](https://en.wikipedia.org/wiki/DECtalk) en la década de 1990. Hoy en día, TTS puede producir voces realistas en todos los idiomas. Puede generar un humano digital con un habla convincente y natural si se combina con sincronización labial. En este caso, utilizaremos [ElevenLabs](https://elevenlabs.io/), un servicio de texto a voz multilingüe.
+- **Texto a voz (TTS):** La tecnología de texto a voz (TTS) ha avanzado mucho desde los primeros días de asistentes de
+  voz como el [Agente de Microsoft](https://en.wikipedia.org/wiki/Microsoft_Agent) y
+  [DECtalk](https://en.wikipedia.org/wiki/DECtalk) en la década de 1990. Hoy en día, TTS puede producir voces realistas
+  en todos los idiomas. Se puede utilizar esta tecnología para generar un habla convincente y natural si se combina con
+  sincronización labial. En este caso, utilizaremos [ElevenLabs](https://elevenlabs.io/), un servicio de texto a voz
+  multilingüe.
 
 - **Voz a texto (STT):** El reconocimiento de voz es una característica crítica que permite a los usuarios interactuar con avatares digitales a través de comandos de voz. Para esto, utilizaremos [Whisper](https://platform.openai.com/docs/guides/speech-to-text), una API de Voz a Texto (STT) de OpenAI. Este sistema transforma la voz del usuario en texto para que la IA pueda escucharla adecuadamente.
 
@@ -49,7 +62,7 @@ Al final de este tutorial, habremos creado un avatar de IA que destaca entre sus
   humana real. En este caso, nuestro avatar todavía tendrá alta latencia, una característica que mejoraremos en un
   futuro post.
 
-## Configuración del Proyecto
+## Configuración del proyecto
 
 La arquitectura de nuestro sistema tiene dos directorios: el directorio `frontend`, que se encarga de renderizar el avatar, y el directorio `backend`, que es responsable de coordinar todos los servicios de inteligencia artificial.
 
@@ -197,7 +210,7 @@ function App() {
 export default App
 ```
 
-En el código anterior, hemos configurado los componentes principales de una aplicación React integrando gráficos 3D utilizando [Three.js](https://threejs.org/) junto con la biblioteca `@react-three/fiber`. Comenzamos importando Loader de `@react-three/drei` para manejar la visualización de la carga de recursos 3D, asegurando una experiencia de usuario fluida durante el inicio de la aplicación.
+En el código anterior, hemos configurado los componentes principales de una aplicación React integrando gráficos 3D utilizando [Three.js](https://threejs.org/) junto con la biblioteca `@react-three/fiber`. Comenzamos importando `Loader` de `@react-three/drei` para manejar la visualización de la carga de recursos 3D, asegurando una experiencia de usuario fluida durante el inicio de la aplicación.
 
 Para representar la escena 3D, utilizamos el componente Canvas de `@react-three/fiber`, que sirve como contenedor para todos los elementos visuales 3D. En este caso, el Canvas tiene las sombras habilitadas (`shadows`), y la cámara está configurada con una posición inicial de `[0, 0, 0]` y un campo de visión `(fov)` de 10. La cámara se ha colocado en el centro de la escena, proporcionando una vista inicial neutral para el usuario.
 
@@ -263,7 +276,7 @@ Una vez que tu avatar esté listo, copiamos el enlace del avatar y lo modificamo
 https://models.readyplayer.me/TU_ID_DE_AVATAR.glb?morphTargets=ARKit,Oculus Visemes
 ```
 
-Al añadir los parámetros de consulta, podemos descargar el archivo .glb con los atributos para animar la boca, los ojos y la cara en general del avatar. [Aquí](https://docs.readyplayer.me/ready-player-me/api-reference/rest-api/avatars/get-3d-avatars#morphtargets), puedes consultar el resto de los parámetros de consulta que podemos usar. Una vez que nuestro avatar esté descargado, lo colocamos en el directorio `public/model` con un nombre de tu elección. En mi caso, lo he llamado `avatar.glb`.
+Al añadir los parámetros de consulta, podemos descargar el archivo `.glb` con los atributos para animar la boca, los ojos y la cara en general del avatar. [Aquí](https://docs.readyplayer.me/ready-player-me/api-reference/rest-api/avatars/get-3d-avatars#morphtargets), puedes consultar el resto de los parámetros de consulta que podemos usar. Una vez que nuestro avatar esté descargado, lo colocamos en el directorio `public/model` con un nombre de tu elección. En mi caso, lo he llamado `avatar.glb`.
 
 Con el archivo `avatar.glb`, vamos a [gltf.pmnd.rs](https://gltf.pmnd.rs/) para crear nuestro componente React para nuestro avatar. Si decides usar TypeScript, es necesario especificar que también necesitas los tipos correspondientes.
 
@@ -363,13 +376,13 @@ El código anterior contiene un componente React llamado `Avatar`, que carga y r
 archivo GLB, un formato binario de glTF (GL Transmission Format), una especificación estándar para la distribución
 eficiente de modelos 3D.
 
-# Componente Avatar 3D y Animaciones
+# Componente avatar 3D y animaciones
 
 El componente anterior realiza lo siguiente:
 
-1. **Carga del modelo 3D:** El hook `useGLTF` carga el modelo 3D desde la ruta proporcionada ("models/avatar.glb"). Una vez cargado, este hook devuelve dos objetos importantes: `nodes`, que contiene todos los nodos o elementos del modelo, y `materials`, que almacena los materiales definidos en el modelo 3D.
+1. **Carga del modelo 3D:** El hook `useGLTF` carga el modelo 3D desde la ruta proporcionada (`models/avatar.glb`). Una vez cargado, este hook devuelve dos objetos importantes: `nodes`, que contiene todos los nodos o elementos del modelo, y `materials`, que almacena los materiales definidos en el modelo 3D.
 
-2. **Estructura del componente:** El componente Avatar devuelve un elemento `<group>` de `Three.js`, que actúa como contenedor para todos los elementos hijos. Este grupo recibe cualquier prop adicional pasado al componente Avatar a través de `{...props}` y evita que el recolector de basura de JavaScript elimine el grupo cuando no está en uso estableciendo `dispose={null}`.
+2. **Estructura del componente:** El componente Avatar devuelve un elemento `<group>` de `Three.js`, que actúa como contenedor para todos los elementos hijos. Este grupo recibe cualquier `prop` adicional pasado al componente Avatar a través de `{...props}` y evita que el recolector de basura de JavaScript elimine el grupo cuando no está en uso estableciendo `dispose={null}`.
 
 3. **Mallas con skinning:** Dentro del grupo, se crean múltiples componentes `<skinnedMesh>`, cada uno representando una parte del avatar con su propia geometría, material y esqueleto. Las mallas con skinning permiten animaciones complejas, como expresiones faciales o movimiento de personajes, ya que sus vértices están vinculados a un sistema de huesos (esqueleto).
 
@@ -490,7 +503,7 @@ Si se hace correctamente, nuestro avatar debería verse así en Blender:
   **Figura 9**. Exportar en formato FBX.
 </ImageBox>
 
-Debemos asegurarnos de que el parámetro Path Mode esté establecido en `copy`:
+Debemos asegurarnos de que el parámetro `Path Mode` esté establecido en `copy`:
 
 <ImageBox
   src="/images/ai-avatars/fig10v2.png"
@@ -503,7 +516,7 @@ Debemos asegurarnos de que el parámetro Path Mode esté establecido en `copy`:
 
 Y finalmente, los exportamos a nuestro directorio `frontend/public/models`.
 
-Ahora que tenemos nuestro modelo en formato FBX, vamos a https://www.mixamo.com/, nos registramos y subimos el archivo
+Ahora que tenemos nuestro modelo en formato `FBX`, vamos a https://www.mixamo.com/, nos registramos y subimos el archivo
 `avatar.fbx`. Aquí encontraremos una variedad de animaciones en las que podemos animar nuestro avatar. Recuerda, la idea
 aquí es hacer que nuestro avatar actúe de la manera más realista posible.
 
@@ -616,23 +629,23 @@ Ahora que entendemos el razonamiento detrás de las animaciones de [Mixamo](http
 
 Primero seleccionaremos un conjunto de animaciones coherentes con la personalidad que queremos darle a nuestro avatar. En mi caso, he elegido diez de ellas:
 
-1.  **Derrotado:** Mostrando frustración después de una pérdida
-2.  **Enojado:** De pie enojado
-3.  **Inactivo:** Detenido, sin hacer nada
+1.  **Defeated:** Mostrando frustración después de una pérdida
+2.  **Angry:** De pie enojado
+3.  **Idle:** Detenido, sin hacer nada
 
-4.  **Inactivo feliz:** Inactivo feliz
+4.  **Idle:** Inactivo feliz
 
-5.  **Sorprendido:** Encontrando algo y moviendo los dedos
+5.  **Surprised:** Encontrando algo y moviendo los dedos
 
-6.  **Sacudida de cabeza pensativa:** Sacudiendo la cabeza pensativamente
+6.  **Thoughtful headshake:** Sacudiendo la cabeza pensativamente
 
-7.  **Gesto de descarte:** Descartando con el dorso de la mano
+7.  **Dismissing gesture:** Descartando con el dorso de la mano
 
-8.  **Hablando Uno:** Hablando con dos manos
+8.  **Talking One:** Hablando con dos manos
 
-9.  **Hablando Dos:** Hablando con una mano
+9.  **Talking Two:** Hablando con una mano
 
-10. **Inactivo triste:** De pie en una disposición triste
+10. **Sad idle:** De pie en una disposición triste
 
 Cuando hayas elegido tus animaciones, debemos descargar cada una de ellas sin piel, como podemos ver en la siguiente imagen:
 
@@ -760,7 +773,7 @@ Cuando el efecto termina, `fadeOut()` se usa para suavizar la transición de sal
 
 En resumen, este código carga un archivo de animación, lo conecta a un modelo 3D y controla qué animación se activa basándose en el estado de la aplicación.
 
-### Función de Actualización para Rasgos Morfológicos
+### Función de actualización para rasgos morfológicos
 
 En esta sección, implementaremos una función llamada `lerpMorphTarget` en el componente Avatar.jsx. En el desarrollo de juegos y animaciones 3D, `lerp` es un término comúnmente usado que significa "interpolación lineal" - un proceso que permite una transición suave entre dos puntos o valores. En este caso, "MorphTarget" se refiere a una característica de los modelos 3D que representa diferentes estados o formas que pueden adoptar. El código de nuestra función se verá así:
 
@@ -795,7 +808,7 @@ A continuación, intenta obtener el índice del morph target que queremos cambia
 Si ambas referencias son válidas, la función reasigna el valor de influencia del morph target respectivo utilizando
 `THREE.MathUtils.lerp`, un método de interpolación lineal dentro de la biblioteca three.js.
 
-### Característica de Parpadeo de Ojos
+### Característica de parpadeo de ojos
 
 Si queremos que nuestro humano digital se comporte de manera más realista, es necesario añadir un parpadeo natural de los ojos. Para añadir el parpadeo de ojos, animaremos los elementos morfológicos `eyeBlinkLeft` y `eyeBlinkRight` en el componente `Avatar.jsx`. Empezamos importando el hook `useFrame` de `@react-three/fiber`, que nos permite actualizar la escena u objetos en la escena cuadro por cuadro:
 
@@ -855,7 +868,7 @@ De esta manera, conseguimos una mirada encantadora para nuestro avatar:
   **Figura 18**. Felix mostrando su mirada sensual.
 </ImageBox>
 
-### Expresiones Faciales con la Biblioteca Leva
+### Expresiones faciales con la biblioteca Leva
 
 Como se mencionó antes, [Leva](https://sbcode.net/react-three-fiber/leva/) es una biblioteca para controlar todas las características del avatar, como ojos, cejas, boca, manos, pies, etc. En este caso, la usaremos para crear un conjunto de expresiones faciales y depurar nuestro código. Lo primero que haremos es importar `useControls` y `button` para configurar el panel de control que nos permitirá modificar todos los atributos de nuestro avatar:
 
@@ -1111,7 +1124,7 @@ const parser = StructuredOutputParser.fromZodSchema(
 
 Así, más adelante, usaremos expresiones faciales basadas en la respuesta generada por la API de OpenAI.
 
-## Habla y Sincronización de Labios
+## Habla y sincronización de labios
 
 Esta sección explicará cómo implementar el sistema de habla y sincronización de labios utilizando las siguientes APIs: OpenAI GPT, Eleven Labs TTS API y Rhubarb Lip Sync.
 
@@ -1143,7 +1156,7 @@ Habrá dos flujos de trabajo principales basados en si la entrada del usuario es
 5. El audio se envía a Rhubarb Lip Sync para generar metadatos de visemas.
 6. Los visemas sincronizan los labios del humano digital con el audio.
 
-### Texto y Audio del Cliente
+### Texto y audio del cliente
 
 Usaremos el siguiente hook para manejar texto, audio y respuestas del backend: un contexto de React y múltiples estados para gestionar la grabación de voz y enviarla al backend. Luego, a través de la API de Whisper, transformaremos el audio en texto, permitiendo que la API de OpenAI GPT lo procese y proporcione una respuesta que podemos procesar aún más con la API de ElevenLabs y Rhubarb Lip-Sync para generar la sincronización de labios para el avatar, produciendo así una respuesta más humana en el lado del cliente.
 
@@ -1472,7 +1485,7 @@ Finalmente, se devuelve `SpeechContext.Provider`, pasando todas las funciones y 
 
 Con esto, tenemos un componente `SpeechProvider` que permite a los usuarios grabar su voz, enviarla al servidor para ser procesada por la API de OpenAI, y así entablar una conversación con ella.
 
-### Interfaz de Chat e Integración de SpeechProvider
+### Interfaz de chat e integración de SpeechProvider
 
 Para integrar el SpeechProvider, utilizaremos la siguiente interfaz:
 
@@ -1715,7 +1728,7 @@ export { convertAudioToText };
 
 El propósito principal de este código es convertir audio a texto. Para lograr esto, primero convierte el audio a formato MP3, luego usa la API de OpenAI Whisper para transcribir el audio a texto, y finalmente, limpia creando y eliminando archivos temporales según sea necesario.
 
-### Generación de Voz con la API de ElevenLabs
+### Generación de voz con la API de ElevenLabs
 
 Una vez que estamos seguros de que la entrada del usuario (texto o audio) ha pasado por la API de OpenAI GPT y ha generado una respuesta, actuando según el flujo descrito anteriormente, la respuesta es un texto que debemos convertir en audio. Para esto, usamos el servicio TTS de [ElevenLabs API](https://elevenlabs.io/) a través del siguiente servicio:
 
@@ -1812,7 +1825,7 @@ async function convertTextToSpeech({ text, fileName }) {
 export { convertTextToSpeech, voice }
 ```
 
-### Visemas del Archivo de Audio de Rhubarb Lip-Sync
+### Visemas del archivo de audio de Rhubarb Lip-Sync
 
 Empecemos diciendo que Rhubarb Lip-Sync es una herramienta de línea de comandos con la que puedes analizar un archivo de audio para reconocer lo que se está diciendo y generar automáticamente la información necesaria para la sincronización labial. Rhubarb Lip-Sync puede generar entre seis y nueve posiciones de boca (visemas). Las primeras seis formas de boca corresponden a fonemas de la A a la F, que son las formas básicas de la boca y, según su documentación, son las posiciones mínimas de boca que deben dibujarse para lograr una animación exitosa.
 
@@ -1921,7 +1934,7 @@ export default visemesMapping
 
 Aquí, nuestro objetivo es hacer coincidir los fonemas identificados por Rhubarb Lip-sync con los morph targets correspondientes de los visemas de nuestro avatar. Para más detalles, puedes consultar la sección sobre posiciones de boca en [Rhubarb lip-sync](https://github.com/DanielSWolf/rhubarb-lip-sync?tab=readme-ov-file#mouth-shapes) y los Morph Targets correspondientes a los visemas del avatar en [Ready Player me](https://docs.readyplayer.me/ready-player-me/api-reference/avatars/morph-targets/oculus-ovr-libsync).
 
-### Sincronización Labial de Audio
+### Sincronización labial de audio
 
 En nuestro backend, tenemos el siguiente código para llevar a cabo la sincronización vocal con el audio:
 
