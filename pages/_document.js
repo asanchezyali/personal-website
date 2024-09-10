@@ -21,7 +21,7 @@ class MyDocument extends Document {
           <link rel="mask-icon" href="/static/favicons/safari-pinned-tab.svg" color="#5bbad5" />
           <meta
             name="google-site-verification"
-            content="9yyV-4tBX0dUfCywA6SU7kXvc8DTQMiUem_Rzshn3Pk"
+            content="huZ8aBRuzeiuxio0W-1ot3JKlaV-0Bb8DKB_Eh_QpVs"
           />
           <meta name="msapplication-TileColor" content="#000000" />
           <meta name="theme-color" media="(prefers-color-scheme: light)" content="#fff" />
