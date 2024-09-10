@@ -1,0 +1,24 @@
+
+  <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+      <title>Alejandro Sánchez Yalí - Blog</title>
+      <link>https://asanchezyali.com/blog</link>
+      <description>Blog para compartir mis apuntes de todo lo que estoy aprendiendo.</description>
+      <language>en-us</language>
+      <managingEditor>asanchezyali@gmail.com (Alejandro Sánchez Yalí)</managingEditor>
+      <webMaster>asanchezyali@gmail.com (Alejandro Sánchez Yalí)</webMaster>
+      <lastBuildDate>Wed, 15 Aug 2018 00:00:00 GMT</lastBuildDate>
+      <atom:link href="https://asanchezyali.com/tags/book/feed.xml" rel="self" type="application/rss+xml"/>
+      
+  <item>
+    <guid>https://asanchezyali.com/blog/the-time-machine</guid>
+    <title>The Time Machine</title>
+    <link>https://asanchezyali.com/blog/the-time-machine</link>
+    <description>The Time Traveller (for so it will be convenient to speak of him) was expounding a recondite matter to us. His pale grey eyes shone and twinkled, and his usually pale face was flushed and animated...</description>
+    <pubDate>Wed, 15 Aug 2018 00:00:00 GMT</pubDate>
+    <author>asanchezyali@gmail.com (Alejandro Sánchez Yalí)</author>
+    <category>writings</category><category>book</category><category>reflection</category>
+  </item>
+
+    </channel>
+  </rss>

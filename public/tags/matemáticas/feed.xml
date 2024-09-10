@@ -1,0 +1,44 @@
+
+  <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+      <title>Alejandro Sánchez Yalí - Programming, Mathematics, and Technology Blog</title>
+      <link>https://asanchezyali.com/blog</link>
+      <description>Welcome to my blog, where I share my notes and insights on programming, mathematics, and technology. From machine learning to software development, I cover a wide range of topics related to computer science and beyond.</description>
+      <language>en-us</language>
+      <managingEditor>asanchezyali@gmail.com (Alejandro Sánchez Yalí)</managingEditor>
+      <webMaster>asanchezyali@gmail.com (Alejandro Sánchez Yalí)</webMaster>
+      <lastBuildDate>Mon, 23 Sep 2024 05:00:00 GMT</lastBuildDate>
+      <atom:link href="https://asanchezyali.com/tags/matemáticas/feed.xml" rel="self" type="application/rss+xml"/>
+      
+  <item>
+    <guid>https://asanchezyali.com/blog/es/differentiable-programming/20240923DifferentiablePrograms</guid>
+    <title>Redes neuronales representadas como DAGs de programas computacionales parametrizados</title>
+    <link>https://asanchezyali.com/blog/es/differentiable-programming/20240923DifferentiablePrograms</link>
+    <description>Las redes neuronales se pueden ver como algoritmos con parámetros ajustables, optimizados mediante aprendizaje automatizado. Este enfoque nos permite abordarlas desde una perspectiva matemática y computacional más amplia. En este artículo, exploraremos cómo representar estos algoritmos como grafos dirigidos acíclicos (DAG).</description>
+    <pubDate>Mon, 23 Sep 2024 05:00:00 GMT</pubDate>
+    <author>asanchezyali@gmail.com (Alejandro Sánchez Yalí)</author>
+    <category>matemáticas</category><category>ciencias de la computación</category>
+  </item>
+
+  <item>
+    <guid>https://asanchezyali.com/blog/es/number-theory/20230108DivisionAlgorithm</guid>
+    <title>Algoritmo de la división</title>
+    <link>https://asanchezyali.com/blog/es/number-theory/20230108DivisionAlgorithm</link>
+    <description>Un algoritmo de división es un proceso que divide un número (llamado el dividendo) por otro número (llamado el divisor) y obtiene el cociente y el resto de la división. Se puede implementar un algoritmo de división en Python utilizando un ciclo while y restando el divisor del dividendo en cada iteración. Conocer cómo funciona un algoritmo de división y cómo implementarlo por nuestra cuenta es útil para entender mejor cómo funcionan las divisiones y puede ser útil en situaciones donde no podemos utilizar librerías o funciones predefinidas.</description>
+    <pubDate>Tue, 10 Jan 2023 05:00:00 GMT</pubDate>
+    <author>asanchezyali@gmail.com (Alejandro Sánchez Yalí)</author>
+    <category>matemáticas</category><category>teoría de numeros</category><category>python</category>
+  </item>
+
+  <item>
+    <guid>https://asanchezyali.com/blog/es/ml/20210712MachineLearning</guid>
+    <title>Explorando el aprendizaje de máquinas y humanos: principios y procesos</title>
+    <link>https://asanchezyali.com/blog/es/ml/20210712MachineLearning</link>
+    <description>¿Qué es lo que nos permite aprender como seres humanos? En general, adquirimos gran parte de nuestros conocimientos a través de nuestra experiencia con los objetos y el mundo que nos rodea. Esto significa que aprendemos a partir de la información y los datos que recopilamos sobre ellos, en lugar de depender de definiciones matemáticas abstractas.</description>
+    <pubDate>Mon, 12 Jul 2021 05:00:00 GMT</pubDate>
+    <author>asanchezyali@gmail.com (Alejandro Sánchez Yalí)</author>
+    <category>machine-learning</category><category>matemáticas</category>
+  </item>
+
+    </channel>
+  </rss>

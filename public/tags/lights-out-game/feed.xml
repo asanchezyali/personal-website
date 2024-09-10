@@ -1,0 +1,24 @@
+
+  <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+      <title>Alejandro Sánchez Yalí - Programming, Mathematics, and Technology Blog</title>
+      <link>https://asanchezyali.com/blog</link>
+      <description>Welcome to my blog, where I share my notes and insights on programming, mathematics, and technology. From machine learning to software development, I cover a wide range of topics related to computer science and beyond.</description>
+      <language>en-us</language>
+      <managingEditor>asanchezyali@gmail.com (Alejandro Sánchez Yalí)</managingEditor>
+      <webMaster>asanchezyali@gmail.com (Alejandro Sánchez Yalí)</webMaster>
+      <lastBuildDate>Wed, 05 Oct 2022 05:00:00 GMT</lastBuildDate>
+      <atom:link href="https://asanchezyali.com/tags/lights-out-game/feed.xml" rel="self" type="application/rss+xml"/>
+      
+  <item>
+    <guid>https://asanchezyali.com/blog/en/modular-arithmetic/20220510ModularArithmetic</guid>
+    <title>How to build a modular arithmetic library in Python</title>
+    <link>https://asanchezyali.com/blog/en/modular-arithmetic/20220510ModularArithmetic</link>
+    <description>In this tutorial, we are going to learn how to create a library for modular arithmetic, using operator overloading and redefining the built-in functions for NumPy.</description>
+    <pubDate>Wed, 05 Oct 2022 05:00:00 GMT</pubDate>
+    <author>asanchezyali@gmail.com (Alejandro Sánchez Yalí)</author>
+    <category>python</category><category>operator-overloading</category><category>number-theory</category><category>lights out game</category>
+  </item>
+
+    </channel>
+  </rss>

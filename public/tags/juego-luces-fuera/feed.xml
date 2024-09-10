@@ -1,0 +1,24 @@
+
+  <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+      <title>Alejandro Sánchez Yalí - Programming, Mathematics, and Technology Blog</title>
+      <link>https://asanchezyali.com/blog</link>
+      <description>Welcome to my blog, where I share my notes and insights on programming, mathematics, and technology. From machine learning to software development, I cover a wide range of topics related to computer science and beyond.</description>
+      <language>en-us</language>
+      <managingEditor>asanchezyali@gmail.com (Alejandro Sánchez Yalí)</managingEditor>
+      <webMaster>asanchezyali@gmail.com (Alejandro Sánchez Yalí)</webMaster>
+      <lastBuildDate>Wed, 05 Oct 2022 05:00:00 GMT</lastBuildDate>
+      <atom:link href="https://asanchezyali.com/tags/juego-luces-fuera/feed.xml" rel="self" type="application/rss+xml"/>
+      
+  <item>
+    <guid>https://asanchezyali.com/blog/es/modular-arithmetic/20220510ModularArithmetic</guid>
+    <title>Cómo construir una biblioteca de aritmética modular en Python</title>
+    <link>https://asanchezyali.com/blog/es/modular-arithmetic/20220510ModularArithmetic</link>
+    <description>En este tutorial, aprenderemos cómo crear una biblioteca para aritmética modular, usando sobrecarga de operadores y redefiniendo las funciones incorporadas de NumPy.</description>
+    <pubDate>Wed, 05 Oct 2022 05:00:00 GMT</pubDate>
+    <author>asanchezyali@gmail.com (Alejandro Sánchez Yalí)</author>
+    <category>python</category><category>sobrecarga-de-operadores</category><category>teoría-de-números</category><category>juego-luces-fuera</category>
+  </item>
+
+    </channel>
+  </rss>
