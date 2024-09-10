@@ -36,7 +36,8 @@ export async function getStaticProps({ params }) {
     return formattedSlug === joinedSlug
   })
 
-  let postEnglish, postSpanish
+  let postEnglish = null
+  let postSpanish = null
 
   try {
     params.slug[0] = 'en'
@@ -50,6 +51,13 @@ export async function getStaticProps({ params }) {
     postSpanish = await getFileBySlug('blog', params.slug.join('/'))
   } catch (error) {
     console.error(`Failed to get Spanish post: ${error}`)
+  }
+
+  // If both posts don't exist, return 404
+  if (!postEnglish && !postSpanish) {
+    return {
+      notFound: true,
+    }
   }
 
   // If one of the posts doesn't exist, make them equal
