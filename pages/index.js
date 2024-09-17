@@ -1,14 +1,11 @@
 import React from 'react'
-import Image from '@/components/Image'
 import { getAllFilesFrontMatter } from '@/lib/mdx'
 import siteMetadata from '@/data/siteMetadata'
 import metaLabels from '@/data/metaLabels'
 import ListLayout from '@/layouts/ListLayout'
 import { PageSEO } from '@/components/SEO'
-import SocialIcon from '@/components/social-icons'
 import { LanguageContext } from '@/providers/LanguageProvider'
 import { quotes } from '@/lib/quotes'
-import Link from 'next/link'
 
 export const POSTS_PER_PAGE = 5
 
