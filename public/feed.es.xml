@@ -12,7 +12,7 @@
       
   <item>
     <guid>https://asanchezyali.com/blog/es/ai/20240917ZeroShot</guid>
-    <title>Clasificación de texto Zero-Shot con modelos de lenguaje</title>
+    <title>Clasificación de texto Zero-Shot</title>
     <link>https://asanchezyali.com/blog/es/ai/20240917ZeroShot</link>
     <description>La clasificación de texto Zero-Shot (ZSTC) es una técnica de aprendizaje automatizado que permite a los modelos clasificar textos en categorías sin haber sido entrenados previamente en esas categorías específicas. Utiliza modelos de lenguaje pre-entrenados, como BART o GPT, que han aprendido a comprender las relaciones semánticas entre palabras y frases durante su pre-entrenamiento. Este enfoque permite al modelo generalizar su conocimiento y hacer inferencias sobre nuevas categorías basándose en un texto dado, sin necesidad de ejemplos etiquetados.</description>
     <pubDate>Tue, 17 Sep 2024 05:00:00 GMT</pubDate>

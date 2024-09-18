@@ -19,23 +19,25 @@ In mathematics the division algorithm is stated as follows:
 
 The above theorem defines a way to calculate the quotient and remainder of a division, but it does not seem to be an algorithm itself. However, its mathematical approach can be useful in developing an efficient division algorithm. The idea is to apply the concepts of the theorem to create a systematic and repetitive process that allows dividing two numbers and obtaining the desired result. In this way, we can use logic and mathematics to solve practical problems and apply theory in practice.
 
-Before we start implementing the algorithm, let's see how a division would be done by hand to better understand the process. For example, if we divide $17$ by $5$, we can perform the division as follows:
+# Explanation of the division algorithm for integers (including negatives)
 
-1. We initialize the dividend with the value $17$ and the divisor with the value $5$. We also initialize the quotient to 0 and the remainder equal to the dividend.
+Before implementing the algorithm, let's see how division is performed manually, also considering negative numbers. We'll use the example of dividing 17 by 5, and then explain how to handle negative cases.
 
-2. We check if the remainder is greater than or equal to the divisor. Since $17$ is greater than $5$, we enter the next loop defined by steps (3) and (4).
+## Positive case: 17 ÷ 5
 
-3. We subtract the divisor from the remainder and obtain a new value for the remainder: $17 - 5 = 12$.
+1. We initialize the dividend with 17, the divisor with 5, the quotient at 0, and the remainder equal to the dividend (17).
 
-4. We increase the value of the quotient by one: $0 + 1 = 1$.
+2. We check if the absolute value of the remainder is greater than or equal to the absolute value of the divisor. Since |17| ≥ |5|, we enter the cycle.
 
-5. We again check if the remainder is greater than or equal to the divisor. Since $12>5$, we repeat steps (3) and (4).
+3. We subtract the absolute value of the divisor from the absolute value of the remainder: 17 - 5 = 12.
 
-6. We repeat steps (3) and (4) until the remainder is less than the divisor. In this case, after two additional iterations, the dividend becomes $2$.
+4. We increase the absolute value of the quotient by 1: 0 + 1 = 1.
 
-7. The final value of the quotient is $3$, which is the result of the division $17 / 5$, and the final value of the remainder is $2$, which is the modulo of the division.
+5. We repeat steps 3 and 4 until the absolute value of the remainder is less than that of the divisor.
 
-To better visualize the process, we add a process table to the previous steps:
+6. At the end, the absolute value of the quotient is 3 and that of the remainder is 2.
+
+Iteration table:
 
 | Iteration | Dividend | Divisor | Quotient | Remainder |
 | --------- | -------- | ------- | -------- | --------- |
@@ -44,31 +46,154 @@ To better visualize the process, we add a process table to the previous steps:
 | 3         | 17       | 5       | 2        | 7         |
 | 4         | 17       | 5       | 3        | 2         |
 
-This table clearly shows how the remainder decreases and the quotient increases in each iteration until the dividend is less than the divisor and the final result is obtained.
+## Handling negative cases
 
-What happens if the dividend is less than the divisor? In this case, the quotient is $0$ and the remainder is the value of the dividend. For example, if we divide $3$ by $5$, the quotient is $0$ and the remainder is $3$.
+To handle negative numbers, we follow these additional steps:
 
-In the next step, we will implement the division algorithm in Python. To do this, we must first define the values of the dividend and divisor. Then, we must check if the divisor is equal to $0$. If it is, the algorithm cannot continue and must raise an exception. If the divisor is different from $0$, we must initialize the quotient to $0$ and the remainder to the value of the dividend. Then, we must use a `while` loop that runs while the remainder is greater than or equal to the divisor. In each iteration, we must subtract the divisor from the remainder and increase the value of the quotient by one. Finally, we must return the values of the quotient and remainder as the result of the division algorithm.
+1. At the beginning, we determine the sign of the result:
+
+   - If the dividend and divisor have the same sign, the result is positive.
+   - If they have different signs, the result is negative.
+
+2. We work with absolute values during the division.
+
+3. At the end, we adjust the sign of the quotient as determined in step 1.
+
+4. The sign of the remainder is always the same as that of the original dividend.
+
+## Examples with negative numbers
+
+### Case 1: -17 ÷ 5
+
+- Sign of the result: Negative (different signs)
+- Absolute dividend: 17, Absolute divisor: 5
+- Division process same as in the positive case
+- Result: Quotient = -3, Remainder = -2
+
+### Case 2: 17 ÷ -5
+
+- Sign of the result: Negative (different signs)
+- Absolute dividend: 17, Absolute divisor: 5
+- Division process same as in the positive case
+- Result: Quotient = -3, Remainder = 2
+
+### Case 3: -17 ÷ -5
+
+- Sign of the result: Positive (both negative)
+- Absolute dividend: 17, Absolute divisor: 5
+- Division process same as in the positive case
+- Result: Quotient = 3, Remainder = -2
+
+## Special case: Dividend less than divisor
+
+If the absolute value of the dividend is less than that of the divisor, the quotient is 0 and the remainder is equal to the dividend. For example:
+
+- 3 ÷ 5 = Quotient: 0, Remainder: 3
+- -3 ÷ 5 = Quotient: 0, Remainder: -3
+- 3 ÷ -5 = Quotient: 0, Remainder: 3
+- -3 ÷ -5 = Quotient: 0, Remainder: -3
+
+# Implementation of the division algorithm in Python
+
+Next, we present a pseudocode that describes the division algorithm for integers, including the handling of negative
+numbers.
+
+<PseudoCode title="Algoritmo 1. División de Enteros">
+<PseudoCodeLine showNumber={false} indent={0}>
+$\text{\textbf{Función:}}$ $\text{división}(a, b)$
+</PseudoCodeLine>
+<PseudoCodeLine showNumber={false} indent={0}>
+$\text{\textbf{Entrada:}}$ $a, b \in \mathbb{Z}, b \neq 0$
+</PseudoCodeLine>
+<PseudoCodeLine number={1}>
+$\text{\textbf{Si} } b = 0 \text{ \textbf{entonces}}$
+</PseudoCodeLine>
+<PseudoCodeLine number={2} indent={2}>
+$\text{Lanzar error: "El divisor no puede ser cero"}$
+</PseudoCodeLine>
+<PseudoCodeLine number={3}>
+$\text{\textbf{Si} } (a \geq 0 \text{ \textbf{y} } b > 0) \text{ \textbf{o} } (a \leq 0 \text{ \textbf{y} } b < 0) \text{ \textbf{entonces}}$
+</PseudoCodeLine>
+<PseudoCodeLine number={4} indent={2}>
+$\text{signo} \leftarrow 1$
+</PseudoCodeLine>
+<PseudoCodeLine number={5}>
+$\text{\textbf{Si no}}$
+</PseudoCodeLine>
+<PseudoCodeLine number={6} indent={2}>
+$\text{signo} \leftarrow -1$
+</PseudoCodeLine>
+<PseudoCodeLine number={7}>
+$a \leftarrow |a|$
+</PseudoCodeLine>
+<PseudoCodeLine number={8}>
+$b \leftarrow |b|$
+</PseudoCodeLine>
+<PseudoCodeLine number={9}>
+$\text{cociente} \leftarrow 0$
+</PseudoCodeLine>
+<PseudoCodeLine number={10}>
+$\text{residuo} \leftarrow a$
+</PseudoCodeLine>
+<PseudoCodeLine number={11}>
+$\text{\textbf{Mientras} } \text{residuo} \geq b \text{ \textbf{hacer}}$
+</PseudoCodeLine>
+<PseudoCodeLine number={12} indent={2}>
+$\text{residuo} \leftarrow \text{residuo} - b$
+</PseudoCodeLine>
+<PseudoCodeLine number={13} indent={2}>
+$\text{cociente} \leftarrow \text{cociente} + 1$
+</PseudoCodeLine>
+<PseudoCodeLine number={14}>
+$\text{cociente} \leftarrow \text{cociente} \times \text{signo}$
+</PseudoCodeLine>
+<PseudoCodeLine number={15}>
+$\text{\textbf{Si} } a < 0 \text{ \textbf{entonces}}$
+</PseudoCodeLine>
+<PseudoCodeLine number={16} indent={2}>
+$\text{residuo} \leftarrow \text{residuo} \times (-1)$
+</PseudoCodeLine>
+<PseudoCodeLine showNumber={false} indent={0}>
+$\text{\textbf{Salida:} } (\text{cociente}, \text{residuo})$
+</PseudoCodeLine>
+</PseudoCode>
 
 An example of code in Python that implements the above process is as follows:
 
-```python
+```python showLineNumbers
 def division(dividend, divisor):
     if divisor == 0:
         raise ValueError("Divisor cannot be zero")
 
+    # Determine the sign of the result more explicitly
+    if (dividend >= 0 and divisor > 0) or (dividend <= 0 and divisor < 0):
+        sign = 1
+    else:
+        sign = -1
+
+    # Work with absolute values
+    dividend = abs(dividend)
+    divisor = abs(divisor)
+
     quotient = 0
     remainder = dividend
+
     while remainder >= divisor:
-        remainder = remainder - divisor
+        remainder -= divisor
         quotient += 1
+
+    # Adjust the sign of the quotient and remainder
+    quotient *= sign
+    remainder *= -1 if dividend < 0 else 1
+
     return quotient, remainder
 
+# Test the algorithm
 dividend = int(input("Enter the dividend: "))
 divisor = int(input("Enter the divisor: "))
 quotient, remainder = division(dividend, divisor)
-print("Quotient: ", quotient)
-print("Remainder: ", remainder)
+print("Quotient:", quotient)
+print("Remainder:", remainder)
 ```
 
 This code performs the division of two numbers entered by the user. First, the variables `quotient` y `remainder`, are defined, and the value of the dividend is assigned to `remainder`. hen, a `while` loop is used that runs while `remainder` is greater than or equal to `divisor`. EOn each iteration, `divisor` is subtracted from `remainder` and the value of `quotient` s increased by one. Finally, the values of `quotient` and `remainder` are returned as the result of the `division()` function.
