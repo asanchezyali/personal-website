@@ -1,10 +1,10 @@
 ---
-title: 'Clasificación de texto Zero-Shot con modelos de lenguaje'
+title: 'Clasificación Zero-Shot de texto'
 date: '2024/09/17'
 tags: ['IA', 'Zero-Shot Learning', 'Transformers', 'Hugging Face']
 draft: false
 time: '15 min'
-summary: 'La clasificación de texto Zero-Shot (ZSTC) es una técnica de aprendizaje automatizado que permite a los modelos clasificar textos en categorías sin haber sido entrenados previamente en esas categorías específicas. Utiliza modelos de lenguaje pre-entrenados, como BART o GPT, que han aprendido a comprender las relaciones semánticas entre palabras y frases durante su pre-entrenamiento. Este enfoque permite al modelo generalizar su conocimiento y hacer inferencias sobre nuevas categorías basándose en un texto dado, sin necesidad de ejemplos etiquetados.'
+summary: 'La clasificación Zero-Shot de texto (ZSTC) es una técnica de aprendizaje automatizado que permite a los modelos clasificar textos en categorías sin haber sido entrenados previamente en esas categorías específicas. Utiliza modelos de lenguaje pre-entrenados, como BART o GPT, que han aprendido a comprender las relaciones semánticas entre palabras y frases durante su pre-entrenamiento. Este enfoque permite al modelo generalizar su conocimiento y hacer inferencias sobre nuevas categorías basándose en un texto dado, sin necesidad de ejemplos etiquetados.'
 bibliography: references-data.bib
 canonicalUrl: 'https://www.asanchezyali.com/blog/es/number-theory/20230108DivisionAlgorithm'
 headerImage: '/images/ai/zero-shot.jpg'
@@ -20,9 +20,9 @@ y se conoce como Zero-Shot Learning (ZSL) o Aprendizaje de Cero Disparos. En est
 modelos de lenguaje pueden realizar clasificaciones de texto sin necesidad de entrenamiento previo en un dominio
 específico.
 
-## Clasificación de texto Zero-Shot
+## Clasificación Zero-Shot de texto
 
-La clasificación de texto Zero-Shot (ZSTC) es una técnica de aprendizaje automatizado que permite a los modelos clasificar textos en categorías sin haber sido entrenados previamente en esas categorías específicas. Utiliza modelos de lenguaje pre-entrenados, como BART o GPT, que han aprendido a comprender las relaciones semánticas entre palabras y frases durante su pre-entrenamiento. Este enfoque permite al modelo generalizar su conocimiento y hacer inferencias sobre nuevas categorías basándose en un texto dado, sin necesidad de ejemplos etiquetados. Esta capacidad representa un avance significativo respecto al aprendizaje supervisado tradicional, donde los modelos necesitan ejemplos de cada clase para realizar una clasificación precisa.
+La clasificación Zero-Shot de texto (ZSTC por sus siglas en inglés, _Zero-Shot Text Classification_) es una técnica de aprendizaje automatizado que permite a los modelos clasificar textos en categorías sin haber sido entrenados previamente en esas categorías específicas. Utiliza modelos de lenguaje pre-entrenados, como BART o GPT, que han aprendido a comprender las relaciones semánticas entre palabras y frases durante su pre-entrenamiento. Este enfoque permite al modelo generalizar su conocimiento y hacer inferencias sobre nuevas categorías basándose en un texto dado, sin necesidad de ejemplos etiquetados. Esta capacidad representa un avance significativo respecto al aprendizaje supervisado tradicional, donde los modelos necesitan ejemplos de cada clase para realizar una clasificación precisa.
 
 El término «Zero-Shot» (cero disparos) se refiere a la habilidad de un modelo de manejar tareas o hacer predicciones sin
 entrenamiento específico previo. En este enfoque, el modelo debe aprovechar y transferir el conocimiento adquirido
@@ -35,7 +35,7 @@ La clasificación Zero-Shot es particularmente útil en escenarios donde:
 2. Las categorías cambian con el tiempo y es difícil mantener un conjunto de entrenamiento actualizado.
 3. Se requiere una rápida adaptación a nuevas categorías sin necesidad de reentrenar el modelo.
 
-Veamos un ejemplo práctico de cómo se puede implementar la clasificación de texto Zero-Shot utilizando modelos de
+Veamos un ejemplo práctico de cómo se puede implementar ZSTC utilizando modelos de
 lenguaje pre-entrenados:
 
 ```python showLineNumbers
@@ -61,11 +61,11 @@ Score: 0.5561
 
 En este ejemplo, estamos utilizando un modelo pre-entrenado para clasificar un texto en categorías que posiblemente no
 haya visto antes. El modelo BART-large-mnli de Facebook es un modelo de lenguaje pre-entrenado que ha sido ajustado en
-la tarea de clasificación de texto. Al proporcionar el texto y una lista de etiquetas candidatas, el modelo devuelve la
+la tarea de ZSTC. Al proporcionar el texto y una lista de etiquetas candidatas, el modelo devuelve la
 etiqueta más probable y la puntuación asociada a esa predicción. En este caso, el modelo clasifica el texto como una
 «Local news» con una puntuación de 0.5561.
 
-## ¿Cómo funciona la clasificación de texto Zero-Shot?
+## ¿Cómo funciona?
 
 Cuando le presentamos un texto y una lista de etiquetas candidatas al modelo, éste compara el texto de entrada
 (conocido como premisa) xon varias descripciones o hipótesis relacionadas con las etiquetas candidatas. Estas
@@ -129,18 +129,20 @@ print(results)
 
 ```
 
-## Ventajas de la clasificación de texto Zero-Shot
+```
+## Salida
+{'technology': 0.5412299036979675, 'food': 0.006815298460423946, 'sports': 0.02776361256837845}
+```
 
-la clasificación de texto Zero-Shot ofrece varias ventajas sobre los enfoques tradicionales de clasificación,
+## Ventajas de ZSTC
+
+ZSTC ofrece varias ventajas sobre los enfoques tradicionales de clasificación,
 especialmente en escenarios donde la disponibilidad de datos etiquetados es limitada o costosa. Veamos algunas de las
 ventajas clave de este enfoque.
 
-### 1. Flexibilidad y adaptabilidad
+### Flexibilidad y adaptabilidad
 
-Los modelos Zero-Shot con modelos de lenguaje pre-entrenados pueden adaptarse rápidamente a nuevas categorías o tareas
-sin necesidad de entrenamiento adicional. Esto permite una mayor flexibilidad y adaptabilidad en entornos donde las
-categorías cambian con frecuencia o donde es difícil obtener ejemplos de entrenamiento para todas las categorías. Veamos
-un ejemplo práctico:
+Los modelos Zero-Shot, al utilizar modelos de lenguaje pre-entrenados, pueden adaptarse rápidamente a nuevas categorías o tareas sin necesidad de entrenamiento adicional. Esto permite una mayor flexibilidad y adaptabilidad en entornos donde las categorías cambian con frecuencia o donde es difícil obtener ejemplos de entrenamiento para todas las categorías. Un ejemplo práctico puede verse a continuación, donde se añaden nuevas etiquetas sin necesidad de ajustar el modelo:
 
 ```python showLineNumbers
 from transformers import pipeline
@@ -183,11 +185,744 @@ Confidence: 0.99
 En este ejemplo, podemos ver cómo el modelo es capaz clasificar correctamente un texto en una nueva categoría no vista
 previamente, «medical technology», con alta confianza.
 
-### 2. Eficiencia en recursos y tiempo
+### Reducción de la necesidad de datos etiquetados
+
+En muchos escenarios del mundo real, algunas clases pueden tener muy pocos ejemplos de entrenamiento. La clasificación Zero-Shot brilla en estas situaciones:
+
+- Permite la clasificación en categorías raras o poco representadas
+- Es útil en dominios especializados donde la recopilación de datos es costosa o difícil
+
+### Eficiencia en recursos y tiempo
 
 La clasificación Zero-Shot elimina la necesidad de recopilar y etiquetar grandes cantidades de datos de entrenamiento
 para cada categoría. Esto ahorra tiempo y recursos al evitar el proceso de recopilación, limpieza y etiquetado de datos,
 y permite una rápida adaptación a nuevas categorías sin necesidad de reentrenar el modelo.
+
+### Escalabilidad a un gran número de categorías
+
+Los métodos tradicionales de clasificación pueden ser limitados en las cantidad de categorías que pueden manejar. La
+clasificación Zero-Shot maneja este problema de manera elegante:
+
+- Puede manejar potencialmente un número ilimitado de categorías.
+- No sufre de desequilibrios de clases, ya que no requiere un conjunto de entrenamiento equilibrado.
+
+### Transferencia de conocimiento entre dominios
+
+La clasificació2n Zero-Shot permite una forma de transferencia de conocimiento entre dominios:
+
+- Utiliza el conocimiento general del modelo de lenguaje pre-entrenado para inferir sobre nuevos dominios.
+- Puede adaptar el conocimiento de un dominio a otro relacionado.
+
+Ejemplo de transferencia de conocimiento entre dominios:
+
+```python showLineNumbers
+# Clasificación en un nuevo dominio
+from transformers import pipeline
+
+classifier = pipeline("zero-shot-classification", model="facebook/bart-large-mnli", device=0)
+tech_text = "The new smartphone features a high-resolution OLED display"
+medical_text = "The patient exhibits symptoms of acute bronchitis"
+
+diverse_labels = ["technology", "medicine", "sports", "cooking"]
+
+for text in [tech_text, medical_text]:
+    result = classifier(text, diverse_labels)
+    print(f"Texto: {text}")
+    print(f"Clasificación: {result['labels'][0]}")
+    print(f"Confianza: {result['scores'][0]:.2f}\n")
+```
+
+```
+## Salida
+Texto: The new smartphone features a high-resolution OLED display
+Clasificación: technology
+Confianza: 0.99
+
+Texto: The patient exhibits symptoms of acute bronchitis
+Clasificación: medicine
+Confianza: 0.89
+```
+
+### Flexibilidad en la formulación de clases.
+
+La clasificación Zero-Shot permite una gran flexibilidad en cómo se formulan las clases:
+
+- Las clases puede ser descritas con frases o incluso con oraciones completas.
+- Permite una clasificación más matizada y contextual.
+
+```python showLineNumbers
+# Clasificación con descripciones de clase detalladas
+from transformers import pipeline
+
+classifier = pipeline("zero-shot-classification", model="facebook/bart-large-mnli", device=0)
+text = "The company announced record profits this quarter"
+detailed_labels = [
+    "Financial news about corporate performance",
+    "Technology advancements in the business sector",
+    "Environmental impact of corporate activities"
+]
+
+result = classifier(text, detailed_labels)
+print(f"Texto: {text}")
+print(f"Clasificación: {result['labels'][0]}")
+print(f"Confianza: {result['scores'][0]:.2f}")
+```
+
+```
+Texto: The company announced record profits this quarter
+Clasificación: Financial news about corporate performance
+Confianza: 0.99
+```
+
+## Manejo de etiquetas múltiples
+
+Los modelos de lenguaje permite la ZSTC con etiquetas múltiples, es decir, la posibilidad de
+asignar más de una etiqueta a un texto. Esto es útil en escenarios donde un texto puede pertenecer a varias categorías
+simultáneamente.
+
+Veamos un ejemplo práctico de cómo se puede implementar:
+
+```python showLineNumbers
+from transformers import pipeline
+
+classifier = pipeline("zero-shot-classification", model="facebook/bart-large-mnli", device=0)
+
+text = "The new smartphone features a high-resolution camera, 5G connectivity, and a powerful AI chip."
+labels = ["camera quality", "network technology", "processing power", "battery life"]
+
+result = classifier(text, labels, multi_label=True)
+
+print("Text:", text)
+print("\nMulti-label classification results:")
+for label, score in zip(result['labels'], result['scores']):
+    if score > 0.5:  # Adjust this threshold as needed
+        print(f"{label}: {score:.2f}")
+```
+
+```
+## Salida
+Text: The new smartphone features a high-resolution camera, 5G connectivity, and a powerful AI chip.
+
+Multi-label classification results:
+camera quality: 0.94
+processing power: 0.78
+```
+
+La capacidad de manejar múltiples etiquetas amplía significativamente la aplicabilidad de ZSTC en escenarios del mundo real, donde la complejidad y la multidimensionalidad son la norma más que la excepción.
+
+# Buenas prácticas
+
+La clasificación Zero-Shot, aunque es poderosa y versátil, requiere un enfoque cuidadoso para maximizar su eficacia.
+Quiero señalar algunas buenas prácticas a tener en cuenta al trabajar con este enfoque:
+
+## Manejo de la ambiguedad
+
+Como hemos visto, los modelos de lenguaje pre-entrenados pueden ser muy buenos para inferir sobre el contexto y las
+relaciones semánticas en un texto. Sin embargo, pueden tener dificultades con textos ambiguos o con múltiples
+interpretaciones. Es importante tener en cuenta la ambigüedad y la incertidumbre en las predicciones del modelo y
+considerar cómo manejarlas en su aplicación. Cuando múltiple etiquetas parecen igualmente probables, es crucial analizar
+los puntajes de confianza y considerar el contexto.
+
+```python showLineNumbers
+from transformers import pipeline
+
+classifier = pipeline("zero-shot-classification", model="facebook/bart-large-mnli", device=0)
+
+ambiguous_text = "The bank by the river was crowded."
+labels = ["financial institution", "river bank", "crowded place"]
+
+result = classifier(ambiguous_text, labels)
+
+print("Text:", ambiguous_text)
+
+print("\nClassification results:")
+for label, score in zip(result['labels'], result['scores']):
+    print(f"{label}: {score:.2f}")
+
+print("\nAnalysis:")
+if max(result['scores']) - min(result['scores']) < 0.1:
+    print("This case is ambiguous. Consider providing more context or refining the labels.")
+else:
+    print(f"The most likely interpretation is: {result['labels'][0]}")
+```
+
+```
+## Salida
+Text: The bank by the river was crowded.
+
+Classification results:
+crowded place: 0.50
+river bank: 0.50
+financial institution: 0.00
+
+Analysis:
+The most likely interpretation is: crowded place
+```
+
+En el anterior ejemplo, hemos establecido un umbral de diferencia de 0.1 para identificar casos ambiguos. Cuando se
+detecta ambiguedad en las predicciones, hay que considerar proporcionar más contexto o refinar las etiquetas para
+mejorar la precisión de la clasificación. Y en aplicaciones críticas, implementar un sistema de revisión human para
+casos ambiguos.
+
+## Selección cuidadosa de etiquetas
+
+La elección de etiquetas puede tener un impacto significativo en el rendimiento del modelo:
+
+- Usar etiquetas claras y mutuamente excluyentes cuando sea posible.
+- Evitar etiquetas demasiado generales o demasiado específicas.
+- Considerar múltiples formulaciones de la misma etiqueta para capturar diferentes matices.
+
+```python showLineNumbers
+good_labels = ["technology news", "sports report", "financial analysis"]
+poor_labels = ["news", "report", "article"]  # Demasiado amplias
+```
+
+## Preprocesamiento de texto
+
+El preprocesamiento adecuado puede mejorar la precisioón de la clasificación:
+
+- Eliminar información irrelevante o ruido del texto de entrada.
+- Normalizar el texto (minúsculas, eliminación de signos de puntuación, etc.).
+- Considerar la expansión de acrónimos o
+
+## Uso de prompt engineering
+
+La forma en que formula la tarea puede afectar el rendimiento del modelo:
+
+```python showLineNumbers
+# Enfoque estándar
+result = classifier(text, labels)
+
+# Con prompt engineering
+hypothesis_template = "This text is about {}."
+result = classifier(text, labels, hypothesis_template=hypothesis_template)
+```
+
+## Validación y ajuste
+
+Implementar un proceso de validación continua:
+
+- Usar un conjunto de datos de prueba para evaluar regularmente el rendimiento.
+- Ajustar las etiquetas y el modelo según sea necesario.
+- Considerar el fine-tuning del modelo base si se dispone de suficientes datos específicoss del dominio.
+
+## Manejo de casos de baja confianza
+
+Implementar estrategias para manejar predicciones de baja confianza:
+
+```python showLineNumbers
+confidence_threshold = 0.5
+result = classifier(text, labels)
+if max(result['scores']) < confidence_threshold:
+    print("Low confidence prediction. Consider manual review.")
+```
+
+# Casos de uso
+
+La clasificación Zero-Shot tiene una amplia gama de aplicaciones en diversas industrias y campos. Veamos algunos
+ejemplos:
+
+1. **Clasificación de correos electrónicos en un entorno corporativo**:
+
+```python showLineNumbers
+from transformers import pipeline
+
+classifier = pipeline("zero-shot-classification", model="facebook/bart-large-mnli", device=0)
+
+def classify_email(email_body):
+    labels = ["Urgent", "Sales Lead", "Technical Support", "HR Related", "General Inquiry"]
+    confidence_threshold = 0.6
+
+    result = classifier(email_body, labels)
+    top_label = result['labels'][0]
+    top_score = result['scores'][0]
+
+    if top_score < confidence_threshold:
+        return "Needs Human Review", top_score
+    else:
+        return top_label, top_score
+
+# Ejemplos de uso
+email_body = "We need to schedule an urgent meeting to discuss the Q3 financial reports."
+category, confidence = classify_email(email_body)
+
+print(f"Email Category: {category}")
+print(f"Confidence: {confidence:.2f}")
+
+if category == "Needs Human Review":
+    print("This email requires manual classification.")
+else:
+    print(f"Automated action: Route to {category} department")
+```
+
+```
+## Salida
+Email Category: Urgent
+Confidence: 0.94
+Automated action: Route to Urgent department
+```
+
+2. Análisis de sentimientos en reseñas de productos:
+
+```python showLineNumbers
+from transformers import pipeline
+
+classifier = pipeline("zero-shot-classification", model="facebook/bart-large-mnli", device=0)
+
+def analyze_product_review(review):
+    labels = ["Positive", "Negative", "Neutral"]
+    aspect_labels = ["Quality", "Price", "Customer Service", "Usability"]
+    confidence_threshold = 0.7
+
+    sentiment_result = classifier(review, labels)
+    aspect_result = classifier(review, aspect_labels, multi_label=True)
+
+    sentiment = sentiment_result['labels'][0]
+    sentiment_score = sentiment_result['scores'][0]
+
+    if sentiment_score < confidence_threshold:
+        sentiment = "Ambiguous"
+
+    aspects = [label for label, score in zip(aspect_result['labels'], aspect_result['scores']) if score > 0.5]
+
+    return sentiment, aspects
+
+# Ejemplo de uso
+review = "The product is well-made but a bit overpriced. The customer support was helpful when I had questions."
+sentiment, aspects = analyze_product_review(review)
+
+print(f"Overall Sentiment: {sentiment}")
+print(f"Aspects Mentioned: {', '.join(aspects)}")
+
+if sentiment == "Ambiguous":
+    print("This review needs further analysis for accurate sentiment classification.")
+```
+
+```
+## Salida
+Overall Sentiment: Ambiguous
+Aspects Mentioned: Quality, Price, Customer Service
+This review needs further analysis for accurate sentiment classification.
+```
+
+3. **Clasificador de noticias para una agregador de contenido**:
+
+```python showLineNumbers
+from transformers import pipeline
+import numpy as np
+
+classifier = pipeline("zero-shot-classification", model="facebook/bart-large-mnli", device=0)
+
+def categorize_news_article(article_text):
+    main_categories = ["Politics", "Technology", "Sports", "Entertainment", "Business", "Science"]
+    sub_categories = {
+        "Politics": ["Domestic", "International", "Election", "Policy"],
+        "Technology": ["AI", "Cybersecurity", "Gadgets", "Internet"],
+        "Sports": ["Football", "Basketball", "Tennis", "Olympics"],
+        "Entertainment": ["Movies", "Music", "Celebrity", "TV Shows"],
+        "Business": ["Stock Market", "Startups", "Economy", "Corporate"],
+        "Science": ["Space", "Climate", "Medicine", "Biology"]
+    }
+
+    confidence_threshold = 0.4
+
+    # Clasificación de categoría principal
+    main_result = classifier(article_text, main_categories)
+    main_category = main_result['labels'][0]
+    main_score = main_result['scores'][0]
+
+    if main_score < confidence_threshold:
+        return "Uncategorized", [], main_score
+
+    # Clasificación de subcategoría
+    sub_result = classifier(article_text, sub_categories[main_category])
+    sub_category = sub_result['labels'][0]
+    sub_score = sub_result['scores'][0]
+
+    # Calcular confianza promedio
+    avg_confidence = np.mean([main_score, sub_score])
+
+    if avg_confidence < confidence_threshold:
+        return main_category, [], avg_confidence
+    else:
+        return main_category, [sub_category], avg_confidence
+
+# Ejemplo de uso
+article = """
+SpaceX successfully launched its latest batch of Starlink satellites into orbit on Monday.
+The mission, which took off from Cape Canaveral, Florida, deployed 60 new satellites,
+expanding the company's growing constellation of broadband internet satellites.
+"""
+
+main_category, sub_categories, confidence = categorize_news_article(article)
+
+print(f"Main Category: {main_category}")
+if sub_categories:
+    print(f"Sub-Category: {sub_categories[0]}")
+print(f"Confidence: {confidence:.2f}")
+
+if confidence < 0.4:
+    print("This article needs manual review for accurate categorization.")
+elif not sub_categories:
+    print("Could not determine a specific sub-category. Consider refining the classification.")
+```
+
+```
+## Salida
+Main Category: Uncategorized
+Confidence: 0.33
+This article needs manual review for accurate categorization.
+```
+
+También es posible combinar Zero-Shot con otros métodos de NLP para mejorar los resultados, como la extracción de
+entidades, la clasificación de intenciones o la generación de texto.
+
+4. **Análisis de noticias financieras**
+
+```python showLineNumbers
+from transformers import pipeline
+
+# Inicializar modelos
+zero_shot_classifier = pipeline("zero-shot-classification", model="facebook/bart-large-mnli")
+ner_pipeline = pipeline("ner", model="dbmdz/bert-large-cased-finetuned-conll03-english")
+
+def analyze_financial_news(text):
+    # Categorías para Zero-Shot
+    categories = ["Stock Market", "Mergers and Acquisitions", "Earnings Report", "Economic Policy"]
+
+    # Realizar Zero-Shot Classification
+    zs_result = zero_shot_classifier(text, categories)
+
+    # Realizar NER
+    ner_result = ner_pipeline(text)
+
+    # Extraer entidades relevantes
+    companies = set([entity['word'] for entity in ner_result if entity['entity'] == 'I-ORG'])
+
+    # Combinar resultados
+    confidence_threshold = 0.5
+    top_category = zs_result['labels'][0]
+    confidence = zs_result['scores'][0]
+
+    if confidence < confidence_threshold:
+        print("Low confidence prediction. Consider manual review.")
+        return None, companies
+
+    return top_category, companies
+
+# Ejemplo de uso
+news_text = "Apple Inc. reported record-breaking quarterly earnings, exceeding Wall Street expectations. The tech giant's stock surged in after-hours trading."
+
+category, mentioned_companies = analyze_financial_news(news_text)
+
+if category:
+    print(f"News Category: {category}")
+    print(f"Mentioned Companies: {', '.join(mentioned_companies)}")
+```
+
+```
+## Salida
+News Category: Earnings Report
+Mentioned Companies: Apple, Inc
+```
+
+5. **Clasificación de Tweets con contexto de ssuario**
+
+```python showLineNumbers
+from transformers import pipeline
+
+zero_shot_classifier = pipeline("zero-shot-classification", model="facebook/bart-large-mnli")
+ner_pipeline = pipeline("ner", model="dbmdz/bert-large-cased-finetuned-conll03-english")
+
+def classify_tweet_with_context(tweet, user_bio):
+    # Categorías para Zero-Shot
+    categories = ["Technology", "Politics", "Entertainment", "Sports", "Science"]
+
+    # Realizar Zero-Shot Classification en el tweet
+    zs_result = zero_shot_classifier(tweet, categories)
+
+    # Realizar NER en la bio del usuario
+    ner_result = ner_pipeline(user_bio)
+
+    # Extraer entidades relevantes de la bio
+    user_interests = set([entity['word'] for entity in ner_result if entity['entity'] in ['I-ORG', 'I-MISC']])
+
+    # Combinar resultados
+    confidence_threshold = 0.5
+    top_category = zs_result['labels'][0]
+    confidence = zs_result['scores'][0]
+
+    if confidence < confidence_threshold:
+        # Si la confianza es baja, usar la bio del usuario para inferir categoría
+        for interest in user_interests:
+            interest_result = zero_shot_classifier(interest, categories)
+            if interest_result['scores'][0] > confidence:
+                top_category = interest_result['labels'][0]
+                confidence = interest_result['scores'][0]
+
+    if confidence < confidence_threshold:
+        print("Low confidence prediction. Consider manual review.")
+        return None
+
+    return top_category
+
+# Ejemplo de uso
+tweet = "Just watched the latest episode. Mind blown!"
+user_bio = "Tech enthusiast. AI researcher at Google. Avid sci-fi reader."
+
+category = classify_tweet_with_context(tweet, user_bio)
+
+if category:
+    print(f"Tweet Category: {category}")
+```
+
+```
+## Salida
+Tweet Category: Entertainment
+```
+
+# Evaluación y métricas
+
+La evaluación del rendimiento de los modelos de clasificación Zero-Shot es crucial para entender su efectividad y limitaciones. A diferencia de los métodos tradicionales, estos modelos se prueban en categorías no vistas durante el entrenamiento, lo que requiere un enfoque de evaluación específico.
+Para ilustrar este proceso, utilizaremos el conjunto de datos AG News, que contiene noticias de cuatro categorías:
+World, Sports, Business y Sci/Tech. Implementaremos un clasificador Zero-Shot utilizando el modelo BART-large-mnli y
+evaluaremos su rendimiento con diversas métricas.
+
+```python showLineNumbers
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+from transformers import pipeline
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+from sklearn.model_selection import train_test_split
+from tqdm import tqdm
+
+# Cargar el conjunto de datos AG News
+def load_ag_news():
+    train_data = pd.read_csv('https://raw.githubusercontent.com/mhjabreel/CharCnn_Keras/master/data/ag_news_csv/train.csv', header=None)
+    test_data = pd.read_csv('https://raw.githubusercontent.com/mhjabreel/CharCnn_Keras/master/data/ag_news_csv/test.csv', header=None)
+    data = pd.concat([train_data, test_data], axis=0)
+    data.columns = ['Class', 'Title', 'Content']
+    data['Text'] = data['Title'] + " " + data['Content']
+    return data
+
+# Cargar y preparar los datos
+data = load_ag_news()
+class_mapping = {1: "World", 2: "Sports", 3: "Business", 4: "Sci/Tech"}
+data['Class'] = data['Class'].map(class_mapping)
+
+# Tomar una muestra aleatoria para reducir el tiempo de procesamiento
+sample_size = 1000  # Ajusta este número según tu capacidad de procesamiento
+data_sample = data.sample(n=sample_size, random_state=42)
+
+# Dividir en conjuntos de entrenamiento y prueba
+train_data, test_data = train_test_split(data_sample, test_size=0.2, random_state=42)
+
+# Preparar el clasificador Zero-Shot
+classifier = pipeline("zero-shot-classification", model="facebook/bart-large-mnli", device=0)
+
+# Función para evaluar el clasificador
+def evaluate_zero_shot_classifier(test_data, all_labels):
+    true_labels = []
+    predicted_labels = []
+    confidences = []
+
+    for _, row in tqdm(test_data.iterrows(), total=len(test_data)):
+        result = classifier(row['Text'], all_labels)
+        predicted_label = result['labels'][0]
+
+        true_labels.append(row['Class'])
+        predicted_labels.append(predicted_label)
+        confidences.append(result['scores'][0])
+
+    return true_labels, predicted_labels, confidences
+
+# Evaluar el clasificador
+all_labels = list(class_mapping.values())
+true_labels, predicted_labels, confidences = evaluate_zero_shot_classifier(test_data, all_labels)
+
+# Calcular métricas
+accuracy = accuracy_score(true_labels, predicted_labels)
+print(f"Overall accuracy: {accuracy:.2f}")
+
+print("\nClassification Report:")
+print(classification_report(true_labels, predicted_labels, target_names=all_labels))
+
+# Visualizar la matriz de confusión
+cm = confusion_matrix(true_labels, predicted_labels, labels=all_labels)
+plt.figure(figsize=(10, 8))
+sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', xticklabels=all_labels, yticklabels=all_labels)
+plt.title('Confusion Matrix')
+plt.xlabel('Predicted Label')
+plt.ylabel('True Label')
+plt.show()
+
+# Visualizar la distribución de confianza
+plt.figure(figsize=(10, 6))
+sns.histplot(confidences, kde=True)
+plt.title('Distribution of Confidence Scores')
+plt.xlabel('Confidence')
+plt.ylabel('Count')
+plt.show()
+
+# Calcular estadísticas adicionales
+mean_confidence = np.mean(confidences)
+median_confidence = np.median(confidences)
+std_confidence = np.std(confidences)
+
+print(f"\nMean Confidence: {mean_confidence:.2f}")
+print(f"Median Confidence: {median_confidence:.2f}")
+print(f"Standard Deviation of Confidence: {std_confidence:.2f}")
+
+# Calcular precisión por clase
+per_class_accuracy = {}
+for label in all_labels:
+    mask = np.array(true_labels) == label
+    per_class_accuracy[label] = accuracy_score(np.array(true_labels)[mask], np.array(predicted_labels)[mask])
+
+print("\nPer-Class Accuracy:")
+for label, acc in per_class_accuracy.items():
+    print(f"{label}: {acc:.2f}")
+
+# Visualizar precisión por clase
+plt.figure(figsize=(12, 6))
+sns.barplot(x=list(per_class_accuracy.keys()), y=list(per_class_accuracy.values()))
+plt.title('Per-Class Accuracy')
+plt.xlabel('Class')
+plt.ylabel('Accuracy')
+plt.xticks(rotation=45)
+plt.show()
+```
+
+Este código evalúa el clasificador Zero-Shot utilizando métricas estándar como precisión, recall y F1-score. Además,
+genera visualizaciones como la matriz de confusión y la distribución de puntajes de confianza, proporcionando insights
+sobre el rendimiento del modelo en diferentes categorías y su nivel de certeza en las predicciones.
+
+La evaluación en un conjunto de datos real como AG News permite una comprensión más profunda de cómo el modelo se
+comporta en escenarios prácticos, revelando sus fortalezas y áreas de mejora en la clasificación de texto sin
+entrenamiento específico.
+
+Los resultados se muestran a continuación:
+
+```
+## Salida
+Overall accuracy: 0.74
+
+Classification Report:
+              precision    recall  f1-score   support
+
+       World       0.62      0.70      0.65        46
+      Sports       0.76      0.51      0.61        51
+    Business       0.93      0.94      0.94        54
+    Sci/Tech       0.68      0.82      0.74        49
+
+    accuracy                           0.74       200
+   macro avg       0.75      0.74      0.74       200
+weighted avg       0.75      0.74      0.74       200
+```
+
+<ImageBox src="/images/ai/zero-shot-v01.png" alt="Matrix de confusión" width="750px" height="750px">
+  **Figura 1**. Matriz de confusión que muestra la distribución de predicciones correctas e
+  incorrectas en diferentes categorías.
+</ImageBox>
+
+<ImageBox
+  src="/images/ai/zero-shot-v02.png"
+  alt="Distribución de puntajes de confianza"
+  width="728px"
+  height="468px"
+>
+  **Figura 2**. Distribución de puntajes de confianza para las predicciones del clasificador
+  Zero-Shot.
+</ImageBox>
+
+```
+Mean Confidence: 0.54
+Median Confidence: 0.50
+Standard Deviation of Confidence: 0.16
+
+Per-Class Accuracy:
+World: 0.82
+Sports: 0.94
+Business: 0.70
+Sci/Tech: 0.51
+```
+
+<ImageBox src="/images/ai/zero-shot-v03.png" alt="Precisión por clase" width="728px" height="468px">
+  **Figura 3**. Precisión por clase en la clasificación Zero-Shot de noticias AG.
+</ImageBox>
+
+El informe de clasificación muestra un rendimiento variado del modelo Zero-Shot en las diferentes categorías del
+conjunto de datos AG News. La precisión general del modelo es del 74%, lo cual es bastante bueno para un enfoque
+Zero-Shot. La categoría «Business» se destaca con un excelente rendimiento (F1-score de 0.94), sugiriendo que el modelo
+identifica muy bien este tipo de contenido. «Sci/Tech» también muestra un buen desempeño (F1-score de 0.74). Sin
+embargo, el modelo parece tener más dificultades con «World» y «Sports», con F1-scores de 0.65 y 0.61 respectivamente.
+Esto podría indicar que estas categorías son más desafiantes de distinguir o que sus características semánticas son
+menos distintivas para el modelo. En general, el clasificador muestra un rendimiento prometedor, especialmente
+considerando que no fue entrenado específicamente en este conjunto de datos.
+
+# Limitaciones y consideraciones
+
+Aunque la clasificación Zero-Shot es poderosa, tiene sus limitaciones. El rendimiento del modelo depende de la calidad
+del pre-entrenamiento y de la relación semántica entre la entrada y las etiquetas. Puede tener dificultades con dominios
+altamente especializados o conceptos alejados de sus datos de entrenamiento. Siempre es importante validar los
+resultados y considerar el fine-tuning para casos de uso específicos.
+
+```python showLineNumbers
+from transformers import pipeline
+
+classifier = pipeline("zero-shot-classification", model="facebook/bart-large-mnli", device=0)
+
+# Example of a limitation: highly specialized domain
+specialized_text = "The patient exhibits signs of keratoconus in the left eye."
+general_labels = ["health", "sports", "technology"]
+specialized_labels = ["ophthalmology", "cardiology", "neurology"]
+
+print("General labels:")
+print(classifier(specialized_text, general_labels))
+
+print("\nSpecialized labels:")
+print(classifier(specialized_text, specialized_labels))
+
+# Example of a concept far from training data
+unusual_text = "The zorblax fluttered its tentacles in the crimson sky of Xargon-7."
+labels = ["science fiction", "historical fiction", "romance", "mystery"]
+
+print("\nUnusual concept:")
+print(classifier(unusual_text, labels))
+```
+
+```
+## Salida
+General labels:
+{'sequence': 'The patient exhibits signs of keratoconus in the left eye.', 'labels': ['health', 'technology', 'sports'], 'scores': [0.7707374095916748, 0.135053813457489, 0.0942087471485138]}
+
+Specialized labels:
+{'sequence': 'The patient exhibits signs of keratoconus in the left eye.', 'labels': ['ophthalmology', 'neurology', 'cardiology'], 'scores': [0.9111181497573853, 0.06408613175153732, 0.02479572966694832]}
+
+Unusual concept:
+{'sequence': 'The zorblax fluttered its tentacles in the crimson sky of Xargon-7.', 'labels': ['science fiction', 'mystery', 'historical fiction', 'romance'], 'scores': [0.48209530115127563, 0.2437402755022049, 0.16008099913597107, 0.11408346891403198]}
+```
+
+El informe de clasificación muestra un rendimiento variado del modelo Zero-Shot en las diferentes categorías del conjunto de datos AG News. La precisión general del modelo es del 74%, lo cual es bastante bueno para un enfoque Zero-Shot. La categoría √Business» se destaca con un excelente rendimiento (F1-score de 0.94), sugiriendo que el modelo identifica muy bien este tipo de contenido. "Sci/Tech" también muestra un buen desempeño (F1-score de 0.74). Sin embargo, el modelo parece tener más dificultades con "World" y "Sports", con F1-scores de 0.65 y 0.61 respectivamente. Esto podría indicar que estas categorías son más desafiantes de distinguir o que sus características semánticas son menos distintivas para el modelo. En general, el clasificador muestra un rendimiento prometedor, especialmente considerando que no fue entrenado específicamente en este conjunto de datos.
+
+Algunos puntos adicionales a considerar:
+
+1. Sensibilidad a la formulación: El rendimiento puede variar significativamente según cómo se formulen las etiquetas de
+   clase.
+
+2. Sesgo del modelo: Los modelos pre-entrenados pueden reflejar sesgos presentes en sus datos de entrenamiento.
+
+3. Limitaciones de contexto: Pueden tener dificultades con tareas que requieren un conocimiento contextual extenso o
+   razonamiento complejo.
+
+4. Escalabilidad: El tiempo de inferencia puede aumentar con el número de clases potenciales.
+
+5. Interpretabilidad: Puede ser difícil entender exactamente cómo el modelo llega a sus decisiones.
+
+Es crucial realizar una evaluación exhaustiva en el dominio específico de aplicación y considerar estas limitaciones al
+implementar soluciones basadas en clasificación Zero-Shot.
 
 ## Imágenes
 
