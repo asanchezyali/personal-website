@@ -28,7 +28,9 @@ Desde una perspectiva más matemática, **el problema del aprendizaje** puede fo
 Para abordar esta tarea es necesario seleccionar un **conjunto de hipótesis** $\mathcal{H} \subset \mathcal{M}( \mathcal{X}, \mathcal{Y} )$ y desarrollar un **algoritmo de aprendizaje**, es decir, encontrar un mapeo:
 
 $$
+\begin{equation}
 \mathcal{A}: \bigcup_{ m\in \mathbb{N} } \mathcal{Z}^{m} \to \mathcal{H}.
+\end{equation}
 $$
 
 El objetivo de un algoritmo de aprendizaje es, a partir de una muestra de datos $S = (s_i)_{i\in[m]}$ de cierto tamaño $m$, encontrar un **modelo** $h_S = \mathcal{A}(S)\in \mathcal{H}$ que tenga un buen rendimiento en la muestra de datos y también tenga la capacidad de generalizar ese rendimiento a datos desconocidos en $\mathcal{Z} \setminus \{s_i\}_{i\in[m]}$. El rendimiento del modelo se evalúa mediante la función de pérdida $\mathcal{L}$, y se mide a través de la pérdida $\mathcal{L}(h_S, z)$. La capacidad de generalizar implica que el modelo $h_S$ tendrá un comportamiento similar en el conjunto de datos desconocidos $z\in \mathcal{Z} \setminus \{s_i\}_{i\in[m]}$ al que tiene en el conjunto de datos conocidos, $z\in \mathcal{S}$.
