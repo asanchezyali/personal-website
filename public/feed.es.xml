@@ -7,15 +7,25 @@
       <language>en-us</language>
       <managingEditor>asanchezyali@gmail.com (Alejandro Sánchez Yalí)</managingEditor>
       <webMaster>asanchezyali@gmail.com (Alejandro Sánchez Yalí)</webMaster>
-      <lastBuildDate>Mon, 23 Sep 2024 05:00:00 GMT</lastBuildDate>
+      <lastBuildDate>Tue, 17 Sep 2024 05:00:00 GMT</lastBuildDate>
       <atom:link href="https://asanchezyali.com/feed.xml" rel="self" type="application/rss+xml"/>
       
+  <item>
+    <guid>https://asanchezyali.com/blog/es/ai/20240917ZeroShot</guid>
+    <title>Clasificación de Texto Zero-Shot con Modelos de Lenguaje</title>
+    <link>https://asanchezyali.com/blog/es/ai/20240917ZeroShot</link>
+    <description>Un algoritmo de división es un proceso que divide un número (llamado el dividendo) por otro número (llamado el divisor) y obtiene el cociente y el resto de la división. Se puede implementar un algoritmo de división en Python utilizando un ciclo while y restando el divisor del dividendo en cada iteración. Conocer cómo funciona un algoritmo de división y cómo implementarlo por nuestra cuenta es útil para entender mejor cómo funcionan las divisiones y puede ser útil en situaciones donde no podemos utilizar librerías o funciones predefinidas.</description>
+    <pubDate>Tue, 17 Sep 2024 05:00:00 GMT</pubDate>
+    <author>asanchezyali@gmail.com (Alejandro Sánchez Yalí)</author>
+    <category>IA</category><category>Zero-Shot Learning</category><category>Transformers</category><category>Hugging Face</category>
+  </item>
+
   <item>
     <guid>https://asanchezyali.com/blog/es/differentiable-programming/20240923DifferentiablePrograms</guid>
     <title>Redes neuronales representadas como DAGs de programas computacionales parametrizados</title>
     <link>https://asanchezyali.com/blog/es/differentiable-programming/20240923DifferentiablePrograms</link>
     <description>Las redes neuronales se pueden ver como algoritmos con parámetros ajustables, optimizados mediante aprendizaje automatizado. Este enfoque nos permite abordarlas desde una perspectiva matemática y computacional más amplia. En este artículo, exploraremos cómo representar estos algoritmos como grafos dirigidos acíclicos (DAG).</description>
-    <pubDate>Mon, 23 Sep 2024 05:00:00 GMT</pubDate>
+    <pubDate>Fri, 23 Aug 2024 05:00:00 GMT</pubDate>
     <author>asanchezyali@gmail.com (Alejandro Sánchez Yalí)</author>
     <category>matemáticas</category><category>ciencias de la computación</category>
   </item>
