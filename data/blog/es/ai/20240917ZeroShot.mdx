@@ -462,7 +462,7 @@ Confidence: 0.94
 Automated action: Route to Urgent department
 ```
 
-2. Análisis de sentimientos en reseñas de productos:
+2. **Análisis de sentimientos en reseñas de productos**:
 
 ```python showLineNumbers
 from transformers import pipeline
@@ -904,8 +904,6 @@ Specialized labels:
 Unusual concept:
 {'sequence': 'The zorblax fluttered its tentacles in the crimson sky of Xargon-7.', 'labels': ['science fiction', 'mystery', 'historical fiction', 'romance'], 'scores': [0.48209530115127563, 0.2437402755022049, 0.16008099913597107, 0.11408346891403198]}
 ```
-
-El informe de clasificación muestra un rendimiento variado del modelo Zero-Shot en las diferentes categorías del conjunto de datos AG News. La precisión general del modelo es del 74%, lo cual es bastante bueno para un enfoque Zero-Shot. La categoría √Business» se destaca con un excelente rendimiento (F1-score de 0.94), sugiriendo que el modelo identifica muy bien este tipo de contenido. "Sci/Tech" también muestra un buen desempeño (F1-score de 0.74). Sin embargo, el modelo parece tener más dificultades con "World" y "Sports", con F1-scores de 0.65 y 0.61 respectivamente. Esto podría indicar que estas categorías son más desafiantes de distinguir o que sus características semánticas son menos distintivas para el modelo. En general, el clasificador muestra un rendimiento prometedor, especialmente considerando que no fue entrenado específicamente en este conjunto de datos.
 
 Algunos puntos adicionales a considerar:
 
