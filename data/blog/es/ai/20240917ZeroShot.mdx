@@ -1,0 +1,198 @@
+---
+title: 'Clasificación de Texto Zero-Shot con Modelos de Lenguaje'
+date: '2024/09/17'
+tags: ['IA', 'Zero-Shot Learning', 'Transformers', 'Hugging Face']
+draft: false
+time: '15 min'
+summary: 'Un algoritmo de división es un proceso que divide un número (llamado el dividendo) por otro número (llamado el divisor) y obtiene el cociente y el resto de la división. Se puede implementar un algoritmo de división en Python utilizando un ciclo while y restando el divisor del dividendo en cada iteración. Conocer cómo funciona un algoritmo de división y cómo implementarlo por nuestra cuenta es útil para entender mejor cómo funcionan las divisiones y puede ser útil en situaciones donde no podemos utilizar librerías o funciones predefinidas.'
+bibliography: references-data.bib
+canonicalUrl: 'https://www.asanchezyali.com/blog/es/number-theory/20230108DivisionAlgorithm'
+headerImage: '/images/ai/zero-shot.png'
+language: 'es'
+---
+
+Imagina un estudiante que puede aprobar un examen sobre un tema que nunca ha estudiado. ¿Cómo es esto posible? La
+respuesta radica en la capacidad de comprensión y generalización de los seres humanos. Los humanos pueden aplicar el
+conocimiento adquirido en un contexto a situaciones nuevas y desconocidas. Este proceso de generalización y adaptación
+es fundamental para el aprendizaje y la inteligencia. Ahora, piensa en una inteligencia artificial capaz de clasificar
+conceptos que jamás ha visto en su entrenamiento. ¿Es posible que una IA pueda realizar esta tarea? La respuesta es sí,
+y se conoce como Zero-Shot Learning (ZSL) o Aprendizaje de Cero Disparos. En este artículo, exploraremos cómo los
+modelos de lenguaje pueden realizar clasificaciones de texto sin necesidad de entrenamiento previo en un dominio
+específico.
+
+## Clasificación de texto Zero-Shot
+
+La clasificación de texto Zero-Shot (ZSTC) es una técnica de aprendizaje automatizado que permite a los modelos clasificar textos en categorías sin haber sido entrenados previamente en esas categorías específicas. Utiliza modelos de lenguaje pre-entrenados, como BART o GPT, que han aprendido a comprender las relaciones semánticas entre palabras y frases durante su pre-entrenamiento. Este enfoque permite al modelo generalizar su conocimiento y hacer inferencias sobre nuevas categorías basándose en un texto dado, sin necesidad de ejemplos etiquetados. Esta capacidad representa un avance significativo respecto al aprendizaje supervisado tradicional, donde los modelos necesitan ejemplos de cada clase para realizar una clasificación precisa.
+
+El término «Zero-Shot» (cero disparos) se refiere a la habilidad de un modelo de manejar tareas o hacer predicciones sin
+entrenamiento específico previo. En este enfoque, el modelo debe aprovechar y transferir el conocimiento adquirido
+durante sus entrenamiento en otras tareas o categorías relacionadas para abordar estas nuevas categorías no vistas
+previamente.
+
+La clasificación Zero-Shot es particularmente útil en escenarios donde:
+
+1. Es poco practico o costoso etiquetar ejemplos de entrenamiento para todas las categorías.
+2. Las categorías cambian con el tiempo y es difícil mantener un conjunto de entrenamiento actualizado.
+3. Se requiere una rápida adaptación a nuevas categorías sin necesidad de reentrenar el modelo.
+
+Veamos un ejemplo práctico de cómo se puede implementar la clasificación de texto Zero-Shot utilizando modelos de
+lenguaje pre-entrenados:
+
+```python showLineNumbers
+from transformers import pipeline
+
+classifier = pipeline("zero-shot-classification", model="facebook/bart-large-mnli", device=0)
+text = "The new restaurant in the city center offers a unique culinary experience, blending traditional flavors with modern techniques."
+candidate_labels = ["Restaurant review", "Local news", "Cooking recipe", "Tourist guide"]
+result = classifier(text, candidate_labels)
+
+print(f"Text: {text}")
+print(f"Most likely label: {result['labels'][0]}")
+print(f"Score: {result['scores'][0]:.4f}")
+
+```
+
+```
+## Salida
+The new restaurant in the city center offers a unique culinary experience, blending traditional flavors with modern techniques.
+Most likely label: Local news
+Score: 0.5561
+```
+
+En este ejemplo, estamos utilizando un modelo pre-entrenado para clasificar un texto en categorías que posiblemente no
+haya visto antes. El modelo BART-large-mnli de Facebook es un modelo de lenguaje pre-entrenado que ha sido ajustado en
+la tarea de clasificación de texto. Al proporcionar el texto y una lista de etiquetas candidatas, el modelo devuelve la
+etiqueta más probable y la puntuación asociada a esa predicción. En este caso, el modelo clasifica el texto como una
+"Noticia local" con una puntuación de 0.5561.
+
+## ¿Cómo funciona la clasificación de texto Zero-Shot?
+
+Cuando le presentamos un texto y una lista de etiquetas candidatas al modelo, éste compara el texto de entrada
+(conocido como premisa) xon varias descripciones o hipótesis relacionadas con las etiquetas candidatas. Estas
+descripciones toman la forma de afirmaciones que indican que el texto de entrada pertenece a una categoría específica,
+por ejemplo, «Este texto es sobre tecnología» o «Este texto es sobre deportes». El modelo evalúa la probabilidad de cada
+etiqueta en función de la comprensión contextual que ha adquirido durante el pre-entrenamiento.
+
+Matemáticamente, esto puede modelarse a través de la probabilidad condicional de que el texto de entrada pertenezca a
+una categoría dada, dada la hipótesis o descripción de esa categoría, es decir, $P(\text{categoría}\; |\; \text{texto})$, donde la
+$\text{categoría}$ es una de las etiquetas candidatas y el $\text{texto}$ es la premisa. El modelo asigna una puntuación a cada etiqueta
+en función de la probabilidad de que el texto de entrada pertenezca a esa categoría. La etiqueta con la puntuación más
+alta se considera la predicción final del modelo. El modelo utiliza la función de activación $\text{softmax}$ sobre los
+$\text{logits}$ producidos por el modelo para obtener las probabilidades de cada etiqueta:
+
+$$
+\begin{equation}
+P(\text{categoría}_i\; |\; \text{texto}) = \frac{e^{z_i}}{\sum_{j=i}^{N} e^{z_j}}
+\end{equation}
+$$
+
+Donde $z_i$ es el $\text{logit}$ asociado a la categoría $i$ y $N$ es el número total de categorías. La función
+$\text{softmax}$ normaliza los $\text{logits}$ para obtener una distribución de probabilidad sobre las etiquetas
+candidatas.
+
+En Python podemos implementar la clasificación Zero-Shot utilizando la biblioteca `transformers` de [Hugging Face](https://huggingface.co/docs/transformers/index), que
+proporciona una interfaz sencilla para trabajar con modelos de lenguaje pre-entrenados. A continuación, se muestra un ejemplo de cómo implementar la clasificación Zero-Shot en Python utilizando el modelo BART-large-mnli de Facebook:
+
+```python showLineNumbers
+import numpy as np
+import torch
+from transformers import AutoModelForSequenceClassification, AutoTokenizer
+
+# Cargar modelo y tokenizador preentrenados
+model = AutoModelForSequenceClassification.from_pretrained("facebook/bart-large-mnli")
+tokenizer = AutoTokenizer.from_pretrained("facebook/bart-large-mnli")
+
+def zero_shot_classify(text, labels):
+    # Crear hipótesis basadas en las etiquetas candidatas
+    hypothesis = [f"This text is about {label}." for label in labels]
+    premise = [text] * len(labels)
+
+    # Tokenizar entradas (premisa e hipótesis) para el modelo
+    inputs = tokenizer(premise, hypothesis, return_tensors="pt", padding=True, truncation=True)
+
+    # Generar predicciones con el modelo
+    outputs = model(**inputs)
+
+    # Aplicar softmax a los logits para convertirlos en probabilidades
+    probs = torch.nn.functional.softmax(outputs.logits, dim=1)
+
+    # Devolver las probabilidades para cada etiqueta
+    return dict(zip(labels, probs[:, 1].tolist()))
+
+# Texto de entrada y etiquetas candidatas
+text = "The new smartphone has a powerful processor and high-resolution camera."
+labels = ["technology", "food", "sports"]
+
+# Clasificación Zero-Shot
+results = zero_shot_classify(text, labels)
+print(results)
+
+```
+
+## Ventajas de la clasificación de texto Zero-Shot
+
+la clasificación de texto Zero-Shot ofrece varias ventajas sobre los enfoques tradicionales de clasificación,
+especialmente en escenarios donde la disponibilidad de datos etiquetados es limitada o costosa. Veamos algunas de las
+ventajas clave de este enfoque:
+
+### 1. Flecibilidad y adaptabilidad
+
+Los modelos Zero-Shot con modelos de lenguaje pre-entrenados pueden adaptarse rápidamente a nuevas categorías o tareas
+sin necesidad de entrenamiento adicional. Esto permite una mayor flexibilidad y adaptabilidad en entornos donde las
+categorías cambian con frecuencia o donde es difícil obtener ejemplos de entrenamiento para todas las categorías. Veamos
+un ejemplo práctico:
+
+```python showLineNumbers
+from transformers import pipeline
+
+classifier = pipeline("zero-shot-classification", model="facebook/bart-large-mnli", device=0)
+
+# Existing classes
+texts = ["The new AI algorithm outperforms humans in chess",
+         "The latest operating system update improves security"]
+labels = ["artificial intelligence", "software"]
+
+# New, unseen class
+new_text = "The 3D printer creates custom prosthetics for patients"
+new_label = "medical technology"
+
+# Classify with existing and new labels
+all_labels = labels + [new_label]
+for text in texts + [new_text]:
+    result = classifier(text, all_labels)
+    print(f"Text: {text}")
+    print(f"Classification: {result['labels'][0]}")
+    print(f"Confidence: {result['scores'][0]:.2f}\n")
+```
+
+```
+## Salida
+Text: The new AI algorithm outperforms humans in chess
+Classification: artificial intelligence
+Confidence: 0.77
+
+Text: The latest operating system update improves security
+Classification: software
+Confidence: 0.99
+
+Text: The 3D printer creates custom prosthetics for patients
+Classification: medical technology
+Confidence: 0.99
+```
+
+En este ejemplo, podemos ver cómo el modelo es capaz clasificar correctamente un texto en una nueva categoría no vista
+previamente, "medical technology", con alta confianza.
+
+### 2. Eficiencia en recursos y tiempo
+
+La clasificación Zero-Shot elimina la necesidad de recopilar y etiquetar grandes cantidades de datos de entrenamiento
+para cada categoría. Esto ahorra tiempo y recursos al evitar el proceso de recopilación, limpieza y etiquetado de datos,
+y permite una rápida adaptación a nuevas categorías sin necesidad de reentrenar el modelo.
+
+## Imágenes
+
+- [Unplash](https://unsplash.com/@antoine1003) - Antoine Dautry - [Pencil on system of equations](https://unsplash.com/photos/_zsL306fDc).
+
+## Referencias
+
+1. [Felipe Zaldivar. 2012. Introducción a la teoría de números.](http://cbt1.edu.mx/Educacion/OC/Matematicas/Recursos/publication.pdf)
