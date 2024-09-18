@@ -1,5 +1,5 @@
 ---
-title: 'Clasificación de Texto Zero-Shot con Modelos de Lenguaje'
+title: 'Clasificación de texto Zero-Shot con modelos de lenguaje'
 date: '2024/09/17'
 tags: ['IA', 'Zero-Shot Learning', 'Transformers', 'Hugging Face']
 draft: false
@@ -44,7 +44,7 @@ from transformers import pipeline
 classifier = pipeline("zero-shot-classification", model="facebook/bart-large-mnli", device=0)
 text = "The new restaurant in the city center offers a unique culinary experience, blending traditional flavors with modern techniques."
 candidate_labels = ["Restaurant review", "Local news", "Cooking recipe", "Tourist guide"]
-result = classifier(text, candidate_labels)
+result = classifier(text, candidate_labels, multi_label=True)
 
 print(f"Text: {text}")
 print(f"Most likely label: {result['labels'][0]}")
@@ -63,7 +63,7 @@ En este ejemplo, estamos utilizando un modelo pre-entrenado para clasificar un t
 haya visto antes. El modelo BART-large-mnli de Facebook es un modelo de lenguaje pre-entrenado que ha sido ajustado en
 la tarea de clasificación de texto. Al proporcionar el texto y una lista de etiquetas candidatas, el modelo devuelve la
 etiqueta más probable y la puntuación asociada a esa predicción. En este caso, el modelo clasifica el texto como una
-"Noticia local" con una puntuación de 0.5561.
+«Local news» con una puntuación de 0.5561.
 
 ## ¿Cómo funciona la clasificación de texto Zero-Shot?
 
@@ -147,19 +147,19 @@ from transformers import pipeline
 
 classifier = pipeline("zero-shot-classification", model="facebook/bart-large-mnli", device=0)
 
-# Existing classes
+# Textos y etiquetas existentes
 texts = ["The new AI algorithm outperforms humans in chess",
          "The latest operating system update improves security"]
 labels = ["artificial intelligence", "software"]
 
-# New, unseen class
+# Nuevo texto y etiqueta
 new_text = "The 3D printer creates custom prosthetics for patients"
 new_label = "medical technology"
 
-# Classify with existing and new labels
+# Clasificación Zero-Shot con la nueva etiqueta
 all_labels = labels + [new_label]
 for text in texts + [new_text]:
-    result = classifier(text, all_labels)
+    result = classifier(text, all_labels, multi_label=True)
     print(f"Text: {text}")
     print(f"Classification: {result['labels'][0]}")
     print(f"Confidence: {result['scores'][0]:.2f}\n")
@@ -181,7 +181,7 @@ Confidence: 0.99
 ```
 
 En este ejemplo, podemos ver cómo el modelo es capaz clasificar correctamente un texto en una nueva categoría no vista
-previamente, "medical technology", con alta confianza.
+previamente, «medical technology», con alta confianza.
 
 ### 2. Eficiencia en recursos y tiempo
 
