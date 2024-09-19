@@ -310,12 +310,12 @@ processing power: 0.78
 
 La capacidad de manejar múltiples etiquetas amplía significativamente la aplicabilidad de ZSTC en escenarios del mundo real, donde la complejidad y la multidimensionalidad son la norma más que la excepción.
 
-# Buenas prácticas
+## Buenas prácticas
 
 La clasificación Zero-Shot, aunque es poderosa y versátil, requiere un enfoque cuidadoso para maximizar su eficacia.
 Quiero señalar algunas buenas prácticas a tener en cuenta al trabajar con este enfoque:
 
-## Manejo de la ambiguedad
+### Manejo de la ambiguedad
 
 Como hemos visto, los modelos de lenguaje pre-entrenados pueden ser muy buenos para inferir sobre el contexto y las
 relaciones semánticas en un texto. Sin embargo, pueden tener dificultades con textos ambiguos o con múltiples
@@ -364,7 +364,7 @@ detecta ambiguedad en las predicciones, hay que considerar proporcionar más con
 mejorar la precisión de la clasificación. Y en aplicaciones críticas, implementar un sistema de revisión human para
 casos ambiguos.
 
-## Selección cuidadosa de etiquetas
+### Selección cuidadosa de etiquetas
 
 La elección de etiquetas puede tener un impacto significativo en el rendimiento del modelo:
 
@@ -377,7 +377,7 @@ good_labels = ["technology news", "sports report", "financial analysis"]
 poor_labels = ["news", "report", "article"]  # Demasiado amplias
 ```
 
-## Preprocesamiento de texto
+### Preprocesamiento de texto
 
 El preprocesamiento adecuado puede mejorar la precisioón de la clasificación:
 
@@ -398,7 +398,7 @@ hypothesis_template = "This text is about {}."
 result = classifier(text, labels, hypothesis_template=hypothesis_template)
 ```
 
-## Validación y ajuste
+### Validación y ajuste
 
 Implementar un proceso de validación continua:
 
@@ -406,7 +406,7 @@ Implementar un proceso de validación continua:
 - Ajustar las etiquetas y el modelo según sea necesario.
 - Considerar el fine-tuning del modelo base si se dispone de suficientes datos específicoss del dominio.
 
-## Manejo de casos de baja confianza
+### Manejo de casos de baja confianza
 
 Implementar estrategias para manejar predicciones de baja confianza:
 
@@ -417,7 +417,7 @@ if max(result['scores']) < confidence_threshold:
     print("Low confidence prediction. Consider manual review.")
 ```
 
-# Casos de uso
+## Casos de uso
 
 La clasificación Zero-Shot tiene una amplia gama de aplicaciones en diversas industrias y campos. Veamos algunos
 ejemplos:
@@ -681,7 +681,7 @@ if category:
 Tweet Category: Entertainment
 ```
 
-# Evaluación y métricas
+## Evaluación y métricas
 
 La evaluación del rendimiento de los modelos de clasificación Zero-Shot es crucial para entender su efectividad y limitaciones. A diferencia de los métodos tradicionales, estos modelos se prueban en categorías no vistas durante el entrenamiento, lo que requiere un enfoque de evaluación específico.
 Para ilustrar este proceso, utilizaremos el conjunto de datos AG News, que contiene noticias de cuatro categorías:
@@ -862,7 +862,7 @@ Esto podría indicar que estas categorías son más desafiantes de distinguir o 
 menos distintivas para el modelo. En general, el clasificador muestra un rendimiento prometedor, especialmente
 considerando que no fue entrenado específicamente en este conjunto de datos.
 
-# Limitaciones y consideraciones
+## Limitaciones y consideraciones
 
 Aunque la clasificación Zero-Shot es poderosa, tiene sus limitaciones. El rendimiento del modelo depende de la calidad
 del pre-entrenamiento y de la relación semántica entre la entrada y las etiquetas. Puede tener dificultades con dominios
