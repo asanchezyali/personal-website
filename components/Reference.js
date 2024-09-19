@@ -31,7 +31,7 @@ const truncateText = (text, maxLength) => {
 
 const Reference = ({ type, url, text }) => {
   const Source = getSourceType(type)
-  const truncatedText = truncateText(text, 80)
+  const truncatedText = truncateText(text, 70)
 
   return (
     <div className="mb-2 flex items-center space-x-2">
