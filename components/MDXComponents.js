@@ -8,6 +8,7 @@ import Pre from './Pre'
 import { BlogNewsletterForm } from './NewsletterForm'
 import MathBox from './HighlightBox'
 import ImageBox from './ImageBox'
+import Reference from './Reference'
 import { PseudoCodeLine, PseudoCode } from './PseudoCode'
 
 export const MDXComponents = {
@@ -17,6 +18,7 @@ export const MDXComponents = {
   TOCInline,
   PageTitle,
   MathBox,
+  Reference,
   a: CustomLink,
   pre: Pre,
   BlogNewsletterForm: BlogNewsletterForm,
