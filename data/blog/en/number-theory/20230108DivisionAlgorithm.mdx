@@ -21,77 +21,47 @@ The above theorem defines a way to calculate the quotient and remainder of a div
 
 # Explanation of the division algorithm for integers
 
-Before implementing the algorithm, let's see how division is performed manually, also considering negative numbers. We'll use the example of dividing 17 by 5, and then explain how to handle negative cases.
+Before implementing the algorithm, let’s review how manual division is performed, also considering negative numbers. We will take the division of 17 by 5 as an example and then explain how to handle negative cases.
 
-## Positive case: 17 ÷ 5
+1. **Initialization**: We start with a dividend of 17, a divisor of 5, the quotient at 0, and the remainder equal to the dividend.
 
-1. We initialize the dividend with 17, the divisor with 5, the quotient at 0, and the remainder equal to the dividend (17).
+2. **Main loop**: While the absolute value of the remainder is greater than or equal to the absolute value of the divisor, we perform the following actions: subtract the absolute value of the divisor from the absolute value of the remainder and increment the absolute value of the quotient by one. In our example, since $|17| \geq |5|$, we subtract the absolute value of the divisor from the absolute value of the remainder: 17 - 5 = 12. Then, we increase the quotient by 1: 0 + 1 = 1. We repeat the loop until the condition is no longer met. The sequence of these steps is shown in the following iteration table:
 
-2. We check if the absolute value of the remainder is greater than or equal to the absolute value of the divisor. Since |17| ≥ |5|, we enter the cycle.
+   | Iteration | Dividend | Divisor | Quotient | Remainder |
+   | --------- | -------- | ------- | -------- | --------- |
+   | 1         | 17       | 5       | 0        | 17        |
+   | 2         | 17       | 5       | 1        | 12        |
+   | 3         | 17       | 5       | 2        | 7         |
+   | 4         | 17       | 5       | 3        | 2         |
 
-3. We subtract the absolute value of the divisor from the absolute value of the remainder: 17 - 5 = 12.
+3. At the end, the absolute value of the quotient is 3, and the remainder is 2.
 
-4. We increase the absolute value of the quotient by 1: 0 + 1 = 1.
+## Handling Negative Numbers in Division
 
-5. We repeat steps 3 and 4 until the absolute value of the remainder is less than that of the divisor.
+When performing division with negative numbers, it is important to follow a few additional rules to correctly determine the sign of the quotient and how to handle the remainder. The first step is to determine the sign of the result: if both the dividend and the divisor have the same sign, whether both are positive or both negative, the quotient will be positive. If the signs are different, the quotient will be negative. This rule applies regardless of the specific values of the numbers involved.
 
-6. At the end, the absolute value of the quotient is 3 and that of the remainder is 2.
+Once the sign of the quotient is determined, the next step is to work only with the absolute values of the numbers. This
+way, we focus on the magnitude of the numbers without temporarily worrying about the sign. The division
+process—repeatedly subtracting the divisor from the dividend and counting how many times this can be done—remains
+exactly the same as in the case of positive numbers.
 
-Iteration table:
+After completing the division, we adjust the sign of the quotient as determined earlier. However, the remainder always
+retains the same sign as the original dividend. This is important because while the quotient's sign may change according
+to the absolute values, the remainder must reflect the sign of the number being divided.
 
-| Iteration | Dividend | Divisor | Quotient | Remainder |
-| --------- | -------- | ------- | -------- | --------- |
-| 1         | 17       | 5       | 0        | 17        |
-| 2         | 17       | 5       | 1        | 12        |
-| 3         | 17       | 5       | 2        | 7         |
-| 4         | 17       | 5       | 3        | 2         |
+## Example of Divisions with Negative Numbers
 
-## Handling negative cases
+Let’s see how this process works in some concrete examples. First, take the case of -17 divided by 5. Since the dividend is negative and the divisor is positive, the quotient will be negative. We work with the absolute values, dividing 17 by 5 in the usual way. This gives us a quotient of 3 and a remainder of 2, but since we determined at the beginning that the quotient must be negative, the final result is: quotient = -3, remainder = -2.
 
-To handle negative numbers, we follow these additional steps:
+Now, consider the inverse case: 17 divided by -5. Here, the dividend is positive, and the divisor is negative, which again tells us the quotient will be negative. Following the same process, we get a quotient of 3 and a remainder of 2, but we adjust the sign of the quotient to obtain: quotient = -3, remainder = 2.
 
-1. At the beginning, we determine the sign of the result:
+Finally, take the case of -17 divided by -5. Since both numbers are negative, the quotient will be positive. After
+performing the division with the absolute values, we get a quotient of 3 and a remainder of 2, and since the quotient
+must be positive, the result is: quotient = 3, remainder = -2.
 
-   - If the dividend and divisor have the same sign, the result is positive.
-   - If they have different signs, the result is negative.
+## Special Case: Dividend Less Than Divisor
 
-2. We work with absolute values during the division.
-
-3. At the end, we adjust the sign of the quotient as determined in step 1.
-
-4. The sign of the remainder is always the same as that of the original dividend.
-
-## Examples with negative numbers
-
-### Case 1: -17 ÷ 5
-
-- Sign of the result: Negative (different signs)
-- Absolute dividend: 17, Absolute divisor: 5
-- Division process same as in the positive case
-- Result: Quotient = -3, Remainder = -2
-
-### Case 2: 17 ÷ -5
-
-- Sign of the result: Negative (different signs)
-- Absolute dividend: 17, Absolute divisor: 5
-- Division process same as in the positive case
-- Result: Quotient = -3, Remainder = 2
-
-### Case 3: -17 ÷ -5
-
-- Sign of the result: Positive (both negative)
-- Absolute dividend: 17, Absolute divisor: 5
-- Division process same as in the positive case
-- Result: Quotient = 3, Remainder = -2
-
-## Special case: Dividend less than divisor
-
-If the absolute value of the dividend is less than that of the divisor, the quotient is 0 and the remainder is equal to the dividend. For example:
-
-- 3 ÷ 5 = Quotient: 0, Remainder: 3
-- -3 ÷ 5 = Quotient: 0, Remainder: -3
-- 3 ÷ -5 = Quotient: 0, Remainder: 3
-- -3 ÷ -5 = Quotient: 0, Remainder: -3
+A special case occurs when the absolute value of the dividend is less than that of the divisor. In this scenario, the quotient is always 0, as the divisor cannot be subtracted from the dividend even once. The remainder will simply be the same value as the dividend, as no full division takes place. For example, dividing 3 by 5 results in a quotient of 0 and a remainder of 3. The same happens if the dividend is negative: -3 divided by 5 gives a quotient of 0 and a remainder of -3. If the divisor is also negative, as in 3 divided by -5, the quotient remains 0, but the remainder stays positive, that is, 3. Finally, in -3 divided by -5, the quotient is 0, and the remainder is -3, following the same logic.
 
 # Implementation of the division algorithm in Python
 
@@ -204,14 +174,16 @@ It is important to note that the division algorithm we have implemented is a bas
 
 I hope this helps you understand how a division algorithm works and how to implement it in Python without using libraries. If you have any additional questions, feel free to ask.
 
-## Consultancy
-
-If you need additional help, we offer personalized consultancy on [Classgap](https://www.classgap.com/es-co/tutor/alejandro-sanchez-yali), you can check our available schedules and schedule a session with us.
-
-## Images
-
-- [Unplash](https://unsplash.com/@antoine1003) - Antoine Dautry - [Pencil on system of equations](https://unsplash.com/photos/_zsL306fDc).
-
 ## References
 
-1. [Felipe Zaldivar. 2012. Introducción a la teoría de números.](http://cbt1.edu.mx/Educacion/OC/Matematicas/Recursos/publication.pdf)
+<Reference
+  type="image"
+  url="https://unsplash.com/photos/_zsL306fDc"
+  text="Antoine Dautry - Chart Pencil on system of equations."
+/>
+
+<Reference
+  type="web"
+  url="http://cbt1.edu.mx/Educacion/OC/Matematicas/Recursos/publication.pdf"
+  text="Felipe Zaldivar. 2012. Introducción a la teoría de números."
+/>

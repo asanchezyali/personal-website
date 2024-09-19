@@ -27,75 +27,49 @@ El teorema anterior define una forma de calcular el cociente y el resto de una d
 
 Antes de implementar el algoritmo, veamos cómo se realiza una división a mano, considerando también los números negativos. Tomaremos como ejemplo la división de 17 entre 5, y luego explicaremos cómo manejar los casos negativos.
 
-## Caso positivo: 17 ÷ 5
+1. **Inicialización:** Iniciamos dividendo con 17, el divisor con 5, el cociente en 0 y el resto igual al dividendo.
+2. **Bucle principal:** Mientras el valor absoluto del resto sea mayor o igual al valor absoluto del divisor, realizamos
+   las siguientes acciones: restamos el valor
+   absoluto del divisor del valor absoluto del resto e incrementamos el valor absoluto del cociente en uno. En nuestro
+   ejemplo, dado que $|17| \geq |5|$, restamos el valor absoluto del divisor del valor absoluto del
+   resto: 17 - 5 = 12. Luego, aumentamos el valor del cociente en 1: 0 + 1 = 1. Repetimos el bucle hasta que la
+   condición deje de cumplirse. La secuencia de estos pasos se muestra en la siguiente table de iteraciones:
 
-1. Inicializamos el dividendo con 17, el divisor con 5, el cociente en 0 y el resto igual al dividendo (17).
+   | Iteración | Dividendo | Divisor | Cociente | Resto |
+   | --------- | --------- | ------- | -------- | ----- |
+   | 1         | 17        | 5       | 0        | 17    |
+   | 2         | 17        | 5       | 1        | 12    |
+   | 3         | 17        | 5       | 2        | 7     |
+   | 4         | 17        | 5       | 3        | 2     |
 
-2. Verificamos si el valor absoluto del resto es mayor o igual al valor absoluto del divisor. Como |17| ≥ |5|, entramos en el ciclo.
+3. Al finalizar, el valor absoluto del cociente es 3 y el del resto es 2.
 
-3. Restamos el valor absoluto del divisor del valor absoluto del resto: 17 - 5 = 12.
+## Manejo de números negativos en la división
 
-4. Aumentamos el valor absoluto del cociente en 1: 0 + 1 = 1.
+Cuando realizamos divisiones con números negativos, es importante tener en cuenta algunas reglas adicionales para
+determinar correctamente el signo del cociente y cómo manejar el resto. El primer paso es determinar el signo del
+resultado: si el dividendo y el divisor tienen el mismo signo, ya sea ambos positivos o ambos negativos, el cociente
+será positivo. En cambio, si los signos son diferentes, el cociente será negativo. Esta regla se aplica siempre, sin
+importar los valores específicos de los números involucrados.
 
-5. Repetimos los pasos 3 y 4 hasta que el valor absoluto del resto sea menor que el del divisor.
+Una vez que se ha determinado el signo del cociente, el siguiente paso es trabajar únicamente con los valores absolutos
+de los números. De esta forma, nos centramos en la magnitud de los números sin preocuparnos temporalmente por el signo.
+El proceso de división, es decir, restar repetidamente el divisor del dividendo y contar cuántas veces se puede hacer,
+sigue siendo exactamente el mismo que en el caso de los números positivos.
 
-6. Al final, el valor absoluto del cociente es 3 y el del resto es 2.
+Al finalizar la división, ajustamos el signo del cociente según lo determinado al principio. Sin embargo, el resto siempre conservará el mismo signo que el dividendo original. Esto es importante, ya que el cociente puede cambiar de signo según los valores absolutos, pero el resto debe reflejar el signo del número que estamos dividiendo.
 
-Tabla de iteraciones:
+## Ejemplo de divisiones con números negativos
 
-| Iteración | Dividendo | Divisor | Cociente | Resto |
-| --------- | --------- | ------- | -------- | ----- |
-| 1         | 17        | 5       | 0        | 17    |
-| 2         | 17        | 5       | 1        | 12    |
-| 3         | 17        | 5       | 2        | 7     |
-| 4         | 17        | 5       | 3        | 2     |
+Veamos cómo se aplica este proceso en algunos ejemplos concretos. Tomemos primero el caso de -17 dividido por 5. Como el dividendo es negativo y el divisor es positivo, el cociente será negativo. Trabajamos con los valores absolutos, dividiendo 17 entre 5 de la manera usual. Esto nos da un cociente de 3 y un resto de 2, pero como habíamos determinado al principio que el cociente debe ser negativo, el resultado final es: cociente = -3, resto = -2.
 
-## Manejo de casos negativos
+Ahora consideremos el caso inverso, 17 dividido por -5. Aquí, el dividendo es positivo y el divisor es negativo, lo que nuevamente nos indica que el cociente será negativo. Siguiendo el mismo proceso, obtenemos un cociente de 3 y un resto de 2, pero ajustamos el signo del cociente para obtener: cociente = -3, resto = 2.
 
-Para manejar números negativos, seguimos estos pasos adicionales:
+Finalmente, tomemos el caso de -17 dividido por -5. Como ambos números son negativos, el cociente será positivo. Después de realizar la división con los valores absolutos, obtenemos un cociente de 3 y un resto de 2, y dado que el cociente debe ser positivo, el resultado es: cociente = 3, resto = -2.
 
-1. Al inicio, determinamos el signo del resultado:
+## Caso especial: Dividendo mejor que el divisor
 
-   - Si el dividendo y el divisor tienen el mismo signo, el resultado es positivo.
-   - Si tienen signos diferentes, el resultado es negativo.
-
-2. Trabajamos con los valores absolutos durante la división.
-
-3. Al final, ajustamos el signo del cociente según lo determinado en el paso 1.
-
-4. El signo del resto siempre es el mismo que el del dividendo original.
-
-## Ejemplos con números negativos
-
-### Caso 1: -17 ÷ 5
-
-- Signo del resultado: Negativo (signos diferentes)
-- Dividendo absoluto: 17, Divisor absoluto: 5
-- Proceso de división igual que en el caso positivo
-- Resultado: Cociente = -3, Resto = -2
-
-### Caso 2: 17 ÷ -5
-
-- Signo del resultado: Negativo (signos diferentes)
-- Dividendo absoluto: 17, Divisor absoluto: 5
-- Proceso de división igual que en el caso positivo
-- Resultado: Cociente = -3, Resto = 2
-
-### Caso 3: -17 ÷ -5
-
-- Signo del resultado: Positivo (ambos negativos)
-- Dividendo absoluto: 17, Divisor absoluto: 5
-- Proceso de división igual que en el caso positivo
-- Resultado: Cociente = 3, Resto = -2
-
-## Caso especial: Dividendo menor que el divisor
-
-Si el valor absoluto del dividendo es menor que el del divisor, el cociente es 0 y el resto es igual al dividendo. Por ejemplo:
-
-- 3 ÷ 5 = Cociente: 0, Resto: 3
-- -3 ÷ 5 = Cociente: 0, Resto: -3
-- 3 ÷ -5 = Cociente: 0, Resto: 3
-- -3 ÷ -5 = Cociente: 0, Resto: -3
+Un caso especial ocurre cuando el valor absoluto del dividendo es menor que el del divisor. En este escenario, el cociente es siempre 0, ya que no se puede restar el divisor del dividendo ni una sola vez. El resto será simplemente el mismo valor que el dividendo, ya que no hay una división completa. Por ejemplo, al dividir 3 entre 5, el cociente es 0 y el resto es 3. Lo mismo ocurre si el dividendo es negativo: -3 dividido por 5 da un cociente de 0 y un resto de -3. Si el divisor también es negativo, como en 3 dividido por -5, el cociente sigue siendo 0, pero el resto se mantiene positivo, es decir, 3. Finalmente, en -3 dividido por -5, el cociente es 0 y el resto es -3, siguiendo la misma lógica.
 
 ## Implementación del algoritmo de división en Python
 
@@ -208,10 +182,16 @@ Es importante destacar que el algoritmo de división que hemos implementado es u
 
 Espero que esto te ayude a entender cómo funciona un algoritmo de división y cómo implementarlo en Python sin utilizar librerías. Si tienes alguna pregunta adicional, no dudes en hacerla.
 
-## Imágenes
-
-- [Unplash](https://unsplash.com/@antoine1003) - Antoine Dautry - [Pencil on system of equations](https://unsplash.com/photos/_zsL306fDc).
-
 ## Referencias
 
-1. [Felipe Zaldivar. 2012. Introducción a la teoría de números.](http://cbt1.edu.mx/Educacion/OC/Matematicas/Recursos/publication.pdf)
+<Reference
+  type="image"
+  url="https://unsplash.com/photos/_zsL306fDc"
+  text="Antoine Dautry - Chart Pencil on system of equations."
+/>
+
+<Reference
+  type="web"
+  url="http://cbt1.edu.mx/Educacion/OC/Matematicas/Recursos/publication.pdf"
+  text="Felipe Zaldivar. 2012. Introducción a la teoría de números."
+/>
