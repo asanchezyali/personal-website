@@ -122,7 +122,7 @@ export default function PostLayout({ frontMatter, authorDetails, next, prev, chi
             <div className="prose max-w-none pb-8 pt-10 dark:prose-dark">{children}</div>
           </div>
 
-          <footer className="fixed top-[60px] ml-[785px] hidden xl:block">
+          <footer className="fixed top-[60px] ml-[785px] hidden max-w-80 xl:block">
             <div className="divide-gray-200 text-sm font-medium leading-5 xl:col-start-1 xl:row-start-2 xl:divide-y dark:divide-gray-700">
               <dl className="pb-10 xl:pt-11 xl:dark:border-gray-700">
                 <dt className="sr-only">Authors</dt>
