@@ -922,6 +922,37 @@ Algunos puntos adicionales a considerar:
 Es crucial realizar una evaluación exhaustiva en el dominio específico de aplicación y considerar estas limitaciones al
 implementar soluciones basadas en clasificación Zero-Shot.
 
+## ZSTC - Una herramienta poderosa con consideraciones
+
+ZSTC ofrece un enfoque transformador para la categorización de datos textuales, especialmente en escenarios donde los
+datos etiquetados son escasos o costosos de obtener. Al aprovechar el conocimiento incrustado en los modelos de lenguaje
+preentrenados, ZSTC puede generalizar a nuevas categorías y dominios sin necesidad de ejemplos de entrenamiento
+explícitos. Esta capacidad abre un mundo de posibilidades para automatizar tareas como el enrutamiento de correos
+electrónicos, el análisis de sentimientos, la categorización de noticias y el análisis de noticias financieras.
+
+Sin embargo, un aspecto que no se ha considerado en este análisis es el consumo de recursos computacionales,
+como el uso de GPU, que puede ser significativo en la clasificación Zero-Shot. A pesar de que ZSTC ofrece ventajas en
+términos de ahorro de tiempo y etiquetado, el costo computacional sigue siendo un factor a tener en cuenta,
+especialmente para modelos de gran tamaño que requieren hardware especializado para ejecutar las inferencias de manera
+eficiente. El consumo de recursos puede ser decisivo a la hora de elegir ZSTC frente a otros métodos,
+sigue siendo un aspecto que podría influir en determinadas aplicaciones y entornos donde los recursos son limitados o costosos.
+
+La flexibilidad de ZSTC permite una rápida adaptación a categorías en evolución y la incorporación de descripciones de
+clases matizadas, lo que lo hace altamente versátil para aplicaciones del mundo real. Además, reduce la dependencia de
+grandes conjuntos de datos etiquetados, ahorrando tiempo y recursos, al mismo tiempo que permite escalar a un gran
+número de categorías.
+
+Sin embargo, es crucial reconocer las limitaciones de ZSTC. El rendimiento del modelo depende en gran medida de la
+calidad de sus datos de preentrenamiento y de la relación semántica entre el texto de entrada y las etiquetas
+proporcionadas. La ambigüedad en el texto, los dominios altamente especializados y los conceptos alejados de los datos
+de entrenamiento del modelo pueden presentar desafíos.
+
+Para maximizar la efectividad de ZSTC, se debe prestar especial atención a la selección de etiquetas,
+el preprocesamiento de texto y el diseño de prompts. Implementar un proceso de validación robusto, manejar las
+predicciones de baja confianza y abordar posibles sesgos en el modelo son esenciales para implementaciones confiables.
+A medida que ZSTC sigue avanzando, una comprensión profunda de sus capacidades, limitaciones e implicaciones éticas será
+fundamental para aprovechar todo su potencial en diversas aplicaciones basadas en texto.
+
 ## Imágenes
 
 - [Unplash](https://unsplash.com/@profwicks) - Ben Wicks - [Chart Treemap](https://unsplash.com/photos/chart-treemap-chart-GjBPLkTDzt4).
