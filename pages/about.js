@@ -2,8 +2,6 @@ import React from 'react'
 import { MDXLayoutRenderer } from '@/components/MDXComponents'
 import { getFileBySlug } from '@/lib/mdx'
 import { LanguageContext } from '@/providers/LanguageProvider'
-import MonadicalLogo from '@/components/logos/Monadical'
-import Image from '@/components/Image'
 import Link from 'next/link'
 
 const DEFAULT_LAYOUT = 'AuthorLayout'
