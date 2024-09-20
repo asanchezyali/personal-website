@@ -19,25 +19,19 @@ const SourceType = {
 }
 
 const getSourceType = (type) => {
-  console.log(type)
   return SourceType[type] || SourceType.web
-}
-
-const truncateText = (text, maxLength) => {
-  const str = String(text)
-  if (str.length <= maxLength) return str
-  return str.slice(0, maxLength) + ' ...'
 }
 
 const Reference = ({ type, url, text }) => {
   const Source = getSourceType(type)
-  const truncatedText = truncateText(text, 70)
 
   return (
-    <div className="mb-2 flex items-center space-x-2">
-      <Source className="h-5 w-5" />
-      <CustomLink href={url} className="inline-block">
-        {truncatedText}
+    <div className="mb-4 flex space-x-2">
+      <div className="h-5 w-5 flex-shrink-0">
+        <Source className="h-full w-full" />
+      </div>
+      <CustomLink href={url} className="mt-[-5px] max-w-[750px] truncate">
+        {text}
       </CustomLink>
     </div>
   )
