@@ -6,6 +6,7 @@ import Image from './logos/Image'
 import YouTube from './logos/YouTube'
 import Web from './logos/Web'
 import HuggingFace from './logos/HuggingFace'
+import Devto from './logos/Dev'
 import CustomLink from './Link'
 
 const SourceType = {
@@ -16,6 +17,7 @@ const SourceType = {
   youtube: YouTube,
   web: Web,
   huggingface: HuggingFace,
+  devto: Devto,
 }
 
 const getSourceType = (type) => {
