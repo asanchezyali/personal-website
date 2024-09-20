@@ -12,9 +12,9 @@
       
   <item>
     <guid>https://asanchezyali.com/blog/es/ai/20240917ZeroShot</guid>
-    <title>Clasificación de Texto Zero-Shot con Modelos de Lenguaje</title>
+    <title>Clasificación Zero-Shot de texto</title>
     <link>https://asanchezyali.com/blog/es/ai/20240917ZeroShot</link>
-    <description>Un algoritmo de división es un proceso que divide un número (llamado el dividendo) por otro número (llamado el divisor) y obtiene el cociente y el resto de la división. Se puede implementar un algoritmo de división en Python utilizando un ciclo while y restando el divisor del dividendo en cada iteración. Conocer cómo funciona un algoritmo de división y cómo implementarlo por nuestra cuenta es útil para entender mejor cómo funcionan las divisiones y puede ser útil en situaciones donde no podemos utilizar librerías o funciones predefinidas.</description>
+    <description>La clasificación Zero-Shot de texto (ZSTC) es una técnica de aprendizaje automatizado que permite a los modelos clasificar textos en categorías sin haber sido entrenados previamente en esas categorías específicas. Utiliza modelos de lenguaje pre-entrenados, como BART o GPT, que han aprendido a comprender las relaciones semánticas entre palabras y frases durante su pre-entrenamiento. Este enfoque permite al modelo generalizar su conocimiento y hacer inferencias sobre nuevas categorías basándose en un texto dado, sin necesidad de ejemplos etiquetados.</description>
     <pubDate>Tue, 17 Sep 2024 05:00:00 GMT</pubDate>
     <author>asanchezyali@gmail.com (Alejandro Sánchez Yalí)</author>
     <category>IA</category><category>Zero-Shot Learning</category><category>Transformers</category><category>Hugging Face</category>

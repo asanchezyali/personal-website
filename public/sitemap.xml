@@ -25,10 +25,6 @@
   </url>
 
   <url>
-    <loc>https://www.asanchezyali.com/blog/en/number-theory/20230108DivisionAlgorithm</loc>
-  </url>
-
-  <url>
     <loc>https://www.asanchezyali.com/blog/en/ml/20210712MachineLearning</loc>
   </url>
 
@@ -37,13 +33,17 @@
   </url>
 
   <url>
-    <loc
-      >https://www.asanchezyali.com/blog/en/operator-overloading/20210615OperatorOverloadingInPython</loc
-    >
+    <loc>https://www.asanchezyali.com/blog/en/number-theory/20230108DivisionAlgorithm</loc>
   </url>
 
   <url>
     <loc>https://www.asanchezyali.com/blog/es/number-theory/20230108DivisionAlgorithm</loc>
+  </url>
+
+  <url>
+    <loc
+      >https://www.asanchezyali.com/blog/en/operator-overloading/20210615OperatorOverloadingInPython</loc
+    >
   </url>
 
   <url>
@@ -63,13 +63,13 @@
   </url>
 
   <url>
-    <loc>https://www.asanchezyali.com/blog/es/number-theory/20230108DivisionAlgorithm</loc>
+    <loc
+      >https://www.asanchezyali.com/blog/en/operator-overloading/20210615OperatorOverloadingInPython</loc
+    >
   </url>
 
   <url>
-    <loc
-      >https://www.asanchezyali.com/blog/es/operator-overloading/20210615OperatorOverloadingInPython</loc
-    >
+    <loc>https://www.asanchezyali.com/blog/es/number-theory/20230108DivisionAlgorithm</loc>
   </url>
 
   <url>
@@ -85,6 +85,10 @@
   </url>
 
   <url>
+    <loc>https://asanchezyali.com/tags/blockchain</loc>
+  </url>
+
+  <url>
     <loc>https://asanchezyali.com/tags/avatar-ia</loc>
   </url>
 
@@ -93,7 +97,7 @@
   </url>
 
   <url>
-    <loc>https://asanchezyali.com/tags/canada</loc>
+    <loc>https://asanchezyali.com/tags/clases</loc>
   </url>
 
   <url>
@@ -101,11 +105,11 @@
   </url>
 
   <url>
-    <loc>https://asanchezyali.com/tags/clasificación</loc>
+    <loc>https://asanchezyali.com/tags/canada</loc>
   </url>
 
   <url>
-    <loc>https://asanchezyali.com/tags/clases</loc>
+    <loc>https://asanchezyali.com/tags/clasificación</loc>
   </url>
 
   <url>
@@ -117,11 +121,15 @@
   </url>
 
   <url>
+    <loc>https://asanchezyali.com/tags/digital-human</loc>
+  </url>
+
+  <url>
     <loc>https://asanchezyali.com/tags/dapps</loc>
   </url>
 
   <url>
-    <loc>https://asanchezyali.com/tags/digital-human</loc>
+    <loc>https://asanchezyali.com/tags/github</loc>
   </url>
 
   <url>
@@ -134,10 +142,6 @@
 
   <url>
     <loc>https://asanchezyali.com/tags/feature</loc>
-  </url>
-
-  <url>
-    <loc>https://asanchezyali.com/tags/github</loc>
   </url>
 
   <url>
@@ -157,11 +161,11 @@
   </url>
 
   <url>
-    <loc>https://asanchezyali.com/tags/humano-digital</loc>
+    <loc>https://asanchezyali.com/tags/ia</loc>
   </url>
 
   <url>
-    <loc>https://asanchezyali.com/tags/ia</loc>
+    <loc>https://asanchezyali.com/tags/humano-digital</loc>
   </url>
 
   <url>
@@ -185,7 +189,7 @@
   </url>
 
   <url>
-    <loc>https://asanchezyali.com/tags/machine-learning</loc>
+    <loc>https://asanchezyali.com/tags/lipsync</loc>
   </url>
 
   <url>
@@ -193,15 +197,11 @@
   </url>
 
   <url>
-    <loc>https://asanchezyali.com/tags/lipsync</loc>
-  </url>
-
-  <url>
     <loc>https://asanchezyali.com/tags/markdown</loc>
   </url>
 
   <url>
-    <loc>https://asanchezyali.com/tags/mathematics</loc>
+    <loc>https://asanchezyali.com/tags/machine-learning</loc>
   </url>
 
   <url>
@@ -213,6 +213,10 @@
   </url>
 
   <url>
+    <loc>https://asanchezyali.com/tags/mathematics</loc>
+  </url>
+
+  <url>
     <loc>https://asanchezyali.com/tags/metaplex</loc>
   </url>
 
@@ -221,15 +225,11 @@
   </url>
 
   <url>
-    <loc>https://asanchezyali.com/tags/next-js</loc>
-  </url>
-
-  <url>
     <loc>https://asanchezyali.com/tags/nft</loc>
   </url>
 
   <url>
-    <loc>https://asanchezyali.com/tags/number-theory</loc>
+    <loc>https://asanchezyali.com/tags/next-js</loc>
   </url>
 
   <url>
@@ -237,7 +237,7 @@
   </url>
 
   <url>
-    <loc>https://asanchezyali.com/tags/openai</loc>
+    <loc>https://asanchezyali.com/tags/number-theory</loc>
   </url>
 
   <url>
@@ -245,11 +245,15 @@
   </url>
 
   <url>
+    <loc>https://asanchezyali.com/tags/operators</loc>
+  </url>
+
+  <url>
     <loc>https://asanchezyali.com/tags/operator-overloading</loc>
   </url>
 
   <url>
-    <loc>https://asanchezyali.com/tags/operators</loc>
+    <loc>https://asanchezyali.com/tags/openai</loc>
   </url>
 
   <url>
@@ -261,11 +265,15 @@
   </url>
 
   <url>
+    <loc>https://asanchezyali.com/tags/reflection</loc>
+  </url>
+
+  <url>
     <loc>https://asanchezyali.com/tags/regresión</loc>
   </url>
 
   <url>
-    <loc>https://asanchezyali.com/tags/reflection</loc>
+    <loc>https://asanchezyali.com/tags/smart-contracts</loc>
   </url>
 
   <url>
@@ -273,7 +281,7 @@
   </url>
 
   <url>
-    <loc>https://asanchezyali.com/tags/solana</loc>
+    <loc>https://asanchezyali.com/tags/tareas-de-aprendizaje</loc>
   </url>
 
   <url>
@@ -281,7 +289,7 @@
   </url>
 
   <url>
-    <loc>https://asanchezyali.com/tags/tareas-de-aprendizaje</loc>
+    <loc>https://asanchezyali.com/tags/solana</loc>
   </url>
 
   <url>
@@ -293,14 +301,14 @@
   </url>
 
   <url>
+    <loc>https://asanchezyali.com/tags/writings</loc>
+  </url>
+
+  <url>
     <loc>https://asanchezyali.com/tags/teoría-de-números</loc>
   </url>
 
   <url>
     <loc>https://asanchezyali.com/tags/zero-shot-learning</loc>
-  </url>
-
-  <url>
-    <loc>https://asanchezyali.com/tags/writings</loc>
   </url>
 </urlset>

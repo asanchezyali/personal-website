@@ -87,6 +87,8 @@ export const BlogSEO = ({
       ? [images]
       : images
 
+  console.log(imagesArr)
+
   const featuredImages = imagesArr.map((img) => {
     return {
       '@type': 'ImageObject',
