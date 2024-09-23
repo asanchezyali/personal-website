@@ -83,20 +83,79 @@ Inference_](https://en.wikipedia.org/wiki/Textual_entailment)). Este enfoque uti
 para inferir sobre la relación entre una premisa (el texto de entrada) y una hipótesis (la descripción de una categoría
 candidata) para realizar la clasificación, como veremos a continuación.
 
-## ¿Cómo funciona?
+## ¿Cómo funciona la clasificación _Zero-Shot_ basada en NLI?
 
-Cuando le presentamos un texto y una lista de etiquetas candidatas al modelo, éste compara el texto de entrada
-(conocido como premisa) xon varias descripciones o hipótesis relacionadas con las etiquetas candidatas. Estas
-descripciones toman la forma de afirmaciones que indican que el texto de entrada pertenece a una categoría específica,
-por ejemplo, «Este texto es sobre tecnología» o «Este texto es sobre deportes». El modelo evalúa la probabilidad de cada
-etiqueta en función de la comprensión contextual que ha adquirido durante el pre-entrenamiento.
+La Inferencia de Lenguaje Natural (NLI, por sus siglas en inglés) es la tarea de determinar si una afirmación
+(hipótesis) es verdadera, falsa o neutral dada una premisa. Este concepto se puede adaptar ingeniosamente a tareas de
+clasificación _Zero-Shot_, lo que nos permite clasificar textos en categorías sin necesidad de entrenamiento previo en
+esas categorías específicas.
 
-Matemáticamente, esto puede modelarse a través de la probabilidad condicional de que el texto de entrada pertenezca a
-una categoría dada, dada la hipótesis o descripción de esa categoría, es decir, $P(\text{categoría}\; |\; \text{texto})$, donde la
-$\text{categoría}$ es una de las etiquetas candidatas y el $\text{texto}$ es la premisa. El modelo asigna una puntuación a cada etiqueta
-en función de la probabilidad de que el texto de entrada pertenezca a esa categoría. La etiqueta con la puntuación más
-alta se considera la predicción final del modelo. El modelo utiliza la función de activación $\text{softmax}$ sobre los
-$\text{logits}$ producidos por el modelo para obtener las probabilidades de cada etiqueta:
+<ImageBox
+  src="/images/ai/zero-shot-v04.png"
+  alt="Arquitectura de clasificación Zero-Shot basada en NLI"
+  width="728px"
+  height="800px"
+>
+  **Figura 1**. Arquitectura de clasificación Zero-Shot basada en NLI.
+</ImageBox>
+
+En este enfoque, tratamos la premisa como el texto de entrada que queremos clasificar, y la hipótesis como la
+descripción de una categoría candidata. Por ejemplo, si queremos clasificar un texto en la categoría «Tecnología»,
+podemos formular la tarea de la siguiente manera:
+
+- Premisa: «El nuevo smartphone tiene un procesador potente y una cámara de alta resolución.»
+- Hipótesis: «Este texto es sobre tecnología.»
+
+El modelo NLI evaluará la relación entre la premisa y la hipótesis para determinar si el texto pertenece a la categoría
+de tecnología. Este proceso se repite para cada categoría candidata que queramos considerar.
+
+<ImageBox
+  src="/images/ai/zero-shot-v05.png"
+  alt="Proceso de tokenización en clasificación Zero-Shot."
+  width="728px"
+  height="400px"
+>
+  **Figura 2**. Proceso de tokenización en clasificación Zero-Shot.
+</ImageBox>
+
+El proceso comienza con la tokenización, donde el texto de entrada (premisa) y la descripción de la categoría
+(hipótesis) se convierten en una secuencia de tokens que el modelo puede procesar. Como se muestra en la Figura 2, esta
+secuencia de tokens se representa como un par de oraciones que luego se convierte en una seria de IDs de entrada que el
+modelo utilizará.
+
+Una vez tenemos los IDs de entrada, el modelo NLI los procesa para generar _logits_ (puntuaciones). Estos logits
+representa las puntuaciones brutas para cada clase posible (contradicción, neutralidad, o implicación) en la tarea del
+NLI.
+
+<ImageBox
+  src="/images/ai/zero-shot-v06.png"
+  alt="Logits generados por el modelo NLI."
+  width="400px"
+  height="250px"
+>
+  **Figura 3**. Logits generados por el modelo NLI.
+</ImageBox>
+
+Como se muestra en la Figura 3, el modelo produce un conjunto de logits para cada par premisa-hipótesis. En este caso,
+vemos que el logit más alto corresponde a la clase de implicación (entailment), lo que sugiere que el texto de entrada
+está fuertemente relacionado con la categoría propuesta en la hipótesis.
+
+Para casos de clasificación multi-clase o multi-etiqueta, repetimos este proceso para cada categoría candidata.
+
+<ImageBox
+  src="/images/ai/zero-shot-v07.png"
+  alt="Proceso de clasificación multi-clase Zero-Shot."
+  width="728px"
+  height="800px"
+>
+  **Figura 7**. Proceso de clasificación multi-clase Zero-Shot.
+</ImageBox>
+
+La Figura 4 ilustra cómo se maneja la clasificación multi-clase. El mismo texto de entrada se empareja con múltiples
+hipótesis, una para cada categoría candidata. El modelo genera logits para cada par, y luego aplicamos la función
+softmax a estos logits para obtener probabilidades normalizadas para cada categoría.
+
+Matemáticamente, la probabilidad de que el texto pertenezca a una categoría específica se calcula utilizando la función softmax:
 
 $$
 \begin{equation}
@@ -129,13 +188,15 @@ def zero_shot_classify(text, labels):
     inputs = tokenizer(premise, hypothesis, return_tensors="pt", padding=True, truncation=True)
 
     # Generar predicciones con el modelo
-    outputs = model(**inputs)
+    with torch.no_grad():  # Desactivar cálculo de gradientes para inferencia
+        logits = model(**inputs).logits[:, [0, 2]]
 
-    # Aplicar softmax a los logits para convertirlos en probabilidades
-    probs = torch.nn.functional.softmax(outputs.logits, dim=1)
+    probs = logits.softmax(dim=1)
 
-    # Devolver las probabilidades para cada etiqueta
-    return dict(zip(labels, probs[:, 1].tolist()))
+    # Extraer las probabilidades correspondientes a la etiqueta positiva (índice 1)
+    label_probs = probs[:, 1]
+
+    return dict(zip(labels, label_probs.tolist()))
 
 # Texto de entrada y etiquetas candidatas
 text = "The new smartphone has a powerful processor and high-resolution camera."
@@ -144,12 +205,11 @@ labels = ["technology", "food", "sports"]
 # Clasificación Zero-Shot
 results = zero_shot_classify(text, labels)
 print(results)
-
 ```
 
 ```
 ## Salida
-{'technology': 0.5412299036979675, 'food': 0.006815298460423946, 'sports': 0.02776361256837845}
+{'technology': 0.9836695194244385, 'food': 0.0005292915157042444, 'sports': 0.0027664615772664547}
 ```
 
 ## Ventajas de ZSTC
@@ -841,7 +901,7 @@ weighted avg       0.75      0.74      0.74       200
 ```
 
 <ImageBox src="/images/ai/zero-shot-v01.png" alt="Matrix de confusión" width="750px" height="750px">
-  **Figura 1**. Matriz de confusión que muestra la distribución de predicciones correctas e
+  **Figura 5**. Matriz de confusión que muestra la distribución de predicciones correctas e
   incorrectas en diferentes categorías.
 </ImageBox>
 
@@ -851,7 +911,7 @@ weighted avg       0.75      0.74      0.74       200
   width="728px"
   height="468px"
 >
-  **Figura 2**. Distribución de puntajes de confianza para las predicciones del clasificador
+  **Figura 6**. Distribución de puntajes de confianza para las predicciones del clasificador
   _Zero-Shot_.
 </ImageBox>
 
@@ -868,7 +928,7 @@ Sci/Tech: 0.51
 ```
 
 <ImageBox src="/images/ai/zero-shot-v03.png" alt="Precisión por clase" width="728px" height="468px">
-  **Figura 3**. Precisión por clase en la clasificación _Zero-Shot_ de noticias AG.
+  **Figura 7**. Precisión por clase en la clasificación _Zero-Shot_ de noticias AG.
 </ImageBox>
 
 El informe de clasificación muestra un rendimiento variado del modelo _Zero-Shot_ en las diferentes categorías del
@@ -940,7 +1000,7 @@ Algunos puntos adicionales a considerar:
 Es crucial realizar una evaluación exhaustiva en el dominio específico de aplicación y considerar estas limitaciones al
 implementar soluciones basadas en clasificación _Zero-Shot_.
 
-## ZSTC - Una herramienta poderosa con consideraciones
+## Conclusiones
 
 ZSTC ofrece un enfoque transformador para la categorización de datos textuales, especialmente en escenarios donde los
 datos etiquetados son escasos o costosos de obtener. Al aprovechar el conocimiento incrustado en los modelos de lenguaje

@@ -1,0 +1,55 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36" version="24.7.16">
+  <diagram name="Page-1" id="xvrsQ55TazZV11ARrsQE">
+    <mxGraphModel dx="794" dy="801" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="z7yCaiV4CPp4WqFy-m3u-1" value="" style="group" vertex="1" connectable="0" parent="1">
+          <mxGeometry x="51" y="990" width="830" height="350" as="geometry" />
+        </mxCell>
+        <mxCell id="z7yCaiV4CPp4WqFy-m3u-15" value="" style="rounded=1;whiteSpace=wrap;html=1;arcSize=5;" vertex="1" parent="z7yCaiV4CPp4WqFy-m3u-1">
+          <mxGeometry width="830" height="350" as="geometry" />
+        </mxCell>
+        <mxCell id="z7yCaiV4CPp4WqFy-m3u-2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="z7yCaiV4CPp4WqFy-m3u-1" source="z7yCaiV4CPp4WqFy-m3u-3" target="z7yCaiV4CPp4WqFy-m3u-11">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="z7yCaiV4CPp4WqFy-m3u-3" value="The new smartphone has a powerful processor and high-resolution camera" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="z7yCaiV4CPp4WqFy-m3u-1">
+          <mxGeometry x="40" y="40" width="320" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="z7yCaiV4CPp4WqFy-m3u-4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="z7yCaiV4CPp4WqFy-m3u-1" source="z7yCaiV4CPp4WqFy-m3u-5" target="z7yCaiV4CPp4WqFy-m3u-11">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="z7yCaiV4CPp4WqFy-m3u-5" value="This text is about technology" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="z7yCaiV4CPp4WqFy-m3u-1">
+          <mxGeometry x="400" y="40" width="320" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="z7yCaiV4CPp4WqFy-m3u-6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="z7yCaiV4CPp4WqFy-m3u-1" source="z7yCaiV4CPp4WqFy-m3u-7" target="z7yCaiV4CPp4WqFy-m3u-12">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="z7yCaiV4CPp4WqFy-m3u-7" value="&lt;b&gt;Tokenization&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="z7yCaiV4CPp4WqFy-m3u-1">
+          <mxGeometry x="200" y="210" width="360" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="z7yCaiV4CPp4WqFy-m3u-8" value="&lt;b&gt;Premise&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="z7yCaiV4CPp4WqFy-m3u-1">
+          <mxGeometry x="170" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="z7yCaiV4CPp4WqFy-m3u-9" value="&lt;b&gt;Hypothesis&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="z7yCaiV4CPp4WqFy-m3u-1">
+          <mxGeometry x="530" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="z7yCaiV4CPp4WqFy-m3u-10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="z7yCaiV4CPp4WqFy-m3u-1" source="z7yCaiV4CPp4WqFy-m3u-11" target="z7yCaiV4CPp4WqFy-m3u-7">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="z7yCaiV4CPp4WqFy-m3u-11" value="[The new smartphone has a powerful processor and high-resolution camera, This text is about technology]&amp;nbsp;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="z7yCaiV4CPp4WqFy-m3u-1">
+          <mxGeometry y="150" width="760" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="z7yCaiV4CPp4WqFy-m3u-12" value="[87, 342134, 4213, 2, 2, 324, 234, 645,&amp;nbsp; 75, 45, 89, 543, 5342, 8567, 2354, 98034, 45, 4325, 2]&amp;nbsp;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="z7yCaiV4CPp4WqFy-m3u-1">
+          <mxGeometry y="310" width="760" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="z7yCaiV4CPp4WqFy-m3u-13" value="&lt;b&gt;&lt;font color=&quot;#007fff&quot;&gt;Input Ids&lt;/font&gt;&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="z7yCaiV4CPp4WqFy-m3u-1">
+          <mxGeometry x="719" y="310" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="z7yCaiV4CPp4WqFy-m3u-14" value="&lt;b&gt;&lt;font color=&quot;#007fff&quot;&gt;Sentence pair&lt;/font&gt;&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="z7yCaiV4CPp4WqFy-m3u-1">
+          <mxGeometry x="699" y="150" width="100" height="30" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
