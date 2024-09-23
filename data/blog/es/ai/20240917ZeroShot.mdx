@@ -17,22 +17,30 @@ respuesta radica en la capacidad de comprensión y generalización de los seres 
 conocimiento adquirido en un contexto a situaciones nuevas y desconocidas. Este proceso de generalización y adaptación
 es fundamental para el aprendizaje y la inteligencia. Ahora, piensa en una inteligencia artificial capaz de clasificar
 conceptos que jamás ha visto en su entrenamiento. ¿Es posible que una IA pueda realizar esta tarea? La respuesta es sí,
-y se conoce como Zero-Shot Learning (ZSL) o Aprendizaje de Cero Disparos. En este artículo, exploraremos cómo los
-modelos de lenguaje pueden realizar clasificaciones de texto sin necesidad de entrenamiento previo en un dominio
-específico.
+y se conoce como [_Zero-Shot Learning_](https://en.wikipedia.org/wiki/Zero-shot_learning) (ZSL) o Aprendizaje de Cero
+Disparos. En este artículo, exploraremos cómo los modelos de lenguaje pueden realizar clasificaciones de texto sin
+necesidad de entrenamiento previo en un dominio específico.
 
-## Clasificación Zero-Shot de texto
+## Clasificación _Zero-Shot_ de texto
 
-La clasificación Zero-Shot de texto (ZSTC por sus siglas en inglés, _Zero-Shot Text Classification_) es una técnica de aprendizaje automatizado que permite a los modelos clasificar textos en categorías sin haber sido entrenados previamente en esas categorías específicas. Utiliza modelos de lenguaje pre-entrenados, como BART o GPT, que han aprendido a comprender las relaciones semánticas entre palabras y frases durante su pre-entrenamiento. Este enfoque permite al modelo generalizar su conocimiento y hacer inferencias sobre nuevas categorías basándose en un texto dado, sin necesidad de ejemplos etiquetados. Esta capacidad representa un avance significativo respecto al aprendizaje supervisado tradicional, donde los modelos necesitan ejemplos de cada clase para realizar una clasificación precisa.
+La clasificación _Zero-Shot_ de texto (ZSTC por sus siglas en inglés, [_Zero-Shot Text Classification_](https://huggingface.co/tasks/zero-shot-classification)) es una técnica de
+aprendizaje automatizado que permite a los modelos clasificar textos en categorías sin haber sido entrenados previamente
+en esas categorías específicas. Utiliza modelos de lenguaje pre-entrenados, como
+[BART](https://huggingface.co/facebook/bart-large-mnli) o [Distil Roberta](https://huggingface.co/cross-encoder/nli-distilroberta-base), que han aprendido a
+comprender las relaciones semánticas entre palabras y frases durante su pre-entrenamiento. Este enfoque permite al
+modelo generalizar su conocimiento y hacer inferencias sobre nuevas categorías basándose en un texto dado, sin necesidad
+de ejemplos etiquetados ([Wenpeng Yin et al, 2019](https://arxiv.org/pdf/1909.00161),
+[Paul Puri et al, 2019](https://arxiv.org/abs/1912.10165), [Tassallah Abdullahi et al, 2024](https://arxiv.org/abs/1912.10165)). Esta capacidad representa un avance significativo respecto al aprendizaje supervisado
+tradicional, donde los modelos necesitan ejemplos de cada clase para realizar una clasificación precisa.
 
-El término «Zero-Shot» (cero disparos) se refiere a la habilidad de un modelo de manejar tareas o hacer predicciones sin
+El término «_Zero-Shot_» se refiere a la habilidad de un modelo de manejar tareas o hacer predicciones sin
 entrenamiento específico previo. En este enfoque, el modelo debe aprovechar y transferir el conocimiento adquirido
 durante sus entrenamiento en otras tareas o categorías relacionadas para abordar estas nuevas categorías no vistas
 previamente.
 
-La clasificación Zero-Shot es particularmente útil en escenarios donde:
+La clasificación _Zero-Shot_ es particularmente útil en escenarios donde:
 
-1. Es poco practico o costoso etiquetar ejemplos de entrenamiento para todas las categorías.
+1. Es poco práctico o costoso etiquetar ejemplos de entrenamiento para todas las categorías.
 2. Las categorías cambian con el tiempo y es difícil mantener un conjunto de entrenamiento actualizado.
 3. Se requiere una rápida adaptación a nuevas categorías sin necesidad de reentrenar el modelo.
 
@@ -61,10 +69,19 @@ Score: 0.5561
 ```
 
 En este ejemplo, estamos utilizando un modelo pre-entrenado para clasificar un texto en categorías que posiblemente no
-haya visto antes. El modelo BART-large-mnli de Facebook es un modelo de lenguaje pre-entrenado que ha sido ajustado en
+haya visto antes. El modelo [BART-large-mnli](https://huggingface.co/facebook/bart-large-mnli) de Facebook es un modelo de lenguaje pre-entrenado que ha sido ajustado en
 la tarea de ZSTC. Al proporcionar el texto y una lista de etiquetas candidatas, el modelo devuelve la
-etiqueta más probable y la puntuación asociada a esa predicción. En este caso, el modelo clasifica el texto como una
+etiqueta más probable y la puntuación asociada a esa predicción. En este caso, el modelo clasifica el texto como
 «Local news» con una puntuación de 0.5561.
+
+Existen muchos enfoques para resolver los problemas de clasificación _Zero-Shot_: [Latent
+Embeddings](https://arxiv.org/abs/1603.08895), [Text Aware Representation of
+Sentence](https://aclanthology.org/2020.coling-main.285/) and [Natural Language
+Inference](https://arxiv.org/abs/1909.00161). En este artículo, nos centraremos en ZSTC basando en inferencias de
+lenguaje natural (NLI, por sus siglas en inglés [_Natural Language
+Inference_](https://en.wikipedia.org/wiki/Textual_entailment)). Este enfoque utiliza modelos de lenguaje pre-entrenados
+para inferir sobre la relación entre una premisa (el texto de entrada) y una hipótesis (la descripción de una categoría
+candidata) para realizar la clasificación, como veremos a continuación.
 
 ## ¿Cómo funciona?
 
@@ -91,8 +108,8 @@ Donde $z_i$ es el $\text{logit}$ asociado a la categoría $i$ y $N$ es el númer
 $\text{softmax}$ normaliza los $\text{logits}$ para obtener una distribución de probabilidad sobre las etiquetas
 candidatas.
 
-En Python podemos implementar la clasificación Zero-Shot utilizando la biblioteca `transformers` de [Hugging Face](https://huggingface.co/docs/transformers/index), que
-proporciona una interfaz sencilla para trabajar con modelos de lenguaje pre-entrenados. A continuación, se muestra un ejemplo de cómo implementar la clasificación Zero-Shot en Python utilizando el modelo BART-large-mnli de Facebook:
+En Python podemos implementar la clasificación _Zero-Shot_ utilizando la biblioteca `transformers` de [Hugging Face](https://huggingface.co/docs/transformers/index), que
+proporciona una interfaz sencilla para trabajar con modelos de lenguaje pre-entrenados. A continuación, se muestra un ejemplo de cómo implementar la clasificación _Zero-Shot_ en Python utilizando el modelo BART-large-mnli de Facebook:
 
 ```python showLineNumbers
 import numpy as np
@@ -143,7 +160,7 @@ ventajas clave de este enfoque.
 
 ### Flexibilidad y adaptabilidad
 
-Los modelos Zero-Shot, al utilizar modelos de lenguaje pre-entrenados, pueden adaptarse rápidamente a nuevas categorías o tareas sin necesidad de entrenamiento adicional. Esto permite una mayor flexibilidad y adaptabilidad en entornos donde las categorías cambian con frecuencia o donde es difícil obtener ejemplos de entrenamiento para todas las categorías. Un ejemplo práctico puede verse a continuación, donde se añaden nuevas etiquetas sin necesidad de ajustar el modelo:
+Los modelos _Zero-Shot_, al utilizar modelos de lenguaje pre-entrenados, pueden adaptarse rápidamente a nuevas categorías o tareas sin necesidad de entrenamiento adicional. Esto permite una mayor flexibilidad y adaptabilidad en entornos donde las categorías cambian con frecuencia o donde es difícil obtener ejemplos de entrenamiento para todas las categorías. Un ejemplo práctico puede verse a continuación, donde se añaden nuevas etiquetas sin necesidad de ajustar el modelo:
 
 ```python showLineNumbers
 from transformers import pipeline
@@ -188,28 +205,28 @@ previamente, «medical technology», con alta confianza.
 
 ### Reducción de la necesidad de datos etiquetados
 
-En muchos escenarios del mundo real, algunas clases pueden tener muy pocos ejemplos de entrenamiento. La clasificación Zero-Shot brilla en estas situaciones:
+En muchos escenarios del mundo real, algunas clases pueden tener muy pocos ejemplos de entrenamiento. La clasificación _Zero-Shot_ brilla en estas situaciones:
 
 - Permite la clasificación en categorías raras o poco representadas
 - Es útil en dominios especializados donde la recopilación de datos es costosa o difícil
 
 ### Eficiencia en recursos y tiempo
 
-La clasificación Zero-Shot elimina la necesidad de recopilar y etiquetar grandes cantidades de datos de entrenamiento
+La clasificación _Zero-Shot_ elimina la necesidad de recopilar y etiquetar grandes cantidades de datos de entrenamiento
 para cada categoría. Esto ahorra tiempo y recursos al evitar el proceso de recopilación, limpieza y etiquetado de datos,
 y permite una rápida adaptación a nuevas categorías sin necesidad de reentrenar el modelo.
 
 ### Escalabilidad a un gran número de categorías
 
 Los métodos tradicionales de clasificación pueden ser limitados en las cantidad de categorías que pueden manejar. La
-clasificación Zero-Shot maneja este problema de manera elegante:
+clasificación _Zero-Shot_ maneja este problema de manera elegante:
 
 - Puede manejar potencialmente un número ilimitado de categorías.
 - No sufre de desequilibrios de clases, ya que no requiere un conjunto de entrenamiento equilibrado.
 
 ### Transferencia de conocimiento entre dominios
 
-La clasificació2n Zero-Shot permite una forma de transferencia de conocimiento entre dominios:
+La clasificación _Zero-Shot_ permite una forma de transferencia de conocimiento entre dominios:
 
 - Utiliza el conocimiento general del modelo de lenguaje pre-entrenado para inferir sobre nuevos dominios.
 - Puede adaptar el conocimiento de un dominio a otro relacionado.
@@ -246,7 +263,7 @@ Confianza: 0.89
 
 ### Flexibilidad en la formulación de clases.
 
-La clasificación Zero-Shot permite una gran flexibilidad en cómo se formulan las clases:
+La clasificación _Zero-Shot_ permite una gran flexibilidad en cómo se formulan las clases:
 
 - Las clases puede ser descritas con frases o incluso con oraciones completas.
 - Permite una clasificación más matizada y contextual.
@@ -313,7 +330,7 @@ La capacidad de manejar múltiples etiquetas amplía significativamente la aplic
 
 ## Buenas prácticas
 
-La clasificación Zero-Shot, aunque es poderosa y versátil, requiere un enfoque cuidadoso para maximizar su eficacia.
+La clasificación _Zero-Shot_, aunque es poderosa y versátil, requiere un enfoque cuidadoso para maximizar su eficacia.
 Quiero señalar algunas buenas prácticas a tener en cuenta al trabajar con este enfoque:
 
 ### Manejo de la ambiguedad
@@ -420,7 +437,7 @@ if max(result['scores']) < confidence_threshold:
 
 ## Casos de uso
 
-La clasificación Zero-Shot tiene una amplia gama de aplicaciones en diversas industrias y campos. Veamos algunos
+La clasificación _Zero-Shot_ tiene una amplia gama de aplicaciones en diversas industrias y campos. Veamos algunos
 ejemplos:
 
 1. **Clasificación de correos electrónicos en un entorno corporativo**:
@@ -575,7 +592,7 @@ Confidence: 0.33
 This article needs manual review for accurate categorization.
 ```
 
-También es posible combinar Zero-Shot con otros métodos de NLP para mejorar los resultados, como la extracción de
+También es posible combinar _Zero-Shot_ con otros métodos de NLP para mejorar los resultados, como la extracción de
 entidades, la clasificación de intenciones o la generación de texto.
 
 4. **Análisis de noticias financieras**
@@ -684,9 +701,9 @@ Tweet Category: Entertainment
 
 ## Evaluación y métricas
 
-La evaluación del rendimiento de los modelos de clasificación Zero-Shot es crucial para entender su efectividad y limitaciones. A diferencia de los métodos tradicionales, estos modelos se prueban en categorías no vistas durante el entrenamiento, lo que requiere un enfoque de evaluación específico.
+La evaluación del rendimiento de los modelos de clasificación _Zero-Shot_ es crucial para entender su efectividad y limitaciones. A diferencia de los métodos tradicionales, estos modelos se prueban en categorías no vistas durante el entrenamiento, lo que requiere un enfoque de evaluación específico.
 Para ilustrar este proceso, utilizaremos el conjunto de datos AG News, que contiene noticias de cuatro categorías:
-World, Sports, Business y Sci/Tech. Implementaremos un clasificador Zero-Shot utilizando el modelo BART-large-mnli y
+World, Sports, Business y Sci/Tech. Implementaremos un clasificador _Zero-Shot_ utilizando el modelo BART-large-mnli y
 evaluaremos su rendimiento con diversas métricas.
 
 ```python showLineNumbers
@@ -796,7 +813,7 @@ plt.xticks(rotation=45)
 plt.show()
 ```
 
-Este código evalúa el clasificador Zero-Shot utilizando métricas estándar como precisión, recall y F1-score. Además,
+Este código evalúa el clasificador _Zero-Shot_ utilizando métricas estándar como precisión, recall y F1-score. Además,
 genera visualizaciones como la matriz de confusión y la distribución de puntajes de confianza, proporcionando insights
 sobre el rendimiento del modelo en diferentes categorías y su nivel de certeza en las predicciones.
 
@@ -835,7 +852,7 @@ weighted avg       0.75      0.74      0.74       200
   height="468px"
 >
   **Figura 2**. Distribución de puntajes de confianza para las predicciones del clasificador
-  Zero-Shot.
+  _Zero-Shot_.
 </ImageBox>
 
 ```
@@ -851,12 +868,12 @@ Sci/Tech: 0.51
 ```
 
 <ImageBox src="/images/ai/zero-shot-v03.png" alt="Precisión por clase" width="728px" height="468px">
-  **Figura 3**. Precisión por clase en la clasificación Zero-Shot de noticias AG.
+  **Figura 3**. Precisión por clase en la clasificación _Zero-Shot_ de noticias AG.
 </ImageBox>
 
-El informe de clasificación muestra un rendimiento variado del modelo Zero-Shot en las diferentes categorías del
+El informe de clasificación muestra un rendimiento variado del modelo _Zero-Shot_ en las diferentes categorías del
 conjunto de datos AG News. La precisión general del modelo es del 74%, lo cual es bastante bueno para un enfoque
-Zero-Shot. La categoría «Business» se destaca con un excelente rendimiento (F1-score de 0.94), sugiriendo que el modelo
+_Zero-Shot_. La categoría «Business» se destaca con un excelente rendimiento (F1-score de 0.94), sugiriendo que el modelo
 identifica muy bien este tipo de contenido. «Sci/Tech» también muestra un buen desempeño (F1-score de 0.74). Sin
 embargo, el modelo parece tener más dificultades con «World» y «Sports», con F1-scores de 0.65 y 0.61 respectivamente.
 Esto podría indicar que estas categorías son más desafiantes de distinguir o que sus características semánticas son
@@ -865,7 +882,7 @@ considerando que no fue entrenado específicamente en este conjunto de datos.
 
 ## Limitaciones y consideraciones
 
-Aunque la clasificación Zero-Shot es poderosa, tiene sus limitaciones. El rendimiento del modelo depende de la calidad
+Aunque la clasificación _Zero-Shot_ es poderosa, tiene sus limitaciones. El rendimiento del modelo depende de la calidad
 del pre-entrenamiento y de la relación semántica entre la entrada y las etiquetas. Puede tener dificultades con dominios
 altamente especializados o conceptos alejados de sus datos de entrenamiento. Siempre es importante validar los
 resultados y considerar el fine-tuning para casos de uso específicos.
@@ -921,7 +938,7 @@ Algunos puntos adicionales a considerar:
 5. Interpretabilidad: Puede ser difícil entender exactamente cómo el modelo llega a sus decisiones.
 
 Es crucial realizar una evaluación exhaustiva en el dominio específico de aplicación y considerar estas limitaciones al
-implementar soluciones basadas en clasificación Zero-Shot.
+implementar soluciones basadas en clasificación _Zero-Shot_.
 
 ## ZSTC - Una herramienta poderosa con consideraciones
 
@@ -932,7 +949,7 @@ explícitos. Esta capacidad abre un mundo de posibilidades para automatizar tare
 electrónicos, el análisis de sentimientos, la categorización de noticias y el análisis de noticias financieras.
 
 Sin embargo, un aspecto que no se ha considerado en este análisis es el consumo de recursos computacionales,
-como el uso de GPU, que puede ser significativo en la clasificación Zero-Shot. A pesar de que ZSTC ofrece ventajas en
+como el uso de GPU, que puede ser significativo en la clasificación _Zero-Shot_. A pesar de que ZSTC ofrece ventajas en
 términos de ahorro de tiempo y etiquetado, el costo computacional sigue siendo un factor a tener en cuenta,
 especialmente para modelos de gran tamaño que requieren hardware especializado para ejecutar las inferencias de manera
 eficiente. El consumo de recursos puede ser decisivo a la hora de elegir ZSTC frente a otros métodos,
@@ -1053,4 +1070,24 @@ for Zero-shot Text Classification."
   type="devto"
   url="https://dev.to/abderrahimal/zero-shot-text-classification-under-the-hood-3h19"
   text="abderrahimal Alakouche. 2024. Zero Shot Text Classification Under the hood"
+/>
+<Reference
+  type="web"
+  url="https://aclanthology.org/2023.eacl-main.22.pdf"
+  text="Marc Pamies et al. 2023. A weakly supervised textual entailment approach for zero-shot text classification."
+/>
+<Reference
+  type="arxiv"
+  url="https://arxiv.org/abs/2406.15241"
+  text="Tassallah Abdullahi et al. 2024. Retrieval Augmented Zero-Shot Text Classification."
+/>
+<Reference
+  type="arxiv"
+  url="https://arxiv.org/abs/1603.08895"
+  text="Yongqin Xian et al. 2016. Latent Embeddings for Zero-Shot classification."
+/>
+<Reference
+  type="web"
+  url="https://arxiv.org/abs/2406.15241"
+  text="Kishaloy et al. 2020. Task-Aware Representation of Sentences for Generic Text Classification"
 />
