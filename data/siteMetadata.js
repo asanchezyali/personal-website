@@ -10,7 +10,7 @@ const siteMetadata = {
   siteRepo: 'https://github.com/asanchezyali',
   siteLogo: '/static/images/logo.png',
   image: '/static/images/avatar-v1.jpeg',
-  socialBanner: '/static/images/time-machine.webp',
+  socialBanner: '/static/images/twitter-card.png',
   email: 'asanchezyali@gmail.com',
   github: 'https://github.com/asanchezyali',
   twitter: 'https://twitter.com/asanchezyali',
