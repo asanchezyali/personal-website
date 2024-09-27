@@ -1,0 +1,24 @@
+
+  <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+      <title>Alejandro Sánchez Yalí - Programming, Mathematics, and Technology Blog</title>
+      <link>https://asanchezyali.com/blog</link>
+      <description>Welcome to my blog, where I share my notes and insights on programming, mathematics, and technology. From machine learning to software development, I cover a wide range of topics related to computer science and beyond.</description>
+      <language>en-us</language>
+      <managingEditor>asanchezyali@gmail.com (Alejandro Sánchez Yalí)</managingEditor>
+      <webMaster>asanchezyali@gmail.com (Alejandro Sánchez Yalí)</webMaster>
+      <lastBuildDate>Fri, 23 Aug 2024 05:00:00 GMT</lastBuildDate>
+      <atom:link href="https://asanchezyali.com/tags/computer-science/feed.xml" rel="self" type="application/rss+xml"/>
+      
+  <item>
+    <guid>https://asanchezyali.com/blog/en/differentiable-programming/20240923DifferentiablePrograms</guid>
+    <title>Neural networks represented as DAGs of parameterized computational programs</title>
+    <link>https://asanchezyali.com/blog/en/differentiable-programming/20240923DifferentiablePrograms</link>
+    <description>Neural networks can be viewed as algorithms with adjustable parameters, optimized through machine learning. This approach allows us to address them from a broader mathematical and computational perspective. In this article, we will explore how to represent these algorithms as directed acyclic graphs (DAGs).</description>
+    <pubDate>Fri, 23 Aug 2024 05:00:00 GMT</pubDate>
+    <author>asanchezyali@gmail.com (Alejandro Sánchez Yalí)</author>
+    <category>mathematics</category><category>computer science</category>
+  </item>
+
+    </channel>
+  </rss>

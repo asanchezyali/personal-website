@@ -11,6 +11,16 @@
       <atom:link href="https://asanchezyali.com/tags/transformers/feed.xml" rel="self" type="application/rss+xml"/>
       
   <item>
+    <guid>https://asanchezyali.com/blog/en/ai/20240917ZeroShot</guid>
+    <title>Zero-Shot Text Classification</title>
+    <link>https://asanchezyali.com/blog/en/ai/20240917ZeroShot</link>
+    <description>Zero-Shot Text Classification (ZSTC) is a machine learning technique that allows models to classify texts into categories without having been previously trained on those specific categories. It uses pre-trained language models, such as BART or GPT, which have learned to understand semantic relationships between words and phrases during their pre-training. This approach allows the model to generalize its knowledge and make inferences about new categories based on a given text, without the need for labeled examples.</description>
+    <pubDate>Tue, 17 Sep 2024 05:00:00 GMT</pubDate>
+    <author>asanchezyali@gmail.com (Alejandro Sánchez Yalí)</author>
+    <category>AI</category><category>Zero-Shot Learning</category><category>Transformers</category><category>Hugging Face</category>
+  </item>
+
+  <item>
     <guid>https://asanchezyali.com/blog/es/ai/20240917ZeroShot</guid>
     <title>Clasificación Zero-Shot de texto</title>
     <link>https://asanchezyali.com/blog/es/ai/20240917ZeroShot</link>

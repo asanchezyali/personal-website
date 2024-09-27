@@ -12,22 +12,22 @@ images: ['/images/differentiable-programs/header.jpg']
 language: 'es'
 ---
 
-Las redes neuronales pueden considerarse algoritmos con parámetros ajustables, optimizados mediante aprendizaje automático. Este enfoque permite abordarlas desde una perspectiva matemática y computacional más amplia. En este artículo, exploraremos cómo representar estos algoritmos como grafos dirigidos acíclicos (DAG) según las ideas expuestas en el artículo de Blondel et al. (2024). [Elements of Differentiable Programming](https://arxiv.org/pdf/2403.14606).
+Las redes neuronales pueden verse como algoritmos con parámetros ajustables, cuya optimización se realiza a través del aprendizaje automático. Este enfoque abre la puerta a un análisis más amplio, tanto desde la perspectiva matemática como computacional. En este artículo, exploraremos cómo estos algoritmos se representan mediante grafos dirigidos acíclicos (DAG), siguiendo las ideas presentadas por Blondel et al. (2024). [Elements of Differentiable Programming](https://arxiv.org/pdf/2403.14606).
 
 La representación de redes neuronales como DAGs tiene varias ventajas:
 
-1. **Visualización**: Los DAGs ofrecen una forma clara de entender la estructura de un programa.
-2. **Optimización**: Los DAGs permiten optimizar programas mediante técnicas de optimización de grafos.
+1. **Visualización**: Los DAGs permiten una visualización más intuitiva de la estructura de las redes.
+2. **Optimización**: Facilitan el uso de técnicas de optimización basadas en grafos.
 3. **Diferenciación automática**: Facilitan la implementación de algoritmos como la retropropagación.
 4. **Paralelización**: Los DAGs permiten ejecutar programas en paralelo en hardware especializado como GPUs y TPUs.
 
-También examinaremos cómo los DAGs mejoran la comprensión y diseño de redes neuronales complejas y su relación con técnicas avanzadas de aprendizaje profundo, como las redes residuales y recurrentes.
+Además, profundizaremos en cómo los DAGs mejoran tanto el diseño como la comprensión de redes neuronales complejas, y su relación con técnicas avanzadas de aprendizaje profundo, como las redes residuales y recurrentes..
 
 ## Programas computacionales parametrizados
 
 ### Cadenas de computación
 
-Para comenzar, consideremos **programas computacionales** simples definidos por una **secuencia** de funciones $f_1, \ldots, f_n$ que se aplican
+Para comenzar, consideremos los **programas computacionales** simples definidos por una **secuencia** de funciones $f_1, \ldots, f_n$ que se aplican
 de forma secuencial a una entrada
 $s_0 \in S_{0}.$ Denominaremos a estos programas **cadenas de computación** y los representaremos como $f = f_n \circ \cdots
 \circ f_1.$
@@ -44,7 +44,7 @@ parámetros se ajustan mediante un proceso de optimización durante el entrenami
   width="750px"
   height="150px"
 >
-  **Figura 1**. Representación de na cadena de computación como una secuencia de composiciones de
+  **Figura 1**. Representación de una cadena de computación como una secuencia de composiciones de
   funciones. Cada nodo intermedio simboliza una función, La flecha inicial indica la entrada, y la
   final, la salida. Las flechas internas ilustran las dependencias entre las funciones, conectando
   las salidas previas o la entrada inicial con las funciones.
@@ -66,7 +66,7 @@ $$
 
 Donde $s_0$ es la **entrada**, $s_k\in S_k$ para $k = 1, \ldots,
  n-1,$ son los **estados intermedios** del programa y $s_n\in S_n$ es la
-**salida**. Es fundamental que el dominio (espacios de entrada) de $f_k$ debe ser compatible con la imagen (espacio de
+**salida**. Es fundamental que el dominio (espacios de entrada) de $f_k$ sea compatible con la imagen (espacio de
 salida) de $f_{k-1}$ para que la composición tenga sentido. Es decir, que $f_k: S_{k-1} \to S_k$ para $k = 1, \ldots,
  n.$ De forma equivalente a la ecuación (1), la cadena de computación completa se puede escribir en una única expresión:
 
@@ -85,7 +85,7 @@ las funciones individuales y las aristas representan las dependencias y el flujo
 En un **programa computacional genérico**, las funciones intermedias pueden depender de las salidas de otras funciones.
 Estas dependencias se
 pueden representar mediante un Grafo Acíclico Dirigido (DAG). Un **grafo dirigido** $G = (V, E)$ se compone de un conjunto de nodos $V$ y un conjunto de aristas $E\subseteq V \times V.$ Una arista $(u, v) \in E$ es un par ordenado de
-vertices $u, v\in V,$ y se puede representar como $u \to v.$ para indicar que $v$ depende de $u.$ Para representar las
+nodos $u, v\in V,$ y se puede representar como $u \to v.$ para indicar que $v$ depende de $u.$ Para representar las
 entradas y las salidas, es conveniente utilizar **semi-aristas entrantes** $\to j$ y **semi-aristas salientes** $i \to.$
 
 En un grafo $G = (V, E)$, los **padres** de un nodo $v\in V$ son aquellos nodos $u\in V$ tales que $(u, v)\in E,$
@@ -93,7 +93,7 @@ denotados como:
 
 $$
 \begin{equation}
-\text{padres}(v) = \{u\in V: (u, v)\in E\}.
+\mathcal{P}(v) = \{u\in V: (u, v)\in E\}.
 \end{equation}
 $$
 
@@ -101,11 +101,11 @@ De manera similar, los **hijos** de un nodo $v\in V$ son los nodos $w\in V$ tale
 
 $$
 \begin{equation}
-\text{hijos}(v) = \{w\in V: (v, w)\in E\}.
+\mathcal{C}(v) = \{w\in V: (v, w)\in E\}.
 \end{equation}
 $$
 
-Los vertices sin padres son llamados **raíces** y los vertices sin hijos se conocen como **hojas**.
+Los nodos sin padres son llamados **raíces** y los nodos sin hijos se conocen como **hojas**.
 
 Un **camino** de $i$ a $j$ en un grafo $G = (V, E)$ es una secuencia de nodos $v_1, \ldots, v_k$ tal que $i \to v_1 \to
 \cdots \to v_k \to j.$ Un camino es **simple** si no contiene nodos repetidos. Un grafo es **acíclico** si no contiene
@@ -119,7 +119,7 @@ cualquier orden tal que $i \preceq j$ si y solo si no hay un camino de $j$ a $i.
 
 ### Programas computacionales como DAGs
 
-Un programa computacional se puede pensar como una función válida en términos matemáticos, lo que significa que el
+Un programa computacional se puede pensar como una función en términos matemáticos, lo que significa que el
 programa debería devolver los mismos valores para las mismas entradas y no debería tener efectos secundarios. Además, asumimos
 que el
 programa se detiene después de un número finito de pasos. Dado esto, un programa puede descomponerse en un conjunto finito de
@@ -137,7 +137,7 @@ excepto por $s_0$, cada variable $s_k$ está en biyección con una función $f_k
 el nodo $0$ representa la entrada $s_0$, mientras que los nodos $1, \ldots, n$ representan las funciones $f_1, \ldots,
 f_n$ y salidas $s_1, \ldots, s_n.$ Es decir, cada nodo $k$ representa tanto la función $f_k$ y la salida $s_k.$
 
-Las aristas de un DAG representan las dependencias entre los nodos. Los padres de un nodo $k,$ denotados como $\{i_1, \ldots, i_{p_k}\} := \text{padres}(k),$ donde $p_k:=|\text{padres}(k)|,$ indican las variables $s_{\text{padres}(k)} := \{s_{i_1}, \ldots, s_{i_{p_k}}\}$
+Las aristas de un DAG representan las dependencias entre los nodos. Los padres de un nodo $k,$ denotados como $\{i_1, \ldots, i_{p_k}\} := \mathcal{P}(k),$ donde $p_k:=|\mathcal{P}(k)|,$ indican las variables $s_{\mathcal{P}(k)} := \{s_{i_1}, \ldots, s_{i_{p_k}}\}$
 que la función $f_k$ necesita para calcular su salida $s_k$. En otras palabras, los padres $\{i_1, \ldots, i_{p_k}\}$
 indican funciones $f_{i_1}, \ldots, f_{i_{p_k}}$ que son necesarias para computar $f_k.$
 
@@ -149,13 +149,13 @@ indican funciones $f_{i_1}, \ldots, f_{i_{p_k}}$ que son necesarias para computa
     $\text{\textbf{Entrada:}}$ $s_0\in S_0$
   </PseudoCodeLine>
   <PseudoCodeLine number={1}>
-    $\text{\textbf{Para} } k = 1, \ldots, n$ $\text{\textbf{hacer}}$
+    $\text{\textbf{Para} } k = 1, \ldots, n$ $\text{\textbf{hacer:}}$
   </PseudoCodeLine>
   <PseudoCodeLine number={2} indent={2}>
-    <span>Encontrar los nodos padres</span> $\{i_1, \ldots, i_{p_k}\} := \text{padres}(k)$
+    <span>Encontrar los nodos padres</span> $\{i_1, \ldots, i_{p_k}\} := \mathcal{P}(k)$
   </PseudoCodeLine>
   <PseudoCodeLine number={3} indent={2}>
-    <span>Calcular</span> $s_k :=f_k\big(s_{padres(k)}\big):= f_k(s_{i_1}, \ldots, s_{i_{p_k}})$
+    <span>Calcular</span> $s_k :=f_k\big(s_{\mathcal{P}(k)}\big):= f_k(s_{i_1}, \ldots, s_{i_{p_k}})$
   </PseudoCodeLine>
   <PseudoCodeLine showNumber={false} indent={0}>
     $\text{\textbf{Fin:} } f(s_0) = s_n$
@@ -171,11 +171,11 @@ programa para evaluar la salida $s_k \in [n]$
 
 $$
 \begin{equation}
-s_k := f_k\big(s_{\text{padres}(k)}\big)\in S_k.
+s_k := f_k\big(s_{\mathcal{P}(k)}\big)\in S_k.
 \end{equation}
 $$
 
-Obsérvese que podemos ver $f_k$ como una función de una sola entrada de $s_{\text{padres}(k)},$ el cual es una tupla de
+Obsérvese que podemos ver $f_k$ como una función de una sola entrada de $s_{\mathcal{P}(k)},$ el cual es una $n$-tupla de
 elementos, o como una función de múltiples entradas $s_{i_1}, \ldots, s_{i_{p_k}}.$ Los dos puntos de vistas son
 esencialmente equivalentes. El proceso de ejecución de un programa es descrito en el Algoritmo 1.
 
@@ -214,7 +214,7 @@ que las funciones tengan múltiples salidas. Por simplicidad, nos centraremos en
 
 ### Circuitos aritméticos
 
-Los circuitos aritméticos son uno de los ejemplos más sencillos de computación grafo, originarios de **la teoría de la
+Los circuitos aritméticos son uno de los ejemplos más sencillos de grafos computacionales, originarios de **la teoría de la
 complejidad computacional**. Formalmente, un circuito aritmético sobre un campo $\mathbb{F}$, como por ejemplo los
 número reales $\mathbb{R}$ o los números complejos $\mathbb{C},$ es un grafo dirigido acíclico (DAG) donde los nodos
 raíces son elementos del campo $\mathbb{F}$ y las funciones intermedias son operaciones aritmética como la suma o la
@@ -227,16 +227,16 @@ circuito**, como se define a continuación.
 
 <MathBox title="Definición 1. Circuito y tamaño polinomial" variant="definition">
   El **tamaño** $S(C)$ de un circuito aritmético $C$ es el número de aristas en el grafo dirigido
-  acíclico (DAG) que representa al circuito. EL **tamaño del polinomio** $S(f)$ de un polinomio $f$
+  acíclico (DAG) que representa al circuito. El **tamaño del polinomio** $S(f)$ de un polinomio $f$
   es el tamaño del circuito aritmético $C$ más pequeño que representa a $f.$
 </MathBox>
 
 Para más información sobre circuitos aritméticos, se puede consultar el libro de _Chen et al_.
 [2011](https://www.math.ias.edu/~avi/PUBLICATIONS/ChenKaWi2011.pdf).
 
-## Redes de alimentación hacia adelante
+## Redes de propagación hacia adelante
 
-Una red de alimentación hacia adelante (_feedforward network_) es un tipo de cadena de computación con funciones parametrizadas $f_1, \ldots, f_n$ que se aplican de forma secuencial a una
+Una red de propagación hacia adelante (_feedforward network_) es un tipo de cadena de computación con funciones parametrizadas $f_1, \ldots, f_n$ que se aplican de forma secuencial a una
 entrada $s_0 \in S_0.$ En este caso, las funciones $f_k$ son usualmente funciones parametrizadas que dependen de un
 vector de parámetros $w_k \in \mathcal{W}_k,$ donde $\mathcal{W}_k$ es el espacio de parámetros de la función $f_k.$ Por lo
 tanto,
@@ -256,10 +256,10 @@ $$
 para una entrada $s_0\in S_0$ y para los **parámetros entrenables** $w = (w_1, \ldots, w_n) \in \mathcal{W} =
 \mathcal{W}_1 \times \cdots \times \mathcal{W}_n.$ Cada función $f_k$ es una **capa** de la red y cada $s_k \in S_k$ es
 una **representación intermedia** de la entrada $s_0.$ la dimension de $S_k$ se conoce como la **dimensión de la capa**
-(o número de unidades ocultas) de la capa $k.$ Una red de alimentación hacia adelante puede ser definida como una
+(o número de unidades ocultas) de la capa $k.$ Una red de propagación hacia adelante puede ser definida como una
 función $f:S_0 \times \mathcal{W} \to S_n$ que mapea una entrada $s_0$ y parámetros $w$ a una salida $s_n.$
 
-Dado un programa parametrizado de este tipo, los parametros $w$ podemos aprender los parámetros ajustando $w$
+Dado un programa parametrizado de este tipo, los parametros $w$ los podemos aprender ajustando $w$
 de acuerdo a un conjunto de datos de entrenamiento. Por ejemplo, dado un conjunto de datos de pares $(x_i, y_i),$ podemos
 minimizar la función de pérdida $L(w) = \sum_{i=1}^{m} \ell(f(x_i; w), y_i).$ La minimización de la función de
 pérdida se puede hacer utilizando un algoritmo de optimización como el descenso de gradiente.
@@ -268,7 +268,7 @@ pérdida se puede hacer utilizando un algoritmo de optimización como el descens
 
 ### Combinación de capas afines y funciones de activación
 
-En la sección anterior, no especificamos cual es la forma de parametrizar las redes de alimentación hacia adelante. Una
+En la sección anterior, no especificamos cual es la forma de parametrizar las redes de propagación hacia adelante. Una
 parametrización típica, es el perceptron multicapa (_multilayer perceptron_ o MLP), que utiliza capas totalmente
 conectadas (también conocidas densas) de la forma
 
@@ -279,14 +279,14 @@ s_k = f_k(s_{k-1}; w_k) = a_k(W_k s_{k-1} + b_k),
 $$
 
 donde $w_k = (W_k, b_k)$ son los parámetros de la capa $k,$ $W_k$ es un matriz de pesos y $b_k$ es un vector de sesgos.
-Ademas la capa las podemos descompones en dos funciones. La función $s \mapsto W_k s + b_k$ es una **capa afín** y la
-función $s \mapsto a_k(s)$ es no lineal sin parámetros, llamada **función de activación**.
+Ademas la capa las podemos descomponer en dos funciones. La función $s \mapsto W_k s + b_k$ es una **capa afín** y la
+función $s \mapsto a_k(s)$ no lineal sin parámetros, llamada **función de activación**.
 
 Generalmente, podemos remplazar el producto matrix-vector $W_k s_{k-1}$ por cualquier función lineal de $s_{k-1}.$ Por
 ejemplo, las capas convolucionales utilizan de convolución de la entrada $s_{k-1}$ con algunos filtros $W_k.$
 
 <MathBox title="Remark 1. Tratamiento de entradas múltiples" variant="remark">
-  A veces es necesario tratar con redes de múltiples entradas. POr ejemplo, supongamos que queremos
+  A veces es necesario tratar con redes de múltiples entradas. Por ejemplo, supongamos que queremos
   diseñar una función $g(x_1, x_2, w_g)$, donde $x_1 \in \mathcal{X}_1$ y $x_2 \in \mathcal{X}_2$
   son dos entradas. Una forma simple de hacerlo es usar la concatenación $x = x_1 \oplus x_2 \in
   \mathcal{X}_1 \oplus \mathcal{X}_2$ como entrada a una red $f(x, W_f).$ Alternativamente, en lugar
@@ -306,7 +306,7 @@ s_1 = a_1(W_1 x + b_1).
 $$
 
 Esto es llamado un **modelo lineal generalizado** (_generalized linear model_ o GLM). En este caso, la función de
-activación $a_1$ es la función de identidad. Los modelos lineales generalizados son un caso especial de los MLPs. Es
+activación $a_1$ es la función identidad. Los modelos lineales generalizados son un caso especial de los MLPs. Es
 particular, cuando $a_1$ es la función $\operatorname*{softargmax}$, se tiene un modelo de regresión logística. Por lo
 general para la profundidad $n>1,$ la salida de un MLP es
 
@@ -322,7 +322,7 @@ interés. Veremos que los MLPs también pueden utilizarse como subcomponentes en
 
 ## Funciones de activación
 
-Como se mencionó anteriormente, la redes de alimentación hacia adelante utilizan funciones de activación $a_k$ para cada
+Como se mencionó anteriormente, la redes de propagación hacia adelante utilizan funciones de activación $a_k$ para cada
 capa. En esta sección, vamos a describir algunas de las funciones de activación más comunes de escalar a escalar o de
 vector a escalar. También presentaremos algunas funciones de probabilidad que pueden ser utilizadas como funciones de
 activación.
@@ -379,11 +379,11 @@ como una versión suavizada de la función max-pooling:
 
 $$
 \begin{equation}
-\text{logsumexp}(x) := \text{softmax}(x) := \log\sum_{j=1}^{d} \exp(x_j).
+\text{logsumexp}(x) := \text{softmax}(x) := \log\left(\sum_{j=1}^{d} \exp(x_j)\right).
 \end{equation}
 $$
 
-La función log-sum-exp puede ser vista como una generalización de la función **softplus** a vectores, en efecto para
+La función log-sum-exp puede ser vista como una generalización de la función softplus a vectores, en efecto para
 todo $x \in \mathbb{R}$
 
 $$
@@ -402,10 +402,10 @@ $$
 
 donde $\mathbf{1}$ es un vector de unos y $c = \max_{j\in [\,d\,]} x_j.$
 
-### Mapeos des probabilidad de escalar a escalar
+### Mapeos de probabilidad de escalar a escalar
 
 En algunas ocasiones queremos mapear algún número real en un número entre 0 y 1, que puede representar la probabilidad
-de un evento. Para se propósito se usa con frecuencia las **sigmoides**. Una sigmoide es una función cuya curva se
+de un evento. Para este propósito se usa con frecuencia las **sigmoides**. Una sigmoide es una función cuya curva se
 caracteriza por tener forma de «S». Estas funciones se utilizan para comprimir valores reales en un intervalo. Un
 ejemplo es la función paso binaria, también conocida como la función de paso de Heaviside,
 
@@ -418,11 +418,11 @@ $$
 \end{equation}
 $$
 
-Es un mapeo de $\mathbb{R}$ a $\{0, 1\}.$ Desafortunadamente, la función de paso binaria no es discontinua en $x=0.$
+Es un mapeo de $\mathbb{R}$ a $\{0, 1\}.$ Desafortunadamente, la función de paso binaria es discontinua en $x=0.$
 Además, debido a que la función es constante en todos los demás puntos, tiene derivada cero en estos puntos, lo que
 dificulta su uso como parte de una red neuronal con retropropagación.
 
-Una mejor sigmoide es la **función logítica**, la cual mapea de $\mathbb{R}$ a $(0, 1)$ y es definida como:
+Una mejor sigmoide es la **función logística**, la cual mapea de $\mathbb{R}$ a $(0, 1)$ y es definida como:
 
 $$
 \begin{equation}
@@ -466,17 +466,17 @@ $$
 
 ### Mapeos de probabilidad de vectores a vectores
 
-En algunas ocasiones queremos mapear un vector en un vector de probabilidades. Este es una mapero de $\mathbb{R}^d$ a un
+En algunas ocasiones queremos mapear un vector en un vector de probabilidades. Este es una mapeo de $\mathbb{R}^d$ a un
 simplex de probabilidad, definido por:
 
 $$
 \begin{equation}
-\Delta^{d} = \left\{p\in \mathbb{R}^d: \forall j \in [\,d\,], p_j \geq 0 \text{ y } \sum_{j=1}^{d} p_j = 1\right\}.
+\Delta^{d} = \left\{p\in \mathbb{R}^d: \forall j \in [\,d\,],\; p_j \geq 0\; \text{ y }\; \sum_{j=1}^{d} p_j = 1\right\}.
 \end{equation}
 $$
 
-Dos ejemplos de funciones de mapeo de probabilidad de vector a vector son la función **$\text{argmax}$ y la función
-**$\text{softargmax}.$ La función $\text{argmax}$ mapea un vector a un vector de probabilidad que es cero en todas las
+Dos ejemplos de funciones de mapeo de probabilidad de vector a vector son la función **argmax** y la función
+**softargmax**. La función $\text{argmax}$ mapea un vector a un vector de probabilidad que es cero en todas las
 entradas excepto en la entrada con el valor máximo que lo hace uno. En efecto,
 
 $$
@@ -499,7 +499,7 @@ masa de probabilidad en la entrada con el valor máximo, en caso de empate, se s
 máximo. Desafortunadamente, la función $\text{argmax}$ no es diferenciable, lo que dificulta su uso en la
 retropropagación.
 
-Una versión suavizada de la función $\text{argmax}$ es la función \*\*$\text{softargmax}$. La función $\text{softargmax}$
+Una versión suavizada de la función $\text{argmax}$ es la función $\text{softargmax}$. La función $\text{softargmax}$
 está definida como
 
 $$
@@ -509,9 +509,9 @@ $$
 $$
 
 Este operador es comúnmente conocido en la literatura como la función _softmax_, pero esta denominación es errónea: este
-operadora realmente define una versión suavizada de la función $\text{argmax}.$ La salida de $\text{softargmax}$
+operador realmente define una versión suavizada de la función $\text{argmax}.$ La salida de $\text{softargmax}$
 pertenece al interior relativo del simplex de probabilidad $\Delta^{d},$ lo que significa que nunca puede alcanzar los
-bordes del simplex. Si denotamos $\pi = \text{softargmax}(x),$ entonces $\pi_j \in (0, 1),$ es decir $0 < \pi_j < 1$
+bordes del simplex. Si denotamos $p = \text{softargmax}(x),$ entonces $p_j \in (0, 1),$ es decir $0 < p_j < 1$
 para todo $j \in [\,d\,].$ La función $\text{softargmax}$ es el gradiente de la función $\text{log-sum-exp}$, es decir,
 para todo $x \in \mathbb{R}^d$
 
@@ -540,17 +540,17 @@ $$
   
   $$
   \begin{equation}
-  \pi = \text{softargmax}(x + c\mathbf{1}) = \text{softargmax}(x).
+  p = \text{softargmax}(x + c\mathbf{1}) = \text{softargmax}(x).
   \end{equation}
   $$
   Esto quiere decir que la función $\text{softargmax}$ tiene $d-1$ grados de libertad y que no es invertible. Sin
   embargo, debido a la anterior propiedad, sin perdida de generalidad, nosotros podemos imponer que $\pmb{x}^\top
-  \pmb{1} = \sum_{j=1}^{d} x_j = 0$ (si no es el caso, podemos simplemente hacer $\pmb{x} \leftarrow x_i - \bar{x}$, en
+  \pmb{1} = \sum_{j=1}^{d} x_j = 0$ (si no es el caso, podemos simplemente hacer $x_i \leftarrow x_i - \bar{x}$, en
   donde $\bar{x} = \frac{1}{d}\sum_{j=1}^{d} x_j$ es la media de $x$). Con esta restricción y junto con el hecho de
 
 $$
 \begin{equation}
-\log(\pi_i) = x_i - \log\sum_{j=1}^{d} \exp(x_j),
+\log(p_i) = x_i - \log\sum_{j=1}^{d} \exp(x_j),
 \end{equation}
 $$
 
@@ -558,7 +558,7 @@ obtenemos
 
 $$
 \begin{equation}
-\sum_{j=1}^{d} \log(\pi_j) = - d \log \sum_{j=1}^{d} \exp(x_j).
+\sum_{j=1}^{d} \log(p_j) = - d \log \sum_{j=1}^{d} \exp(x_j).
 \end{equation}
 $$
 
@@ -566,7 +566,7 @@ Por lo tanto, la función $\text{softargmax}$ es invertible en el sentido de que
 
 $$
 \begin{equation}
-x_i = [\text{softargmax}^{-1}(\pi)]_i = \log(\pi_i) - \frac{1}{d}\sum_{j=1}^{d} \log(\pi_j).
+x_i = [\text{softargmax}^{-1}(p)]_i = \log(p_i) - \frac{1}{d}\sum_{j=1}^{d} \log(p_j).
 \end{equation}
 $$
 
@@ -574,12 +574,12 @@ $$
 
 ## Redes neuronales residuales
 
-Como se mencionó anteriormente, las redes de alimentación hacia adelante son un tipo de cadena de computación. En este
+Como se mencionó anteriormente, las redes de propagación hacia adelante son un tipo de cadena de computación. En este
 caso, las funciones intermedias son funciones parametrizadas que se aplican de forma secuencial a una entrada. En
-efecto, consideremos una red de alimentación hacia adelante con $n+1$ capas $f_1, \ldots, f_{n+1}$. Seguramente, siempre
+efecto, consideremos una red de propagación hacia adelante con $n+1$ capas $f_1, \ldots, f_{n+1}$. Seguramente, siempre
 que $f_{n+1}$ sea la función identidad, el conjunto de funciones que esta red puede representar es el mismo que el de
 una red de $n$ capas $f_1, \ldots, f_n.$ Por lo tanto, podemos considerar una red de $n+1$ capas como una red de $n$. En
-otras palabras,la profundidad, en teoría, no debería perjudicar el poder expresivo de las redes de alimentación hacia
+otras palabras, la profundidad, en teoría, no debería perjudicar el poder expresivo de las redes de propagación hacia
 adelante. Desafortunadamente, la suposición de que cada $f_k$ es una función identidad no es realista. Esto significa
 que la redes más profundas a veces pueden ser más difíciles de entrenar que las más superficiales, haciendo que la
 precisión se sature o degrade en función de la profundidad.
@@ -597,7 +597,7 @@ $$
 La función $h_k$ es la **función residual**, dado que modela la diferencia entre la entrada y la salida, es decir,
 $h_k(s_{k-1}; w_k) = s_{k} - s_{k-1}.$ La función $h_k$ puede ser vista como una **corrección** que se suma a la entrada
 $s_{k-1}$ para obtener la salida $s_k.$ La suma con $s_{k-1}$ se conoce como **conexión de salto** (_skip connection_ o
-_shortcut_). Siempre que se posible ajusta $w_k$ para que $h_k(s_{k-1}; w_k) = 0,$ entonces la función $f_k$ se
+_shortcut_). Siempre que sea posible ajustar $w_k$ para que $h_k(s_{k-1}; w_k) = 0,$ entonces la función $f_k$ se
 convierte en la función identidad. Por ejemplo, si nosotros usamos:
 
 $$
@@ -607,7 +607,7 @@ h_k(s_{k-1}; w_k) = C_ka_k(W_ks_{k-1} + b_k) + d_k,
 $$
 
 donde $w_k = (W_k, b_k, C_k, d_k)$ son los parámetros de la capa $k,$ entonces basta con ajustar $C_k = 0$ y $d_k = 0$
-para que $h_k(s_{k-1}; w_k) = 0.$ Los bloque residuales son conocidos para remediar el problema de gradiente de fuga.
+para que $h_k(s_{k-1}; w_k) = 0.$ Los bloques residuales son conocidos para remediar el problema de gradiente de fuga.
 
 En muchos artículos y paquetes de software se incluye una activación adicional y en su lugar se define el bloque
 residual como:
@@ -620,7 +620,7 @@ $$
 
 donde $a_k$ es usualmente la función ReLU. Si se debe incluir esta activación adicional o no, es esencialmente una
 decisión de modelado. En la práctica, los bloques residuales también pueden incluir operaciones adicionales como
-normalización por lotes (batch norm) y capa convolucionales.
+normalización por lotes (_batch norm_) y capa convolucionales.
 
 ## Redes neuronales recurrentes
 
@@ -688,7 +688,7 @@ $$
 
 donde $w ;= (w_g, w_h, s_0)$ son los parámetros de la red, $s_0$ es el estado inicial. El objetivo de $g$ es actualizar
 el estado $s_i$ en función de la entrada $x$ y el estado anterior $s_{i-1},$ mientras que el objetivo de $h$ es mapear
-el estado $s_i$ a un vector $p_i$ dado el estado $s_i.$. Es importante destacar que los parámetros de $g$ y $h$ se
+el estado $s_i$ a un vector $p_i$ dado el estado $s_i.$ Es importante destacar que los parámetros de $g$ y $h$ se
 cruzan a los largo de los pasos de tiempo. Típicamente, $g$ y $h$ se parametrizan utilizando MLPs de una capa oculta.
 Nótese que $g$ tiene múltiples entradas.
 
@@ -712,14 +712,13 @@ por ejemplo en el análisis de sentimientos. Formalmente, podemos definir $p = f
 $$
 \begin{equation}
 \begin{aligned}
-s_i &:= \gamma(x_i, s_{i-1}; w_g), \quad i \in [\,l\,], \\
+s_i &:= g(x_i, s_{i-1}; w_g), \quad i \in [\,l\,], \\
 p &:= \text{pooling}(s_{1:l}),
 \end{aligned}
 \end{equation}
 $$
 
-donde $w := (w_g, s_0)$ son los parámetros de la red, $s_0$ es el estado inicial y $\gamma$ es una función similar a
-$g$, excepto que ahora actualiza los estados del codificador y no toma predicciones anteriores como entrada. La función
+donde $w := (w_g, s_0)$ son los parámetros de la red, $s_0$ es el estado inicial, y $g$ ahora actualiza los estados del codificador y no toma predicciones anteriores como entrada. La función
 de agrupamiento ($\text{pooling}$) típicamente no tiene parámetros y se utiliza para reducir la secuencia de estados a
 un solo vector. Ejemplos comunes de funciones de agrupamiento son la media, la suma y la función de max-pooling.
 
@@ -804,14 +803,14 @@ $$
 Esta arquitectura se denomina acertadamente arquitectura codificador-decodificador (_encoder-decoder_). Tenga en cuenta
 que denotamos la longitud de la secuencia objetivo como $l'$ en lugar de $l$ para evitar confusiones. Sin embargo, en la
 práctica, la longitud puede depender de la entrada y a menudo no se conoce de antemano. Para abordar este problema, el
-vocabulario (de tamaño $D$ en nuestra notación) se aumenta típicamente con un token de «final de secuencia» (EOS, por
+vocabulario (de tamaño $d$ en nuestra notación) se aumenta típicamente con un token de «final de secuencia» (EOS, por
 sus siglas en inglés), para que, en el momento de la inferencia, sepamos cuándo dajar de generar la secuencia de salida.
 Una desventaja de esta arquitectura, es que toda la información sobre la secuencia de entrada esta contenida en el
 vector de contexto $c,$ que por lo tanto puede convertirse en un cuello de botella.
 
 ## Conclusiones
 
-Las redes neuronales, concebidas como programas parametrizados, proporcionan un marco poderoso y flexible para abordar una amplia gama de problemas en aprendizaje automático y procesamiento de datos. A lo largo de este artículo, hemos explorado diversas arquitecturas y configuraciones, desde redes de alimentación hacia adelante hasta redes neuronales recurrentes y redes residuales. La representación de estas arquitecturas como grafos dirigidos acíclicos (DAGs) no solo facilita su análisis y optimización, sino que también permite la aplicación eficiente de técnicas como la diferenciación automática. Las diferentes configuraciones discutidas demuestran la versatilidad de estos modelos para tareas que van desde la generación de subtítulos de imágenes hasta la traducción automática.
+Las redes neuronales, concebidas como programas parametrizados, proporcionan un marco poderoso y flexible para abordar una amplia gama de problemas en aprendizaje automático y procesamiento de datos. A lo largo de este artículo, hemos explorado diversas arquitecturas y configuraciones, desde redes de propagación hacia adelante hasta redes neuronales recurrentes y redes residuales. La representación de estas arquitecturas como grafos dirigidos acíclicos (DAGs) no solo facilita su análisis y optimización, sino que también permite la aplicación eficiente de técnicas como la diferenciación automática. Las diferentes configuraciones discutidas demuestran la versatilidad de estos modelos para tareas que van desde la generación de subtítulos de imágenes hasta la traducción automática.
 
 Este enfoque de ver las redes neuronales como programas parametrizados no solo permite diseñar modelos más eficientes y
 efectivos, sino que también abre caminos para mejorar la interpretabilidad y explicabilidad de estos modelos, un área de
@@ -823,14 +822,15 @@ aprendizaje automático más avanzados, interpretables y adaptables a una amplia
 Finalmente,si hay errores, omisiones o inexactitudes en este artículo, por favor no dude en contactarnos a través de
 siguiente canal de Discord: [Math & Code](https://discord.gg/gJ3vCgSWeh).
 
-## Consultoria
-
-Si necesitas ayuda adicional, ofrecemos consultoría personalizada en [Classgap](https://www.classgap.com/es-co/tutor/alejandro-sanchez-yali). Puedes consultar nuestros horarios disponibles y agendar una sesión con nosotros.
-
-## Imágenes
-
-- [Unplash](https://unsplash.com/es/fotos/una-imagen-generada-por-computadora-de-un-cerebro-humano-woGRo9m-ByE) - Randa Marzouk
-
 ## Referencias
 
-1. [Mathieu Blondel and Vincent Roulet. 2024. The Elements of Differentiable Programming.](https://arxiv.org/pdf/2403.14606)
+<Reference
+  type="image"
+  url="https://unsplash.com/es/fotos/una-imagen-generada-por-computadora-de-un-cerebro-humano-woGRo9m-ByE"
+  text="Randa Marzouk - Unplash"
+/>
+<Reference
+  type="arxiv"
+  url="https://arxiv.org/pdf/2403.14606"
+  text="Mathieu Blondel and Vincent Roulet. 2024. The Elements of Differentiable Programming."
+/>

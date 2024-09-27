@@ -21,6 +21,16 @@
   </item>
 
   <item>
+    <guid>https://asanchezyali.com/blog/en/differentiable-programming/20240923DifferentiablePrograms</guid>
+    <title>Neural networks represented as DAGs of parameterized computational programs</title>
+    <link>https://asanchezyali.com/blog/en/differentiable-programming/20240923DifferentiablePrograms</link>
+    <description>Neural networks can be viewed as algorithms with adjustable parameters, optimized through machine learning. This approach allows us to address them from a broader mathematical and computational perspective. In this article, we will explore how to represent these algorithms as directed acyclic graphs (DAGs).</description>
+    <pubDate>Fri, 23 Aug 2024 05:00:00 GMT</pubDate>
+    <author>asanchezyali@gmail.com (Alejandro Sánchez Yalí)</author>
+    <category>mathematics</category><category>computer science</category>
+  </item>
+
+  <item>
     <guid>https://asanchezyali.com/blog/en/ai-avatars/20240703DigitalHuman</guid>
     <title>Revolutionize Animation: Build a Digital Human with Large Language Models</title>
     <link>https://asanchezyali.com/blog/en/ai-avatars/20240703DigitalHuman</link>

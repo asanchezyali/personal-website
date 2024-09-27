@@ -1,0 +1,656 @@
+---
+title: 'Neural networks represented as DAGs of parameterized computational programs'
+date: '2024/08/23'
+tags: ['mathematics', 'computer science']
+draft: false
+time: '15 min'
+summary: 'Neural networks can be viewed as algorithms with adjustable parameters, optimized through machine learning. This approach allows us to address them from a broader mathematical and computational perspective. In this article, we will explore how to represent these algorithms as directed acyclic graphs (DAGs).'
+bibliography: references-data.bib
+canonicalUrl: 'https://www.asanchezyali.com/blog/es/number-theory/20240923DivisionAlgorithm/'
+headerImage: '/images/differentiable-programs/header.jpg'
+images: ['/images/differentiable-programs/header.jpg']
+language: 'en'
+---
+
+Neural networks can be viewed as algorithms with adjustable parameters, whose optimization is carried out through machine learning. This approach opens the door to a broader analysis, both from a mathematical and computational perspective. In this article, we will explore how these algorithms are represented using directed acyclic graphs (DAGs), following the ideas presented by Blondel et al. (2024). [Elements of Differentiable Programming](https://arxiv.org/pdf/2403.14606).
+
+The representation of neural networks as DAGs has several advantages:
+
+1. **Visualization**: DAGs allow for a more intuitive visualization of network structures.
+2. **Optimization**: They facilitate the use of graph-based optimization techniques.
+3. **Automatic differentiation**: They ease the implementation of algorithms such as backpropagation.
+4. **Parallelization**: DAGs allow for parallel execution of programs on specialized hardware like GPUs and TPUs.
+
+Additionally, we will delve into how DAGs improve both the design and understanding of complex neural networks, and their relationship with advanced deep learning techniques, such as residual and recurrent networks.
+
+## Parameterized computational programs
+
+### Computation chains
+
+To begin, let's consider simple **computational programs** defined by a **sequence** of functions $f_1, \ldots, f_n$ that are applied sequentially to an input $s_0 \in S_{0}.$ We will call these programs **computation chains** and represent them as $f = f_n \circ \cdots \circ f_1.$
+
+A practical example of a computation chain is image processing, where an image can undergo a series of transformations such as cropping, rotation, and normalization. In the context of neural networks, these transformations are usually parameterized, and their parameters are adjusted through an optimization process during training.
+
+<ImageBox
+  src="/images/differentiable-programs/figure1.svg"
+  alt="Computation Chain"
+  width="750px"
+  height="150px"
+>
+  **Figure 1**. Representation of a computation chain as a sequence of function compositions. Each
+  intermediate node symbolizes a function. The initial arrow indicates the input, and the final one,
+  the output. The internal arrows illustrate the dependencies between functions, connecting previous
+  outputs or the initial input with the functions.
+</ImageBox>
+
+Formally, a computation chain can be written as:
+
+$$
+\begin{equation}
+\begin{aligned}
+s_0 &\in S_{0}, \\
+s_{1} &= f_{1}(s_{0}) \in S_{1}, \\
+s_{2} &= f_{2}(s_{1}) \in S_{2}, \\
+&\vdots \\
+s_{n} &= f_{n}(s_{n-1}) = f(s_0) \in S_{n}.\\
+\end{aligned}
+\end{equation}
+$$
+
+Where $s_0$ is the **input**, $s_k\in S_k$ for $k = 1, \ldots, n-1,$ are the **intermediate states** of the program, and $s_n\in S_n$ is the **output**. It is crucial that the domain (input spaces) of $f_k$ is compatible with the image (output space) of $f_{k-1}$ for the composition to make sense. That is, $f_k: S_{k-1} \to S_k$ for $k = 1, \ldots, n.$ Equivalent to equation (1), the complete computation chain can be written in a single expression:
+
+$$
+\begin{equation}
+s_n = f(s_0) = f_n \circ \cdots \circ f_1(s_0).
+\end{equation}
+$$
+
+As we will see next, a computation chain can be represented as a **directed acyclic graph (DAG)**, where the nodes of the graph represent individual functions and the edges represent the dependencies and flow of information between the functions.
+
+### Directed acyclic graphs
+
+In a **generic computational program**, intermediate functions may depend on the outputs of other functions. These dependencies can be represented by a Directed Acyclic Graph (DAG). A **directed graph** $G = (V, E)$ consists of a set of nodes $V$ and a set of edges $E\subseteq V \times V.$ An edge $(u, v) \in E$ is an ordered pair of nodes $u, v\in V,$ and can be represented as $u \to v$ to indicate that $v$ depends on $u.$ To represent inputs and outputs, it is convenient to use **incoming half-edges** $\to j$ and **outgoing half-edges** $i \to.$
+
+In a graph $G = (V, E)$, the **parents** of a node $v\in V$ are those nodes $u\in V$ such that $(u, v)\in E,$ denoted as:
+
+$$
+\begin{equation}
+\mathcal{P}(v) = \{u\in V: (u, v)\in E\}.
+\end{equation}
+$$
+
+Similarly, the **children** of a node $v\in V$ are the nodes $w\in V$ such that $(v, w)\in E,$ represented by:
+
+$$
+\begin{equation}
+\mathcal{C}(v) = \{w\in V: (v, w)\in E\}.
+\end{equation}
+$$
+
+Nodes without parents are called **roots** and nodes without children are known as **leaves**.
+
+A **path** from $i$ to $j$ in a graph $G = (V, E)$ is a sequence of nodes $v_1, \ldots, v_k$ such that $i \to v_1 \to \cdots \to v_k \to j.$ A path is **simple** if it contains no repeated nodes. A graph is **acyclic** if it contains no cycles, that is, there are no simple paths from a node to itself. A directed acyclic graph (DAG) is a directed graph that lacks cycles.
+
+The edges of a DAG induce a **partial order** among the nodes, denoted as $i \preceq j$ if there exists a path from $i$ to $j.$ This partial order is a reflexive, transitive, and antisymmetric relation. It is called "partial" because not all nodes are related to each other. However, it is possible to define a **total order** called a **topological order**: any order such that $i \preceq j$ if and only if there is no path from $j$ to $i.$
+
+### Computational programs as DAGs
+
+A computational program can be thought of as a function in mathematical terms, which means that the program should return the same values for the same inputs and should not have side effects. Additionally, we assume that the program halts after a finite number of steps. Given this, a program can be decomposed into a finite set of functions and intermediate variables, where the dependencies between these can be represented by a directed acyclic graph (DAG).
+
+Under these conditions, we can make the following assumptions about a computational program:
+
+1. There exists an **input** node $s_0$ and an **output** node $s_n.$
+2. Each intermediate function $f_k$ produces a single value $s_k \in S_k.$
+
+With a finite number of nodes such as $V = \{0, 1, \ldots, n\},$ where node $0$ is the root, corresponding to the program's input, and node $n$ is a leaf, corresponding to the program's output. According to these assumptions, except for $s_0$, each variable $s_k$ is in bijection with a function $f_k.$ Therefore, node $0$ represents the input $s_0$, while nodes $1, \ldots, n$ represent the functions $f_1, \ldots, f_n$ and outputs $s_1, \ldots, s_n.$ That is, each node $k$ represents both the function $f_k$ and the output $s_k.$
+
+The edges of a DAG represent the dependencies between nodes. The parents of a node $k,$ denoted as $\{i_1, \ldots, i_{p_k}\} := \mathcal{P}(k),$ where $p_k:=|\mathcal{P}(k)|,$ indicate the variables $s_{\mathcal{P}(k)} := \{s_{i_1}, \ldots, s_{i_{p_k}}\}$ that the function $f_k$ needs to calculate its output $s_k$. In other words, the parents $\{i_1, \ldots, i_{p_k}\}$ indicate functions $f_{i_1}, \ldots, f_{i_{p_k}}$ that are necessary to compute $f_k.$
+
+<PseudoCode title="Algorithm 1. Program execution">
+  <PseudoCodeLine showNumber={false} indent={0}>
+    $\text{\textbf{Functions:}}$ $f_1, \ldots, f_n \text{ in topological order}$
+  </PseudoCodeLine>
+  <PseudoCodeLine showNumber={false} indent={0}>
+    $\text{\textbf{Input:}}$ $s_0\in S_0$
+  </PseudoCodeLine>
+  <PseudoCodeLine number={1}>
+    $\text{\textbf{For} } k = 1, \ldots, n$ $\text{\textbf{do:}}$
+  </PseudoCodeLine>
+  <PseudoCodeLine number={2} indent={2}>
+    <span>Find parent nodes</span> $\{i_1, \ldots, i_{p_k}\} := \mathcal{P}(k)$
+  </PseudoCodeLine>
+  <PseudoCodeLine number={3} indent={2}>
+    <span>Compute</span> $s_k :=f_k\big(s_{\mathcal{P}(k)}\big):= f_k(s_{i_1}, \ldots, s_{i_{p_k}})$
+  </PseudoCodeLine>
+  <PseudoCodeLine showNumber={false} indent={0}>
+    $\text{\textbf{End:} } f(s_0) = s_n$
+  </PseudoCodeLine>
+</PseudoCode>
+
+#### Program Execution
+
+To execute a program, we need to ensure that the intermediate functions are evaluated in the correct order. Therefore, we assume that the nodes $V=\{0, 1, \ldots, n\}$ are ordered in a **topological order** (if this is not the case, then the program cannot be executed). We can execute a program to evaluate the output $s_k \in [n]$
+
+$$
+\begin{equation}
+s_k := f_k\big(s_{\mathcal{P}(k)}\big)\in S_k.
+\end{equation}
+$$
+
+Note that we can view $f_k$ as a single-input function of $s_{\mathcal{P}(k)}$, which is an $n$-tuple of elements, or as a multi-input function of $s_{i_1}, \ldots, s_{i_{p_k}}$. The two viewpoints are essentially equivalent. The process of executing a program is described in Algorithm 1.
+
+#### Handling Multiple Program Inputs or Outputs
+
+When a program has multiple inputs, we always group them into a single input $s_0 \in S_0$ as $s_0 = (s_{0, 1}, \ldots, s_{0, m_0})$ with $S_0 = S_{0, 1} \times \cdots \times S_{0, m_0}$, since subsequent functions can always filter the elements of $s_0$ they need. Similarly, if an intermediate function $f_k$ has multiple outputs, we always group them into a single output $s_k \in S_k$ as $s_k = (s_{k, 1}, \ldots, s_{k, m_k})$ with $S_k = S_{k, 1} \times \cdots \times S_{k, m_k}$, since subsequent functions can always filter the elements of $s_k$ they need.
+
+<ImageBox
+  src="/images/differentiable-programs/figure2.svg"
+  alt="Computation Chain"
+  width="750px"
+  height="150px"
+>
+  **Figure 2**. Two possible representations of a program. **Left:** Functions are represented as
+  nodes and dependencies as edges. **Right:** Functions are represented as nodes and dependencies as
+  a set of disjoint nodes. In both cases, the input is represented by a root node and the output by
+  a leaf node.
+</ImageBox>
+
+#### Alternative Program Representation: Bipartite Graphs
+
+In our formalism, since a function $f_k$ always has a single output $s_k$, a node $k$ can be considered to represent both the function $f_k$ and the output $s_k$. However, it is also possible to consider two disjoint sets of nodes: one for functions and another for outputs, i.e., a bipartite graph. This formalism is similar to factor graphs (_Frey et al_., [1997](https://people.ee.ethz.ch/~loeliger/localpapers/FG_Allerton1997.pdf); _Loeliger_, [2004](https://ieeexplore.ieee.org/document/1267047)) used in probabilistic modeling, but with directed edges. An advantage of this formalism is that it allows functions to have multiple outputs. For simplicity, we will focus on the representation of a single set of nodes.
+
+### Arithmetic Circuits
+
+Arithmetic circuits are one of the simplest examples of computational graphs, originating from **computational complexity theory**. Formally, an arithmetic circuit over a field $\mathbb{F}$, such as the real numbers $\mathbb{R}$ or complex numbers $\mathbb{C}$, is a directed acyclic graph (DAG) where the root nodes are elements of the field $\mathbb{F}$ and the intermediate functions are arithmetic operations such as addition or multiplication. The latter are usually called **arithmetic gates**. Contrary to the general case of computational graphs, each function, whether a sum or a product, can have multiple root nodes. Root nodes can be variables or constants and must belong to the field $\mathbb{F}$. Arithmetic circuits can be used to calculate polynomials. There can be multiple arithmetic circuits to represent a given polynomial. To compare two arithmetic circuits that represent the same polynomial, an intuitive notion of **complexity** is the **circuit size**, as defined below.
+
+<MathBox title="Definition 1. Circuit and polynomial size" variant="definition">
+  The **size** $S(C)$ of an arithmetic circuit $C$ is the number of edges in the directed acyclic
+  graph (DAG) representing the circuit. The **polynomial size** $S(f)$ of a polynomial $f$ is the
+  size of the smallest arithmetic circuit $C$ that represents $f$.
+</MathBox>
+
+For more information on arithmetic circuits, refer to the book by _Chen et al_. [2011](https://www.math.ias.edu/~avi/PUBLICATIONS/ChenKaWi2011.pdf).
+
+## Feedforward Networks
+
+A feedforward network is a type of computation chain with parameterized functions $f_1, \ldots, f_n$ that are applied sequentially to an input $s_0 \in S_0$. In this case, the functions $f_k$ are usually parameterized functions that depend on a parameter vector $w_k \in \mathcal{W}_k$, where $\mathcal{W}_k$ is the parameter space of function $f_k$. Therefore,
+
+$$
+\begin{equation}
+\begin{aligned}
+x &= s_0 \in S_{0}, \\
+s_{1} &= f_{1}(s_{0}; w_1) \in S_{1}, \\
+s_{2} &= f_{2}(s_{1}; w_2) \in S_{2}, \\
+&\vdots \\
+s_{n} &= f_{n}(s_{n-1}; w_n) = f(s_0; w) \in S_{n}.\\
+\end{aligned}
+\end{equation}
+$$
+
+for an input $s_0\in S_0$ and for the **trainable parameters** $w = (w_1, \ldots, w_n) \in \mathcal{W} = \mathcal{W}_1 \times \cdots \times \mathcal{W}_n$. Each function $f_k$ is a **layer** of the network and each $s_k \in S_k$ is an **intermediate representation** of the input $s_0$. The dimension of $S_k$ is known as the **layer dimension** (or number of hidden units) of layer $k$. A feedforward network can be defined as a function $f:S_0 \times \mathcal{W} \to S_n$ that maps an input $s_0$ and parameters $w$ to an output $s_n$.
+
+Given a parameterized program of this type, we can learn the parameters $w$ by adjusting $w$ according to a training dataset. For example, given a dataset of pairs $(x_i, y_i)$, we can minimize the loss function $L(w) = \sum_{i=1}^{m} \ell(f(x_i; w), y_i)$. The minimization of the loss function can be done using an optimization algorithm such as gradient descent.
+
+## Multilayer Perceptrons
+
+### Combination of Affine Layers and Activation Functions
+
+In the previous section, we did not specify how to parameterize feedforward networks. A typical parameterization is the multilayer perceptron (MLP), which uses fully connected layers (also known as dense layers) of the form
+
+$$
+\begin{equation}
+s_k = f_k(s_{k-1}; w_k) = a_k(W_k s_{k-1} + b_k),
+\end{equation}
+$$
+
+where $w_k = (W_k, b_k)$ are the parameters of layer $k$, $W_k$ is a weight matrix, and $b_k$ is a bias vector. Moreover, we can decompose the layer into two functions. The function $s \mapsto W_k s + b_k$ is an **affine layer** and the non-linear function $s \mapsto a_k(s)$ without parameters is called an **activation function**.
+
+Generally, we can replace the matrix-vector product $W_k s_{k-1}$ with any linear function of $s_{k-1}$. For example, convolutional layers use convolution of the input $s_{k-1}$ with some filters $W_k$.
+
+<MathBox title="Remark 1. Handling Multiple Inputs" variant="remark">
+  Sometimes it is necessary to deal with networks with multiple inputs. For example, suppose we want
+  to design a function $g(x_1, x_2, w_g)$, where $x_1 \in \mathcal{X}_1$ and $x_2 \in \mathcal{X}_2$
+  are two inputs. A simple way to do this is to use the concatenation $x = x_1 \oplus x_2 \in
+  \mathcal{X}_1 \oplus \mathcal{X}_2$ as input to a network $f(x, W_f)$. Alternatively, instead of
+  concatenating the inputs, they can be concatenated after having passed through one or more hidden
+  layers.
+</MathBox>
+
+### Relationship with Generalized Linear Models
+
+When the depth of the network is $n=1$ (i.e., a single layer), the output of an MLP is a linear function of the input $x$:
+
+$$
+\begin{equation}
+s_1 = a_1(W_1 x + b_1).
+\end{equation}
+$$
+
+This is called a **generalized linear model** (GLM). In this case, the activation function $a_1$ is the identity function. Generalized linear models are a special case of MLPs. In particular, when $a_1$ is the $\operatorname*{softargmax}$ function, we have a logistic regression model. Generally, for depth $n>1$, the output of an MLP is:
+
+$$
+\begin{equation}
+s_n = a_n(W_n s_{n-1} + b_n).
+\end{equation}
+$$
+
+This can be seen as a GLM over the **intermediate representation** $s_{n-1}$ of the input $s_0$. This is the main attraction of MLPs: the ability to learn intermediate representations that are useful for the task of interest. We will see that MLPs can also be used as subcomponents in other architectures.
+
+## Activation Functions
+
+As mentioned earlier, feedforward networks use activation functions $a_k$ for each layer. In this section, we will describe some of the most common scalar-to-scalar or vector-to-scalar activation functions. We will also present some probability functions that can be used as activation functions.
+
+### Nonlinear Scalar-to-Scalar Activation Functions
+
+The **ReLU** (Rectified Linear Unit) function is a nonlinear activation function defined as the non-negative part of its argument. That is, the ReLU function is the identity function for non-negative values and zero for negative values:
+
+$$
+\begin{equation}
+\text{ReLU}(x) = \max(0, x) = \begin{cases}
+x & \text{if } x \geq 0, \\
+0 & \text{if } x < 0.
+\end{cases}
+\end{equation}
+$$
+
+It is a piecewise linear function and includes an inflection point at $x=0$. A multilayer perceptron with ReLU activations is called a rectifier neural network. The layers take the form:
+
+$$
+\begin{equation}
+s_k = \text{ReLU}(W_k s_{k-1} + b_k).
+\end{equation}
+$$
+
+where the ReLU is applied element-wise. The ReLU function can be replaced with a smoothed version, known as **softplus**:
+
+$$
+\begin{equation}
+\text{softplus}(x) = \log(1 + \exp(x)).
+\end{equation}
+$$
+
+Unlike ReLU, softplus is a smooth, differentiable, and strictly positive function.
+
+### Nonlinear Vector-to-Scalar Activation Functions
+
+It is often useful to reduce vectors to scalars. These scalar values can be seen as scores or probabilities, representing the importance of an input vector. A common function for doing this is using the maximum value, also known as **max-pooling**. Given a vector $x\in \mathbb{R}^d$, the max-pooling function is:
+
+$$
+\begin{equation}
+\text{maxpooling}(x) = \max_{j \in [\,d\,]} x_j.
+\end{equation}
+$$
+
+As a smooth approximation of the max-pooling function, the **log-sum-exp** function can be used, which behaves like a smoothed version of the max-pooling function:
+
+$$
+\begin{equation}
+\text{logsumexp}(x) := \text{softmax}(x) := \log\left(\sum_{j=1}^{d} \exp(x_j)\right).
+\end{equation}
+$$
+
+The log-sum-exp function can be seen as a generalization of the softplus function to vectors. In fact, for all $x \in \mathbb{R}$:
+
+$$
+\begin{equation}
+\operatorname*{logsumexp}((x, 0)) = \operatorname*{softplus}(x).
+\end{equation}
+$$
+
+A numerically stable implementation of the log-sum-exp function is as follows:
+
+$$
+\begin{equation}
+\text{logsumexp}(x) = \text{logsumexp}(x - c\mathbf{1}) + c,
+\end{equation}
+$$
+
+where $\mathbf{1}$ is a vector of ones and $c = \max_{j\in [\,d\,]} x_j$.
+
+### Scalar-to-Scalar Probability Mappings
+
+Sometimes we want to map a real number to a number between 0 and 1, which can represent the probability of an event. For this purpose, **sigmoids** are frequently used. A sigmoid is a function whose curve is characterized by an "S" shape. These functions are used to compress real values into an interval. An example is the binary step function, also known as the Heaviside step function:
+
+$$
+\begin{equation}
+\text{step}(x) = \begin{cases}
+1 & \text{if } x \geq 0, \\
+0 & \text{if } x < 0.
+\end{cases}
+\end{equation}
+$$
+
+It is a mapping from $\mathbb{R}$ to $\{0, 1\}$. Unfortunately, the binary step function is discontinuous at $x=0$. Moreover, because the function is constant at all other points, it has zero derivative at these points, which makes it difficult to use as part of a neural network with backpropagation.
+
+A better sigmoid is the **logistic function**, which maps from $\mathbb{R}$ to $(0, 1)$ and is defined as:
+
+$$
+\begin{equation}
+\begin{aligned}
+\text{logistic}(x) &= \frac{1}{1 + \exp(-x)} \\
+&= \frac{\exp(x)}{1 + \exp(x)} \\
+&= \frac{1}{2} + \frac{1}{2}\tanh\left(\frac{x}{2}\right).
+\end{aligned}
+\end{equation}
+$$
+
+It maps $(-\infty, 0)$ to $(0, 0.5)$ and $\lbrack 0, \infty \rparen$ to $\lbrack 0.5, 1\rparen$, and satisfies $\text{logistic}(0) = 0.5$. Therefore, it can be seen as a probability function. The logistic function can be viewed as a smoothed version of the step function $\text{step}(x)$. Furthermore, the logistic function can be obtained as the derivative of the $\text{softplus}(x)$ function, that is, for all $x \in \mathbb{R}$:
+
+$$
+\begin{equation}
+\text{logistic}(x) = \frac{d}{dx}\text{softplus}(x).
+\end{equation}
+$$
+
+Two important properties of the logistic function are that for all $x \in \mathbb{R}$:
+
+$$
+\begin{equation}
+\text{logistic}(-x) = 1 - \text{logistic}(x),
+\end{equation}
+$$
+
+and
+
+$$
+\begin{equation}
+\begin{aligned}
+\frac{d}{dx}\text{logistic}(x) &= \text{logistic}(x)(1 - \text{logistic}(x)) \\
+&= \text{logistic}(x)\text{logistic}(-x).
+\end{aligned}
+\end{equation}
+$$
+
+### Vector-to-Vector Probability Mappings
+
+Sometimes we want to map a vector to a vector of probabilities. This is a mapping from $\mathbb{R}^d$ to a probability simplex, defined by:
+
+$$
+\begin{equation}
+\Delta^{d} = \left\{p\in \mathbb{R}^d: \forall j \in [\,d\,],\; p_j \geq 0\; \text{ and }\; \sum_{j=1}^{d} p_j = 1\right\}.
+\end{equation}
+$$
+
+Two examples of vector-to-vector probability mapping functions are the **argmax** function and the **softargmax** function. The $\text{argmax}$ function maps a vector to a probability vector that is zero in all entries except for the entry with the maximum value, which it makes one. In effect,
+
+$$
+\begin{equation}
+\text{argmax}(x) = \phi(\arg\max_{j\in [\,d\,]} x_j),
+\end{equation}
+$$
+
+where $\phi(j)$ denotes the one-hot encoding of an integer $j\in [\,d\,]$, that is, $\phi(j)_i = 1$ if $i = j$ and zero otherwise, i.e.,
+
+$$
+\begin{equation}
+\phi(j) = (0, \ldots, 0, 1, 0, \ldots, 0) = e_j \in \{0, 1\}^d.
+\end{equation}
+$$
+
+This mapping places all the probability mass on the input with the maximum value; in case of a tie, it selects the first input with the maximum value. Unfortunately, the $\text{argmax}$ function is not differentiable, which makes it difficult to use in backpropagation.
+
+A smoothed version of the $\text{argmax}$ function is the $\text{softargmax}$ function. The $\text{softargmax}$ function is defined as:
+
+$$
+\begin{equation}
+\text{softargmax}(x) = \frac{\exp(x)}{\sum_{j=1}^{d} \exp(x_j)}.
+\end{equation}
+$$
+
+This operator is commonly known in the literature as the softmax function, but this naming is misleading: this operator actually defines a smoothed version of the $\text{argmax}$ function. The output of $\text{softargmax}$ belongs to the relative interior of the probability simplex $\Delta^{d}$, which means it can never reach the edges of the simplex. If we denote $p = \text{softargmax}(x)$, then $p_j \in (0, 1)$, i.e., $0 < p_j < 1$ for all $j \in [\,d\,]$. The $\text{softargmax}$ function is the gradient of the $\text{log-sum-exp}$ function, that is, for all $x \in \mathbb{R}^d$:
+
+$$
+\begin{equation}
+\text{softargmax}(x) = \nabla \text{log-sum-exp}(x).
+\end{equation}
+$$
+
+The $\text{softargmax}$ function can be seen as a generalization of the $\text{logistic}$ function to vectors, in effect:
+
+$$
+\begin{equation}
+\text{softargmax}(x) = \begin{bmatrix}
+\text{logistic}(x_1) \\
+\vdots \\
+\text{logistic}(x_d)
+\end{bmatrix}.
+\end{equation}
+$$
+
+<MathBox title="Remark 2. Degrees of Freedom and Inverse of the Softargmax Function" variant="remark">
+  The $\text{softargmax}$ function satisfies the property that for all $x \in \mathbb{R}^d$ and for all $c \in \mathbb{R}$,
+  
+  $$
+  \begin{equation}
+  p = \text{softargmax}(x + c\mathbf{1}) = \text{softargmax}(x).
+  \end{equation}
+  $$
+  This means that the $\text{softargmax}$ function has $d-1$ degrees of freedom and is not invertible. However, due to the above property, without loss of generality, we can impose that $\pmb{x}^\top \pmb{1} = \sum_{j=1}^{d} x_j = 0$ (if this is not the case, we can simply do $x_i \leftarrow x_i - \bar{x}$, where $\bar{x} = \frac{1}{d}\sum_{j=1}^{d} x_j$ is the mean of $x$). With this restriction and together with the fact that
+
+$$
+\begin{equation}
+\log(p_i) = x_i - \log\sum_{j=1}^{d} \exp(x_j),
+\end{equation}
+$$
+
+we obtain
+
+$$
+\begin{equation}
+\sum_{j=1}^{d} \log(p_j) = - d \log \sum_{j=1}^{d} \exp(x_j).
+\end{equation}
+$$
+
+Therefore, the $\text{softargmax}$ function is invertible in the sense that we can recover $x$ from
+
+$$
+\begin{equation}
+x_i = [\text{softargmax}^{-1}(p)]_i = \log(p_i) - \frac{1}{d}\sum_{j=1}^{d} \log(p_j).
+\end{equation}
+$$
+
+</MathBox>
+
+## Residual Neural Networks
+
+As mentioned earlier, feedforward networks are a type of computation chain. In this case, the intermediate functions are parameterized functions that are applied sequentially to an input. Indeed, consider a feedforward network with $n+1$ layers $f_1, \ldots, f_{n+1}$. Surely, whenever $f_{n+1}$ is the identity function, the set of functions that this network can represent is the same as that of an $n$-layer network $f_1, \ldots, f_n$. Therefore, we can consider an $n+1$-layer network as an $n$-layer network. In other words, depth, in theory, should not harm the expressive power of feedforward networks. Unfortunately, the assumption that each $f_k$ is an identity function is not realistic. This means that deeper networks can sometimes be more difficult to train than shallower ones, causing accuracy to saturate or degrade as a function of depth.
+
+The key idea of residual neural networks (ResNets) (_He et al._, [2016](https://arxiv.org/pdf/1512.03385)) is to introduce **residual blocks** between layers, such that the output of one layer becomes the input to a later layer. Formally, a residual block is a function of the form
+
+$$
+\begin{equation}
+s_{k} = f_k(s_{k-1}; w_k):= s_{k-1} + h_k(s_{k-1}; w_k).
+\end{equation}
+$$
+
+The function $h_k$ is the **residual function**, as it models the difference between the input and output, i.e., $h_k(s_{k-1}; w_k) = s_{k} - s_{k-1}$. The function $h_k$ can be seen as a **correction** that is added to the input $s_{k-1}$ to obtain the output $s_k$. The addition with $s_{k-1}$ is known as a **skip connection** or **shortcut**. As long as it's possible to adjust $w_k$ so that $h_k(s_{k-1}; w_k) = 0$, then the function $f_k$ becomes the identity function. For example, if we use:
+
+$$
+\begin{equation}
+h_k(s_{k-1}; w_k) = C_ka_k(W_ks_{k-1} + b_k) + d_k,
+\end{equation}
+$$
+
+where $w_k = (W_k, b_k, C_k, d_k)$ are the parameters of layer $k$, then it suffices to adjust $C_k = 0$ and $d_k = 0$ so that $h_k(s_{k-1}; w_k) = 0$. Residual blocks are known to remedy the vanishing gradient problem.
+
+In many articles and software packages, an additional activation is included and instead, the residual block is defined as:
+
+$$
+\begin{equation}
+s_{k} = f_k(s_{k-1}; w_k):= a_k(s_{k-1} + h_k(s_{k-1}; w_k)),
+\end{equation}
+$$
+
+where $a_k$ is usually the ReLU function. Whether to include this additional activation or not is essentially a modeling decision. In practice, residual blocks can also include additional operations such as batch normalization and convolutional layers.
+
+## Recurrent Neural Networks
+
+Recurrent neural networks (RNNs) (_Rumelhart et al._, [1986](https://www.nature.com/articles/323533a0)) are a type of neural network that operate on sequences of vectors, either as input, output, or both. Their actual parameterization depends on the configuration, but the central idea is to maintain a state vector that is updated step by step through a recursive function that uses shared parameters across steps. We distinguish between the following configurations:
+
+1. Vector to sequence (one to many):
+   $$
+   \begin{equation}
+   f^d:\mathbb{R}^d \times \mathbb{R}^{p} \to \mathbb{R}^{l\times m }.
+   \end{equation}
+   $$
+2. Sequence to vector (many to one):
+   $$
+   \begin{equation}
+   f^e:\mathbb{R}^{l\times d} \times \mathbb{R}^{p} \to \mathbb{R}^{m}.
+   \end{equation}
+   $$
+3. Sequence to sequence (many to many, aligned):
+   $$
+   \begin{equation}
+   f^a:\mathbb{R}^{l\times d} \times \mathbb{R}^{p} \to \mathbb{R}^{l\times m}.
+   \end{equation}
+   $$
+4. Sequence to sequence (many to many, unaligned):
+   $$
+   \begin{equation}
+   f^u:\mathbb{R}^{l\times d} \times \mathbb{R}^{p} \to \mathbb{R}^{l'\times m}.
+   \end{equation}
+   $$
+
+where $l$ is the length of the input sequence and $l'$ is the length of the output sequence. Note that the same number of parameters $p$ is used for each of the configurations, but this is of course not necessary. Throughout this post, we will use the notation $p_{1:l} := (p_1, \ldots, p_l)$ to denote a sequence of $l$ vectors.
+
+### Vector to Sequence
+
+In this configuration, a decoder function $p_{1:l} = f^d(x; w)$ maps a vector $x \in \mathbb{R}^d$ and a parameter vector $w \in \mathbb{R}^p$ to a sequence of vectors $p_{1:l} \in \mathbb{R}^{l\times m}$.
+
+<ImageBox
+  src="/images/differentiable-programs/RNNv1.svg"
+  alt="Computation Chain"
+  width="500px"
+  height="350px"
+>
+  **Figure 3**. One to many (decoding). A vector $x \in \mathbb{R}^d$ is mapped to a sequence of vectors $p_{1:l} \in \mathbb{R}^{l\times m}$.
+</ImageBox>
+
+This is useful for image captioning, where a sentence (a sequence of words) is generated from an image (a vector of pixels). Formally, we can define $p_{1:l} = f^d(x; w)$ through the recursion:
+
+$$
+\begin{equation}
+\begin{aligned}
+s_i &:= g(x, s_{i-1}; w_g), \quad i \in [\,l\,], \\
+p_i &:= h(s_i; w_h), \quad i \in [\,l\,].
+\end{aligned}
+\end{equation}
+$$
+
+where $w := (w_g, w_h, s_0)$ are the network parameters, $s_0$ is the initial state. The goal of $g$ is to update the state $s_i$ based on the input $x$ and the previous state $s_{i-1}$, while the goal of $h$ is to map the state $s_i$ to a vector $p_i$ given the state $s_i$. It's important to note that the parameters of $g$ and $h$ are shared across time steps. Typically, $g$ and $h$ are parameterized using single hidden layer MLPs. Note that $g$ has multiple inputs.
+
+### Sequence to Vector
+
+In this configuration, an encoder function $p = f^e(x_{1:l}; w)$ is defined that maps a sequence of vectors $x_{1:l} \in \mathbb{R}^{l\times d}$ and a parameter vector $w \in \mathbb{R}^p$ to a vector $p \in \mathbb{R}^m$.
+
+<ImageBox
+  src="/images/differentiable-programs/RNNv2.svg"
+  alt="Computation Chain"
+  width="500px"
+  height="350px"
+>
+  **Figure 4**. Many to one (encoding). A sequence of vectors $x_{1:l} \in \mathbb{R}^{l\times d}$ is mapped to a vector $p \in \mathbb{R}^m$.
+</ImageBox>
+
+This is useful for sequence classification, where the entire sequence is classified into a single category, for example in sentiment analysis. Formally, we can define $p = f^e(x_{1:l}; w)$ through the recursion:
+
+$$
+\begin{equation}
+\begin{aligned}
+s_i &:= g(x_i, s_{i-1}; w_g), \quad i \in [\,l\,], \\
+p &:= \text{pooling}(s_{1:l}),
+\end{aligned}
+\end{equation}
+$$
+
+where $w := (w_g, s_0)$ are the network parameters, $s_0$ is the initial state, and $g$ now updates the encoder states
+and doesn't take previous predictions as input. The pooling function typically has no parameters and is used to reduce
+the sequence of states to a single vector. Common examples of pooling functions are the mean, sum, and max-pooling
+function.
+
+### Sequence to Sequence (Aligned)
+
+In this configuration, an alignment function $p_{1:l} = f^a(x_{1:l}; w)$ is defined that maps a sequence of vectors $x_{1:l} \in \mathbb{R}^{l\times d}$ and a parameter vector $w \in \mathbb{R}^p$ to a sequence of vectors $p_{1:l} \in \mathbb{R}^{l\times m}$. The length of the input sequence and the output sequence are equal.
+
+<ImageBox
+  src="/images/differentiable-programs/RNNv3.svg"
+  alt="Computation Chain"
+  width="500px"
+  height="350px"
+>
+  **Figure 4**. Many to many (aligned). A sequence of vectors $x_{1:l} \in \mathbb{R}^{l\times d}$ is mapped to a sequence of vectors $p_{1:l} \in \mathbb{R}^{l\times m}$.
+</ImageBox>
+
+An example application is **POS-tagging**, where a tag is assigned to each word in a sentence. Formally, this can be defined as $p_{1:l} = f^a(x_{1:l}; w)$ through the recursion:
+
+$$
+\begin{equation}
+\begin{aligned}
+s_i &:= g(x_i, s_{i-1}; w_g), \quad i \in [\,l\,], \\
+p_i &:= h(s_i; w_h), \quad i \in [\,l\,].
+\end{aligned}
+\end{equation}
+$$
+
+where $w := (w_g, w_h, s_0)$ are the network parameters, $s_0$ is the initial state, and $g$ and $h$ are functions similar to those defined in the one-to-many configuration. The function $g$ updates the state $s_i$ based on the input $x_i$ and the previous state $s_{i-1}$, while the function $h$ maps the state $s_i$ to a vector $p_i$ given the state $s_i$.
+
+### Sequence to Sequence (Unaligned)
+
+In this configuration, an alignment function $p_{1:l'} = f^u(x_{1:l}; w)$ is defined that maps a sequence of vectors $x_{1:l} \in \mathbb{R}^{l\times d}$ and a parameter vector $w \in \mathbb{R}^p$ to a sequence of vectors $p_{1:l'} \in \mathbb{R}^{l'\times m}$.
+
+<ImageBox
+  src="/images/differentiable-programs/RNNv4.svg"
+  alt="Computation Chain"
+  width="500px"
+  height="600px"
+>
+  **Figure 5**. Many to many (unaligned). A sequence of vectors $x_{1:l} \in \mathbb{R}^{l\times d}$ is mapped to a sequence of vectors $p_{1:l'} \in \mathbb{R}^{l'\times m}$.
+</ImageBox>
+
+The length of the input sequence and the output sequence are not necessarily equal. An example application is machine translation, where a sentence in one language is translated to a sentence in another language. Formally, this can be defined as $p_{1:l'} = f^u(x_{1:l}; w)$ through the recursion:
+
+$$
+\begin{equation}
+\begin{aligned}
+c &:= f^e(x_{1:l}; w_e), \\
+p_{1:l} &:= f^d(c, w_d),
+\end{aligned}
+\end{equation}
+$$
+
+where $w := (w_e, w_d)$ are the network parameters, $f^e$ is an encoder function that maps the input sequence to a context vector $c$, and $f^d$ is a decoder function that maps the context vector to the output sequence. The encoding function $f^e$ and the decoding function $f^d$ can be implemented as RNNs. The detailed steps would be:
+
+$$
+\begin{equation}
+\begin{aligned}
+s_i &:= g(x_i, s_{i-1}; w_g), \quad i \in [\,l\,], \\
+c &:= \text{pooling}(s_{1:l}), \\
+z_i &:= g(c, p_{i-1}, z_{i-1}; w_g), \quad i \in [\,l'\,], \\
+p_i &:= h(z_i; w_h), \quad i \in [\,l'\,].
+\end{aligned}
+\end{equation}
+$$
+
+This architecture is aptly called an encoder-decoder architecture. Note that we denote the length of the target sequence as $l'$ instead of $l$ to avoid confusion. However, in practice, the length may depend on the input and is often not known in advance. To address this issue, the vocabulary (of size $d$ in our notation) is typically augmented with an "end of sequence" (EOS) token, so that at inference time, we know when to stop generating the output sequence. A disadvantage of this architecture is that all information about the input sequence is contained in the context vector $c$, which can therefore become a bottleneck.
+
+## Conclusions
+
+Neural networks, conceived as parameterized programs, provide a powerful and flexible framework for addressing a wide range of problems in machine learning and data processing. Throughout this article, we have explored various architectures and configurations, from feedforward networks to recurrent neural networks and residual networks. The representation of these architectures as directed acyclic graphs (DAGs) not only facilitates their analysis and optimization but also allows for the efficient application of techniques such as automatic differentiation. The different configurations discussed demonstrate the versatility of these models for tasks ranging from image captioning to machine translation.
+
+This approach of viewing neural networks as parameterized programs not only allows for designing more efficient and effective models but also opens pathways for improving the interpretability and explainability of these models, an area of growing importance in artificial intelligence. Although we have covered several types of neural networks, it's important to note that the field is constantly evolving, with new architectures and techniques being developed continuously. In summary, this perspective provides a solid foundation for the future development of more advanced, interpretable, and adaptable machine learning models for a wide range of real-world applications.
+
+Finally, if there are any errors, omissions, or inaccuracies in this article, please don't hesitate to contact us through the following Discord channel: [Math & Code](https://discord.gg/gJ3vCgSWeh).
+
+## References
+
+<Reference
+  type="image"
+  url="https://unsplash.com/es/fotos/una-imagen-generada-por-computadora-de-un-cerebro-humano-woGRo9m-ByE"
+  text="Randa Marzouk - Unplash"
+/>
+<Reference
+  type="arxiv"
+  url="https://arxiv.org/pdf/2403.14606"
+  text="Mathieu Blondel and Vincent Roulet. 2024. The Elements of Differentiable Programming."
+/>
