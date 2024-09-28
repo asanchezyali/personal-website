@@ -29,6 +29,8 @@ Here’s a list of the latest posts from the blog:
 4. [How to build a modular arithmetic library in Python.](https://www.asanchezyali.com/blog/en/modular-arithmetic/20220510ModularArithmetic)
 5. [Exploring Machine and Human Learning: Principles and Processes.](https://www.asanchezyali.com/blog/en/ml/20210712MachineLearning)
 6. [Operator Overloading in Python.](https://www.asanchezyali.com/blog/en/operator-overloading/20210615OperatorOverloadingInPython)
+7. [Neural networks represented as DAGs of parameterized computational programs](https://www.asanchezyali.com/blog/en/differentiable-programming/20240923DifferentiablePrograms)
+8. [Zero-Shot Text Classification](https://www.asanchezyali.com/blog/en/ai/20240917ZeroShot)
 
 _More posts to come! Stay tuned._ 🎉
 
