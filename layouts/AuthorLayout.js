@@ -3,6 +3,7 @@ import SocialIcon from '@/components/social-icons'
 import Image from '@/components/Image'
 import { PageSEO } from '@/components/SEO'
 import { LanguageContext } from '@/providers/LanguageProvider'
+import Link from 'next/link'
 
 export default function AuthorLayout({ children, frontMatter }) {
   const { name, avatar, occupation, company, email, twitter, linkedin, github, instagram } =
@@ -22,7 +23,10 @@ export default function AuthorLayout({ children, frontMatter }) {
           />
           <h3 className="pb-2 pt-4 text-2xl font-bold leading-8 tracking-tight">{name}</h3>
           <div className="text-gray-500 dark:text-gray-400">{occupation}</div>
-          <div className="text-gray-500 dark:text-gray-400">{company}</div>
+          <Link href={'https://www.upwork.com/freelancers/~01a356d30bfef60690?viewMode=1'}>
+            <p className="text-primary-500 underline">{company}</p>
+          </Link>
+
           <div className="flex space-x-3 pt-6">
             <SocialIcon kind="mail" href={`mailto:${email}`} />
             <SocialIcon kind="github" href={github} />

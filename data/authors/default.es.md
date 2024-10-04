@@ -2,7 +2,7 @@
 name: Alejandro Sánchez Yalí
 avatar: /avatar-v2.jpeg
 occupation: Desarrollador de Software y Matemático
-company: Freelance
+company: Upwork - Freelancer
 email: asanchezyali@gmail.com
 twitter: https://twitter.com/asanchezyali
 instagram: https://www.instagram.com/asanchezyali/
