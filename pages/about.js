@@ -2,17 +2,16 @@ import React from 'react'
 import { MDXLayoutRenderer } from '@/components/MDXComponents'
 import { getFileBySlug } from '@/lib/mdx'
 import { LanguageContext } from '@/providers/LanguageProvider'
-import Link from 'next/link'
 
 const DEFAULT_LAYOUT = 'AuthorLayout'
 
 const LifeLineEN = [
   {
-    date: 'Apr. 2021 - Current',
+    date: 'Apr. 2021 - Aug. 2024',
     description: (
       <>
         <p>
-          Currently, I work as a full-stack software developer at the company{' '}
+          Full-stack Software Developer at{' '}
           <a
             href="https://monadical.com"
             target="_blank"
@@ -21,8 +20,7 @@ const LifeLineEN = [
           >
             Monadical
           </a>
-          . Here I have had the opportunity to participate in several projects related to standard
-          software, blockchain, and artificial intelligence. Some of these projects include:
+          , I contributed to several key projects:
         </p>
         <ul className="ml-8 list-outside list-disc">
           <li>
@@ -34,10 +32,7 @@ const LifeLineEN = [
             >
               ZoHuddle
             </a>
-            : a video conferencing application where participants create profiles and rate each
-            other based on common interests. Implemented with Django on the backend, integrating the
-            Twilio video conferencing API, and a React frontend. WebSocket communication through
-            Django channels.
+            : A ranked-matching video conferencing platform using Django, React, and Twilio API.
           </li>
           <li>
             <a
@@ -48,7 +43,7 @@ const LifeLineEN = [
             >
               Samurari-Army
             </a>
-            : an NFT platform for G2-Sports.
+            : An NFT platform built on Ethereum.
           </li>
           <li>
             <a
@@ -59,186 +54,23 @@ const LifeLineEN = [
             >
               Virtue Poker
             </a>
-            : a web-based poker platform that allows anyone to create their own cash table,
-            tournament, or club in 60 seconds or less, and invite their friends.
+            : A blockchain-based poker platform.
           </li>
           <li>
-            <a
-              href="https://solanart.io/collections/cyberpharmacist"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="cursor-pointer text-primary-500 underline"
-            >
-              Cyber Pharmacy
-            </a>
-            : a marketplace for NFTs and weed derivatives.
+            Cyber Pharmacy: An e-commerce platform for cannabis derivatives with cryptocurrency
+            payments.
+          </li>
+          <li>
+            VC Tools: An AI tool using large language models for investor information retrieval.
           </li>
         </ul>
-        <br />
-        <>And I have also had the opportunity to write some articles for the company's blog:</>
-        <ul className="ml-8 list-outside list-disc">
-          <li>
-            <a
-              href="https://monadical.com/posts/modular-arithmetic.html"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="cursor-pointer text-primary-500 underline"
-            >
-              "How to build a modular arithmetic library in Python"
-            </a>
-            , where I explain how to create a library for modular arithmetic, using operator
-            overloading and redefining built-in functions for NumPy.
-          </li>
-          <li>
-            <a
-              href="https://monadical.com/posts/how-to-build-a-talking-avatar-with-azure-cognitive-langchain-and-openai.html"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="cursor-pointer text-primary-500 underline"
-            >
-              "Kraken the Code: How to Build a Talking Avatar"
-            </a>
-            , where I teach how to create your own conversational avatar with Azure Cognitive,
-            LangChain, and OpenAI. You can see the result{' '}
-            <a
-              href="https://github.com/Monadical-SAS/zippy-avatar-ai"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="cursor-pointer text-primary-500 underline"
-            >
-              here
-            </a>
-            .
-          </li>
-        </ul>
+        <p>
+          Key achievements include developing full-stack applications, building AI tools,
+          contributing to blockchain solutions, and publishing articles on AI and mathematics.
+        </p>
       </>
     ),
     company: 'Monadical',
-  },
-  {
-    date: 'Feb. 2024 - Jun. 2024',
-    description: (
-      <p>
-        This year, I am back at the{' '}
-        <Link href={'https://www.udea.edu.co/'}>
-          <a
-            target="_blank"
-            rel="noopener noreferrer"
-            className="cursor-pointer text-primary-500 underline"
-          >
-            University of Antioquia
-          </a>
-        </Link>
-        , where I was working as a professor of the Mathematics Laboratory with Python.
-      </p>
-    ),
-    company: 'Universidad de Antioquia',
-  },
-  {
-    date: 'Sep. 2021 - Apr. 2023',
-    description: (
-      <p>
-        I served as advisor for student{' '}
-        <Link href="https://www.luispapiernik.dev/">
-          <a
-            target="_blank"
-            rel="noopener noreferrer"
-            className="cursor-pointer text-primary-500 underline"
-          >
-            Luis Papiernik
-          </a>
-        </Link>
-        's thesis on {''}
-        <a
-          href={'/files/papiernik-thesis.pdf'}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="cursor-pointer text-primary-500 underline"
-          download
-        >
-          Category Theory Applied to Supervised Learning Algorithms
-        </a>{' '}
-        (in Spanish) at the{' '}
-        <Link href={'https://www.udea.edu.co/'}>
-          <a
-            target="_blank"
-            rel="noopener noreferrer"
-            className="cursor-pointer text-primary-500 underline"
-          >
-            University of Antioquia
-          </a>
-        </Link>
-        .
-      </p>
-    ),
-    company: 'Universidad de Antioquia',
-  },
-  {
-    date: 'Agu. 2018 - Oct. 2020',
-    description: (
-      <>
-        <p>
-          At{' '}
-          <Link href="https://www.bcfort.com/">
-            <a
-              target="_blank"
-              rel="noopener noreferrer"
-              className="cursor-pointer text-primary-500 underline"
-            >
-              BCFort
-            </a>
-          </Link>
-          , I led Backend Software Development for various projects, utilizing Python, Node.js,
-          MongoDB, IPFS, and Blockchain technologies. My responsibilities included data analysis
-          using Pandas, JupyterLab Hub, and MongoDB; server administration on AWS, GCLOUD, and IBM
-          CLOUD; overseeing and managing tasks for multiple development teams; as well as training
-          and selecting junior software developers. I contributed to the following projects:
-        </p>
-        <br />
-        <ul className="ml-8 list-outside list-disc">
-          <li>
-            Private blockchain for mineral traceability using Hyperledger Fabric and the IBM
-            blockchain platform.
-          </li>
-          <li>
-            Document blockchain and voting system utilizing Python, Node.js, Ethereum, and Telegram
-            Bots.
-          </li>
-        </ul>
-      </>
-    ),
-    company: 'BCFort',
-  },
-
-  {
-    date: 'Jan. 2017 - Nov. 2019',
-    description: (
-      <>
-        <p>
-          Mathematics and Physics Professor at the{' '}
-          <Link href="https://www.usbmed.edu.co/">
-            <a
-              target="_blank"
-              rel="noopener noreferrer"
-              className="cursor-pointer text-primary-500 underline"
-            >
-              University of San Buenaventura
-            </a>
-          </Link>
-          , I had the opportunity to teach several courses including:
-        </p>
-        <br />
-        <ul className="ml-8 list-inside list-disc">
-          <li>Vector Calculus</li>
-          <li>Numerical Methods with Python</li>
-          <li>Calculus of Complex Variables</li>
-          <li>Differential Equations</li>
-          <li>Thermodinamics</li>
-          <li>Theory of Relativity</li>
-        </ul>
-      </>
-    ),
-    company: 'USB MED',
   },
   {
     date: 'Jan. 2010 - Oct. 2021',
@@ -246,79 +78,99 @@ const LifeLineEN = [
       <>
         <p>
           Mathematics and Physics Professor at the{' '}
-          <Link href={'https://www.udea.edu.co/'}>
-            <a
-              target="_blank"
-              rel="noopener noreferrer"
-              className="cursor-pointer text-primary-500 underline"
-            >
-              University of Antioquia
-            </a>
-          </Link>
-          , Mathematics professor at the University of Antioquia, I had the opportunity to teach
-          several courses including:
-        </p>
-        <br />
-        <ul className="ml-8 list-inside list-disc">
-          <li>Vector Calculus</li>
-          <li>Linear Algebra</li>
-          <li>Euclidean Geometry</li>
-          <li>Machine Learning</li>
-          <li>History of Mathematics</li>
-          <li>Fluid Mechanics</li>
-          <li>Mechanics of Motion</li>
-        </ul>
-      </>
-    ),
-    company: 'Universidad de Antioquia',
-  },
-
-  {
-    date: 'Jan. 2010 - Sep. 2013',
-    description: (
-      <p>
-        MSc in Mathematics at the{' '}
-        <Link href={'https://www.udea.edu.co/'}>
           <a
+            href="https://www.udea.edu.co/"
             target="_blank"
             rel="noopener noreferrer"
             className="cursor-pointer text-primary-500 underline"
           >
             University of Antioquia
           </a>
-        </Link>
-        , where I worked with{' '}
-        <Link href={'https://www.researchgate.net/profile/Carlos-Marin-7'}>
+          . I taught various courses including:
+        </p>
+        <ul className="ml-8 list-inside list-disc">
+          <li>Machine Learning</li>
+          <li>Differential Equations</li>
+          <li>Special Mathematics</li>
+          <li>Physics</li>
+          <li>Thermodynamics</li>
+          <li>Fluid Mechanics</li>
+          <li>Linear Algebra</li>
+          <li>Advanced Calculus</li>
+        </ul>
+        <p>
+          Additionally, I supervised a degree project focused on the intersection of Category Theory
+          and Machine Learning.
+        </p>
+      </>
+    ),
+    company: 'Universidad de Antioquia',
+  },
+  {
+    date: 'Aug. 2018 - Oct. 2020',
+    description: (
+      <>
+        <p>
+          Full-stack Software Developer at{' '}
           <a
+            href="https://www.bcfort.com/"
             target="_blank"
             rel="noopener noreferrer"
             className="cursor-pointer text-primary-500 underline"
           >
-            Carlos Alberto Marin
+            BCFort
           </a>
-        </Link>
-        , on the theory of{' '}
+          , I led software development, delivering innovative blockchain solutions. Key projects
+          included:
+        </p>
+        <ul className="ml-8 list-outside list-disc">
+          <li>
+            Developing a private blockchain for mineral traceability using Hyperledger Fabric and
+            IBM Blockchain Platform.
+          </li>
+          <li>Creating a secure blockchain-based voting system.</li>
+        </ul>
+        <p>
+          I managed cloud infrastructure on AWS, GCP, and IBM Cloud, and mentored junior engineers
+          to improve team performance.
+        </p>
+      </>
+    ),
+    company: 'BCFort',
+  },
+  {
+    date: 'Jan. 2017 - Nov. 2019',
+    description: (
+      <p>
+        Professor at the{' '}
         <a
-          href={'/files/own-thesis.pdf'}
+          href="https://www.usbmed.edu.co/"
           target="_blank"
           rel="noopener noreferrer"
           className="cursor-pointer text-primary-500 underline"
-          download
         >
-          Affine Immersions in Homogeneous Manifolds
-        </a>{' '}
-        (in Spanish). During this period, I also worked as a professor at the University of
-        Antioquia and had the opportunity to meet one of my best friends,{' '}
-        <Link href={'https://github.com/juanArias8'}>
-          <a
-            target="_blank"
-            rel="noopener noreferrer"
-            className="cursor-pointer text-primary-500 underline"
-          >
-            Juan David Arias
-          </a>
-        </Link>
-        , with whom I began to program and explore the world of machine learning.
+          University of San Buenaventura
+        </a>
+        , where I taught Thermodynamics, Modern Physics, Differential Equations, and Special
+        Mathematics for the Faculty of Engineering.
+      </p>
+    ),
+    company: 'Universidad de San Buenaventura Medellín',
+  },
+  {
+    date: 'Jan. 2010 - Sep. 2013',
+    description: (
+      <p>
+        Completed MSc in Mathematics at the{' '}
+        <a
+          href="https://www.udea.edu.co/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="cursor-pointer text-primary-500 underline"
+        >
+          University of Antioquia
+        </a>
+        , focusing on the theory of Affine Immersions in Homogeneous Manifolds.
       </p>
     ),
     company: 'Universidad de Antioquia',
@@ -327,19 +179,16 @@ const LifeLineEN = [
     date: 'Jan. 2004 - Oct. 2009',
     description: (
       <p>
-        BSc in Mathematics and Physics Education from the{' '}
-        <Link href={'https://www.udea.edu.co/'}>
-          <a
-            target="_blank"
-            rel="noopener noreferrer"
-            className="cursor-pointer text-primary-500 underline"
-          >
-            University of Antioquia
-          </a>
-        </Link>
-        . During my studies, I focused on various advanced mathematics topics, including complex
-        analysis, abstract algebra, differential geometry, and number theory. My undergraduate
-        thesis focused on teaching fluid mechanics, combining my passion for physics with education.
+        Earned BSc in Mathematics and Physics Education from the{' '}
+        <a
+          href="https://www.udea.edu.co/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="cursor-pointer text-primary-500 underline"
+        >
+          University of Antioquia
+        </a>
+        , with a focus on advanced mathematics topics and a thesis on teaching fluid mechanics.
       </p>
     ),
     company: 'Universidad de Antioquia',
@@ -348,11 +197,11 @@ const LifeLineEN = [
 
 const LifeLineES = [
   {
-    date: 'Abr. 2021 - Actual',
+    date: 'Abr. 2021 - Ago. 2024',
     description: (
       <>
         <p>
-          Actualmente, trabajo como desarrollador de software full-stack en la empresa{' '}
+          Desarrollador Software Full-Stack en{' '}
           <a
             href="https://monadical.com"
             target="_blank"
@@ -361,9 +210,7 @@ const LifeLineES = [
           >
             Monadical
           </a>
-          . Aquí he tenido la oportunidad de participar en varios proyectos relacionados con
-          software estándar, blockchain e inteligencia artificial. Algunos de estos proyectos
-          incluyen:
+          , contribuí a varios proyectos clave:
         </p>
         <ul className="ml-8 list-outside list-disc">
           <li>
@@ -375,10 +222,8 @@ const LifeLineES = [
             >
               ZoHuddle
             </a>
-            : una aplicación de videoconferencia donde los participantes crean perfiles y se
-            califican entre sí en función de intereses comunes. Implementado con Django en el
-            backend, integrando la API de videoconferencia de Twilio y un frontend de React.
-            Comunicación por WebSocket a través de canales de Django.
+            : Una plataforma de videoconferencia con emparejamiento clasificado, utilizando Django,
+            React y la API de Twilio.
           </li>
           <li>
             <a
@@ -389,7 +234,7 @@ const LifeLineES = [
             >
               Samurari-Army
             </a>
-            : una plataforma NFT para G2-Sports.
+            : Una plataforma NFT construida en Ethereum.
           </li>
           <li>
             <a
@@ -400,120 +245,57 @@ const LifeLineES = [
             >
               Virtue Poker
             </a>
-            : una plataforma de póker basada en la web que permite a cualquiera crear su propia mesa
-            de efectivo, torneo o club en 60 segundos o menos e invitar a sus amigos.
+            : Una plataforma de póker basada en blockchain.
           </li>
           <li>
-            <a
-              href="https://solanart.io/collections/cyberpharmacist"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="cursor-pointer text-primary-500 underline"
-            >
-              Cyber Pharmacy
-            </a>
-            : un mercado para NFTs y derivados de la marihuana.
+            Cyber Pharmacy: Una plataforma de comercio electrónico para derivados del cannabis con
+            pagos en criptomonedas.
+          </li>
+          <li>
+            VC Tools: Una herramienta de IA que utiliza modelos de lenguaje grandes para la
+            recuperación de información para inversores.
           </li>
         </ul>
-        <br />
-        <>
-          Y también he tenido la oportunidad de escribir algunos artículos para el blog de la
-          empresa:
-        </>
-        <ul className="ml-8 list-outside list-disc">
-          <li>
-            <a
-              href="https://monadical.com/posts/modular-arithmetic.html"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="cursor-pointer text-primary-500 underline"
-            >
-              "How to build a modular arithmetic library in Python"
-            </a>
-            , donde explico cómo crear una biblioteca para aritmética modular, utilizando la
-            sobrecarga de operadores y la redefinición de funciones integradas para NumPy.
-          </li>
-          <li>
-            <a
-              href="https://monadical.com/posts/how-to-build-a-talking-avatar-with-azure-cognitive-langchain-and-openai.html"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="cursor-pointer text-primary-500 underline"
-            >
-              "Kraken the Code: How to Build a Talking Avatar"
-            </a>
-            , donde enseño cómo crear tu propio avatar conversacional con Azure Cognitive, LangChain
-            y OpenAI. Puedes ver el resultado{' '}
-            <a
-              href="https://github.com/Monadical-SAS/zippy-avatar-ai"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="cursor-pointer text-primary-500 underline"
-            >
-              aquí
-            </a>
-            .
-          </li>
-        </ul>
+        <p>
+          Logros clave incluyen el desarrollo de aplicaciones full-stack, la construcción de
+          herramientas de IA, la contribución a soluciones blockchain y la publicación de artículos
+          sobre IA y matemáticas.
+        </p>
       </>
     ),
     company: 'Monadical',
   },
   {
-    date: 'Feb. 2024 - Jun. 2024',
+    date: 'Ene. 2010 - Oct. 2021',
     description: (
-      <p>
-        Este año, estoy de vuelta en la{' '}
-        <Link href={'https://www.udea.edu.co/'}>
+      <>
+        <p>
+          Profesor de Matemáticas y Física en la{' '}
           <a
+            href="https://www.udea.edu.co/"
             target="_blank"
             rel="noopener noreferrer"
             className="cursor-pointer text-primary-500 underline"
           >
             Universidad de Antioquia
           </a>
-        </Link>
-        , donde trabajé como profesor del Laboratorio de Matemáticas con Python.
-      </p>
-    ),
-    company: 'Universidad de Antioquia',
-  },
-  {
-    date: 'Sep. 2021 - Abr. 2023',
-    description: (
-      <p>
-        Fui asesor de la tesis del estudiante{' '}
-        <Link href="https://www.luispapiernik.dev/">
-          <a
-            target="_blank"
-            rel="noopener noreferrer"
-            className="cursor-pointer text-primary-500 underline"
-          >
-            Luis Papiernik
-          </a>
-        </Link>{' '}
-        sobre{' '}
-        <a
-          href={'/files/papiernik-thesis.pdf'}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="cursor-pointer text-primary-500 underline"
-          download
-        >
-          Teoría de Categorías Aplicada a Algoritmos de Aprendizaje Supervisado
-        </a>{' '}
-        en la{' '}
-        <Link href={'https://www.udea.edu.co/'}>
-          <a
-            target="_blank"
-            rel="noopener noreferrer"
-            className="cursor-pointer text-primary-500 underline"
-          >
-            Universidad de Antioquia
-          </a>
-        </Link>
-        .
-      </p>
+          . Impartí varios cursos incluyendo:
+        </p>
+        <ul className="ml-8 list-inside list-disc">
+          <li>Aprendizaje Automático</li>
+          <li>Ecuaciones Diferenciales</li>
+          <li>Matemáticas Especiales</li>
+          <li>Física</li>
+          <li>Termodinámica</li>
+          <li>Mecánica de Fluidos</li>
+          <li>Álgebra Lineal</li>
+          <li>Cálculo Avanzado</li>
+        </ul>
+        <p>
+          Además, supervisé un proyecto de grado centrado en la intersección de la Teoría de
+          Categorías y el Aprendizaje Automático.
+        </p>
+      </>
     ),
     company: 'Universidad de Antioquia',
   },
@@ -522,146 +304,66 @@ const LifeLineES = [
     description: (
       <>
         <p>
-          Durante mi tiempo en{' '}
-          <Link href="https://www.bcfort.com/">
-            <a
-              target="_blank"
-              rel="noopener noreferrer"
-              className="cursor-pointer text-primary-500 underline"
-            >
-              BCFort
-            </a>
-          </Link>
-          , lideré el desarrollo de software backend para varios proyectos. Esto implicó el uso de
-          tecnologías como Python, Node.js, MongoDB, IPFS y Blockchain. Además, me encargué de
-          analizar datos utilizando herramientas como Pandas, JupyterLab Hub y MongoDB. Asimismo,
-          gestioné servidores en plataformas como AWS, GCLOUD e IBM CLOUD, supervisé tareas y
-          equipos de desarrollo, y contribuí a la formación y selección de desarrolladores junior.
+          Desarrollador de Software Full-Stack en{' '}
+          <a
+            href="https://www.bcfort.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="cursor-pointer text-primary-500 underline"
+          >
+            BCFort
+          </a>
+          , lideré el desarrollo de software, entregando soluciones innovadoras de blockchain. Los
+          proyectos clave incluyeron:
         </p>
-        <br />
         <ul className="ml-8 list-outside list-disc">
           <li>
-            Desarrollé una blockchain privada para la trazabilidad de minerales utilizando
-            Hyperledger Fabric y la plataforma de blockchain de IBM.
+            Desarrollo de una blockchain privada para la trazabilidad de minerales utilizando
+            Hyperledger Fabric y la plataforma IBM Blockchain.
           </li>
-          <li>
-            Implementé un sistema de blockchain para documentos y votaciones, empleando Python,
-            Node.js, Ethereum y Bots de Telegram.
-          </li>
+          <li>Creación de un sistema de votación seguro basado en blockchain.</li>
         </ul>
+        <p>
+          Gestioné la infraestructura en la nube en AWS, GCP e IBM Cloud, y mentoré a ingenieros
+          junior para mejorar el rendimiento del equipo.
+        </p>
       </>
     ),
     company: 'BCFort',
   },
-
   {
     date: 'Ene. 2017 - Nov. 2019',
     description: (
-      <>
-        <p>
-          Profesor de Matemáticas y Física en la{' '}
-          <Link href="https://www.usbmed.edu.co/">
-            <a
-              target="_blank"
-              rel="noopener noreferrer"
-              className="cursor-pointer text-primary-500 underline"
-            >
-              Universidad de San Buenaventura
-            </a>
-          </Link>
-          , tuve la oportunidad de enseñar varios cursos incluyendo:
-          <br />{' '}
-        </p>
-        <ul className="ml-8 list-inside list-disc">
-          <li>Cálculo Vectorial</li>
-          <li>Métodos Numéricos con Python</li>
-          <li>Cálculo de Variables Complejas</li>
-          <li>Ecuaciones Diferenciales</li>
-          <li>Termodinámica</li>
-          <li>Teoría de la Relatividad</li>
-        </ul>
-      </>
+      <p>
+        Profesor en la{' '}
+        <a
+          href="https://www.usbmed.edu.co/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="cursor-pointer text-primary-500 underline"
+        >
+          Universidad de San Buenaventura
+        </a>
+        , donde impartí Termodinámica, Física Moderna, Ecuaciones Diferenciales y Matemáticas
+        Especiales para la Facultad de Ingeniería.
+      </p>
     ),
-    company: 'USB MED',
+    company: 'Universidad de San Buenaventura Medellín',
   },
-  {
-    date: 'Ene. 2010 - Oct. 2021',
-    description: (
-      <>
-        <p>
-          Profesor de Matemáticas y Física en la{' '}
-          <Link href={'https://www.udea.edu.co/'}>
-            <a
-              target="_blank"
-              rel="noopener noreferrer"
-              className="cursor-pointer text-primary-500 underline"
-            >
-              Universidad de Antioquia
-            </a>
-          </Link>
-          , tuve la oportunidad de enseñar varios cursos incluyendo:
-          <br />
-        </p>
-        <ul className="ml-8 list-inside list-disc">
-          <li>Cálculo Vectorial</li>
-          <li>Álgebra Lineal</li>
-          <li>Geometría Euclidiana</li>
-          <li>Aprendizaje Automático</li>
-          <li>Historia de las Matemáticas</li>
-          <li>Mecánica de Fluidos</li>
-          <li>Mecánica del Movimiento</li>
-        </ul>
-      </>
-    ),
-    company: 'Universidad de Antioquia',
-  },
-
   {
     date: 'Ene. 2010 - Sep. 2013',
     description: (
       <p>
-        MSc en Matemáticas en la{' '}
-        <Link href={'https://www.udea.edu.co/'}>
-          <a
-            target="_blank"
-            rel="noopener noreferrer"
-            className="cursor-pointer text-primary-500 underline"
-          >
-            Universidad de Antioquia
-          </a>
-        </Link>
-        , donde trabajé con{' '}
-        <Link href={'https://www.researchgate.net/profile/Carlos-Marin-7'}>
-          <a
-            target="_blank"
-            rel="noopener noreferrer"
-            className="cursor-pointer text-primary-500 underline"
-          >
-            Carlos Alberto Marin
-          </a>
-        </Link>
-        , en la teoría de{' '}
+        Completé mi Maestría en Matemáticas en la{' '}
         <a
-          href={'/files/own-thesis.pdf'}
+          href="https://www.udea.edu.co/"
           target="_blank"
           rel="noopener noreferrer"
           className="cursor-pointer text-primary-500 underline"
-          download
         >
-          Inmersiones Afines en Variedades Homogéneas
+          Universidad de Antioquia
         </a>
-        . Durante este período, también trabajé como profesor en la Universidad de Antioquia y tuve
-        la oportunidad de conocer a uno de mis mejores amigos,{' '}
-        <Link href={'https://github.com/juanArias8'}>
-          <a
-            target="_blank"
-            rel="noopener noreferrer"
-            className="cursor-pointer text-primary-500 underline"
-          >
-            Juan David Arias
-          </a>
-        </Link>
-        , con quien comencé a programar y explorar el mundo del aprendizaje automático.
+        , enfocándome en la teoría de Inmersiones Afines en Variedades Homogéneas.
       </p>
     ),
     company: 'Universidad de Antioquia',
@@ -670,20 +372,17 @@ const LifeLineES = [
     date: 'Ene. 2004 - Oct. 2009',
     description: (
       <p>
-        Licenciatura en Educación Matemática y Física de la{' '}
-        <Link href={'https://www.udea.edu.co/'}>
-          <a
-            target="_blank"
-            rel="noopener noreferrer"
-            className="cursor-pointer text-primary-500 underline"
-          >
-            Universidad de Antioquia
-          </a>
-        </Link>
-        . Durante mis estudios, me centré en varios temas avanzados de matemáticas, incluyendo
-        análisis complejo, álgebra abstracta, geometría diferencial y teoría de números. Mi tesis de
-        pregrado se centró en la enseñanza de la mecánica de fluidos, combinando mi pasión por la
-        física con la educación.
+        Obtuve mi Licenciatura en Educación Matemática y Física de la{' '}
+        <a
+          href="https://www.udea.edu.co/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="cursor-pointer text-primary-500 underline"
+        >
+          Universidad de Antioquia
+        </a>
+        , con un enfoque en temas avanzados de matemáticas y una tesis sobre la enseñanza de la
+        mecánica de fluidos.
       </p>
     ),
     company: 'Universidad de Antioquia',
