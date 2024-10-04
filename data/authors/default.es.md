@@ -1,8 +1,8 @@
 ---
 name: Alejandro Sánchez Yalí
 avatar: /avatar-v2.jpeg
-occupation: Matematico y Desarrollador de Software
-company: Actualmente trabajo en Monadical
+occupation: Desarrollador de Software y Matemático
+company: Freelance
 email: asanchezyali@gmail.com
 twitter: https://twitter.com/asanchezyali
 instagram: https://www.instagram.com/asanchezyali/
@@ -11,12 +11,16 @@ github: https://github.com/asanchezyali
 language: en
 ---
 
-Hola, soy Alejandro Sánchez Yalí, y soy un apasionado de la tecnología y la programación. Desde pequeño, siempre me ha fascinado entender cómo funcionan las cosas, desarmarlas y descubrir sus secretos. Este interés me llevó a explorar la programación como una forma poderosa de crear y transformar ideas en realidad.
+Hola, soy Alejandro. Me dedico al desarrollo de software y tengo formación en matemáticas.
 
-Para mí, programar no es solo un trabajo o un pasatiempo; es una manera de expresarme y de hacer tangible mi curiosidad por el mundo que me rodea. Como matemático y programador, he trabajado en proyectos emocionantes y desafiantes que me han permitido aprender y crecer constantemente.
+Disfruto explorando la intersección entre la programación y las matemáticas, siempre buscando formas de aplicar
+conceptos abstractos a problemas prácticos. He trabajado en diversos proyectos que van desde aplicaciones web hasta
+algoritmos de aprendizaje automático.
 
-Mi lema es: "¿Si programo, entonces existo?". Creo que a través de la programación puedo hacer cosas increíbles y dar forma a mi mundo, convirtiendo problemas complejos en soluciones creativas.
+En este blog, comparto mis reflexiones sobre tecnología, matemáticas y los desafíos que encuentro en mi día a día como
+programador. No soy experto en todo, pero me gusta aprender y compartir lo que voy descubriendo.
 
-Me encanta aprender nuevas tecnologías y mejorar mis habilidades día a día. Además, disfruto compartir mi conocimiento y pasión por la tecnología a través de la escritura. Escribo sobre temas de tecnología y ciencia de la computación en mi blog personal y en otras plataformas, siempre buscando nuevas ideas y maneras de inspirar a otros.
+Si te interesa intercambiar ideas sobre programación, matemáticas o cualquier tema relacionado, no dudes en conectar,
+sígueme en mis redes sociales o visita mi perfil de LinkedIn. ¡Hasta pronto!
 
-Espero que esta breve presentación te haya dado una idea de quién soy y qué me motiva. Si quieres saber más sobre mí o conectar, sígueme en mis redes sociales o visita mi perfil de LinkedIn. ¡Hasta pronto!
+Para una visión más detallada de mi experiencia profesional y habilidades, puedes revisar mi currículum técnico [aquí](https://github.com/asanchezyali/technical-resume/blob/technical-resume/technical_resume.pdf).

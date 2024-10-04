@@ -1,8 +1,8 @@
 ---
 name: Alejandro Sánchez Yalí
 avatar: /avatar-v2.jpeg
-occupation: Mathematician and Software Developer
-company: Currently working at Monadical
+occupation: Software Developer and Mathematician
+company: Freelance
 email: asanchezyali@gmail.com
 twitter: https://twitter.com/asanchezyali
 instagram: https://www.instagram.com/asanchezyali/
@@ -11,12 +11,13 @@ github: https://github.com/asanchezyali
 language: en
 ---
 
-Hi, I'm Alejandro Sánchez Yalí, and I'm passionate about technology and programming. Ever since I was a kid, I've been fascinated by how things work, taking them apart and uncovering their secrets. This curiosity naturally led me to explore programming as a powerful way to create and bring ideas to life.
+Hello, I'm Alejandro. I work in software development and have a background in mathematics.
 
-For me, programming is not just a job or a hobby; it's a way to express myself and satisfy my curiosity about the world around me. As a mathematician and programmer, I've had the chance to work on exciting and challenging projects that have allowed me to learn and grow continuously.
+I enjoy exploring the intersection between programming and mathematics, always looking for ways to apply abstract concepts to practical problems. I've worked on various projects ranging from web applications to machine learning algorithms.
 
-My motto is: "If I program, then I exist?" I believe that through programming, I can do amazing things and shape my world, turning complex problems into creative solutions.
+In this blog, I share my thoughts on technology, mathematics, and the challenges I encounter in my day-to-day life as a programmer. I'm not an expert in everything, but I like to learn and share what I discover along the way.
 
-I love learning about new technologies and constantly improving my skills. I also enjoy sharing my knowledge and passion for technology through writing. I write about technology and computer science topics on my personal blog and other platforms, always looking for new ideas and ways to inspire others.
+If you're interested in exchanging ideas about programming, mathematics, or any related topic, feel free to connect,
+follow me on my social media, or visit my LinkedIn profile. See you soon!
 
-I hope this brief introduction gives you a sense of who I am and what drives me. If you want to know more about me or connect, feel free to follow me on my social media or visit my LinkedIn profile. See you soon!
+For a more detailed look at my professional experience and skills, you can check out my technical-resume [here](https://github.com/asanchezyali/technical-resume/blob/technical-resume/technical_resume.pdf).
