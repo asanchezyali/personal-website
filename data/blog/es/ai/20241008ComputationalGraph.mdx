@@ -1,0 +1,52 @@
+---
+title: 'Grafos computacionales en Python: potenciando el aprendizaje automático'
+date: '2024/10/08'
+tags: ['IA', 'Python', 'Machine Learning']
+draft: false
+time: '15 min'
+summary: 'Los grafos computacionales son una herramienta poderosa para el aprendizaje automático. En este artículo, aprenderás cómo usarlos en Python para mejorar tus modelos de aprendizaje automático.'
+bibliography: references-data.bib
+canonicalUrl: 'https://www.asanchezyali.com/blog/es/number-theory/20230108DivisionAlgorithm'
+headerImage: '/images/ai/computational-graph-v01.jpg'
+images: ['/images/ai/computational-graph-v01.jpg']
+language: 'es'
+---
+
+## Introducción a los grafos computacionales
+
+Los **grafos computacionales** son herramientas esenciales en _machine learning_, particularmente en _deep learning_, ya que permiten representar y optimizar operaciones matemáticas complejas. Estos grafos sirven como la base de los frameworks modernos de deep learning, habilitando la computación eficiente y la diferenciación automática, que es crucial para el proceso de entrenamiento de modelos. En pocas palabras, permiten descomponer cálculos complejos en operaciones más simples y manejables.
+
+En este artículo, exploraremos en detalle qué son los grafos computacionales, su importancia en el aprendizaje
+automático y cómo implementarlos de manera práctica en Python. Si quieres entender mejor cómo las redes neuronales
+artificiales (ANNs) se relacionan con los grafos dirigidos acíclicos (DAGs), visita mi artículo: [Redes neuronales representadas como DAGs de programas computacionales parametrizados](https://www.asanchezyali.com/blog/es/differentiable-programming/20240923DifferentiablePrograms).
+
+```python showLineNumbers
+import tensorflow as tf
+
+# Define constants
+a = tf.constant(3.0)
+b = tf.constant(4.0)
+
+# Define an operation
+c = a * b
+
+# Print the result
+print(c)
+
+## Output
+# tf.Tensor(12.0, shape=(), dtype=float32)
+```
+
+En el código anterior, hemos definido dos constantes `a` y `b` y una operación `c` que multiplica ambas constantes. Al
+imprimir el resultado, obtenemos un tensor de TensorFlow con el valor `12.0`. Este es un ejemplo simple de un grafo
+computacional, donde las operaciones se representan como nodos y las constantes como entradas.
+
+## ¿Qué es un grafo computacional?
+
+## Referencias
+
+<Reference
+  type="image"
+  url="https://unsplash.com/photos/a-blue-abstract-background-with-lines-and-dots-pREq0ns_p_E"
+  text="Conny Schneider. 2023. Unsplash"
+/>
