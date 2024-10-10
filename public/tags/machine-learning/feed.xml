@@ -7,9 +7,19 @@
       <language>en-us</language>
       <managingEditor>asanchezyali@gmail.com (Alejandro Sánchez Yalí)</managingEditor>
       <webMaster>asanchezyali@gmail.com (Alejandro Sánchez Yalí)</webMaster>
-      <lastBuildDate>Mon, 12 Jul 2021 05:00:00 GMT</lastBuildDate>
+      <lastBuildDate>Tue, 08 Oct 2024 05:00:00 GMT</lastBuildDate>
       <atom:link href="https://asanchezyali.com/tags/machine-learning/feed.xml" rel="self" type="application/rss+xml"/>
       
+  <item>
+    <guid>https://asanchezyali.com/blog/es/ai/20241008ComputationalGraph</guid>
+    <title>Grafos computacionales en Python: potenciando el aprendizaje automático</title>
+    <link>https://asanchezyali.com/blog/es/ai/20241008ComputationalGraph</link>
+    <description>Los grafos computacionales son una herramienta poderosa para el aprendizaje automático. En este artículo, aprenderás cómo usarlos en Python para mejorar tus modelos de aprendizaje automático.</description>
+    <pubDate>Tue, 08 Oct 2024 05:00:00 GMT</pubDate>
+    <author>asanchezyali@gmail.com (Alejandro Sánchez Yalí)</author>
+    <category>IA</category><category>Python</category><category>Machine Learning</category><category>Grafos Computacionales</category><category>Deep Learning</category><category>Diferenciación Automática</category>
+  </item>
+
   <item>
     <guid>https://asanchezyali.com/blog/en/ml/20210712MachineLearning</guid>
     <title>Exploring Machine and Human Learning: Principles and Processes</title>

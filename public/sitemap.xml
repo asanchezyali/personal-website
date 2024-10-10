@@ -25,6 +25,18 @@
   </url>
 
   <url>
+    <loc>https://www.asanchezyali.com/blog/es/blockchain/20220310Solana/</loc>
+  </url>
+
+  <url>
+    <loc>https://www.asanchezyali.com/blog/es/blockchain/20220323SolanaNFTandIPFS/</loc>
+  </url>
+
+  <url>
+    <loc>https://www.asanchezyali.com/blog/en/ml/20210712MachineLearning</loc>
+  </url>
+
+  <url>
     <loc>https://www.asanchezyali.com/blog/en/ai-avatars/2024020AIAvatar</loc>
   </url>
 
@@ -33,7 +45,15 @@
   </url>
 
   <url>
-    <loc>https://www.asanchezyali.com/blog/en/ml/20210712MachineLearning</loc>
+    <loc>https://www.asanchezyali.com/blog/en/modular-arithmetic/20220510ModularArithmetic</loc>
+  </url>
+
+  <url>
+    <loc>https://www.asanchezyali.com/blog/es/number-theory/20230108DivisionAlgorithm</loc>
+  </url>
+
+  <url>
+    <loc>https://www.asanchezyali.com/blog/es/number-theory/20230108DivisionAlgorithm</loc>
   </url>
 
   <url>
@@ -41,17 +61,9 @@
   </url>
 
   <url>
-    <loc>https://www.asanchezyali.com/blog/en/modular-arithmetic/20220510ModularArithmetic</loc>
-  </url>
-
-  <url>
     <loc
       >https://www.asanchezyali.com/blog/en/operator-overloading/20210615OperatorOverloadingInPython</loc
     >
-  </url>
-
-  <url>
-    <loc>https://www.asanchezyali.com/blog/es/number-theory/20230108DivisionAlgorithm</loc>
   </url>
 
   <url>
@@ -63,11 +75,15 @@
   </url>
 
   <url>
-    <loc>https://www.asanchezyali.com/blog/es/ml/20210712MachineLearning</loc>
+    <loc>https://www.asanchezyali.com/blog/es/blockchain/20220310Solana/</loc>
   </url>
 
   <url>
-    <loc>https://www.asanchezyali.com/blog/es/modular-arithmetic/20220510ModularArithmetic</loc>
+    <loc>https://www.asanchezyali.com/blog/es/blockchain/20220323SolanaNFTandIPFS/</loc>
+  </url>
+
+  <url>
+    <loc>https://www.asanchezyali.com/blog/es/ml/20210712MachineLearning</loc>
   </url>
 
   <url>
@@ -81,15 +97,19 @@
   </url>
 
   <url>
+    <loc>https://www.asanchezyali.com/blog/es/modular-arithmetic/20220510ModularArithmetic</loc>
+  </url>
+
+  <url>
     <loc>https://asanchezyali.com/tags/ai</loc>
   </url>
 
   <url>
-    <loc>https://asanchezyali.com/tags/ai-avatar</loc>
+    <loc>https://asanchezyali.com/tags/anchor</loc>
   </url>
 
   <url>
-    <loc>https://asanchezyali.com/tags/anchor</loc>
+    <loc>https://asanchezyali.com/tags/ai-avatar</loc>
   </url>
 
   <url>
@@ -101,19 +121,19 @@
   </url>
 
   <url>
-    <loc>https://asanchezyali.com/tags/book</loc>
-  </url>
-
-  <url>
     <loc>https://asanchezyali.com/tags/blockchain</loc>
   </url>
 
   <url>
-    <loc>https://asanchezyali.com/tags/ciencias-de-la-computación</loc>
+    <loc>https://asanchezyali.com/tags/book</loc>
   </url>
 
   <url>
     <loc>https://asanchezyali.com/tags/canada</loc>
+  </url>
+
+  <url>
+    <loc>https://asanchezyali.com/tags/ciencias-de-la-computación</loc>
   </url>
 
   <url>
@@ -129,11 +149,19 @@
   </url>
 
   <url>
+    <loc>https://asanchezyali.com/tags/computer-science</loc>
+  </url>
+
+  <url>
     <loc>https://asanchezyali.com/tags/code</loc>
   </url>
 
   <url>
-    <loc>https://asanchezyali.com/tags/computer-science</loc>
+    <loc>https://asanchezyali.com/tags/deep-learning</loc>
+  </url>
+
+  <url>
+    <loc>https://asanchezyali.com/tags/dapps</loc>
   </url>
 
   <url>
@@ -141,7 +169,7 @@
   </url>
 
   <url>
-    <loc>https://asanchezyali.com/tags/dapps</loc>
+    <loc>https://asanchezyali.com/tags/diferenciación-automática</loc>
   </url>
 
   <url>
@@ -165,7 +193,7 @@
   </url>
 
   <url>
-    <loc>https://asanchezyali.com/tags/humano-digital</loc>
+    <loc>https://asanchezyali.com/tags/grafos-computacionales</loc>
   </url>
 
   <url>
@@ -177,11 +205,15 @@
   </url>
 
   <url>
+    <loc>https://asanchezyali.com/tags/hugging-face</loc>
+  </url>
+
+  <url>
     <loc>https://asanchezyali.com/tags/ia</loc>
   </url>
 
   <url>
-    <loc>https://asanchezyali.com/tags/hugging-face</loc>
+    <loc>https://asanchezyali.com/tags/humano-digital</loc>
   </url>
 
   <url>
@@ -201,15 +233,7 @@
   </url>
 
   <url>
-    <loc>https://asanchezyali.com/tags/lip-sync</loc>
-  </url>
-
-  <url>
     <loc>https://asanchezyali.com/tags/lipsync</loc>
-  </url>
-
-  <url>
-    <loc>https://asanchezyali.com/tags/llm</loc>
   </url>
 
   <url>
@@ -217,15 +241,15 @@
   </url>
 
   <url>
+    <loc>https://asanchezyali.com/tags/llm</loc>
+  </url>
+
+  <url>
+    <loc>https://asanchezyali.com/tags/lip-sync</loc>
+  </url>
+
+  <url>
     <loc>https://asanchezyali.com/tags/markdown</loc>
-  </url>
-
-  <url>
-    <loc>https://asanchezyali.com/tags/math</loc>
-  </url>
-
-  <url>
-    <loc>https://asanchezyali.com/tags/mathematics</loc>
   </url>
 
   <url>
@@ -233,11 +257,11 @@
   </url>
 
   <url>
-    <loc>https://asanchezyali.com/tags/metaplex</loc>
+    <loc>https://asanchezyali.com/tags/mathematics</loc>
   </url>
 
   <url>
-    <loc>https://asanchezyali.com/tags/next-js</loc>
+    <loc>https://asanchezyali.com/tags/math</loc>
   </url>
 
   <url>
@@ -245,7 +269,7 @@
   </url>
 
   <url>
-    <loc>https://asanchezyali.com/tags/number-theory</loc>
+    <loc>https://asanchezyali.com/tags/metaplex</loc>
   </url>
 
   <url>
@@ -253,11 +277,19 @@
   </url>
 
   <url>
-    <loc>https://asanchezyali.com/tags/openai</loc>
+    <loc>https://asanchezyali.com/tags/next-js</loc>
   </url>
 
   <url>
     <loc>https://asanchezyali.com/tags/ols</loc>
+  </url>
+
+  <url>
+    <loc>https://asanchezyali.com/tags/number-theory</loc>
+  </url>
+
+  <url>
+    <loc>https://asanchezyali.com/tags/openai</loc>
   </url>
 
   <url>
@@ -266,6 +298,10 @@
 
   <url>
     <loc>https://asanchezyali.com/tags/operadores</loc>
+  </url>
+
+  <url>
+    <loc>https://asanchezyali.com/tags/phantom-wallet</loc>
   </url>
 
   <url>
@@ -281,11 +317,11 @@
   </url>
 
   <url>
-    <loc>https://asanchezyali.com/tags/regresión</loc>
+    <loc>https://asanchezyali.com/tags/sobrecarga-de-operadores</loc>
   </url>
 
   <url>
-    <loc>https://asanchezyali.com/tags/phantom-wallet</loc>
+    <loc>https://asanchezyali.com/tags/regresión</loc>
   </url>
 
   <url>
@@ -293,15 +329,7 @@
   </url>
 
   <url>
-    <loc>https://asanchezyali.com/tags/sobrecarga-de-operadores</loc>
-  </url>
-
-  <url>
     <loc>https://asanchezyali.com/tags/solana</loc>
-  </url>
-
-  <url>
-    <loc>https://asanchezyali.com/tags/tailwind</loc>
   </url>
 
   <url>
@@ -313,11 +341,15 @@
   </url>
 
   <url>
-    <loc>https://asanchezyali.com/tags/transformers</loc>
+    <loc>https://asanchezyali.com/tags/teoría-de-números</loc>
   </url>
 
   <url>
-    <loc>https://asanchezyali.com/tags/teoría-de-números</loc>
+    <loc>https://asanchezyali.com/tags/tailwind</loc>
+  </url>
+
+  <url>
+    <loc>https://asanchezyali.com/tags/transformers</loc>
   </url>
 
   <url>

@@ -8,7 +8,7 @@
       <managingEditor>asanchezyali@gmail.com (Alejandro Sánchez Yalí)</managingEditor>
       <webMaster>asanchezyali@gmail.com (Alejandro Sánchez Yalí)</webMaster>
       <lastBuildDate>Tue, 08 Oct 2024 05:00:00 GMT</lastBuildDate>
-      <atom:link href="https://asanchezyali.com/tags/ia/feed.xml" rel="self" type="application/rss+xml"/>
+      <atom:link href="https://asanchezyali.com/tags/grafos-computacionales/feed.xml" rel="self" type="application/rss+xml"/>
       
   <item>
     <guid>https://asanchezyali.com/blog/es/ai/20241008ComputationalGraph</guid>
@@ -18,16 +18,6 @@
     <pubDate>Tue, 08 Oct 2024 05:00:00 GMT</pubDate>
     <author>asanchezyali@gmail.com (Alejandro Sánchez Yalí)</author>
     <category>IA</category><category>Python</category><category>Machine Learning</category><category>Grafos Computacionales</category><category>Deep Learning</category><category>Diferenciación Automática</category>
-  </item>
-
-  <item>
-    <guid>https://asanchezyali.com/blog/es/ai/20240917ZeroShot</guid>
-    <title>Clasificación Zero-Shot de texto</title>
-    <link>https://asanchezyali.com/blog/es/ai/20240917ZeroShot</link>
-    <description>La clasificación Zero-Shot de texto (ZSTC) es una técnica de aprendizaje automatizado que permite a los modelos clasificar textos en categorías sin haber sido entrenados previamente en esas categorías específicas. Utiliza modelos de lenguaje pre-entrenados, como BART o GPT, que han aprendido a comprender las relaciones semánticas entre palabras y frases durante su pre-entrenamiento. Este enfoque permite al modelo generalizar su conocimiento y hacer inferencias sobre nuevas categorías basándose en un texto dado, sin necesidad de ejemplos etiquetados.</description>
-    <pubDate>Tue, 17 Sep 2024 05:00:00 GMT</pubDate>
-    <author>asanchezyali@gmail.com (Alejandro Sánchez Yalí)</author>
-    <category>IA</category><category>Zero-Shot Learning</category><category>Transformers</category><category>Hugging Face</category>
   </item>
 
     </channel>
