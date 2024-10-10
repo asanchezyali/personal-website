@@ -17,7 +17,7 @@
     <description>Los grafos computacionales son una herramienta poderosa para el aprendizaje automático. En este artículo, aprenderás cómo usarlos en Python para mejorar tus modelos de aprendizaje automático.</description>
     <pubDate>Tue, 08 Oct 2024 05:00:00 GMT</pubDate>
     <author>asanchezyali@gmail.com (Alejandro Sánchez Yalí)</author>
-    <category>IA</category><category>Python</category><category>Machine Learning</category>
+    <category>IA</category><category>Python</category><category>Machine Learning</category><category>Grafos Computacionales</category><category>Deep Learning</category><category>Diferenciación Automática</category>
   </item>
 
   <item>
@@ -78,6 +78,26 @@
     <pubDate>Wed, 05 Oct 2022 05:00:00 GMT</pubDate>
     <author>asanchezyali@gmail.com (Alejandro Sánchez Yalí)</author>
     <category>python</category><category>sobrecarga-de-operadores</category><category>teoría-de-números</category><category>juego-luces-fuera</category>
+  </item>
+
+  <item>
+    <guid>https://asanchezyali.com/blog/es/blockchain/20220323SolanaNFTandIPFS</guid>
+    <title>Crea tu propia colección de NFTs en Solana con IPFS</title>
+    <link>https://asanchezyali.com/blog/es/blockchain/20220323SolanaNFTandIPFS</link>
+    <description>Aprende cómo crear tu propia colección de NFTs en Solana utilizando IPFS. Descubre cómo los NFTs están revolucionando los derechos de propiedad digital y cómo puedes aprovechar esta tecnología en Solana.</description>
+    <pubDate>Wed, 23 Mar 2022 05:00:00 GMT</pubDate>
+    <author>asanchezyali@gmail.com (Alejandro Sánchez Yalí)</author>
+    <category>solana</category><category>nft</category><category>metaplex</category>
+  </item>
+
+  <item>
+    <guid>https://asanchezyali.com/blog/es/blockchain/20220310Solana</guid>
+    <title>Desarrollando Dapps en Solana</title>
+    <link>https://asanchezyali.com/blog/es/blockchain/20220310Solana</link>
+    <description>Solana es una blockchain de alto rendimiento que permite el desarrollo de aplicaciones descentralizadas (Dapps) mediante herramientas como Anchor y la criptocartera Phantom. En este tutorial, aprenderás a construir el código base para tu propia Dapp en Solana.</description>
+    <pubDate>Thu, 10 Mar 2022 05:00:00 GMT</pubDate>
+    <author>asanchezyali@gmail.com (Alejandro Sánchez Yalí)</author>
+    <category>solana</category><category>dapps</category>
   </item>
 
   <item>
