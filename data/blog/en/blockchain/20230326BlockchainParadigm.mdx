@@ -1,0 +1,92 @@
+---
+title: 'Descifrando el enigma del blockchain en siete pasos - Parte 1'
+date: '2023/03/26'
+lastmod: '2023-03-26'
+tags: ['blockchain', 'smart-contracts', 'dapps']
+draft: true
+time: '40 min'
+summary: 'En este tutorial se presenta una introducción básica al mundo del blockchain en siete pasos. Se explican los conceptos clave de la tecnología, desde la estructura básica de los bloques hasta los algoritmos de consenso, como prueba de trabajo y prueba de participación. También se discuten los smart contracts, los wallets y las aplicaciones descentralizadas (dApps), y cómo estas herramientas permiten el desarrollo de aplicaciones descentralizadas. Al final de este tutorial, se espera que los lectores tengan una comprensión sólida de los fundamentos del blockchain y cómo se utiliza en el mundo de las criptomonedas y más allá.'
+layout: PostLayout
+bibliography: references-data.bib
+canonicalUrl: https://www.asanchezyali.com/blog/es/blockchain/20230326BlockchainParadigm/
+headerImage: '/images/post-solana.webp'
+language: 'en'
+---
+
+Blockchain, criptomonedas, Dapps, wallets, tokens, NFTs, etc. Son términos que se han vuelto comunes en los últimos años, pero ¿qué es realmente el blockchain? ¿Cómo funciona? La idea de esta serie de articulos (siete en total) es explicar el paradigma del blockchain en siete pasos, de una manera sencilla y práctica, para que puedas entenderlo y aplicarlo en tus proyectos.
+
+## ¿Qué es la blockchain?
+
+El termino blockchain es un acrónimo de la frase en inglés “block chain”, que significa “cadena de bloques”. En términos simples, un blockchain es una base de datos distribuida, que almacena información de manera segura y confiable, y que es compartida por todos los nodos de la red. La información se almacena en bloques, que son registros de datos que se agregan a la cadena de bloques. Cada bloque contiene información sobre el bloque anterior, y así sucesivamente. La información que se almacena en los bloques puede ser cualquier cosa, desde texto, hasta archivos, hasta datos de una base de datos, hasta código ejecutable, etc. La información que se almacena en los bloques se almacena en forma de hash, que es una cadena de caracteres que representa un valor único. Los bloques se almacenan en una estructura de datos llamada blockchain, que es una lista enlazada de bloques. La blockchain es una estructura de datos que se puede utilizar para almacenar cualquier tipo de información, pero es más común que se utilice para almacenar información financiera, como transacciones de criptomonedas, o información de identidad, como datos biométricos.
+
+## ¿Cómo funciona la blockchain?
+
+De acuerdo con los autores del artículo [Ethereum: A secure decentralised generalised transaction ledger](https://ethereum.github.io/yellowpaper/paper.pdf) una blockchain se puede entender como una **maquina de estados basada en transacciones**. Desde las ciencias de la computación una **maquina de estados** es un modelo matemático que describe el comportamiento de una sistema en términos de una serie de **estados** y **transiciones**. En este contexto, **estado** se refiere a una situación en la que se encuentra un sistema en un momento determinado y **transición** se refiere al cambio del sistema de un estado a otro en respuesta a un evento o acción (transacciones).
+
+![Blockchain](/images/blockchain1.png#center 'Figura 1. Blockchain como maquina de estados basado en transacciones')
+
+En el caso de una Blockchain, por ejemplo Ethereum, se utiliza una máquina de estados para representar el estado actual de la red (ver Figura 1), es decir, quienes son los nodos que la conforman, cuál es el estado de sus cuentas, cuáles son los contratos activos, etc. Cada transacción en la red es una acción que modifica el estado de la red, por ejemplo, una transacción de transferencia de tokens, una transacción de creación de un contrato, etc. En el formalismo matemático presentado en el artículo: [Ethereum: A secure decentralised generalised transaction ledger](https://ethereum.github.io/yellowpaper/paper.pdf), una blockchain como una maquina de estados basada en transacciones luce así:
+
+$$
+\begin{equation}
+\sigma_{t+1} = \Gamma(\sigma_{t}, T)
+\end{equation}
+$$
+
+En donde $\sigma_{t}$ es el estado de la red en el tiempo $t$, $\Gamma$ es la función de transición que describe el comportamiento de la red, y $T$ es la transacción que se ejecuta en el tiempo $t$. Toda esta ecuación nos está diciendo que el estado de la red en el tiempo $t+1$ es el resultado de ejecutar la función de transición $\Gamma$ sobre el estado de la red en el tiempo $t$ y la transacción $T$ que se ejecuta en el tiempo $t$.
+
+## ¿Cómo se almacena la información en el blockchain?
+
+En la blockchain, la información se almacena en _bloques_. Las transacciones son recopiladas y agrupadas en bloques. Cada bloque contiene un paquete de datos que incluye información sobre las transacciones realizadas.
+
+![Blockchain](/images/blockchain2.png#center 'Figura 2. Las transacciones son recopiladas y agrupadas en bloques. Cada bloque contiene un paquete de datos.')
+
+Los nuevos bloques son agregados a la blockchain mediante un proceso llamado _minería_. El proceso de minería consiste en resolver un problema matemático complejo, que requiere de una gran cantidad de recursos computacionales y energéticos por paarte del nodo que lo está creando. Por lo tanto, se necesita de un mecanismo para incentivar a las personas a participar de la red. Cada ve que un nodo crea un nuevo bloque, recibe una recompesa. La recompensa es un incentivo para que los nodos participen de la red, y es una forma de asegurar que la red sea descentralizada.
+
+Cada bloque contiene un número determinado de transacciones. En el caso de Bitcoin, el tamaño mínimo de una transacción es de 83 bytes, lo que permitiría aproximadamente 10,000 transacciones por bloque. Una transacción regular (es decir, de la parte A a la parte B) tiene un tamaño de alrededor de 250 bytes, lo que resulta en alrededor de 4,000 transacciones. El número de transacciones que se pueden incluir en un solo bloque depende del límite de tamaño de un bloque. A partir de 2019, el límite de tamaño para un bloque de Bitcoin era de dos megabytes. Tenga en cuenta que un bloque contiene más información que solo los datos de transacción incluyendo elementos como sellos de fecha y otros datos de referencia.
+
+Por lo tanto, de acuerdo al artículo de Ethereum, un bloque se puede representar de la siguiente manera:
+
+$$
+\begin{equation}
+B \cong (\dots, (T_0, T_1, \dots))
+\end{equation}
+$$
+
+Esta ecuación representa un bloque como una lista de transacciones (y algunas cosas más que omitiremos por ahora). En la ecuación (2), $B$ es el bloque, y $T_0, T_1, \dots$ son las transacciones que se incluyen en el bloque.
+
+Como hemos visto ya con el caso de Bitcoin, las blockchain no procesan las transacciones individualmente para actualizar el estado de la red. Por lo tanto la ecuación (1) se puede reescribir para representar mejor este paradigma:
+
+$$
+\begin{equation}
+\sigma_{t+1} = \pi (\sigma_t, B)
+\end{equation}
+$$
+
+En donde $\pi$ es la función transacción que describe el cambio de estado de la red. En la ecuación (3), $\sigma_{t+1}$ es el estado de la red en el tiempo $t+1$, $\sigma_{t}$ es el estado de la red en el tiempo $t$, y $B$ es el bloque que se incluye en el tiempo $t$. Esta ecuación dice que el estado de la red se actualizará aplicando las transacciones de un bloque al estado actual, produciendo un nuevo estado. Todo este proceso es consolidado en un nuevo bloque que se agrega a la blockchain, de la siguiente manera:
+
+$$
+\begin{equation}
+\pi(\sigma, B) = \Omega(B, \Gamma(\Gamma(\sigma, T_0), T_1), \dots)
+\end{equation}
+$$
+
+Cuando el bloque $B$ es minado, las transacciones $T_0, T_1, \dots$ son aplicadas en secuencia, y el nuevo estado generado por cada una de estas transacciones se pasa como entrada a la siguiente transacción. El resultado final es el nuevo estado de la red. La función $\Omega$ es la _block-finalisation state transition function_ que se encarga de recompensar a los nodos que validan las transacciones y crean nuevos bloques en la blockchain. Esta función determina cómo se distribuyen las recompensas entre los nodos y cómo se actualiza el estado de la blockchain después de que se agregue un nuevo bloque.
+
+En resumen, la ecuación (4) describe la forma como la blockchain funciona. Un nodo mina un bloque, las transacciones que contiene son aplicadas en secuencia modificando el estado de la red, el nuevo estado es agregado a la blockchain, y finalmente el nodo que ha minado el bloque recibe una recompensa.
+
+![Blockchain](/images/blockchain3.png#center 'Figura 3. Desde el punto de vista de los estados. Una blockchain puede ser entendida como una cadena de estados.')
+
+## Imágenes
+
+- [Unplash](https://unsplash.com/) - [3D illustration of blocks in a blockchain](https://unsplash.com/photos/_rZnChsIFuQ)
+
+  WhatsApp: +917559305753
+
+  Email: shubhamdhage000@gmail.com
+
+## Referencias
+
+1. [Metaplex Docs](https://docs.metaplex.com/)
+2. [Web3.js](https://github.com/ChainSafe/web3.js)
+3. [Metaboss](https://metaboss.rs/update.html)
