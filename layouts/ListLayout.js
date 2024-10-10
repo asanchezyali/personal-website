@@ -1,16 +1,19 @@
-import React, { useState, useContext, useMemo } from 'react'
+import React, { useState, useContext, useMemo, useEffect } from 'react'
+import { useRouter } from 'next/router'
 import Pagination from '@/components/Pagination'
 import ArticleOverview from '@/components/ArticleOverview'
 import metaLabels from '@/data/metaLabels'
 import { LanguageContext } from '@/providers/LanguageProvider'
 
-const ListLayout = ({ posts, title, initialDisplayPosts = [], pagination }) => {
+const ListLayout = ({ posts, title, pagination }) => {
+  const router = useRouter()
   const [searchValue, setSearchValue] = useState('')
-  const [currentPage, setCurrentPage] = useState(1)
   const [selectedTag, setSelectedTag] = useState(null)
   const [showAllTags, setShowAllTags] = useState(false)
   const { language } = useContext(LanguageContext)
   const postsPerPage = 9
+
+  const [currentPage, setCurrentPage] = useState(pagination.currentPage)
 
   const filteredPosts = useMemo(() => {
     return posts.filter(
@@ -52,11 +55,23 @@ const ListLayout = ({ posts, title, initialDisplayPosts = [], pagination }) => {
     })
   }, [filteredPosts, searchValue, selectedTag])
 
-  const indexOfLastPost = currentPage * postsPerPage
-  const indexOfFirstPost = indexOfLastPost - postsPerPage
-  const currentPosts = filteredBlogPosts.slice(indexOfFirstPost, indexOfLastPost)
+  const totalPages = Math.ceil(filteredBlogPosts.length / postsPerPage)
 
-  const paginate = (pageNumber) => setCurrentPage(pageNumber)
+  const currentPosts = useMemo(() => {
+    const indexOfLastPost = currentPage * postsPerPage
+    const indexOfFirstPost = indexOfLastPost - postsPerPage
+    return filteredBlogPosts.slice(indexOfFirstPost, indexOfLastPost)
+  }, [filteredBlogPosts, currentPage, postsPerPage])
+
+  const paginate = (pageNumber) => {
+    setCurrentPage(pageNumber)
+    router.push(`/blog/page/${pageNumber}`, undefined, { shallow: true })
+  }
+
+  useEffect(() => {
+    const page = parseInt(router.query.page) || 1
+    setCurrentPage(page)
+  }, [router.query.page])
 
   const handleTagClick = (tag) => {
     if (tag === selectedTag) {
@@ -159,11 +174,7 @@ const ListLayout = ({ posts, title, initialDisplayPosts = [], pagination }) => {
         </ul>
       </div>
       {filteredBlogPosts.length > postsPerPage && (
-        <Pagination
-          currentPage={currentPage}
-          totalPages={Math.ceil(filteredBlogPosts.length / postsPerPage)}
-          onPageChange={paginate}
-        />
+        <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={paginate} />
       )}
     </>
   )
