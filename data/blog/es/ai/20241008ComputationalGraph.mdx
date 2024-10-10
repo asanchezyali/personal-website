@@ -1,0 +1,114 @@
+---
+title: 'Grafos computacionales en Python: potenciando el aprendizaje automático'
+date: '2024/10/08'
+tags:
+  [
+    'IA',
+    'Python',
+    'Machine Learning',
+    'Grafos Computacionales',
+    'Deep Learning',
+    'Diferenciación Automática',
+  ]
+draft: false
+time: '15 min'
+summary: 'Los grafos computacionales son una herramienta poderosa para el aprendizaje automático. En este artículo, aprenderás cómo usarlos en Python para mejorar tus modelos de aprendizaje automático.'
+bibliography: references-data.bib
+canonicalUrl: 'https://www.asanchezyali.com/blog/es/number-theory/20230108DivisionAlgorithm'
+headerImage: '/images/ai/computational-graph-v01.jpg'
+images: ['/images/ai/computational-graph-v01.jpg']
+language: 'es'
+---
+
+## Introducción a los grafos computacionales
+
+Los **grafos computacionales** son herramientas esenciales en _machine learning_, particularmente en _deep learning_, ya que permiten representar y optimizar operaciones matemáticas complejas. Estos grafos sirven como la base de los frameworks modernos de deep learning, habilitando la computación eficiente y la diferenciación automática, que es crucial para el proceso de entrenamiento de modelos. En pocas palabras, permiten descomponer cálculos complejos en operaciones más simples y manejables.
+
+En este artículo, exploraremos en detalle qué son los grafos computacionales, su importancia en el aprendizaje
+automático y cómo implementarlos de manera práctica en Python. Si quieres entender mejor cómo las redes neuronales
+artificiales (ANNs) se relacionan con los grafos dirigidos acíclicos (DAGs), visita mi artículo: [Redes neuronales representadas como DAGs de programas computacionales parametrizados](https://www.asanchezyali.com/blog/es/differentiable-programming/20240923DifferentiablePrograms).
+
+```python showLineNumbers
+import tensorflow as tf
+
+# Define constants
+a = tf.constant(3.0)
+b = tf.constant(4.0)
+
+# Define an operation
+c = a * b
+
+# Print the result
+print(c)
+
+## Output
+# tf.Tensor(12.0, shape=(), dtype=float32)
+```
+
+En el código anterior, hemos definido dos constantes `a` y `b` y una operación `c` que multiplica ambas constantes. Al
+imprimir el resultado, obtenemos un tensor de TensorFlow con el valor `12.0`. Este es un ejemplo simple de un grafo
+computacional, donde las operaciones se representan como nodos y las constantes como entradas.
+
+## ¿Qué es un grafo computacional?
+
+Un **grafo computacional** es una estructura matemática que representa una secuencia de operaciones matemáticas. En un
+grafo computacional, los nodos representan las operaciones y las aristas representan los datos que fluyen entre ellas.
+Cada nodo en el grafo computacional toma uno o más tensores como entrada y produce uno o más tensores como salida.
+
+Los grafos computacionales son **dirigidos acíclicos**, lo que significa que las aristas tienen una dirección y no hay
+ciclos en la estructura. Esto permite que las operaciones se ejecuten en un orden específico, lo que es esencial para
+el cálculo eficiente de gradientes en el aprendizaje automático.
+
+```python showLineNumbers
+import tensorflow as tf
+
+# Create nodes (operations and variables)
+x = tf.Variable(2.0)
+y = tf.Variable(3.0)
+z = x * y + tf.square(x)
+
+# Compute the result
+result = z.numpy()
+print(f"Result: {result}")
+
+# Output
+# Result: 10.0
+```
+
+En el código anterior, hemos definido tres nodos en el grafo computacional: `x`, `y` y `z`. `x` y `y` son variables, y
+`z` es una operación que involucra multiplicación y cuadrado. Al evaluar el resultado de `z`, obtenemos `10.0`. Este es
+un ejemplo más complejo de un grafo computacional que involucra múltiples operaciones y variables.
+
+## Forwards y backwards en grafos computacionales
+
+## Referencias
+
+<Reference
+  type="image"
+  url="https://unsplash.com/photos/a-blue-abstract-background-with-lines-and-dots-pREq0ns_p_E"
+  text="Conny Schneider. 2023. Unsplash"
+/>
+
+<Reference
+  type="web"
+  url="https://www.tensorflow.org/guide/intro_to_graphs"
+  text="TensorFlow. 2023. Introduction to graphs and tf.function"
+/>
+
+<Reference
+  type="web"
+  url="https://www.geeksforgeeks.org/how-to-form-graphs-in-tensorflow/"
+  text="GeeksforGeeks. 2024. How to form graphs in TensorFlow"
+/>
+
+<Reference
+  type="youtube"
+  url="https://www.youtube.com/watch?v=hM74RH82LyI"
+  text="Neural Networks 6 Computation Graphs and Backward Differentiation"
+/>
+
+<Reference
+  type="web"
+  url="https://colah.github.io/posts/2015-08-Backprop/"
+  text="Colah's Blog. 2015. Calculus on Computational Graphs: Backpropagation"
+/>

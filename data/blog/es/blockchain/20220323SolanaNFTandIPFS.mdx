@@ -3,7 +3,7 @@ title: 'Crea tu propia colección de NFTs en Solana con IPFS'
 date: '2022/03/23'
 lastmod: '2021/02/01'
 tags: ['solana', 'nft', 'metaplex']
-draft: true
+draft: false
 time: '30 min'
 summary: 'Aprende cómo crear tu propia colección de NFTs en Solana utilizando IPFS. Descubre cómo los NFTs están revolucionando los derechos de propiedad digital y cómo puedes aprovechar esta tecnología en Solana.'
 layout: PostLayout
@@ -451,7 +451,7 @@ yarn start
 ```
 
 Cuando se cargue la aplicación, deberías ver:
-![CandiMachine](/images/candymachine.png#center 'Figura 1. User Interface')
+![CandiMachine](/images/blockchain/candymachine.png#center 'Figura 1. User Interface')
 Podrá elegir una criptocartera para conectarse. Independientemente de la criptocartera que selecciones, deberá asegurarse de que algo de SOL de desarrollo. ¿Recuerdas cuando recibimos algunos SOL desde `devnet`? También podemos hacerlo con otra dirección. Conecte su billetera, asegúrese de estar en `devnet`, y luego copie la dirección de la criptocartera que desea usar. Desde la línea de comandos, escriba:
 
 ```bash
@@ -459,13 +459,13 @@ solana airdrop 2 YOUR_PUBLIC_KEY --url devnet
 ```
 
 Una vez que esto esté completo, debería tener SOL en su criptocartera basada en navegador y ahora puede acuñar uno de sus nuevos NFT. Para hacerlo, simplemente haga clic en el botón de acuñar (Mint):
-![CandiMachine](/images/candymachine1.png#center 'Figura 2. Botón para acuñar un NFT')
+![CandiMachine](/images/blockchain/candymachine1.png#center 'Figura 2. Botón para acuñar un NFT')
 
 Deberás confirmar la transacción. Cuando lo haga, el proceso de acuñación solo debería tomar unos segundos. Una vez que esté completo, su nuevo NFT debería aparecer en la colección de NFTs de su criptocartera.
 
 La imagen que ve de su NFT se está cargando desde Pinata. Dependiendo de si proporcionó una URL de puerta de enlace dedicada en su archivo de configuración, el NFT ser carga a través de su puerta de enlace personalizada o una puerta de enlace IPFS pública. Nota: si proporcionó una URL de puerta de enlace dedicada, el NFT será cargado a través de su puerta de enlace personalizada, y si no, el NFT será cargado a través de una puerta de enlace IPFS pública. Puede ver esto en el siguiente ejemplo usando Phantom Wallet. Los dos NFT que están atascados en la carga están usando una puerta de enlace IPFS pública. Los dos que se cargan casi instantáneamente en la carga están usando una puerta de enlace personalizada.
 
-![Wallet](/images/wallet.png#center 'Figura 3. NFTs apostillados en la Wallet personalizada')
+![Wallet](/images/blockchain/wallet.png#center 'Figura 3. NFTs apostillados en la Wallet personalizada')
 
 Al ver su NFT en los mercados de Solana NFT, los activos también se cargarán a través de la puerta de enlace de IPFS. Esto permite que las personas puedan ver el contenido de la forma en que fue diseñado para ser experimentado.
 
