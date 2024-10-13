@@ -25,14 +25,6 @@
   </url>
 
   <url>
-    <loc>https://www.asanchezyali.com/blog/es/blockchain/20220310Solana/</loc>
-  </url>
-
-  <url>
-    <loc>https://www.asanchezyali.com/blog/es/blockchain/20220323SolanaNFTandIPFS/</loc>
-  </url>
-
-  <url>
     <loc>https://www.asanchezyali.com/blog/en/ml/20210712MachineLearning</loc>
   </url>
 
@@ -49,14 +41,6 @@
   </url>
 
   <url>
-    <loc>https://www.asanchezyali.com/blog/es/number-theory/20230108DivisionAlgorithm</loc>
-  </url>
-
-  <url>
-    <loc>https://www.asanchezyali.com/blog/es/number-theory/20230108DivisionAlgorithm</loc>
-  </url>
-
-  <url>
     <loc>https://www.asanchezyali.com/blog/en/number-theory/20230108DivisionAlgorithm</loc>
   </url>
 
@@ -64,6 +48,14 @@
     <loc
       >https://www.asanchezyali.com/blog/en/operator-overloading/20210615OperatorOverloadingInPython</loc
     >
+  </url>
+
+  <url>
+    <loc>https://www.asanchezyali.com/blog/es/number-theory/20230108DivisionAlgorithm</loc>
+  </url>
+
+  <url>
+    <loc>https://www.asanchezyali.com/blog/es/number-theory/20230108DivisionAlgorithm</loc>
   </url>
 
   <url>
@@ -87,6 +79,10 @@
   </url>
 
   <url>
+    <loc>https://www.asanchezyali.com/blog/es/modular-arithmetic/20220510ModularArithmetic</loc>
+  </url>
+
+  <url>
     <loc
       >https://www.asanchezyali.com/blog/en/operator-overloading/20210615OperatorOverloadingInPython</loc
     >
@@ -97,15 +93,7 @@
   </url>
 
   <url>
-    <loc>https://www.asanchezyali.com/blog/es/modular-arithmetic/20220510ModularArithmetic</loc>
-  </url>
-
-  <url>
     <loc>https://asanchezyali.com/tags/ai</loc>
-  </url>
-
-  <url>
-    <loc>https://asanchezyali.com/tags/anchor</loc>
   </url>
 
   <url>
@@ -113,35 +101,11 @@
   </url>
 
   <url>
-    <loc>https://asanchezyali.com/tags/artificial-intelligence</loc>
-  </url>
-
-  <url>
     <loc>https://asanchezyali.com/tags/avatar-ia</loc>
   </url>
 
   <url>
-    <loc>https://asanchezyali.com/tags/blockchain</loc>
-  </url>
-
-  <url>
-    <loc>https://asanchezyali.com/tags/book</loc>
-  </url>
-
-  <url>
-    <loc>https://asanchezyali.com/tags/canada</loc>
-  </url>
-
-  <url>
-    <loc>https://asanchezyali.com/tags/ciencias-de-la-computación</loc>
-  </url>
-
-  <url>
-    <loc>https://asanchezyali.com/tags/clases</loc>
-  </url>
-
-  <url>
-    <loc>https://asanchezyali.com/tags/clasificación</loc>
+    <loc>https://asanchezyali.com/tags/artificial-intelligence</loc>
   </url>
 
   <url>
@@ -149,11 +113,15 @@
   </url>
 
   <url>
-    <loc>https://asanchezyali.com/tags/computer-science</loc>
+    <loc>https://asanchezyali.com/tags/clases</loc>
   </url>
 
   <url>
-    <loc>https://asanchezyali.com/tags/code</loc>
+    <loc>https://asanchezyali.com/tags/ciencias-de-la-computación</loc>
+  </url>
+
+  <url>
+    <loc>https://asanchezyali.com/tags/computer-science</loc>
   </url>
 
   <url>
@@ -165,27 +133,11 @@
   </url>
 
   <url>
-    <loc>https://asanchezyali.com/tags/digital-human</loc>
-  </url>
-
-  <url>
     <loc>https://asanchezyali.com/tags/diferenciación-automática</loc>
   </url>
 
   <url>
-    <loc>https://asanchezyali.com/tags/español</loc>
-  </url>
-
-  <url>
-    <loc>https://asanchezyali.com/tags/feature</loc>
-  </url>
-
-  <url>
-    <loc>https://asanchezyali.com/tags/features</loc>
-  </url>
-
-  <url>
-    <loc>https://asanchezyali.com/tags/github</loc>
+    <loc>https://asanchezyali.com/tags/digital-human</loc>
   </url>
 
   <url>
@@ -197,19 +149,7 @@
   </url>
 
   <url>
-    <loc>https://asanchezyali.com/tags/guide</loc>
-  </url>
-
-  <url>
-    <loc>https://asanchezyali.com/tags/holiday</loc>
-  </url>
-
-  <url>
     <loc>https://asanchezyali.com/tags/hugging-face</loc>
-  </url>
-
-  <url>
-    <loc>https://asanchezyali.com/tags/ia</loc>
   </url>
 
   <url>
@@ -217,7 +157,7 @@
   </url>
 
   <url>
-    <loc>https://asanchezyali.com/tags/images</loc>
+    <loc>https://asanchezyali.com/tags/ia</loc>
   </url>
 
   <url>
@@ -233,23 +173,15 @@
   </url>
 
   <url>
-    <loc>https://asanchezyali.com/tags/lipsync</loc>
-  </url>
-
-  <url>
-    <loc>https://asanchezyali.com/tags/machine-learning</loc>
-  </url>
-
-  <url>
-    <loc>https://asanchezyali.com/tags/llm</loc>
-  </url>
-
-  <url>
     <loc>https://asanchezyali.com/tags/lip-sync</loc>
   </url>
 
   <url>
-    <loc>https://asanchezyali.com/tags/markdown</loc>
+    <loc>https://asanchezyali.com/tags/lipsync</loc>
+  </url>
+
+  <url>
+    <loc>https://asanchezyali.com/tags/llm</loc>
   </url>
 
   <url>
@@ -261,11 +193,7 @@
   </url>
 
   <url>
-    <loc>https://asanchezyali.com/tags/math</loc>
-  </url>
-
-  <url>
-    <loc>https://asanchezyali.com/tags/multi-author</loc>
+    <loc>https://asanchezyali.com/tags/machine-learning</loc>
   </url>
 
   <url>
@@ -277,14 +205,6 @@
   </url>
 
   <url>
-    <loc>https://asanchezyali.com/tags/next-js</loc>
-  </url>
-
-  <url>
-    <loc>https://asanchezyali.com/tags/ols</loc>
-  </url>
-
-  <url>
     <loc>https://asanchezyali.com/tags/number-theory</loc>
   </url>
 
@@ -293,15 +213,11 @@
   </url>
 
   <url>
-    <loc>https://asanchezyali.com/tags/operator-overloading</loc>
-  </url>
-
-  <url>
     <loc>https://asanchezyali.com/tags/operadores</loc>
   </url>
 
   <url>
-    <loc>https://asanchezyali.com/tags/phantom-wallet</loc>
+    <loc>https://asanchezyali.com/tags/operator-overloading</loc>
   </url>
 
   <url>
@@ -313,19 +229,7 @@
   </url>
 
   <url>
-    <loc>https://asanchezyali.com/tags/reflection</loc>
-  </url>
-
-  <url>
     <loc>https://asanchezyali.com/tags/sobrecarga-de-operadores</loc>
-  </url>
-
-  <url>
-    <loc>https://asanchezyali.com/tags/regresión</loc>
-  </url>
-
-  <url>
-    <loc>https://asanchezyali.com/tags/smart-contracts</loc>
   </url>
 
   <url>
@@ -337,23 +241,11 @@
   </url>
 
   <url>
-    <loc>https://asanchezyali.com/tags/tareas-de-aprendizaje</loc>
-  </url>
-
-  <url>
     <loc>https://asanchezyali.com/tags/teoría-de-números</loc>
   </url>
 
   <url>
-    <loc>https://asanchezyali.com/tags/tailwind</loc>
-  </url>
-
-  <url>
     <loc>https://asanchezyali.com/tags/transformers</loc>
-  </url>
-
-  <url>
-    <loc>https://asanchezyali.com/tags/writings</loc>
   </url>
 
   <url>

@@ -71,26 +71,6 @@
   </item>
 
   <item>
-    <guid>https://asanchezyali.com/blog/en/blockchain/20220323SolanaNFTandIPFS</guid>
-    <title>Crea tu propia colección de NFTs en Solana con IPFS</title>
-    <link>https://asanchezyali.com/blog/en/blockchain/20220323SolanaNFTandIPFS</link>
-    <description>Aprende cómo crear tu propia colección de NFTs en Solana utilizando IPFS. Descubre cómo los NFTs están revolucionando los derechos de propiedad digital y cómo puedes aprovechar esta tecnología en Solana.</description>
-    <pubDate>Wed, 23 Mar 2022 05:00:00 GMT</pubDate>
-    <author>asanchezyali@gmail.com (Alejandro Sánchez Yalí)</author>
-    <category>solana</category><category>nft</category><category>metaplex</category>
-  </item>
-
-  <item>
-    <guid>https://asanchezyali.com/blog/en/blockchain/20220310Solana</guid>
-    <title>Desarrollando Dapps en Solana</title>
-    <link>https://asanchezyali.com/blog/en/blockchain/20220310Solana</link>
-    <description>Solana es una blockchain de alto rendimiento que permite el desarrollo de aplicaciones descentralizadas (Dapps) mediante herramientas como Anchor y la criptocartera Phantom. En este tutorial, aprenderás a construir el código base para tu propia Dapp en Solana.</description>
-    <pubDate>Thu, 10 Mar 2022 05:00:00 GMT</pubDate>
-    <author>asanchezyali@gmail.com (Alejandro Sánchez Yalí)</author>
-    <category>solana</category><category>dapps</category>
-  </item>
-
-  <item>
     <guid>https://asanchezyali.com/blog/en/ml/20210712MachineLearning</guid>
     <title>Exploring Machine and Human Learning: Principles and Processes</title>
     <link>https://asanchezyali.com/blog/en/ml/20210712MachineLearning</link>
