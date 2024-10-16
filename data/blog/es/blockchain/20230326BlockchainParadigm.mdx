@@ -3,13 +3,14 @@ title: 'Descifrando el enigma del blockchain en siete pasos - Parte 1'
 date: '2023/03/26'
 lastmod: '2023-03-26'
 tags: ['blockchain', 'smart-contracts', 'dapps']
-draft: true
+draft: false
 time: '40 min'
 summary: 'En este tutorial se presenta una introducción básica al mundo del blockchain en siete pasos. Se explican los conceptos clave de la tecnología, desde la estructura básica de los bloques hasta los algoritmos de consenso, como prueba de trabajo y prueba de participación. También se discuten los smart contracts, los wallets y las aplicaciones descentralizadas (dApps), y cómo estas herramientas permiten el desarrollo de aplicaciones descentralizadas. Al final de este tutorial, se espera que los lectores tengan una comprensión sólida de los fundamentos del blockchain y cómo se utiliza en el mundo de las criptomonedas y más allá.'
 layout: PostLayout
 bibliography: references-data.bib
 canonicalUrl: https://www.asanchezyali.com/blog/es/blockchain/20230326BlockchainParadigm/
-headerImage: '/images/post-solana.webp'
+headerImage: '/images/blockchain/post-solana.webp'
+images: ['/images/blockchain/post-solana.webp']
 language: 'es'
 ---
 
@@ -29,11 +30,11 @@ En el caso de una Blockchain, por ejemplo Ethereum, se utiliza una máquina de e
 
 $$
 \begin{equation}
-\sigma_{t+1} = \Gamma(\sigma_{t}, T)
+\sigma_{t+1} \equiv \Upsilon(\sigma_{t}, T)
 \end{equation}
 $$
 
-En donde $\sigma_{t}$ es el estado de la red en el tiempo $t$, $\Gamma$ es la función de transición que describe el comportamiento de la red, y $T$ es la transacción que se ejecuta en el tiempo $t$. Toda esta ecuación nos está diciendo que el estado de la red en el tiempo $t+1$ es el resultado de ejecutar la función de transición $\Gamma$ sobre el estado de la red en el tiempo $t$ y la transacción $T$ que se ejecuta en el tiempo $t$.
+En donde $\sigma_{t}$ es el estado de la red en el tiempo $t$, $\Upsilon$ es la función de transición que describe el comportamiento de la red, y $T$ es la transacción que se ejecuta en el tiempo $t$. Toda esta ecuación nos está diciendo que el estado de la red en el tiempo $t+1$ es el resultado de ejecutar la función de transición $\Upsilon$ sobre el estado de la red en el tiempo $t$ y la transacción $T$ que se ejecuta en el tiempo $t$.
 
 ## ¿Cómo se almacena la información en el blockchain?
 
@@ -49,7 +50,7 @@ Por lo tanto, de acuerdo al artículo de Ethereum, un bloque se puede representa
 
 $$
 \begin{equation}
-B \cong (\dots, (T_0, T_1, \dots))
+B \equiv (\dots, (T_0, T_1, \dots))
 \end{equation}
 $$
 
@@ -59,15 +60,15 @@ Como hemos visto ya con el caso de Bitcoin, las blockchain no procesan las trans
 
 $$
 \begin{equation}
-\sigma_{t+1} = \pi (\sigma_t, B)
+\sigma_{t+1} \equiv \Pi (\sigma_t, B)
 \end{equation}
 $$
 
-En donde $\pi$ es la función transacción que describe el cambio de estado de la red. En la ecuación (3), $\sigma_{t+1}$ es el estado de la red en el tiempo $t+1$, $\sigma_{t}$ es el estado de la red en el tiempo $t$, y $B$ es el bloque que se incluye en el tiempo $t$. Esta ecuación dice que el estado de la red se actualizará aplicando las transacciones de un bloque al estado actual, produciendo un nuevo estado. Todo este proceso es consolidado en un nuevo bloque que se agrega a la blockchain, de la siguiente manera:
+En donde $\Pi$ es la función transacción que describe el cambio de estado de la red. En la ecuación (3), $\sigma_{t+1}$ es el estado de la red en el tiempo $t+1$, $\sigma_{t}$ es el estado de la red en el tiempo $t$, y $B$ es el bloque que se incluye en el tiempo $t$. Esta ecuación dice que el estado de la red se actualizará aplicando las transacciones de un bloque al estado actual, produciendo un nuevo estado. Todo este proceso es consolidado en un nuevo bloque que se agrega a la blockchain, de la siguiente manera:
 
 $$
 \begin{equation}
-\pi(\sigma, B) = \Omega(B, \Gamma(\Gamma(\sigma, T_0), T_1), \dots)
+\Pi(\sigma, B) \equiv \Omega(B, \Upsilon(\Upsilon(\sigma, T_0), T_1), \dots)
 \end{equation}
 $$
 

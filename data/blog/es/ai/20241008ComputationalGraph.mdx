@@ -15,8 +15,8 @@ time: '15 min'
 summary: 'Los grafos computacionales son una herramienta poderosa para el aprendizaje automático. En este artículo, aprenderás cómo usarlos en Python para mejorar tus modelos de aprendizaje automático.'
 bibliography: references-data.bib
 canonicalUrl: 'https://www.asanchezyali.com/blog/es/number-theory/20230108DivisionAlgorithm'
-headerImage: '/images/ai/computational-graph-v01.jpg'
-images: ['/images/ai/computational-graph-v01.jpg']
+headerImage: '/images/ai/computational-graph/computational-graph-v01.jpg'
+images: ['/images/ai/computation-graph/computational-graph-v01.jpg']
 language: 'es'
 ---
 
@@ -46,7 +46,8 @@ print(c)
 ```
 
 En el código anterior, hemos definido dos constantes `a` y `b` y una operación `c` que multiplica ambas constantes. Al
-imprimir el resultado, obtenemos un tensor de TensorFlow con el valor `12.0`. Este es un ejemplo simple de un grafo
+imprimir el resultado, obtenemos un tensor de TensorFlow con el valor `12.0`. Este es un ejemplo simple se puede
+representar un grafo
 computacional, donde las operaciones se representan como nodos y las constantes como entradas.
 
 ## ¿Qué es un grafo computacional?
@@ -75,11 +76,56 @@ print(f"Result: {result}")
 # Result: 10.0
 ```
 
-En el código anterior, hemos definido tres nodos en el grafo computacional: `x`, `y` y `z`. `x` y `y` son variables, y
-`z` es una operación que involucra multiplicación y cuadrado. Al evaluar el resultado de `z`, obtenemos `10.0`. Este es
-un ejemplo más complejo de un grafo computacional que involucra múltiples operaciones y variables.
+En el código anterior, hemos definido tres nodos en el grafo computacional: `+`, `*` y `$\square^2$`. En este caso las
+primeras dos operaciones son multiplicación y el cuadrado de `x`, respectivamente, que toman por entrada las variables
+`x` e `y`. Luego se ejecuta la operación de suma entre los resultados de las dos operaciones anteriores. Finalmente, se
+imprime el resultado, que es `10.0`. Este es un ejemplo simple de cómo se ejecutan las operaciones en grafo computacional.
 
-## Forwards y backwards en grafos computacionales
+## Forward propagation en grafos computacionales
+
+_**Forward propagation**_ (o _forward pass_) se refiere al proceso de calcular y almacenar los variables intermedias
+(incluyendo las salidas) de un grafo computacional. En el _forward propagation_, los datos fluyen desde las entradas a
+las salidas a través de las operaciones definidas en el grafo.
+
+```python showLineNumbers
+import tensorflow as tf
+
+def forward_pass(x):
+    w1 = tf.Variable(3.0)
+    b1 = tf.Variable(4.0)
+    w2 = tf.Variable(1.0)
+    b2 = tf.Variable(0.5)
+
+    # First layer
+    z1 = w1 * x + b1
+    a1 = tf.nn.relu(z1)
+
+    # Second layer
+    z2 = w2 * a1 + b2
+    a2 = tf.nn.sigmoid(z2)
+
+    return a2
+
+# Compute the result
+x = tf.constant(2.0)
+result = forward_pass(x).numpy()
+print(f"Result: {result}")
+
+# Output
+# Result: 0.9999724626541138
+```
+
+Si ahora vamos paso a paso en el código anterior, primero definimos las variables `w1`, `b1`, `w2` y `b2`, que son los
+pesos y sesgos de las dos capas de la red neuronal. Luego, calculamos las salidas de la primera capa (`z1` y `a1`) y de
+la segunda capa (`z2` y `a2`) utilizando las operaciones de multiplicación y suma. Finalmente, aplicamos las funciones
+de activación `ReLU` y `sigmoid` a las salidas de las capas respectivas y devolvemos el resultado final.
+
+## Diferenciación automática en grafos computacionales
+
+Una aplicación importante de los grafos computacionales es la diferenciación automática (AD por sus siglas en inglés).
+En general, hay tres tipos de AD, que son: _reverse-mode_, _forward-mode_ y _mixed-mode_. En el aprendizaje automático.
+
+Básicamente, el _forward-mode_ y el _reverse-mode_ DA ambos usan la regla de la cadena para calcular los gradiente.
 
 ## Referencias
 
@@ -111,4 +157,22 @@ un ejemplo más complejo de un grafo computacional que involucra múltiples oper
   type="web"
   url="https://colah.github.io/posts/2015-08-Backprop/"
   text="Colah's Blog. 2015. Calculus on Computational Graphs: Backpropagation"
+/>
+
+<Reference
+  type="web"
+  url="https://kailaix.github.io/ADCME.jl/latest/tu_whatis/"
+  text="ADCME. 2023. What is ADCME? Computational Graph, Automatic Differentiation, and TensorFlor"
+/>
+
+<Reference
+  type="web"
+  url="https://www.youtube.com/watch?v=r9_5dxtDTOk"
+  text="MIT Open Course Ware. 2013. Matrix Calculus For Machine Learning And Beyond, IAP 2023"
+/>
+
+<Reference
+  type="github"
+  url="https://github.com/xbeat/Machine-Learning/blob/main/Computational%20Graphs%20for%20Machine%20Learning%20in%20Python.md"
+  text="Giuseppe Canale. 2024. Computational Graphs for Machine Learning in Python"
 />
