@@ -61,16 +61,6 @@
   </item>
 
   <item>
-    <guid>https://asanchezyali.com/blog/es/blockchain/20230326BlockchainParadigm</guid>
-    <title>Descifrando el enigma del blockchain en siete pasos - Parte 1</title>
-    <link>https://asanchezyali.com/blog/es/blockchain/20230326BlockchainParadigm</link>
-    <description>En este tutorial se presenta una introducción básica al mundo del blockchain en siete pasos. Se explican los conceptos clave de la tecnología, desde la estructura básica de los bloques hasta los algoritmos de consenso, como prueba de trabajo y prueba de participación. También se discuten los smart contracts, los wallets y las aplicaciones descentralizadas (dApps), y cómo estas herramientas permiten el desarrollo de aplicaciones descentralizadas. Al final de este tutorial, se espera que los lectores tengan una comprensión sólida de los fundamentos del blockchain y cómo se utiliza en el mundo de las criptomonedas y más allá.</description>
-    <pubDate>Sun, 26 Mar 2023 05:00:00 GMT</pubDate>
-    <author>asanchezyali@gmail.com (Alejandro Sánchez Yalí)</author>
-    <category>blockchain</category><category>smart-contracts</category><category>dapps</category>
-  </item>
-
-  <item>
     <guid>https://asanchezyali.com/blog/es/number-theory/20230108DivisionAlgorithm</guid>
     <title>Algoritmo de la división</title>
     <link>https://asanchezyali.com/blog/es/number-theory/20230108DivisionAlgorithm</link>
