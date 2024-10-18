@@ -31,6 +31,8 @@ Here’s a list of the latest posts from the blog:
 6. [Operator Overloading in Python.](https://www.asanchezyali.com/blog/en/operator-overloading/20210615OperatorOverloadingInPython)
 7. [Neural networks represented as DAGs of parameterized computational programs](https://www.asanchezyali.com/blog/en/differentiable-programming/20240923DifferentiablePrograms)
 8. [Zero-Shot Text Classification](https://www.asanchezyali.com/blog/en/ai/20240917ZeroShot)
+9. [Create Your Own NFT Collection on Solana with IPFS](https://www.asanchezyali.com/blog/en/blockchain/20220323SolanaNFTandIPFS)
+10. [Developing Dapps on Solana](https://www.asanchezyali.com/blog/en/blockchain/20220310Solana)
 
 _More posts to come! Stay tuned._ 🎉
 
