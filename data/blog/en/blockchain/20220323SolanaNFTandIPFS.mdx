@@ -1,0 +1,463 @@
+---
+title: 'Create Your Own NFT Collection on Solana with IPFS'
+date: '2022/03/23'
+lastmod: '2021/02/01'
+tags: ['solana', 'nft', 'metaplex']
+draft: false
+time: '30 min'
+summary: 'Learn how to create your own NFT collection on Solana using IPFS. Discover how NFTs are revolutionizing digital property rights and how you can leverage this technology on Solana.'
+layout: PostLayout
+bibliography: references-data.bib
+canonicalUrl: https://www.asanchezyali.com/blog/es/blockchain/20220323SolanaNFTandIPFS/
+headerImage: '/images/blockchain/post-solanaNFTandIPFS.webp'
+images: ['/images/blockchain/post-solanaNFTandIPFS.webp']
+language: 'en'
+---
+
+The goal of this article is to provide a step-by-step guide to create an NFT (Non-Fungible Token) collection using the Solana blockchain with IPFS (InterPlanetary File System) through Pinata. If you're interested in understanding in depth what NFTs are and how they represent a revolution in digital property rights, we recommend reading Nick Szabo's article, [_Secure Property Titles with Owner Authority_](https://nakamotoinstitute.org/secure-property-titles/), where you'll find some of the fundamental ideas behind this concept.
+
+This tutorial is especially relevant as Solana has been closely linked to [Arweave](https://www.arweave.org/), but there are many projects that prefer to use IPFS to store their data due to its fast access and reliability. Additionally, Metaplex is a project built to facilitate the creation of NFT projects on Solana and has support for IPFS, including the ability to use Pinata to store content and serve it through a dedicated IPFS API Gateway. In this tutorial, we'll show you how to create an NFT collection using these tools.
+
+## Setting up the work environment
+
+To start, you should register on [Pinata](https://www.pinata.cloud/). If you want to do tests, you can use the free plan, however for launching a large collection of NFTs on the main network, the recommendation is to consider the professional plan with a dedicated IPFS API Gateway.
+
+Once you've signed up for Pinata, you just need to make sure you have the following items installed (in the list below, each of them is linked to installation instructions in case you need to install them):
+
+- [Node.js](https://nodejs.org/en/download/) - version 16.13.0 or the most recent.
+- [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) - version 2.32.0 or the most recent.
+- [Yarn](https://classic.yarnpkg.com/lang/en/docs/install/#mac-stable) - version 1.22.17 or the most recent.
+- [TS-Node](https://www.npmjs.com/package/ts-node#installation) - version 10.4.0 or the most recent.
+- [Solana CLI](https://docs.solana.com/cli/install-solana-cli-tools) - version 1.8.16 or the most recent.
+
+If it's of any use, we'll follow most of the instructions from the [Metaplex](https://docs.metaplex.com/candy-machine-v2/getting-started) website with some modifications to upload content to IPFS through Pinata.
+
+## Preparing the assets
+
+In this tutorial, I'm not going to teach you how to generate the assets for your NFT project. That's a completely separate job that has to be done before deploying the contract on Solana. So, I'm going to assume that you already have a collection of images to create your NFTs. Next, let's see how to prepare them to upload to IPFS through Metaplex.
+
+The first step is to create a folder for your NFT project assets. From the command line, run the following command:
+
+```shell
+mkdir nft-project
+```
+
+Inside that folder, create another folder called `assets`. In the `assets` folder, add all your images. It's important that each of your images is labeled in a base 10 index format. That means the first image would be `0.png` and the second would be `1.png` and so on.
+
+Once your images are in the folder, you'll need to create the metadata for these images. If you have any experience with Ethereum NFT metadata, you'll feel right at home with Solana NFT metadata. The structure is almost identical. Let's take a look at a basic JSON metadata file structure for NFTs on Solana:
+
+```json
+{
+  "name": "Number #0001",
+  "symbol": "NB",
+  "description": "Collection of 10 numbers on the blockchain. This is the number 1/10.",
+  "image": "0.png",
+  "attributes": [
+    { "trait_type": "Layer-1", "value": "0" },
+    { "trait_type": "Layer-2", "value": "0" },
+    { "trait_type": "Layer-3", "value": "0" },
+    { "trait_type": "Layer-4", "value": "1" }
+  ],
+  "properties": {
+    "creators": [{ "address": "ADDRESS_FROM_CREATOR", "share": 100 }],
+    "files": [{ "uri": "0.png", "type": "image/png" }]
+  },
+  "collection": { "name": "numbers", "family": "numbers" }
+}
+```
+
+Just like with the Ethereum metadata standard, the Solana metadata standard has a name, an image, and a description. Additionally, attributes can be included (just like with ETH), a symbol, and billing details. In Ethereum projects, the token symbol is usually assigned in the contract implementation and not in the metadata. Another difference is the properties part of Solana metadata. This is necessary and allows you to include a series of files for your NFTs. You must have at least one file in that array that points to the same asset as the image property, but you can include other files that make up your complete NFT. This is a really interesting concept that should be explored further, but for the sake of this article, we're only going to operate with single-asset NFTs.
+
+If you want to delve deeper into the Solana metadata standard for NFTs, you can do so
+[here](https://docs.metaplex.com/candy-machine-v2/preparing-assets).
+
+# Setting Up an NFT Collection on Solana
+
+## Generating Metadata
+
+Now that we have the images in the folder, we know that these images need to be named in a specific way. And we know that we need the JSON metadata files. How are we going to get those JSON files created and added to the assets folder? You could do it manually, but with a 10,000 NFT project, that would be almost impossible.
+
+Let's write a script to create the metadata files.
+
+From your command line, make sure you're in the `nft-project` folder. We'll create a new file called `metadata-generator.js` by running this command: `touch metadata-generator.js`.
+
+In your code editor, open that new file. It's empty, but we'll fill it now. We need to go through all the images in our assets folder and create a single JSON file for each one. We need to name and save that JSON file in the same assets folder. To do this, we'll make use of the Node.js `fs` which is built into Node.js.
+
+In your `metadata-generator.js` file add this code:
+
+```javascript
+const fs = require('fs')
+const imageDir = fs.readdirSync('./assets')
+imageDir.forEach((img) => {
+  const metadata = {
+    name: `Image ${img.split('.')[0]}`,
+    description: 'YOUR DESCRIPTION HERE',
+    symbol: 'YOUR_NFT_COLLECTION_SHORT_SYMBOL',
+    image: img,
+    seller_fee_basis_points: 'ROYALTIES_PERCENTAGE_BASIS_POINTS',
+    properties: {
+      files: [{ uri: img, type: 'image/png' }],
+      category: 'image',
+      creators: [
+        {
+          address: 'YOUR_SOL_WALLET_ADDRESS',
+          share: 100,
+        },
+      ],
+    },
+  }
+  fs.writeFileSync(`./assets/${img.split('.')[0]}.json`, JSON.stringify(metadata))
+})
+```
+
+Of course, you could customize this for your project. Give your images different names, add the attributes array, etc. This is a very basic example, but it will get you started.
+
+To run your script and generate the metadata, you should run this command from the root of your project folder: `node metadata-generator.js`.
+
+When the script has run, you'll have an assets folder that has images and JSON files together and should look similar to this:
+
+```
+.
+├── assets
+│   ├── 0.json
+│   ├── 0.png
+│   ├── 1.json
+│   ├── 1.png
+│   ├── 2.json
+│   └── 2.png
+└── metadata-generator.js
+```
+
+Great, we now have our assets ready to get started. Now let's start using Metaplex to get going with Solana.
+
+## Metaplex
+
+[Metaplex](https://www.metaplex.com/) is a tool that facilitates the launch of an NFT project on Solana. Instead of having to write your own program ("smart contract") as you would have to do with Ethereum, Metaplex has pre-written contracts that projects can use. For this to work, Metaplex needs to be able to access the files associated with the NFTs, then it needs to be able to upload those files and associate them with each token that is going to be minted.
+
+Metaplex has support for IPFS through some services, but here we'll focus on using Pinata.
+
+We'll follow the standard Metaplex guide for Candy Machine 2 which can be found [here](https://docs.metaplex.com/candy-machine-v2/getting-started). The first step will be to clone Metaplex. To do this run the following command in your terminal:
+
+```
+git clone https://github.com/metaplex-foundation/metaplex.git ~/metaplex
+```
+
+We're cloning the directory into the home directory so we don't have to remember where the project was cloned, we'll create the following shortcut:
+
+```
+export candymachine=«YOUR_ROOT_PATH»/metaplex/js/packages/cli/src/candy-machine-v2-cli.ts
+```
+
+Inside the new metaplex repository there is code to support the JavaScript CLI that we are going to use. Therefore, we need to install the dependencies for that CLI code.
+
+```
+yarn install --cwd ~/metaplex/js/
+```
+
+Now, let's make sure the installation worked. Remember we installed `TS-Node`? We're going to use it to run a command for the metaplex CLI:
+
+```
+ts-node $candymachine --version
+```
+
+This should print a version if everything was installed correctly. Now, we need to make sure the Solana CLI is working. For this, run the following command to get the version number:
+
+```
+solana --version
+```
+
+If that works, you're ready. If not, check that you've installed the [Solana CLI Toolkit](https://docs.solana.com/cli/install-solana-cli-tools). Next, we'll use that CLI to create a wallet on the `devnet` test network. Solana's `devnet` is where we can experiment without fear of incurring any real financial impact.
+
+Run this command to create a new paper wallet and store the credentials:
+
+```
+solana-keygen new --outfile ~/.config/solana/«NAME_FROM_MY_WALLET_PAPER».json
+```
+
+Now, we can set the default key pair for our Solana CLI interactions:
+
+```
+solana config set --keypair ~/.config/solana/«NAME_FROM_MY_WALLET_PAPER».json
+```
+
+Finally, let's configure the CLI to interact with the `devnet`:
+
+```
+solana config set --url devnet
+```
+
+To check the current network configuration (and others) we can use this command:
+
+```
+solana config get
+```
+
+With the CLI we can see our wallet address:
+
+```
+solana address
+```
+
+Next we're going to get some Solanas, to do this, make sure you're on the `devnet`, as our dapp will work on this network. To get the solanas we do:
+
+```
+solana airdrop 2 «YOUR_WALLET_ADDRESS» --url devnet
+```
+
+To get the complete information of our account:
+
+```
+solana account «YOUR_WALLET_ADDRESS»
+```
+
+To verify the balance of our wallet we do:
+
+```
+solana balance «YOUR_WALLET_ADDRESS»
+```
+
+Up to this point we have managed to create a paper wallet and fund it with two solanas, cryptocurrencies that we will use later to test our application. Next we'll see how we can switch between each of Solana's networks (localhost, testnet, devnet and mainnet-beta).
+
+## NFT Collection Configuration
+
+This is the most important part of the entire development, so you can see the details in the [official
+documentation](https://docs.metaplex.com/candy-machine-v2/configuration). Metaplex uses a tool called Candy Machine to
+generate the NFTs, and it's important to make sure your project is perfectly configured. In the root of your project,
+create a JSON file called config.json. Then, enter a configuration like this:
+
+```json
+{
+  "price": 0.05,
+  "number": 3,
+  "gatekeeper": null,
+  "solTreasuryAccount": "YOUR_DEVNET_WALLET_ADDRESS",
+  "splTokenAccount": null,
+  "splToken": null,
+  "goLiveDate": "01 Jan 2022 00:00:00 GMT",
+  "endSettings": null,
+  "whitelistMintSettings": null,
+  "hiddenSettings": null,
+  "storage": "pinata",
+  "ipfsInfuraProjectId": null,
+  "ipfsInfuraSecret": null,
+  "pinataJwt": "YOUR_PINATA_JWT_TOKEN",
+  "pinataGateway": "YOUR_PINATA_GATEWAY_URL",
+  "awsS3Bucket": null,
+  "noRetainAuthority": false,
+  "noMutable": false
+}
+```
+
+This may seem like a lot, but it's actually just the minimum required configuration. There's much more you can add. However, don't worry. We'll keep it simple. You only need to change five things in this file. The first change is to set the `storage` property to point to `pinata`.
+
+Then, you need to decide whether you're going to use a [Pinata Dedicated Gateway](https://knowledge.pinata.cloud/en/articles/5666429-dedicated-gateways) or not. If you do, it will give you and anyone who loads your NFT the best possible performance. But, although recommended, it's not mandatory. If you decide on a Pinata Dedicated Gateway, you'll need to upgrade your account to the [professional plan](https://www.pinata.cloud/pricing) on Pinata.
+
+Next, you need to get a JWT to access the Pinata API. To do this, click on the dropdown menu in the top right, click on API Keys, and then generate a new API key. You can select the specific endpoints the key should have access to (pinFileToIPFS) or you can make it an admin key that has full access. This depends on your security preferences, but the key must have access to pinFileToIPFS. You can read more about API Keys [here](https://medium.com/pinata/introducing-scoped-api-keys-48e808623d5d).
+
+When you've created your key, a modal will display your API KEY, API Secret, and your JWT. We only need the JWT, so copy it and paste it into the value of the pinataJwt property in the configuration file.
+
+If you created a Dedicated Gateway, you should paste your Dedicated Gateway URL into the pinataGateway property of the configuration file. If you don't have a Dedicated Gateway, you should update that property to look like this:
+
+```json
+pinataGateway: null
+```
+
+Finally, you only need to set the number of items in your NFT collection in the `number` property and the price in SOL in the `price` property.
+
+That's all you need. Now, there's much more to do, but I want to point out something that many projects will probably want to do, and that's hiding the NFT assets until after a reveal date. This is possible with Metaplex and CandyMachine with hidden settings. You can read about this [here](https://docs.metaplex.com/candy-machine-v2/configuration#hidden-settings). We won't do that in this tutorial. The NFT project in this tutorial consists of minting an NFT with immediate reveal.
+
+The last thing you'll want to change in the configuration file is the `solTreasuryAccount` property. This should probably point to your wallet address on the `devnet` network, but it can be any Solana wallet address. To get your wallet address on the `devnet` network, you can run this in the command line:
+
+```bash
+solana address
+```
+
+We're now ready to load some assets and create our NFT collection.
+
+## Uploading assets to Pinata and Solana
+
+We've finished all the preparation work. It's time to upload the assets. Fortunately, this is really simple.
+
+In the root of the project directory, run this command in the command line:
+
+```shell
+ts-node $candymachine upload -e devnet -k ~/.config/solana/devnet.json -cp config.json -c nft-project ./assets
+```
+
+```shell:output
+wallet public key: 4aDSG82CdgMwt81z7AwnLnDRZyp6MjvZMUVpT82HZRU9
+(node:12028) ExperimentalWarning: buffer.Blob is an experimental feature. This feature could change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+Beginning the upload for 3 (img+json) pairs
+started at: 1652029177126
+initializing candy machine
+Candy machine address:  ENvMsi3pbpsHYbPRg3fKi6hrr8dGjFWNDTybXFGAhG2b
+Collection metadata address:  6fqwQEJGQGyGpovV6HmYoF5aB7RscoPCR8BmEjh8X4gG
+Collection metadata authority:  4aDSG82CdgMwt81z7AwnLnDRZyp6MjvZMUVpT82HZRU9
+Collection master edition address:  5xMAgL4HpjmwxMkJLsoyekQEGTbZCae1AW6NfTGpuKUZ
+Collection mint address:  Djp7ZCX2q2mJqmxCv1szirsxsA9N7YW77tEoRdASpp92
+Collection PDA address:  98NgHVcz9mV2AdZJCraTR2NHAC8BCvvbtj4ET8gBCijS
+Collection authority record address:  zkqyaNFVQsmsFyXVLYJ1Gt6s8jNHcEn6EHkDtehfBu3
+Collection:  {
+  collectionMetadata: '6fqwQEJGQGyGpovV6HmYoF5aB7RscoPCR8BmEjh8X4gG',
+  collectionPDA: '98NgHVcz9mV2AdZJCraTR2NHAC8BCvvbtj4ET8gBCijS',
+  txId: '3GkHsk7UANvX3aJugj5fs3LEWi8gvb5uFgUkot6rGTRDS5utXRL7tkKE5JVLnHm2EiHw75VfzFQz3bRDf3P3xbk'
+}
+initialized config for a candy machine with publickey: ENvMsi3pbpsHYbPRg3fKi6hrr8dGjFWNDTybXFGAhG2b
+[0] out of [3] items have been uploaded
+Starting upload for [3] items, format {"mediaExt":".png","index":"0"}
+Progress: [░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░] 0% | 0/3uploaded image:  hs
+waiting
+uploaded image:  https://ipfs.io/ipfs/QmcPEs45xLiUV4Wq8e8femHetEFcS6uvDKSn5rq6S3
+waiting
+waiting
+waiting
+uploaded image:  https://ipfs.io/ipfs/QmQEPmMzbSq4JZDSqtTgTDC9M7zrNvjRkaEej3UZga
+waiting
+uploaded manifest:  https://ipfs.io/ipfs/QmPSBJv34txUiuwBXrBXNErQuZTXu6AvjHLsm7D
+Progress: [█████████████░░░░░░░░░░░░░░░░░░░░░░░░░░░] 33% | 1/3uploaded manifest8
+Progress: [███████████████████████████░░░░░░░░░░░░░] 66% | 2/3waiting
+uploaded manifest:  https://ipfs.io/ipfs/QmQSCDDskNTV9nFE1ysHJTedkup4jJ3Vzs4pbdJ
+Progress: [████████████████████████████████████████] 100% | 3/3
+Writing all indices in 1 transactions...
+Progress: [████████████████████████████████████████] 100% | 1/1
+Done. Successful = true.
+ended at: 2022-05-08T17:00:17.542Z. time taken: 00:00:40
+```
+
+This command will take your configuration file and parse it so Metaplex knows how to upload your files and how to get the minted NFT information onto Solana. You'll see in your command line each upload of your metadata from your assets folder and the images from your assets folder. Depending on how many files you're uploading, this process might take a few minutes. So crack open a beer and wait.
+
+When the process is finished, you'll need to do one more thing. You'll need to verify the upload. This helps you know if
+everything is ready and if your NFTs can be minted. You just need to run this command:
+
+```bash
+ts-node $candymachine verify_upload -e devnet -k ~/.config/solana/devnet.json -c nft-project
+
+# Output is something like this:
+wallet public key: "YOUR_DEVNET_WALLET_ADDRESS"
+(node:118910) ExperimentalWarning: buffer.Blob is an experimental feature. This feature could change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+Key size 3
+Looking at key  0
+Looking at key  1
+Looking at key  2
+uploaded (3) out of (3)
+ready to deploy!
+```
+
+If everything goes well, you should see a message that says `ready to deploy!`. This means your project is ready to run. If you want to confirm things, you can find the `.cache` folder in your working directory. Open it and you'll see a JSON file containing information for each uploaded asset. The file should look like the following data structure:
+
+```json
+{
+  "program": {
+    "uuid": "ENvMsi",
+    "candyMachine": "ENvMsi3pbpsHYbPRg3fKi6hrr8dGjFWNDTybXFGAhG2b",
+    "collection": "6fqwQEJGQGyGpovV6HmYoF5aB7RscoPCR8BmEjh8X4gG"
+  },
+  "items": {
+    "0": {
+      "link": "https://ipfs.io/ipfs/QmQSCDDskNTV9nFE1ysHJTedkup4jJ3Vzs4pbdrPExGHSJ",
+      "imageLink": "https://ipfs.io/ipfs/QmQEPmMzbSq4JZDSqtTgTDC9M7zrNvjRkaEej3UZgDjsaa",
+      "name": "Image 0",
+      "onChain": true,
+      "verifyRun": true
+    },
+    "1": {
+      "link": "https://ipfs.io/ipfs/QmeinbfhRtbkegUf5c3xrYrUZ4TpN3nSZCuvqQNGTEN1r8",
+      "imageLink": "https://ipfs.io/ipfs/QmXKXd9bpH4rasEB4i3HLCoHbW76yYyxcmwvHpadgmeRZs",
+      "name": "Image 1",
+      "onChain": true,
+      "verifyRun": true
+    },
+    "2": {
+      "link": "https://ipfs.io/ipfs/QmPSBJv34txUiuwBXrBXNErQuZTXu6AvjHLsm7U5cFRA6D",
+      "imageLink": "https://ipfs.io/ipfs/QmcPEs45xLiUV4Wq8e8femHetEFcS6uvDKSn5rq6SCrv63",
+      "name": "Image 2",
+      "onChain": true,
+      "verifyRun": true
+    }
+  },
+  "env": "devnet",
+  "cacheName": "nft-project"
+}
+```
+
+The `program.candyMachine` property is your program's address that you can look up in the Solana blockchain explorer, which you'll find [here](https://explorer.solana.com/). Just make sure to set your network to `devnet`.
+
+Perfect, now you can start minting your NFTs. But how? You probably want to build a website to allow NFT minting. Fortunately, Metaplex's codebase has us covered.
+
+## Building a website to mint NFTs
+
+Remember that we cloned the entire Metaplex repository? We cloned it into the `nft-project` folder. So, from your command line, change to our working directory and the metaplex project, directly to the sample React application:
+
+```bash
+cd ~/metaplex/js/packages/candy-machine-ui
+```
+
+You'll need to install the dependencies like this:
+
+```bash
+yarn install
+```
+
+Then, open the project in your preferred editor. You'll see a `.env` file that contains your project configuration. You should update it to look like this:
+
+```text
+ REACT_APP_CANDY_MACHINE_PUBLIC_KEY=YOUR_PUBLIC_KEY
+ REACT_APP_CANDY_MACHINE_ENV=devnet
+ REACT_APP_SOLANA_RPC_URL=https://api.devnet.solana.com
+```
+
+Remember we used the Candy machine `ID` to look up our project in Solana Explorer? Let's paste that same ID where it says `YOUR_PUBLIC_KEY`.
+
+Now, you can run the application with:
+
+```bash
+yarn start
+```
+
+When the application loads, you should see:
+![CandiMachine](/images/blockchain/candymachine.png#center 'Figure 1. User Interface')
+You'll be able to choose a crypto wallet to connect. Regardless of which wallet you select, you'll need to make sure it has some development SOL. Remember when we received some SOL from `devnet`? We can also do this with another address. Connect your wallet, make sure you're on `devnet`, and then copy the address of the wallet you want to use. From the command line, type:
+
+```bash
+solana airdrop 2 YOUR_PUBLIC_KEY --url devnet
+```
+
+Once this is complete, you should have SOL in your browser-based wallet and now you can mint one of your new NFTs. To do this, simply click on the mint button:
+![CandiMachine](/images/blockchain/candymachine1.png#center 'Figure 2. Button to mint an NFT')
+
+You'll need to confirm the transaction. When you do, the minting process should only take a few seconds. Once it's complete, your new NFT should appear in your wallet's NFT collection.
+
+The image you see of your NFT is loading from Pinata. Depending on whether you provided a dedicated gateway URL in your configuration file, the NFT is loaded through your custom gateway or a public IPFS gateway. Note: if you provided a dedicated gateway URL, the NFT will be loaded through your custom gateway, and if not, the NFT will be loaded through a public IPFS gateway. You can see this in the following example using Phantom Wallet. The two NFTs that are stuck loading are using a public IPFS gateway. The two that load almost instantly on loading are using a custom gateway.
+
+![Wallet](/images/blockchain/wallet.png#center 'Figure 3. Minted NFTs in the custom Wallet')
+
+When viewing your NFT in Solana NFT marketplaces, the assets will also load through the IPFS gateway. This allows people to see the content in the way it was designed to be experienced.
+
+## Conclusions
+
+The benefits of using IPFS for NFT asset storage are well documented. IPFS offers fast retrieval (especially when using a dedicated Pinata gateway), IPFS offers content addressability, and IPFS is portable. NFT ownership can be transferred both in the symbolic sense and in the digital sense.
+
+However, it hasn't always been easy to use IPFS with Solana NFT projects. Hopefully, this tutorial will help change
+that.
+
+## References
+
+<Reference
+  type="image"
+  url="https://unsplash.com/photos/yscrM1AOEKI"
+  text="NTF inscription on cubes against the background of dollars and microcircuits"
+/>
+
+<Reference
+  type="web"
+  url="https://medium.com/pinata/how-to-create-a-solana-nft-with-ipfs-59d87afbe206"
+  text="How to create a Solana NFT with IPFS"
+/>
+
+<Reference type="web" url="https://docs.metaplex.com/" text="Metaplex Docs" />
+
+<Reference type="github" url="https://github.com/ChainSafe/web3.js" text="Web3.js" />
+
+<Reference type="web" url="https://metaboss.rs/update.html" text="Metaboss" />
