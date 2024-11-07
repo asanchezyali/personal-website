@@ -1,0 +1,123 @@
+---
+title: 'Blockchain: Criptografía el corazón de la tecnología'
+date: '2024/11/06'
+lastmod: '2023-03-26'
+tags: ['blockchain', 'smart-contracts', 'dapps', 'criptografía']
+draft: false
+time: '40 min'
+summary: 'En este tutorial se presenta una introducción básica al mundo del blockchain en siete pasos. Se explican los conceptos clave de la tecnología, desde la estructura básica de los bloques hasta los algoritmos de consenso, como prueba de trabajo y prueba de participación. También se discuten los smart contracts, los wallets y las aplicaciones descentralizadas (dApps), y cómo estas herramientas permiten el desarrollo de aplicaciones descentralizadas. Al final de este tutorial, se espera que los lectores tengan una comprensión sólida de los fundamentos del blockchain y cómo se utiliza en el mundo de las criptomonedas y más allá.'
+layout: PostLayout
+bibliography: references-data.bib
+canonicalUrl: https://www.asanchezyali.com/blog/es/blockchain/20230326BlockchainParadigm/
+headerImage: '/images/blockchain/post-solana.webp'
+images: ['/images/blockchain/post-solana.webp']
+language: 'es'
+---
+
+## Criptografía en el antiguo Egipto
+
+La criptografía tiene sus raíces en la antigüedad, con varias civilizaciones antiguas que utilizaban técnicas de cifrado
+para proteger la información. Estas técnicas fueron esenciales para la comunicación segura entre los líderes militares,
+políticos y religiosos [[1](https://www.youtube.com/watch?v=z9Qi5mDSYb8),
+[2](https://www.youtube.com/watch?v=9pp9YpginNg)]. En el antiguo Egipto, uno de los primeros ejemplos de criptografía
+fue encontrado en la tumba de Tutankamón [[3](https://www.jstor.org/stable/25150077)], donde se descubrió un mensaje
+cifrado en jeroglíficos. Este mensaje estaba destinado a proteger el tesoro del faraón y asegurar que solo aquellos con
+el conocimiento adecuado pudieran acceder a él. El método utilizado para ocultar el mensaje era simple pero efectivo: se
+cambiaban los jeroglíficos por otros símbolos, lo que hacía que el mensaje fuera ilegible para aquellos que no conocían
+el código.
+
+## El cifrado César
+
+Una de las técnicas de cifrado más antiguar y conocidas es el **cifrado César**, que lleva el nombre de Julio César,
+quien usó este método para proteger sus mensajes militares
+[[4](https://edu.anarcho-copy.org/Programming%20Languages/Python/Practical_Cryptography_in_Python_Learning_Correct_Cryptography_by.pdf)].
+El cifrado César es un cifrado por sustitución en el que cada letra del mensaje original se desplaza un número fijo de
+posiciones en el alfabeto. Por ejemplo, si el desplazamiento es de 3, la letra 'A' se convierte en 'D', la letra 'B' en
+'E', y así sucesivamente. Este método es fácil de implementar y entender, pero es vulnerable a ataques de fuerza bruta
+y análisis de frecuencia.
+
+El proceso de cifrado y descifrado en el cifrado César se puede representar de la siguiente manera:
+
+$$
+\begin{equation}
+\text{Cifrado:} \quad E(x) = (x + k) \mod 26
+\end{equation}
+$$
+
+$$
+\begin{equation}
+\text{Descifrado:} \quad D(x) = (x - k) \mod 26
+\end{equation}
+$$
+
+Donde $x$ es la posición de la letra en el alfabeto (por ejemplo, 'A' es 0, 'B' es 1, etc.), $k$ es el desplazamiento y $\mod 26$ asegura que el resultado esté dentro del rango de letras del alfabeto.
+
+Una implementación simple del cifrado César en Python se muestra a continuación:
+
+```python showLineNumbers
+def caesar_cipher_encrypt(text, shift):
+    result = ""
+    for char in text:
+        # If it's a letter, shift it by the specified amount else keep it as it is
+        if char.isalpha():
+            # Convert letter to number (0-25)
+            base = ord('a') if char.islower() else ord('A')
+            x = ord(char) - base
+            # Apply the formula e(x) = (x + k) mod 26
+            x = (x + shift) % 26
+            # Convert number back to letter
+            result += chr(x + base)
+        else:
+            result += char
+    return result
+
+def caesar_cipher_decrypt(text, shift):
+    return caesar_cipher_encrypt(text, -shift)
+
+# Encrypt the message "HELLO" with a shift of 3
+encrypted_message = caesar_cipher_encrypt("HELLO", 3)
+decrypt_message = caesar_cipher_decrypt(encrypted_message, 3)
+print(f"Encrypted message: {encrypted_message}")
+print(f"Decrypted message: {decrypt_message}")
+
+## Output
+# Encrypted message: KHOOR
+# Decrypted message: HELLO
+```
+
+En este ejemplo, la función `caesar_cipher` toma un mensaje y un desplazamiento como entrada y devuelve el mensaje
+cifrado utilizando el cifrado César. En este caso, el mensaje "HELLO" se cifra con un desplazamiento de 3, lo que
+resulta en el mensaje cifrado "KHOOR". El lector puede notar que el mensaje cifrado se puede descifrar utilizando el
+mismo desplazamiento pero con un signo negativo.
+
+La criptografía ha evolucionado significativamente desde los días del antiguo Egipto y el cifrado César, ahora se
+utilizan estructura matemáticas más complejas y algoritmos avanzados para proteger la información y garantizar la
+seguridad en la comunicación.
+
+## Desarrollo de la criptografía moderna
+
+## Referencias
+
+<Reference
+  type="youtube"
+  url="https://www.youtube.com/watch?v=z9Qi5mDSYb8"
+  text="[1] History and Evolution of Cryptography and Cryptonalysis"
+/>
+
+<Reference
+  type="youtube"
+  url="https://www.youtube.com/watch?v=9pp9YpginNg"
+  text="[2] Secret Codes: A History of Cryptography"
+/>
+
+<Reference
+  type="web"
+  url="https://www.jstor.org/stable/25150077"
+  text="[3] David P. Silverman. 1980. Cryptography writing in the Tomb of Tutankhamun."
+/>
+
+<Reference
+  type="web"
+  url="https://edu.anarcho-copy.org/Programming%20Languages/Python/Practical_Cryptography_in_Python_Learning_Correct_Cryptography_by.pdf"
+  text="[4] Seth James Nielson et al. 2019. Practical Cryptography in Python: Learning Correct Cryptography by Example."
+/>

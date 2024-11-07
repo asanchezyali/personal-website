@@ -7,9 +7,19 @@
       <language>en-us</language>
       <managingEditor>asanchezyali@gmail.com (Alejandro Sánchez Yalí)</managingEditor>
       <webMaster>asanchezyali@gmail.com (Alejandro Sánchez Yalí)</webMaster>
-      <lastBuildDate>Tue, 08 Oct 2024 05:00:00 GMT</lastBuildDate>
+      <lastBuildDate>Wed, 06 Nov 2024 05:00:00 GMT</lastBuildDate>
       <atom:link href="https://asanchezyali.com/feed.xml" rel="self" type="application/rss+xml"/>
       
+  <item>
+    <guid>https://asanchezyali.com/blog/es/blockchain/20241106Blockchain</guid>
+    <title>Blockchain: Criptografía el corazón de la tecnología</title>
+    <link>https://asanchezyali.com/blog/es/blockchain/20241106Blockchain</link>
+    <description>En este tutorial se presenta una introducción básica al mundo del blockchain en siete pasos. Se explican los conceptos clave de la tecnología, desde la estructura básica de los bloques hasta los algoritmos de consenso, como prueba de trabajo y prueba de participación. También se discuten los smart contracts, los wallets y las aplicaciones descentralizadas (dApps), y cómo estas herramientas permiten el desarrollo de aplicaciones descentralizadas. Al final de este tutorial, se espera que los lectores tengan una comprensión sólida de los fundamentos del blockchain y cómo se utiliza en el mundo de las criptomonedas y más allá.</description>
+    <pubDate>Wed, 06 Nov 2024 05:00:00 GMT</pubDate>
+    <author>asanchezyali@gmail.com (Alejandro Sánchez Yalí)</author>
+    <category>blockchain</category><category>smart-contracts</category><category>dapps</category><category>criptografía</category>
+  </item>
+
   <item>
     <guid>https://asanchezyali.com/blog/es/ai/20241008ComputationalGraph</guid>
     <title>Grafos computacionales en Python: potenciando el aprendizaje automático</title>

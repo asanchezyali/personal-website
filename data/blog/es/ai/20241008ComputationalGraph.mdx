@@ -126,6 +126,27 @@ Una aplicación importante de los grafos computacionales es la diferenciación a
 En general, hay tres tipos de AD, que son: _reverse-mode_, _forward-mode_ y _mixed-mode_. En el aprendizaje automático.
 
 Básicamente, el _forward-mode_ y el _reverse-mode_ DA ambos usan la regla de la cadena para calcular los gradiente.
+Evaluan los gradientes de las funciones «pequeñas» analíticamente (simbólica) y encadena todos los gradientes numéricos
+calculados mediante la regla de la cadena
+
+$$
+\frac{d}{dx} f(g(x)) = f'(g(x)) \cdot g'(x).
+$$
+
+En el _forward-mode_ se evalúa la derivada de la función externa primero, mientras que en el _reverse-mode_ se evalúa la derivada de la función interna primero.
+
+### Forward-mode AD
+
+En el _forward-mode_ AD, los gradientes se calculan en la dirección de las entradas, es decir, $g'(x)$ se calcula
+primero y luego se multiplica por $f'(g(x))$. La idea es la misma en un grafo computacional, salvo que primero tenemos
+que agregar todos los gradientes de los nodos ascendentes y luego reenviarlos a los nodos descendentes. Veamos un
+ejemplo de cómo se calculan los gradientes en el _forward-mode_ AD. Supongamos que tenemos la siguiente función:
+
+$$
+\begin{equation}
+f(x) = \begin{bmatrix} x^4 \\ x^2 + \sin(x) \\ -\sin(x) \end{bmatrix}
+\end{equation}
+$$
 
 ## Referencias
 
