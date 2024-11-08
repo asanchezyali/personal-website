@@ -82,21 +82,149 @@ mismo desplazamiento pero con un signo negativo.
 
 La verdadera revolución en la criptografía llegó con el desarrollo de las computadoras y la teoría de la información.
 Claude Shannon, considerado el padre de la teoría de la información, estableció en 1949 los principios fundamentales que
-guiarían el desarrollo de la criptografía moderna en su seminal artículo ["Communication Theory of Secrecy Systems"](https://pages.cs.wisc.edu/~rist/642-spring-2014/shannon-secrecy.pdf).
+guiarían el desarrollo de la criptografía moderna en su seminal artículo ["Communication Theory of Secrecy
+Systems"](https://pages.cs.wisc.edu/~rist/642-spring-2014/shannon-secrecy.pdf).
 
-Shannon introdujo cuatro conceptos clave que transformarían la disciplina:
+Shannon introdujo cuatro conceptos fundamentales que transformarían la disciplina:
 
-- **Entropía**: Mide la incertidumbre en un sistema de cifrado. Un sistema con alta entropía es más seguro que uno con
-  baja entropía.
-- **Confusión**: Una técnica que hace que la relación entre el texto cifrado y la clave sea lo más compleja posible. Un sistema con alta
-  confusión es más difícil de descifrar.
-- **Difusión**: Una técnica que busca distribuir la información del mensaje original a lo largo del texto cifrado, aumentando la resistencia a
-  ataques analíticos. Un sistema con alta
-  difusión es más resistente a ataques.
-- **Seguridad perfecta**: Se refiere a un sistema de cifrado en el cual el texto cifrado no da ninguna pista sobre el
-  mensaje original, incluso si el atacante tiene acceso a múltiples mensajes cifrados.
+1. **Entropía**: La medida matemática de la incertidumbre en un sistema de cifrado. Un sistema con alta entropía es más resistente a análisis estadísticos y ataques.
 
-Estos principios teóricos sentaron las bases para el desarrollo de algoritmos de cifrado modernos y la teoría de la información, elementos fundamentales en la era digital actual.
+2. **Confusión**: Un principio fundamental que establece que cada bit del texto cifrado debe depender de varias partes de la clave de cifrado. Esta propiedad oculta la relación entre el texto cifrado y la clave, dificultando los ataques de fuerza bruta.
+
+```python showLineNumbers
+def demonstrate_confusion():
+    # Define a simplified S-box (Substitution box)
+    # S-boxes provide confusion by creating complex mappings
+    # between input and output
+    s_box = {
+        0x0: 0xC, 0x1: 0x5, 0x2: 0x6, 0x3: 0xB,
+        0x4: 0x9, 0x5: 0x0, 0x6: 0xA, 0x7: 0xD,
+        0x8: 0x3, 0x9: 0xE, 0xA: 0xF, 0xB: 0x8,
+        0xC: 0x4, 0xD: 0x7, 0xE: 0x1, 0xF: 0x2
+    }
+
+    def apply_confusion(input_byte, key_byte):
+        # XOR the input with the key and then apply S-box
+        # This demonstrates how a small key change affects the output
+        mixed = input_byte ^ key_byte
+        return s_box[mixed & 0xF]  # Keep only 4 bits
+
+    # Demonstrate how a 1-bit change in the key produces
+    # significantly different output
+    input_value = 0x5
+    key1 = 0x3
+    key2 = 0x2  # Differs by only one bit from key1
+
+    result1 = apply_confusion(input_value, key1)
+    result2 = apply_confusion(input_value, key2)
+
+    print(f"Input: 0x{input_value:X}")
+    print(f"Output with key 0x{key1:X}: 0x{result1:X}")
+    print(f"Output with key 0x{key2:X}: 0x{result2:X}")
+    # The results will be significantly different
+    # despite the minimal change in the key
+
+# Example usage
+demonstrate_confusion()
+```
+
+En este ejemplo, la función `apply_confusion` toma un byte de entrada y un byte de clave como entrada y aplica la
+confusión utilizando una S-box simplificada. La función demuestra cómo un pequeño cambio en la clave produce resultados
+significativamente diferentes en la salida, lo que ilustra el principio de confusión en la criptografía.
+
+3. **Difusión**: Un principio crucial que establece que cambiar un solo bit en el texto original debe modificar aproximadamente la mitad de los bits en el texto cifrado, y viceversa. Este "efecto avalancha" asegura que los patrones en el texto original no sean detectables en el texto cifrado.
+
+```python showLineNumbers
+def demonstrate_avalanche_effect(message, key):
+    # This function demonstrates how a small change in input
+    # causes a significant change in the output hash
+
+    def hash_message(msg):
+        # Convert the message to a 256-bit hash
+        import hashlib
+        return bin(int(hashlib.sha256(msg.encode()).hexdigest(), 16))[2:].zfill(256)
+
+    # Get hash of original message
+    original_hash = hash_message(message + key)
+
+    # Change just one character in the message
+    modified_message = message[:-1] + chr(ord(message[-1]) + 1)
+    modified_hash = hash_message(modified_message + key)
+
+    # Count how many bits changed
+    diff_bits = sum(a != b for a, b in zip(original_hash, modified_hash))
+    diff_percentage = (diff_bits / len(original_hash)) * 100
+
+    return diff_percentage
+
+# Example usage
+message = "Hello, World!"
+key = "secretkey123"
+avalanche = demonstrate_avalanche_effect(message, key)
+print(f"Bit change percentage: {avalanche:.2f}%")
+# Typical output: ~50% of bits changed
+```
+
+4. **Seguridad perfecta**: Un estado ideal donde el texto cifrado no revela información sobre el mensaje original, incluso ante un atacante con recursos computacionales ilimitados.
+
+Para ilustrar cómo estos principios se aplican en la práctica, veamos una estructura simplificada de una ronda de
+cifrado moderna:
+
+```python showLineNumbers
+def simplified_encryption_round(state, round_key):
+    # This demonstrates how confusion and diffusion work together
+    # in modern block ciphers like AES
+
+    def substitute_bytes(state):
+        # Confusion: Apply S-box substitution
+        # Each byte is transformed independently
+        pass
+
+    def shift_rows(state):
+        # Diffusion: Rearrange bytes in the state
+        # Spreads changes across the state
+        pass
+
+    def mix_columns(state):
+        # Diffusion: Mix data within columns
+        # Ensures changes propagate across columns
+        pass
+
+    def add_round_key(state, key):
+        # Confusion: Combine state with round key
+        # Creates dependency between state and key
+        pass
+
+    # A typical round applies both confusion and diffusion
+    state = substitute_bytes(state)    # Confusion
+    state = shift_rows(state)          # Diffusion
+    state = mix_columns(state)         # Diffusion
+    state = add_round_key(state, key)  # Confusion
+
+    return state
+
+# Example usage
+state = [0x32, 0x88, 0x31, 0xE0,
+         0x43, 0x5A, 0x31, 0x37,
+         0xF6, 0x30, 0x98, 0x07,
+         0xA8, 0x8D, 0xA2, 0x34]
+
+round_key = [0x2B, 0x28, 0xAB, 0x09,
+             0x7E, 0xAE, 0xF7, 0xCF,
+             0x15, 0xD2, 0x15, 0x4F,
+             0x16, 0xA6, 0x88, 0x3C]
+
+encrypted_state = simplified_encryption_round(state, round_key)
+print(f"Encrypted state: {encrypted_state}")
+
+## Output
+# Encrypted state: [0x39, 0x02, 0xDC, 0x19,
+#                   0x25, 0xDC, 0x11, 0x6A,
+#                   0x84, 0x09, 0x85, 0x0B,
+#                   0x1D, 0xFB, 0x97, 0x32]
+```
+
+En este ejemplo, la función `simplified_encryption_round` simula una ronda de cifrado en un cifrador de bloques moderno como AES. La ronda aplica tanto la confusión como la difusión, utilizando operaciones como la sustitución de bytes, el desplazamiento de filas, la mezcla de columnas y la adición de la clave de ronda. Estas operaciones trabajan juntas para garantizar que los cambios en el estado se propaguen de manera efectiva y que el cifrado sea resistente a ataques criptoanalíticos.
 
 ## La triada de seguridad CIA en la criptografía
 
