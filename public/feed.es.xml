@@ -12,9 +12,9 @@
       
   <item>
     <guid>https://asanchezyali.com/blog/es/blockchain/20241106Blockchain</guid>
-    <title>Blockchain: Criptografía el corazón de la tecnología</title>
+    <title>Criptografía: El pilar fundamental del Blockchain</title>
     <link>https://asanchezyali.com/blog/es/blockchain/20241106Blockchain</link>
-    <description>En este tutorial se presenta una introducción básica al mundo del blockchain en siete pasos. Se explican los conceptos clave de la tecnología, desde la estructura básica de los bloques hasta los algoritmos de consenso, como prueba de trabajo y prueba de participación. También se discuten los smart contracts, los wallets y las aplicaciones descentralizadas (dApps), y cómo estas herramientas permiten el desarrollo de aplicaciones descentralizadas. Al final de este tutorial, se espera que los lectores tengan una comprensión sólida de los fundamentos del blockchain y cómo se utiliza en el mundo de las criptomonedas y más allá.</description>
+    <description>Este artículo explora la evolución y fundamentos de la criptografía, desde sus orígenes en el antiguo Egipto hasta su papel crucial en la tecnología blockchain. Comenzamos con un recorrido histórico que incluye los jeroglíficos egipcios y el cifrado César, acompañado de implementaciones prácticas en Python. Se examinan los principios modernos establecidos por Claude Shannon y la triada de seguridad CIA (Confidencialidad, Integridad y Autenticidad). La parte central del artículo profundiza en cómo la criptografía moderna sustenta la tecnología blockchain a través de técnicas como el hashing, cifrado simétrico y asimétrico, ilustradas con ejemplos prácticos de código. Este tutorial de 40 minutos proporciona una comprensión sólida de cómo la criptografía ha evolucionado para convertirse en el pilar fundamental de la seguridad y confianza en los sistemas blockchain.</description>
     <pubDate>Wed, 06 Nov 2024 05:00:00 GMT</pubDate>
     <author>asanchezyali@gmail.com (Alejandro Sánchez Yalí)</author>
     <category>blockchain</category><category>smart-contracts</category><category>dapps</category><category>criptografía</category>

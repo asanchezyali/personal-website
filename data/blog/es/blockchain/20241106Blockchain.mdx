@@ -1,11 +1,11 @@
 ---
-title: 'Blockchain: Criptografía el corazón de la tecnología'
+title: 'Criptografía: El pilar fundamental del Blockchain'
 date: '2024/11/06'
 lastmod: '2023-03-26'
 tags: ['blockchain', 'smart-contracts', 'dapps', 'criptografía']
 draft: false
 time: '40 min'
-summary: 'En este tutorial se presenta una introducción básica al mundo del blockchain en siete pasos. Se explican los conceptos clave de la tecnología, desde la estructura básica de los bloques hasta los algoritmos de consenso, como prueba de trabajo y prueba de participación. También se discuten los smart contracts, los wallets y las aplicaciones descentralizadas (dApps), y cómo estas herramientas permiten el desarrollo de aplicaciones descentralizadas. Al final de este tutorial, se espera que los lectores tengan una comprensión sólida de los fundamentos del blockchain y cómo se utiliza en el mundo de las criptomonedas y más allá.'
+summary: 'Este artículo explora la evolución y fundamentos de la criptografía, desde sus orígenes en el antiguo Egipto hasta su papel crucial en la tecnología blockchain. Comenzamos con un recorrido histórico que incluye los jeroglíficos egipcios y el cifrado César, acompañado de implementaciones prácticas en Python. Se examinan los principios modernos establecidos por Claude Shannon y la triada de seguridad CIA (Confidencialidad, Integridad y Autenticidad). La parte central del artículo profundiza en cómo la criptografía moderna sustenta la tecnología blockchain a través de técnicas como el hashing, cifrado simétrico y asimétrico, ilustradas con ejemplos prácticos de código. Este tutorial de 40 minutos proporciona una comprensión sólida de cómo la criptografía ha evolucionado para convertirse en el pilar fundamental de la seguridad y confianza en los sistemas blockchain.'
 layout: PostLayout
 bibliography: references-data.bib
 canonicalUrl: https://www.asanchezyali.com/blog/es/blockchain/20230326BlockchainParadigm/
@@ -14,45 +14,33 @@ images: ['/images/blockchain/post-solana.webp']
 language: 'es'
 ---
 
-## Criptografía en el antiguo Egipto
+La historia de la criptografía es un fascinante viaje que refleja la eterna necesidad humana de proteger la información.
+Desde las antiguas civilizaciones hasta la era digital moderna, la criptografía ha evolucionado constantemente,
+adaptándose a nuevas necesidades y desafíos.
 
-La criptografía tiene sus raíces en la antigüedad, con varias civilizaciones antiguas que utilizaban técnicas de cifrado
-para proteger la información. Estas técnicas fueron esenciales para la comunicación segura entre los líderes militares,
-políticos y religiosos [[1](https://www.youtube.com/watch?v=z9Qi5mDSYb8),
-[2](https://www.youtube.com/watch?v=9pp9YpginNg)]. En el antiguo Egipto, uno de los primeros ejemplos de criptografía
-fue encontrado en la tumba de Tutankamón [[3](https://www.jstor.org/stable/25150077)], donde se descubrió un mensaje
-cifrado en jeroglíficos. Este mensaje estaba destinado a proteger el tesoro del faraón y asegurar que solo aquellos con
-el conocimiento adecuado pudieran acceder a él. El método utilizado para ocultar el mensaje era simple pero efectivo: se
-cambiaban los jeroglíficos por otros símbolos, lo que hacía que el mensaje fuera ilegible para aquellos que no conocían
-el código.
+### Los orígenes: Antiguo Egipto y Roma
 
-## El cifrado César
+En el antiguo Egipto, los escribas desarrollaron uno de los primeros sistemas de cifrado conocidos, utilizando
+jeroglíficos no estándar para ocultar mensajes sagrados y secretos de estado. Un ejemplo notable se encontró en la tumba
+de Tutankamón, donde jeroglíficos modificados protegían información sobre los tesoros del faraón
+[[3](https://www.jstor.org/stable/25150077)]. El método consistía en desplazar cada letra del mensaje un número fijo de posiciones en el alfabeto, creando así un texto cifrado.
 
-Una de las técnicas de cifrado más antiguar y conocidas es el **cifrado César**, que lleva el nombre de Julio César,
-quien usó este método para proteger sus mensajes militares
-[[4](https://edu.anarcho-copy.org/Programming%20Languages/Python/Practical_Cryptography_in_Python_Learning_Correct_Cryptography_by.pdf)].
-El cifrado César es un cifrado por sustitución en el que cada letra del mensaje original se desplaza un número fijo de
-posiciones en el alfabeto. Por ejemplo, si el desplazamiento es de 3, la letra 'A' se convierte en 'D', la letra 'B' en
-'E', y así sucesivamente. Este método es fácil de implementar y entender, pero es vulnerable a ataques de fuerza bruta
-y análisis de frecuencia.
-
-El proceso de cifrado y descifrado en el cifrado César se puede representar de la siguiente manera:
+El proceso puede expresarse matemáticamente como:
 
 $$
 \begin{equation}
-\text{Cifrado:} \quad E(x) = (x + k) \mod 26
+\text{Cifrado:} \quad E(x) = (x + k) \mod 26,
 \end{equation}
 $$
 
 $$
 \begin{equation}
-\text{Descifrado:} \quad D(x) = (x - k) \mod 26
+\text{Descifrado:} \quad D(x) = (x - k) \mod 26,
 \end{equation}
 $$
 
-Donde $x$ es la posición de la letra en el alfabeto (por ejemplo, 'A' es 0, 'B' es 1, etc.), $k$ es el desplazamiento y $\mod 26$ asegura que el resultado esté dentro del rango de letras del alfabeto.
-
-Una implementación simple del cifrado César en Python se muestra a continuación:
+Donde $x$ es la posición de la letra en el alfabeto (por ejemplo, 'A' es 0, 'B' es 1, etc.), $k$ es el desplazamiento y
+$\mod 26$ asegura que el resultado esté dentro del rango de letras del alfabeto inglés.
 
 ```python showLineNumbers
 def caesar_cipher_encrypt(text, shift):
@@ -90,34 +78,594 @@ cifrado utilizando el cifrado César. En este caso, el mensaje "HELLO" se cifra 
 resulta en el mensaje cifrado "KHOOR". El lector puede notar que el mensaje cifrado se puede descifrar utilizando el
 mismo desplazamiento pero con un signo negativo.
 
-La criptografía ha evolucionado significativamente desde los días del antiguo Egipto y el cifrado César, ahora se
-utilizan estructura matemáticas más complejas y algoritmos avanzados para proteger la información y garantizar la
-seguridad en la comunicación.
+## El nacimiento de la criptografía moderna
 
-## Desarrollo de la criptografía moderna
+La verdadera revolución en la criptografía llegó con el desarrollo de las computadoras y la teoría de la información.
+Claude Shannon, considerado el padre de la teoría de la información, estableció en 1949 los principios fundamentales que
+guiarían el desarrollo de la criptografía moderna en su seminal artículo ["Communication Theory of Secrecy Systems"](https://pages.cs.wisc.edu/~rist/642-spring-2014/shannon-secrecy.pdf).
+
+Shannon introdujo cuatro conceptos clave que transformarían la disciplina:
+
+- **Entropía**: Mide la incertidumbre en un sistema de cifrado. Un sistema con alta entropía es más seguro que uno con
+  baja entropía.
+- **Confusión**: Una técnica que hace que la relación entre el texto cifrado y la clave sea lo más compleja posible. Un sistema con alta
+  confusión es más difícil de descifrar.
+- **Difusión**: Una técnica que busca distribuir la información del mensaje original a lo largo del texto cifrado, aumentando la resistencia a
+  ataques analíticos. Un sistema con alta
+  difusión es más resistente a ataques.
+- **Seguridad perfecta**: Se refiere a un sistema de cifrado en el cual el texto cifrado no da ninguna pista sobre el
+  mensaje original, incluso si el atacante tiene acceso a múltiples mensajes cifrados.
+
+Estos principios teóricos sentaron las bases para el desarrollo de algoritmos de cifrado modernos y la teoría de la información, elementos fundamentales en la era digital actual.
+
+## La triada de seguridad CIA en la criptografía
+
+La criptografía moderna se basa en tres pilares fundamentales conocidos como la triada de la CIA:
+
+- **Confidencialidad**: Garantiza que la información solo sea accesible para las partes autorizadas y protege contra la
+  divulgación no autorizada.
+- **Integridad**: Asegura que la información no ha sido alterada o modificada durante la transmisión o el
+  almacenamiento.
+- **Autenticidad**: Verifica la identidad de las partes involucradas en una comunicación y garantiza que la información no
+  haya sido falsificada.
+
+Ademas, [el principio de Kerckhoffs](https://en.wikipedia.org/wiki/Kerckhoffs%27s_principle) establece que la seguridad de un sistema de
+cifrado debe depender únicamente de la clave secreta y no del algoritmo en sí. Esto significa que el algoritmo de
+cifrado puede ser de conocimiento público sin comprometer la seguridad, siempre y cuando la clave mantenga protegida.
+
+En el diseño de algoritmos de cifrado modernos, se busca la **resistencia a ataques criptoanalíticos y
+computacionales**, lo que significa que el cifrado debe ser capaz de resistir ataques de fuerza bruta, análisis de texto
+cifrado y otros métodos de descifrado sin conocer la clave secreta. Los algoritmos de cifrado modernos, como [AES](https://en.wikipedia.org/wiki/Advanced_Encryption_Standard)
+(Advanced Encryption Standard) y [RSA](https://es.wikipedia.org/wiki/RSA) (Rivest-Shamir-Adleman), se basan en principios en la triada de la CIA y el
+principio de Kerckhoffs para garantizar la seguridad de la información.
+
+## Blockchain y la criptografía
+
+La criptografía juega una papel fundamental en la tecnología blockchain, asegurando que el sistema siga siendo seguro,
+fiable y resistente a manipulaciones. En esta sección exploraremos cómo técnicas criptográficas como **hashing**,
+**firma digital** y **criptografía de clave pública** se utilizan para proteger la confidencialidad, la integridad y la
+autenticidad de los datos, transacciones y participantes en la red blockchain, eliminando la necesidad de una autoridad
+central.
+
+**Hashing**: En blockchain, el hashing se utiliza para garantizar la integridad de los datos almacenados en los bloques.
+Un hash es una función matemática que toma una entrada de longitud variable y produce una salida de longitud fija. Los
+hashes son únicos para cada entrada y cualquier cambio en la entrada resultará en un hash completamente diferente. Por
+ejemplo, en la red Bitcoin, se utiliza la función de hash SHA-256 para generar el hash de cada bloque, lo que permite a
+los participantes verificar la integridad de los datos almacenados en la cadena de bloques.
+
+```python showLineNumbers
+import hashlib
+
+def calculate_hash(data):
+    return hashlib.sha256(data.encode()).hexdigest()
+
+# Calculate the hash of a message
+message = "Hello, world!"
+hash_value = calculate_hash(message)
+
+print(f"Hash of '{message}': {hash_value}")
+
+## Output
+# Hash of 'Hello, world!': 315f5bdb...
+```
+
+En este ejemplo, la función `calculate_hash` toma un mensaje como entrada y devuelve el hash SHA-256 del mensaje. El
+hash
+resultante es único para cada mensaje y cualquier cambio en el mensaje resultará en un hash completamente diferente.
+
+**Cifrado simétrico**: En el cifrado simétrico, la misma clave se utiliza para cifrar y descifrar los datos. Esto
+permite una comunicación segura entre dos partes que comparten la misma clave secreta. Ejemplos de algoritmos de cifrado
+simétrico incluyen [AES](https://es.wikipedia.org/wiki/Advanced_Encryption_Standard) y
+[DES](https://es.wikipedia.org/wiki/Data_Encryption_Standard). En blockchain, el cifrado simétrico se utiliza para
+proteger la confidencialidad de los datos almacenados en los bloques. Sin embargo, el cifrado simétrico no es adecuado
+para garantizar la autenticidad y la integridad de los datos, ya que requiere que las partes compartan la clave secreta.
+
+```python showLineNumbers
+from cryptography.fernet import Fernet
+
+def encrypt_message(message, key):
+    cipher = Fernet(key)
+    return cipher.encrypt(message.encode())
+
+
+def decrypt_message(encrypted_message, key):
+    cipher = Fernet(key)
+    return cipher.decrypt(encrypted_message).decode()
+
+
+# Generate a random key
+key = Fernet.generate_key()
+
+# Encrypt and decrypt a message
+message = "Hello, world!"
+encrypted_message = encrypt_message(message, key)
+decrypted_message = decrypt_message(encrypted_message, key)
+
+print(f"Original message: {message}")
+print(f"Encrypted message: {encrypted_message}")
+print(f"Decrypted message: {decrypted_message}")
+
+## Output
+# Original message: Hello, world!
+# Encrypted message: b'gAAAAABnLo...
+# Decrypted message: Hello, world!
+```
+
+En este ejemplo, la función `encrypt_message` toma un mensaje y una clave secreta como entrada y devuelve el mensaje
+cifrado, mientras la función `decrypt_message` toma el mensaje cifrado y utiliza la misma clave secreta para descifrarlo.
+
+**Cifrado asimétrico**: En el cifrado asimétrico, se utilizan dos claves diferentes, una clave pública y una clave
+privada, para cifrar y descifrar los datos. La clave pública se comparte con todos los participantes de la red, mientras
+que la clave privada se mantiene en secreto. Este método permite a los participantes verificar la autenticidad de los
+datos utilizando la clave pública del remitente para cifrar los datos y la clave privada del destinatario para
+descifrarlos. Ejemplos de algoritmos de cifrado asimétrico incluyen [RSA](https://es.wikipedia.org/wiki/RSA) y
+[DSA](https://es.wikipedia.org/wiki/Digital_Signature_Algorithm). En blockchain, el cifrado asimétrico se utiliza para
+proteger la autenticidad de las transacciones y los bloques. Por ejemplo, en la red Bitcoin, las direcciones de las
+billeteras se generan utilizando claves públicas y privadas, lo que permite a los usuarios firmar transacciones con su
+clave privada y verificarlas con su clave pública.
+
+```python showLineNumbers
+from cryptography.hazmat.primitives.asymmetric import rsa
+from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives.asymmetric import padding
+from cryptography.hazmat.primitives import hashes
+
+def generate_key_pair():
+    private_key = rsa.generate_private_key(
+        public_exponent=65537,
+        key_size=2048
+    )
+    public_key = private_key.public_key()
+    return private_key, public_key
+
+def encrypt_message(message, public_key):
+    encrypted = public_key.encrypt(
+        message.encode(),
+        padding.OAEP(
+            mgf=padding.MGF1(algorithm=hashes.SHA256()),
+            algorithm=hashes.SHA256(),
+            label=None
+        )
+    )
+    return encrypted
+
+def decrypt_message(encrypted_message, private_key):
+    decrypted = private_key.decrypt(
+        encrypted_message,
+        padding.OAEP(
+            mgf=padding.MGF1(algorithm=hashes.SHA256()),
+            algorithm=hashes.SHA256(),
+            label=None
+        )
+    )
+    return decrypted.decode()
+
+# Generate a key pair
+private_key, public_key = generate_key_pair()
+
+# Encrypt and decrypt a message
+message = "Hello, world!"
+encrypted_message = encrypt_message(message, public_key)
+decrypted_message = decrypt_message(encrypted_message, private_key)
+
+print(f"Original message: {message}")
+print(f"Encrypted message: {encrypted_message}")
+print(f"Decrypted message: {decrypted_message}")
+
+## Output
+# Original message: Hello, world!
+# Encrypted message: b'r\xeb\xe9\...
+# Decrypted message: Hello, world!
+```
+
+En este ejemplo, la función `generate_key_pair` genera un par de claves pública y privada. La función `encrypt_message`
+toma un mensaje y una clave pública como entrada y devuelve el mensaje cifrado. La función `decrypt_message` toma el
+mensaje cifrado y la clave privada correspondiente y devuelve el mensaje descifrado. En este caso, el mensaje cifrado se
+puede descifrar correctamente utilizando la clave privada correspondiente.
+
+**Firma digital**: La firma digital es una técnica criptográfica que se utiliza para verificar la autenticidad de un
+mensaje o un
+documento. En blockchain, las firmas digitales se utilizan para garantizar que las transacciones sean auténticas y no
+hayan sido
+alteradas.
+
+```python showLineNumbers
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives.asymmetric import padding
+from cryptography.hazmat.primitives import serialization
+
+def sign_message(message, private_key):
+    signature = private_key.sign(
+        message.encode(),
+        padding.PSS(
+            mgf=padding.MGF1(hashes.SHA256()),
+            salt_length=padding.PSS.MAX_LENGTH
+        ),
+        hashes.SHA256()
+    )
+    return signature
+
+def verify_signature(message, signature, public_key):
+    try:
+        public_key.verify(
+            signature,
+            message.encode(),
+            padding.PSS(
+                mgf=padding.MGF1(hashes.SHA256()),
+                salt_length=padding.PSS.MAX_LENGTH
+            ),
+            hashes.SHA256()
+        )
+        return True
+    except:
+        return False
+
+# Generate a key pair
+private_key, public_key = generate_key_pair()
+
+# Sign and verify a message
+message = "Hello, world!"
+signature = sign_message(message, private_key)
+is_valid = verify_signature(message, signature, public_key)
+
+print(f"Original message: {message}")
+print(f"Signature: {signature}")
+print(f"Is valid signature: {is_valid}")
+
+## Output
+# Original message: Hello, world!
+# Signature: b'\xab\xc9l\x83...
+# Is valid signature: True
+```
+
+En este ejemplo, la función `sign_message` toma un mensaje y una clave privada como entrada y devuelve la firma digital
+del mensaje. La función `verify_signature` toma el mensaje, la firma y la clave pública correspondiente y verifica si la
+firma es válida. En este caso, la firma es válida, lo que significa que el mensaje no ha sido alterado y proviene de la
+parte que posee la clave privada.
+
+## El papel de la criptografía en la seguridad de blockchain
+
+Como hemos visto, la criptografía desempeña un papel fundamental en la seguridad y confianza de los sistemas blockchain.
+A través de técnicas como el hashing, el cifrado simétrico y asimétrico, y la firma digital, la criptografía garantiza
+la confidencialidad, integridad y autenticidad de los datos, transacciones y participantes en la red blockchain. Al
+utilizar la criptografía, los sistemas blockchain pueden operar de manera descentralizada y segura, eliminando la
+necesidad de una autoridad central y proporcionando una capa adicional de seguridad.
+
+### Cifrado simétrico y asimétrico para la confidencialidad
+
+El cifrado, tanto simétrico como asimétrico, se utiliza para proteger la confidencialidad de los datos almacenados en
+los bloques y las transacciones en la red blockchain. El cifrado simétrico permite a las partes comunicarse de forma
+segura utilizando una clave compartida, mientras que el cifrado asimétrico permite a los participantes verificar la
+autenticidad de los datos utilizando claves públicas y privadas. Por ejemplo, en redes privadas de blockchain, se puede
+utilizar el cifrado simétrico para proteger la confidencialidad de los datos almacenados en los bloques, mientras que en
+redes públicas de blockchain, se puede utilizar el cifrado asimétrico para proteger la confidencialidad de las
+transacciones y las direcciones de las billeteras.
+
+### Hashing para la integridad
+
+En contraste con el cifrado, el hashing no protege la confidencialidad de los datos, sino que garantiza su la integridad. Al generar un hash único para cada bloque, los participantes pueden verificar que los datos almacenados en el
+bloque no han sido alterados. Cualquier cambio en los datos resultará en un hash completamente diferente, lo que permite
+a los participantes detectar cualquier intento de manipulación de los datos. Por ejemplo, en la red Ethereum, se utiliza
+la función de hash Keccak-256 para generar el hash de cada bloque, lo que permite a los participantes verificar la
+integridad de los datos almacenados en la cadena de bloques.
+
+El hashing es ampliamente utilizando en blockchain para:
+
+1. **Identificar los bloques**: Cada bloque en la cadena de bloques tiene un hash único que lo identifica y lo conecta
+   con el bloque anterior.
+
+   ```python showLineNumbers
+    import hashlib
+
+    def calculate_hash(data):
+        return hashlib.sha256(data.encode()).hexdigest()
+
+    # Calculate the hash of a block
+    block_data = "Block data..."
+    previous_hash = "Previous hash..."
+
+    block_hash = calculate_hash(block_data + previous_hash)
+
+    print(f"Hash of the block: {block_hash}")
+
+    ## Output
+    # Hash of the block: c352756d8a49e....
+   ```
+
+2. **Algoritmo de consenso**: Los algoritmos de consenso en blockchain, como [Proof of Work](https://en.wikipedia.org/wiki/Proof_of_work) (PoW) y [Proof of Stake](https://en.wikipedia.org/wiki/Proof_of_stake) (PoS), utilizan el hashing para
+   validar y confirmar los bloques en la cadena de bloques. Por ejemplo, en la red Bitcoin, los mineros compiten por
+   resolver un problema criptográfico que implica encontrar un hash que cumpla con ciertos requisitos, lo que garantiza
+   la seguridad y la integridad de la red.
+
+   ```python showLineNumbers
+   import hashlib
+
+   def proof_of_work(block_data, previous_hash, difficulty):
+       nonce = 0
+       while True:
+           block_hash = hashlib.sha256((block_data + previous_hash + str(nonce)).encode()).hexdigest()
+           if block_hash.startswith("0" * difficulty):
+               return block_hash, nonce
+           nonce += 1
+
+   # Find a valid hash using Proof of Work
+
+   block_data = "Block data..."
+   previous_hash = "Previous hash..."
+
+   difficulty = 4  # Number of leading zeros required in the hash
+
+   block_hash, nonce = proof_of_work(block_data, previous_hash, difficulty)
+
+   print(f"Valid hash: {block_hash}")
+   print(f"Nonce: {nonce}")
+
+   ## Output
+   # Valid hash: 0000a11815e9ef8f...
+   # Nonce: 12345
+   ```
+
+3. **Merkle Trees**: Los árboles de Merkle son estructuras de datos que utilizan hashing para agrupar múltiples
+   transacciones en un solo hash raíz. Cada nodo en el árbol de Merkle es el hash de sus nodos hijos, lo que permite a
+   los participantes verificar la integridad de las transacciones en un bloque sin tener que verificar cada transacción  
+    individualmente.
+
+   ```python showLineNumbers
+     import hashlib
+
+     def calculate_merkle_root(transactions):
+         if len(transactions) == 1:
+             return transactions[0]
+
+         new_transactions = []
+         for i in range(0, len(transactions), 2):
+             left = transactions[i]
+             right = transactions[i + 1] if i + 1 < len(transactions) else left # If the number of transactions is odd, duplicate the last transaction
+             combined = left + right
+             new_transactions.append(hashlib.sha256(combined.encode()).hexdigest())
+
+         return calculate_merkle_root(new_transactions)
+
+     # Calculate the Merkle root of a list of transactions
+     transactions = ["Transaction 1", "Transaction 2", "Transaction 3", "Transaction 4"]
+
+     merkle_root = calculate_merkle_root(transactions)
+
+     print(f"Merkle root: {merkle_root}")
+
+     ## Output
+     # Merkle root: 0bc1c5cf4cc8f4...
+   ```
+
+### Firma digital para la autenticidad
+
+La firma digital se utiliza en blockchain para garantizar la autenticidad de las transacciones y los bloques. Al firmar
+una transacción con una clave privada, el remitente puede demostrar que la transacción proviene de él y no ha sido
+alterada. Por ejemplo, en la red Ethereum, las transacciones se firman con la clave privada del remitente y se verifican
+con la clave pública correspondiente, lo que garantiza que la transacción sea auténtica y provenga del remitente
+autorizado.
+
+La firma digital es ampliamente utilizada en blockchain para:
+
+1. **Verificar la autenticidad de las transacciones**: Cada transacción en la red blockchain se firma con la clave privada
+   del remitente y se verifica con la clave pública correspondiente, lo que garantiza que la transacción sea auténtica y
+   provenga del remitente autorizado.
+
+   ```python showLineNumbers
+    from cryptography.hazmat.primitives import hashes
+    from cryptography.hazmat.primitives.asymmetric import padding
+    from cryptography.hazmat.primitives import serialization
+
+    def sign_transaction(transaction, private_key):
+        signature = private_key.sign(
+            transaction.encode(),
+            padding.PSS(
+                mgf=padding.MGF1(hashes.SHA256()),
+                salt_length=padding.PSS.MAX_LENGTH
+            ),
+            hashes.SHA256()
+        )
+        return signature
+
+    def verify_transaction(transaction, signature, public_key):
+        try:
+            public_key.verify(
+                signature,
+                transaction.encode(),
+                padding.PSS(
+                    mgf=padding.MGF1(hashes.SHA256()),
+                    salt_length=padding.PSS.MAX_LENGTH
+                ),
+                hashes.SHA256()
+            )
+            return True
+        except:
+            return False
+
+    # Generate a key pair
+    private_key, public_key = generate_key_pair()
+
+    # Sign and verify a transaction
+    transaction = "Transfer 10 BTC to Alice"
+    signature = sign_transaction(transaction, private_key)
+    is_valid = verify_transaction(transaction, signature, public_key)
+
+    print(f"Transaction: {transaction}")
+    print(f"Signature: {signature}")
+    print(f"Is valid signature: {is_valid}")
+
+    ## Output
+    # Transaction: Transfer 10 BTC to Alice
+    # Signature: b'4y~\x15\x9fS\x84...
+    # Is valid signature: True
+   ```
+
+2. **Verificar la autenticidad de los bloques**: Cada bloque en la cadena de bloques se firma con la clave privada del
+   minero y se verifica con la clave pública correspondiente, lo que garantiza que el bloque sea auténtico y provenga
+   del minero autorizado.
+
+   ```python showLineNumbers
+     from cryptography.hazmat.primitives import hashes
+     from cryptography.hazmat.primitives.asymmetric import padding
+     from cryptography.hazmat.primitives import serialization
+
+     def sign_block(block_data, private_key):
+         signature = private_key.sign(
+             block_data.encode(),
+             padding.PSS(
+                 mgf=padding.MGF1(hashes.SHA256()),
+                 salt_length=padding.PSS.MAX_LENGTH
+             ),
+             hashes.SHA256()
+         )
+         return signature
+
+     def verify_block(block_data, signature, public_key):
+         try:
+             public_key.verify(
+                 signature,
+                 block_data.encode(),
+                 padding.PSS(
+                     mgf=padding.MGF1(hashes.SHA256()),
+                     salt_length=padding.PSS.MAX_LENGTH
+                 ),
+                 hashes.SHA256()
+             )
+             return True
+         except:
+             return False
+
+     # Generate a key pair
+     private_key, public_key = generate_key_pair()
+
+     # Sign and verify a block
+     block_data = "Block data..."
+     signature = sign_block(block_data, private_key)
+     is_valid = verify_block(block_data, signature, public_key)
+
+     print(f"Block data: {block_data}")
+     print(f"Signature: {signature}")
+     print(f"Is valid signature: {is_valid}")
+
+     ## Output
+     # Block data: Block data...
+     # Signature: b'x98b\rNP2\xdd...
+     # Is valid signature: True
+   ```
+
+3. **Verificar la autenticidad de los participantes**: Cada participante en la red blockchain tiene un par de claves
+   pública y privada que se utiliza para firmar transacciones y bloques, lo que garantiza que las transacciones sean
+   auténticas y provengan del remitente autorizado.
+
+   ```python showLineNumbers
+     from cryptography.hazmat.primitives import hashes
+     from cryptography.hazmat.primitives.asymmetric import padding
+     from cryptography.hazmat.primitives import serialization
+
+     def sign_message(message, private_key):
+         signature = private_key.sign(
+             message.encode(),
+             padding.PSS(
+                 mgf=padding.MGF1(hashes.SHA256()),
+                 salt_length=padding.PSS.MAX_LENGTH
+             ),
+             hashes.SHA256()
+         )
+         return signature
+
+     def verify_message(message, signature, public_key):
+         try:
+             public_key.verify(
+                 signature,
+                 message.encode(),
+                 padding.PSS(
+                     mgf=padding.MGF1(hashes.SHA256()),
+                     salt_length=padding.PSS.MAX_LENGTH
+                 ),
+                 hashes.SHA256()
+             )
+             return True
+         except:
+             return False
+
+     # Generate a key pair
+     private_key, public_key = generate_key_pair()
+
+     # Sign and verify a message
+     message = "Hello, world!"
+     signature = sign_message(message, private_key)
+     is_valid = verify_message(message, signature, public_key)
+
+     print(f"Message: {message}")
+     print(f"Signature: {signature}")
+     print(f"Is valid signature: {is_valid}")
+
+     ## Output
+     # Message: Hello, world!
+     # Signature: b'$P/\xf0y\xfbIH=...
+     # Is valid signature: True
+   ```
+
+## Conclusiones
+
+La criptografía ha evolucionado desde simples sustituciones de símbolos en el antiguo Egipto hasta convertirse en uno de los pilares fundamentales de la tecnología blockchain. A lo largo de este artículo, hemos explorado cómo los principios básicos de la criptografía, establecidos por pioneros como Claude Shannon, siguen siendo relevantes en la era digital.
+Las técnicas criptográficas modernas como el hashing, el cifrado simétrico y asimétrico, y las firmas digitales trabajan en conjunto para proporcionar la base de seguridad necesaria en los sistemas blockchain:
+
+- El hashing garantiza la integridad de los datos y forma la base de los mecanismos de consenso
+- El cifrado simétrico y asimétrico protege la confidencialidad de la información sensible
+- Las firmas digitales aseguran la autenticidad de las transacciones y la identidad de los participantes
+
+La implementación de estos conceptos criptográficos en blockchain demuestra cómo los principios fundamentales de la triada CIA (Confidencialidad, Integridad y Autenticidad) pueden aplicarse de manera práctica para crear sistemas descentralizados y seguros. Los ejemplos de código presentados ilustran que, aunque los conceptos subyacentes pueden ser complejos, su implementación es accesible utilizando bibliotecas modernas de programación.
+La criptografía continúa siendo un campo en evolución, y su papel en blockchain seguirá siendo crucial para el desarrollo de sistemas descentralizados más seguros y eficientes en el futuro.
 
 ## Referencias
 
 <Reference
   type="youtube"
   url="https://www.youtube.com/watch?v=z9Qi5mDSYb8"
-  text="[1] History and Evolution of Cryptography and Cryptonalysis"
+  text="History and Evolution of Cryptography and Cryptonalysis"
 />
 
 <Reference
   type="youtube"
   url="https://www.youtube.com/watch?v=9pp9YpginNg"
-  text="[2] Secret Codes: A History of Cryptography"
+  text="Secret Codes: A History of Cryptography"
 />
 
 <Reference
   type="web"
   url="https://www.jstor.org/stable/25150077"
-  text="[3] David P. Silverman. 1980. Cryptography writing in the Tomb of Tutankhamun."
+  text="David P. Silverman. 1980. Cryptography writing in the Tomb of Tutankhamun."
 />
 
 <Reference
   type="web"
   url="https://edu.anarcho-copy.org/Programming%20Languages/Python/Practical_Cryptography_in_Python_Learning_Correct_Cryptography_by.pdf"
-  text="[4] Seth James Nielson et al. 2019. Practical Cryptography in Python: Learning Correct Cryptography by Example."
+  text="Seth James Nielson et al. 2019. Practical Cryptography in Python: Learning Correct Cryptography by Example."
+/>
+
+<Reference
+  type="web"
+  url="https://pages.cs.wisc.edu/~rist/642-spring-2014/shannon-secrecy.pdf"
+  text="Claude Shannon. 1949. Communication Theory of Secrecy Systems."
+/>
+
+<Reference
+  type="arxiv"
+  url="https://arxiv.org/abs/2410.10110v1"
+  text="Pohsun Feng et al. 2024. Mastering AI: Big Data, Deep Learning, and the Evolution of Large Language Models -- Blockchain and Applications
+"
+/>
+
+<Reference
+  type="web"
+  url="https://www.mdpi.com/2073-8994/16/2/147"
+  text="Luon-Chang Lin et al. 2024. Symmetry in Blockchain-Powered Secure Decentralized Data Storage: Mitigating Risks and Ensuring Confidentiality
+"
+/>
+
+<Reference
+  type="web"
+  url="https://annals-csis.org/Volume_10/drp/pdf/48.pdf"
+  text="Vijaya Kumar S. 2017. Symmetry key encryption with many secret keys"
 />
