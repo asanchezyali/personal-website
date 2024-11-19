@@ -42,13 +42,11 @@ print(f"Text: {text}")
 print(f"Most likely label: {result['labels'][0]}")
 print(f"Score: {result['scores'][0]:.4f}")
 
-```
-
-```
 ## Output
-The new restaurant in the city center offers a unique culinary experience, blending traditional flavors with modern techniques.
-Most likely label: Local news
-Score: 0.5561
+# The new restaurant in the city center offers a unique culinary experience, blending traditional flavors with modern techniques.
+# Most likely label: Local news
+# Score: 0.5561
+
 ```
 
 In this example, we're using a pre-trained model to classify a text into categories it may not have seen before. Facebook's [BART-large-mnli](https://huggingface.co/facebook/bart-large-mnli) model is a pre-trained language model that has been fine-tuned on the ZSTC task. By providing the text and a list of candidate labels, the model returns the most likely label and the score associated with that prediction. In this case, the model classifies the text as "Local news" with a score of 0.5561.
@@ -162,11 +160,9 @@ labels = ["technology", "food", "sports"]
 # Zero-Shot Classification
 results = zero_shot_classify(text, labels)
 print(results)
-```
 
-```
 ## Output
-{'technology': 0.9836695194244385, 'food': 0.0005292915157042444, 'sports': 0.0027664615772664547}
+# {'technology': 0.9836695194244385, 'food': 0.0005292915157042444, 'sports': 0.0027664615772664547}
 ```
 
 ## Advantages of ZSTC
@@ -198,21 +194,20 @@ for text in texts + [new_text]:
     print(f"Text: {text}")
     print(f"Classification: {result['labels'][0]}")
     print(f"Confidence: {result['scores'][0]:.2f}\n")
-```
 
-```
+
 ## Output
-Text: The new AI algorithm outperforms humans in chess
-Classification: artificial intelligence
-Confidence: 0.77
+# Text: The new AI algorithm outperforms humans in chess
+# Classification: artificial intelligence
+# Confidence: 0.77
 
-Text: The latest operating system update improves security
-Classification: software
-Confidence: 0.99
+# Text: The latest operating system update improves security
+# Classification: software
+# Confidence: 0.99
 
-Text: The 3D printer creates custom prosthetics for patients
-Classification: medical technology
-Confidence: 0.99
+# Text: The 3D printer creates custom prosthetics for patients
+# Classification: medical technology
+#Confidence: 0.99
 ```
 
 In this example, we can see how the model is able to correctly classify a text in a new previously unseen category, "medical technology", with high confidence.
@@ -259,17 +254,15 @@ for text in [tech_text, medical_text]:
     print(f"Text: {text}")
     print(f"Classification: {result['labels'][0]}")
     print(f"Confidence: {result['scores'][0]:.2f}\n")
-```
 
-```
 ## Output
-Text: The new smartphone features a high-resolution OLED display
-Classification: technology
-Confidence: 0.99
+# Text: The new smartphone features a high-resolution OLED display
+# Classification: technology
+# Confidence: 0.99
 
-Text: The patient exhibits symptoms of acute bronchitis
-Classification: medicine
-Confidence: 0.89
+# Text: The patient exhibits symptoms of acute bronchitis
+# Classification: medicine
+# Confidence: 0.89
 ```
 
 ### Flexibility in class formulation
@@ -295,12 +288,11 @@ result = classifier(text, detailed_labels)
 print(f"Text: {text}")
 print(f"Classification: {result['labels'][0]}")
 print(f"Confidence: {result['scores'][0]:.2f}")
-```
 
-```
-Text: The company announced record profits this quarter
-Classification: Financial news about corporate performance
-Confidence: 0.99
+## Output
+# Text: The company announced record profits this quarter
+# Classification: Financial news about corporate performance
+# Confidence: 0.99
 ```
 
 ## Handling multiple labels
@@ -324,15 +316,13 @@ print("\nMulti-label classification results:")
 for label, score in zip(result['labels'], result['scores']):
     if score > 0.5:  # Adjust this threshold as needed
         print(f"{label}: {score:.2f}")
-```
 
-```
 ## Output
-Text: The new smartphone features a high-resolution camera, 5G connectivity, and a powerful AI chip.
+# Text: The new smartphone features a high-resolution camera, 5G connectivity, and a powerful AI chip.
 
-Multi-label classification results:
-camera quality: 0.94
-processing power: 0.78
+# Multi-label classification results:
+# camera quality: 0.94
+# processing power: 0.78
 ```
 
 The ability to handle multiple labels significantly expands the applicability of ZSTC in real-world scenarios, where complexity and multidimensionality are the norm rather than the exception.
@@ -366,19 +356,17 @@ if max(result['scores']) - min(result['scores']) < 0.1:
     print("This case is ambiguous. Consider providing more context or refining the labels.")
 else:
     print(f"The most likely interpretation is: {result['labels'][0]}")
-```
 
-```
 ## Output
-Text: The bank by the river was crowded.
+# Text: The bank by the river was crowded.
 
-Classification results:
-crowded place: 0.50
-river bank: 0.50
-financial institution: 0.00
+# Classification results:
+# crowded place: 0.50
+# river bank: 0.50
+# financial institution: 0.00
 
-Analysis:
-The most likely interpretation is: crowded place
+# Analysis:
+# The most likely interpretation is: crowded place
 ```
 
 In the above example, we've set a threshold difference of 0.1 to identify ambiguous cases. When ambiguity is detected in the predictions, consider providing more context or refining the labels to improve classification accuracy. And in critical applications, implement a human review system for ambiguous cases.
@@ -471,13 +459,11 @@ if category == "Needs Human Review":
     print("This email requires manual classification.")
 else:
     print(f"Automated action: Route to {category} department")
-```
 
-```
 ## Output
-Email Category: Urgent
-Confidence: 0.94
-Automated action: Route to Urgent department
+# Email Category: Urgent
+# Confidence: 0.94
+# Automated action: Route to Urgent department
 ```
 
 2. **Sentiment analysis in product reviews**:
@@ -514,13 +500,11 @@ print(f"Aspects Mentioned: {', '.join(aspects)}")
 
 if sentiment == "Ambiguous":
     print("This review needs further analysis for accurate sentiment classification.")
-```
 
-```
 ## Output
-Overall Sentiment: Ambiguous
-Aspects Mentioned: Quality, Price, Customer Service
-This review needs further analysis for accurate sentiment classification.
+# Overall Sentiment: Ambiguous
+# Aspects Mentioned: Quality, Price, Customer Service
+# This review needs further analysis for accurate sentiment classification.
 ```
 
 3. **News classifier for a content aggregator**:
@@ -583,13 +567,11 @@ if confidence < 0.4:
     print("This article needs manual review for accurate categorization.")
 elif not sub_categories:
     print("Could not determine a specific sub-category. Consider refining the classification.")
-```
 
-```
 ## Output
-Main Category: Uncategorized
-Confidence: 0.33
-This article needs manual review for accurate categorization.
+# Main Category: Uncategorized
+# Confidence: 0.33
+# This article needs manual review for accurate categorization.
 ```
 
 It's also possible to combine Zero-Shot with other NLP methods to improve results, such as entity extraction, intent
@@ -636,12 +618,10 @@ category, mentioned_companies = analyze_financial_news(news_text)
 if category:
     print(f"News Category: {category}")
     print(f"Mentioned Companies: {', '.join(mentioned_companies)}")
-```
 
-```
 ## Output
-News Category: Earnings Report
-Mentioned Companies: Apple, Inc
+# News Category: Earnings Report
+# Mentioned Companies: Apple, Inc
 ```
 
 5. **Tweet classification with user context**
@@ -692,11 +672,9 @@ category = classify_tweet_with_context(tweet, user_bio)
 
 if category:
     print(f"Tweet Category: {category}")
-```
 
-```
 ## Output
-Tweet Category: Entertainment
+# Tweet Category: Entertainment
 ```
 
 ## Evaluation and metrics
@@ -894,18 +872,16 @@ labels = ["science fiction", "historical fiction", "romance", "mystery"]
 
 print("\nUnusual concept:")
 print(classifier(unusual_text, labels))
-```
 
-```
 ## Output
-General labels:
-{'sequence': 'The patient exhibits signs of keratoconus in the left eye.', 'labels': ['health', 'technology', 'sports'], 'scores': [0.7707374095916748, 0.135053813457489, 0.0942087471485138]}
+# General labels:
+# {'sequence': 'The patient exhibits signs of keratoconus in the left eye.', 'labels': ['health', 'technology', 'sports'], 'scores': [0.7707374095916748, 0.135053813457489, 0.0942087471485138]}
 
-Specialized labels:
-{'sequence': 'The patient exhibits signs of keratoconus in the left eye.', 'labels': ['ophthalmology', 'neurology', 'cardiology'], 'scores': [0.9111181497573853, 0.06408613175153732, 0.02479572966694832]}
+#Specialized labels:
+# {'sequence': 'The patient exhibits signs of keratoconus in the left eye.', 'labels': ['ophthalmology', 'neurology', 'cardiology'], 'scores': [0.9111181497573853, 0.06408613175153732, 0.02479572966694832]}
 
-Unusual concept:
-{'sequence': 'The zorblax fluttered its tentacles in the crimson sky of Xargon-7.', 'labels': ['science fiction', 'mystery', 'historical fiction', 'romance'], 'scores': [0.48209530115127563, 0.2437402755022049, 0.16008099913597107, 0.11408346891403198]}
+# Unusual concept:
+# {'sequence': 'The zorblax fluttered its tentacles in the crimson sky of Xargon-7.', 'labels': ['science fiction', 'mystery', 'historical fiction', 'romance'], 'scores': [0.48209530115127563, 0.2437402755022049, 0.16008099913597107, 0.11408346891403198]}
 ```
 
 Additional points to consider:

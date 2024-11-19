@@ -101,9 +101,8 @@ const ListLayout = ({ posts, title, pagination }) => {
     <>
       <div className="space-y-2 pb-8 pt-2 md:space-y-5">
         <p className="text-[14px]">
-          We're infected by AI here... and we love it! All the content you'll find here has been
-          co-created with artificial intelligence, but don't worry, it's all fine-tuned by humans
-          and thoroughly reviewed to offer you the best of both worlds.
+          We're infected by AI... and we love it! Content here is co-created with AI, fine-tuned by
+          humans, and carefully reviewed for the best experience.
         </p>
         <div className="relative max-w-full lg:max-w-lg">
           <input
