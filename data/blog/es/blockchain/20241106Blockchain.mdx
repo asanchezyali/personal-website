@@ -18,7 +18,7 @@ La historia de la criptografía es un fascinante viaje que refleja la eterna nec
 Desde las antiguas civilizaciones hasta la era digital moderna, la criptografía ha evolucionado constantemente,
 adaptándose a nuevas necesidades y desafíos.
 
-### Los orígenes: Antiguo Egipto y Roma
+## Los orígenes: Antiguo Egipto y Roma
 
 En el antiguo Egipto, los escribas desarrollaron uno de los primeros sistemas de cifrado conocidos, utilizando
 jeroglíficos no estándar para ocultar mensajes sagrados y secretos de estado. Un ejemplo notable se encontró en la tumba
@@ -166,65 +166,6 @@ print(f"Bit change percentage: {avalanche:.2f}%")
 ```
 
 4. **Seguridad perfecta**: Un estado ideal donde el texto cifrado no revela información sobre el mensaje original, incluso ante un atacante con recursos computacionales ilimitados.
-
-Para ilustrar cómo estos principios se aplican en la práctica, veamos una estructura simplificada de una ronda de
-cifrado moderna:
-
-```python showLineNumbers
-def simplified_encryption_round(state, round_key):
-    # This demonstrates how confusion and diffusion work together
-    # in modern block ciphers like AES
-
-    def substitute_bytes(state):
-        # Confusion: Apply S-box substitution
-        # Each byte is transformed independently
-        pass
-
-    def shift_rows(state):
-        # Diffusion: Rearrange bytes in the state
-        # Spreads changes across the state
-        pass
-
-    def mix_columns(state):
-        # Diffusion: Mix data within columns
-        # Ensures changes propagate across columns
-        pass
-
-    def add_round_key(state, key):
-        # Confusion: Combine state with round key
-        # Creates dependency between state and key
-        pass
-
-    # A typical round applies both confusion and diffusion
-    state = substitute_bytes(state)    # Confusion
-    state = shift_rows(state)          # Diffusion
-    state = mix_columns(state)         # Diffusion
-    state = add_round_key(state, key)  # Confusion
-
-    return state
-
-# Example usage
-state = [0x32, 0x88, 0x31, 0xE0,
-         0x43, 0x5A, 0x31, 0x37,
-         0xF6, 0x30, 0x98, 0x07,
-         0xA8, 0x8D, 0xA2, 0x34]
-
-round_key = [0x2B, 0x28, 0xAB, 0x09,
-             0x7E, 0xAE, 0xF7, 0xCF,
-             0x15, 0xD2, 0x15, 0x4F,
-             0x16, 0xA6, 0x88, 0x3C]
-
-encrypted_state = simplified_encryption_round(state, round_key)
-print(f"Encrypted state: {encrypted_state}")
-
-## Output
-# Encrypted state: [0x39, 0x02, 0xDC, 0x19,
-#                   0x25, 0xDC, 0x11, 0x6A,
-#                   0x84, 0x09, 0x85, 0x0B,
-#                   0x1D, 0xFB, 0x97, 0x32]
-```
-
-En este ejemplo, la función `simplified_encryption_round` simula una ronda de cifrado en un cifrador de bloques moderno como AES. La ronda aplica tanto la confusión como la difusión, utilizando operaciones como la sustitución de bytes, el desplazamiento de filas, la mezcla de columnas y la adición de la clave de ronda. Estas operaciones trabajan juntas para garantizar que los cambios en el estado se propaguen de manera efectiva y que el cifrado sea resistente a ataques criptoanalíticos.
 
 ## La triada de seguridad CIA en la criptografía
 
