@@ -100,10 +100,6 @@ const ListLayout = ({ posts, title, pagination }) => {
   return (
     <>
       <div className="space-y-2 pb-8 pt-2 md:space-y-5">
-        <p className="max-w-[500px] text-[14px]">
-          We're infected by AI... and we love it! Content here is co-created with AI, fine-tuned by
-          humans, and carefully reviewed for the best experience.
-        </p>
         <div className="relative max-w-full lg:max-w-lg">
           <input
             aria-label="Search articles or tags"
