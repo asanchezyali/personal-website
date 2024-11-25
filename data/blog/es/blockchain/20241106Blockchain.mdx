@@ -23,7 +23,7 @@ adaptándose a nuevas necesidades y desafíos.
 En el antiguo Egipto, los escribas desarrollaron uno de los primeros sistemas de cifrado conocidos, utilizando
 jeroglíficos no estándar para ocultar mensajes sagrados y secretos de estado. Un ejemplo notable se encontró en la tumba
 de Tutankamón, donde jeroglíficos modificados protegían información sobre los tesoros del faraón
-[[3](https://www.jstor.org/stable/25150077)]. El método consistía en desplazar cada letra del mensaje un número fijo de posiciones en el alfabeto, creando así un texto cifrado.
+([David P. Silverman, 1980](https://www.jstor.org/stable/25150077)). El método consistía en desplazar cada letra del mensaje un número fijo de posiciones en el alfabeto, creando así un texto cifrado.
 
 El proceso puede expresarse matemáticamente como:
 
@@ -89,7 +89,7 @@ Shannon introdujo cuatro conceptos fundamentales que transformarían la discipli
 
 1. **Entropía**: La medida matemática de la incertidumbre en un sistema de cifrado. Un sistema con alta entropía es más resistente a análisis estadísticos y ataques.
 
-2. **Confusión**: Un principio fundamental que establece que cada bit del texto cifrado debe depender de varias partes de la clave de cifrado. Esta propiedad oculta la relación entre el texto cifrado y la clave, dificultando los ataques de fuerza bruta.
+2. **Confusión**: Principio fundamental que establece que cada bit del texto cifrado debe depender de varias partes de la clave de cifrado. Esta propiedad oculta la relación entre el texto cifrado y la clave, dificultando los ataques de fuerza bruta.
 
 ```python showLineNumbers
 def demonstrate_confusion():
@@ -126,13 +126,18 @@ def demonstrate_confusion():
 
 # Example usage
 demonstrate_confusion()
+
+## Output
+# Input: 0x5
+# Output with key 0x3: 0xA
+# Output with key 0x2: 0xD
 ```
 
 En este ejemplo, la función `apply_confusion` toma un byte de entrada y un byte de clave como entrada y aplica la
 confusión utilizando una S-box simplificada. La función demuestra cómo un pequeño cambio en la clave produce resultados
 significativamente diferentes en la salida, lo que ilustra el principio de confusión en la criptografía.
 
-3. **Difusión**: Un principio crucial que establece que cambiar un solo bit en el texto original debe modificar aproximadamente la mitad de los bits en el texto cifrado, y viceversa. Este "efecto avalancha" asegura que los patrones en el texto original no sean detectables en el texto cifrado.
+3. **Difusión**: Principio crucial que establece que cambiar un solo bit en el texto original debe modificar aproximadamente la mitad de los bits en el texto cifrado, y viceversa. Este "efecto avalancha" asegura que los patrones en el texto original no sean detectables en el texto cifrado.
 
 ```python showLineNumbers
 def demonstrate_avalanche_effect(message, key):

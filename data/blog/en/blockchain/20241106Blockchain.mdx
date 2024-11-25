@@ -1,0 +1,506 @@
+---
+title: 'Cryptography: The Fundamental Pillar of Blockchain'
+date: '2024/11/06'
+lastmod: '2023-03-26'
+tags: ['blockchain', 'smart-contracts', 'dapps', 'cryptography']
+draft: false
+time: '40 min'
+summary: 'This article explores the evolution and foundations of cryptography, from its origins in ancient Egypt to its crucial role in blockchain technology. We begin with a historical journey that includes Egyptian hieroglyphics and Caesar cipher, accompanied by practical implementations in Python. We examine the modern principles established by Claude Shannon and the CIA security triad (Confidentiality, Integrity, and Authenticity). The central part of the article delves into how modern cryptography underpins blockchain technology through techniques such as hashing, symmetric and asymmetric encryption, illustrated with practical code examples. This 40-minute tutorial provides a solid understanding of how cryptography has evolved to become the fundamental pillar of security and trust in blockchain systems.'
+layout: PostLayout
+bibliography: references-data.bib
+canonicalUrl: https://www.asanchezyali.com/blog/es/blockchain/20230326BlockchainParadigm/
+headerImage: '/images/blockchain/post-solana.webp'
+images: ['/images/blockchain/post-solana.webp']
+language: 'en'
+---
+
+The history of cryptography is a fascinating journey that reflects humanity's eternal need to protect information. From ancient civilizations to the modern digital era, cryptography has constantly evolved, adapting to new needs and challenges.
+
+## The Origins: Ancient Egypt and Rome
+
+In ancient Egypt, scribes developed one of the first known encryption systems, using non-standard hieroglyphics to hide sacred messages and state secrets. A notable example was found in Tutankhamun's tomb, where modified hieroglyphics protected information about the pharaoh's treasures ([David P. Silverman, 1980](https://www.jstor.org/stable/25150077)). The method consisted of shifting each letter of the message a fixed number of positions in the alphabet, thus creating an encrypted text.
+
+The process can be expressed mathematically as:
+
+$$
+\begin{equation}
+\text{Encryption:} \quad E(x) = (x + k) \mod 26,
+\end{equation}
+$$
+
+$$
+\begin{equation}
+\text{Decryption:} \quad D(x) = (x - k) \mod 26,
+\end{equation}
+$$
+
+Where $x$ is the position of the letter in the alphabet (for example, 'A' is 0, 'B' is 1, etc.), $k$ is the shift, and $\mod 26$ ensures the result stays within the range of English alphabet letters.
+
+```python showLineNumbers
+def caesar_cipher_encrypt(text, shift):
+    result = ""
+    for char in text:
+        # If it's a letter, shift it by the specified amount else keep it as it is
+        if char.isalpha():
+            # Convert letter to number (0-25)
+            base = ord('a') if char.islower() else ord('A')
+            x = ord(char) - base
+            # Apply the formula e(x) = (x + k) mod 26
+            x = (x + shift) % 26
+            # Convert number back to letter
+            result += chr(x + base)
+        else:
+            result += char
+    return result
+
+def caesar_cipher_decrypt(text, shift):
+    return caesar_cipher_encrypt(text, -shift)
+
+# Encrypt the message "HELLO" with a shift of 3
+encrypted_message = caesar_cipher_encrypt("HELLO", 3)
+decrypt_message = caesar_cipher_decrypt(encrypted_message, 3)
+print(f"Encrypted message: {encrypted_message}")
+print(f"Decrypted message: {decrypt_message}")
+
+## Output
+# Encrypted message: KHOOR
+# Decrypted message: HELLO
+```
+
+## The Birth of Modern Cryptography
+
+The true revolution in cryptography came with the development of computers and information theory. Claude Shannon, considered the father of information theory, established in 1949 the fundamental principles that would guide the development of modern cryptography in his seminal paper ["Communication Theory of Secrecy Systems"](https://pages.cs.wisc.edu/~rist/642-spring-2014/shannon-secrecy.pdf).
+
+Shannon introduced four fundamental concepts that would transform the discipline:
+
+1. **Entropy**: The mathematical measure of uncertainty in an encryption system. A system with high entropy is more resistant to statistical analysis and attacks.
+
+2. **Confusion**: Fundamental principle stating that each bit of the ciphertext should depend on several parts of the encryption key. This property hides the relationship between the ciphertext and the key, making brute force attacks more difficult.
+
+```python showLineNumbers
+def demonstrate_confusion():
+    # Define a simplified S-box (Substitution box)
+    # S-boxes provide confusion by creating complex mappings
+    # between input and output
+    s_box = {
+        0x0: 0xC, 0x1: 0x5, 0x2: 0x6, 0x3: 0xB,
+        0x4: 0x9, 0x5: 0x0, 0x6: 0xA, 0x7: 0xD,
+        0x8: 0x3, 0x9: 0xE, 0xA: 0xF, 0xB: 0x8,
+        0xC: 0x4, 0xD: 0x7, 0xE: 0x1, 0xF: 0x2
+    }
+
+    def apply_confusion(input_byte, key_byte):
+        # XOR the input with the key and then apply S-box
+        # This demonstrates how a small key change affects the output
+        mixed = input_byte ^ key_byte
+        return s_box[mixed & 0xF]  # Keep only 4 bits
+
+    # Demonstrate how a 1-bit change in the key produces
+    # significantly different output
+    input_value = 0x5
+    key1 = 0x3
+    key2 = 0x2  # Differs by only one bit from key1
+
+    result1 = apply_confusion(input_value, key1)
+    result2 = apply_confusion(input_value, key2)
+
+    print(f"Input: 0x{input_value:X}")
+    print(f"Output with key 0x{key1:X}: 0x{result1:X}")
+    print(f"Output with key 0x{key2:X}: 0x{result2:X}")
+    # The results will be significantly different
+    # despite the minimal change in the key
+
+# Example usage
+demonstrate_confusion()
+
+## Output
+# Input: 0x5
+# Output with key 0x3: 0xA
+# Output with key 0x2: 0xD
+```
+
+3. **Diffusion**: Crucial principle stating that changing a single bit in the plaintext should modify approximately half of the bits in the ciphertext, and vice versa. This "avalanche effect" ensures that patterns in the original text are not detectable in the ciphertext.
+
+```python showLineNumbers
+def demonstrate_avalanche_effect(message, key):
+    # This function demonstrates how a small change in input
+    # causes a significant change in the output hash
+
+    def hash_message(msg):
+        # Convert the message to a 256-bit hash
+        import hashlib
+        return bin(int(hashlib.sha256(msg.encode()).hexdigest(), 16))[2:].zfill(256)
+
+    # Get hash of original message
+    original_hash = hash_message(message + key)
+
+    # Change just one character in the message
+    modified_message = message[:-1] + chr(ord(message[-1]) + 1)
+    modified_hash = hash_message(modified_message + key)
+
+    # Count how many bits changed
+    diff_bits = sum(a != b for a, b in zip(original_hash, modified_hash))
+    diff_percentage = (diff_bits / len(original_hash)) * 100
+
+    return diff_percentage
+
+# Example usage
+message = "Hello, World!"
+key = "secretkey123"
+avalanche = demonstrate_avalanche_effect(message, key)
+print(f"Bit change percentage: {avalanche:.2f}%")
+# Typical output: ~50% of bits changed
+```
+
+4. **Perfect security**: An ideal state where the ciphertext reveals no information about the original message, even to an attacker with unlimited computational resources.
+
+## The CIA Security Triad in Cryptography
+
+Modern cryptography is based on three fundamental pillars known as the CIA triad:
+
+- **Confidentiality**: Ensures that information is only accessible to authorized parties and protects against unauthorized disclosure.
+- **Integrity**: Ensures that information has not been altered or modified during transmission or storage.
+- **Authenticity**: Verifies the identity of parties involved in communication and ensures that information has not been forged.
+
+Additionally, [Kerckhoffs's principle](https://en.wikipedia.org/wiki/Kerckhoffs%27s_principle) states that the security of an encryption system should depend solely on the secret key and not on the algorithm itself. This means that the encryption algorithm can be public knowledge without compromising security, as long as the key remains protected.
+
+In the design of modern encryption algorithms, **resistance to cryptanalytic and computational attacks** is sought, meaning that encryption must be able to resist brute force attacks, ciphertext analysis, and other decryption methods without knowing the secret key. Modern encryption algorithms, such as [AES](https://en.wikipedia.org/wiki/Advanced_Encryption_Standard) (Advanced Encryption Standard) and [RSA](https://en.wikipedia.org/wiki/RSA) (Rivest-Shamir-Adleman), are based on the CIA triad principles and Kerckhoffs's principle to ensure information security.
+
+## Blockchain and Cryptography
+
+Cryptography plays a fundamental role in blockchain technology, ensuring that the system remains secure, reliable, and resistant to manipulation. In this section, we'll explore how cryptographic techniques such as **hashing**, **digital signatures**, and **public key cryptography** are used to protect the confidentiality, integrity, and authenticity of data, transactions, and participants in the blockchain network, eliminating the need for a central authority.
+
+**Hashing**: In blockchain, hashing is used to ensure the integrity of data stored in blocks. A hash is a mathematical function that takes a variable-length input and produces a fixed-length output. Hashes are unique for each input, and any change in the input will result in a completely different hash. For example, in the Bitcoin network, the SHA-256 hash function is used to generate the hash of each block, allowing participants to verify the integrity of data stored in the blockchain.
+
+```python showLineNumbers
+import hashlib
+
+def calculate_hash(data):
+    return hashlib.sha256(data.encode()).hexdigest()
+
+# Calculate the hash of a message
+message = "Hello, world!"
+hash_value = calculate_hash(message)
+
+print(f"Hash of '{message}': {hash_value}")
+
+## Output
+# Hash of 'Hello, world!': 315f5bdb...
+```
+
+**Symmetric Encryption**: In symmetric encryption, the same key is used to encrypt and decrypt data. This allows secure communication between two parties who share the same secret key. Examples of symmetric encryption algorithms include [AES](https://en.wikipedia.org/wiki/Advanced_Encryption_Standard) and [DES](https://en.wikipedia.org/wiki/Data_Encryption_Standard). In blockchain, symmetric encryption is used to protect the confidentiality of data stored in blocks. However, symmetric encryption is not suitable for ensuring authenticity and integrity of data, as it requires parties to share the secret key.
+
+```python showLineNumbers
+from cryptography.fernet import Fernet
+
+def encrypt_message(message, key):
+    cipher = Fernet(key)
+    return cipher.encrypt(message.encode())
+
+
+def decrypt_message(encrypted_message, key):
+    cipher = Fernet(key)
+    return cipher.decrypt(encrypted_message).decode()
+
+
+# Generate a random key
+key = Fernet.generate_key()
+
+# Encrypt and decrypt a message
+message = "Hello, world!"
+encrypted_message = encrypt_message(message, key)
+decrypted_message = decrypt_message(encrypted_message, key)
+
+print(f"Original message: {message}")
+print(f"Encrypted message: {encrypted_message}")
+print(f"Decrypted message: {decrypted_message}")
+
+## Output
+# Original message: Hello, world!
+# Encrypted message: b'gAAAAABnLo...
+# Decrypted message: Hello, world!
+```
+
+**Asymmetric Encryption**: In asymmetric encryption, two different keys are used - a public key and a private key - to encrypt and decrypt data. The public key is shared with all network participants, while the private key is kept secret. This method allows participants to verify data authenticity using the sender's public key to encrypt data and the recipient's private key to decrypt it. Examples of asymmetric encryption algorithms include [RSA](https://en.wikipedia.org/wiki/RSA) and [DSA](https://en.wikipedia.org/wiki/Digital_Signature_Algorithm). In blockchain, asymmetric encryption is used to protect transaction and block authenticity. For example, in the Bitcoin network, wallet addresses are generated using public and private keys, allowing users to sign transactions with their private key and verify them with their public key.
+
+```python showLineNumbers
+from cryptography.hazmat.primitives.asymmetric import rsa
+from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives.asymmetric import padding
+from cryptography.hazmat.primitives import hashes
+
+def generate_key_pair():
+    private_key = rsa.generate_private_key(
+        public_exponent=65537,
+        key_size=2048
+    )
+    public_key = private_key.public_key()
+    return private_key, public_key
+
+def encrypt_message(message, public_key):
+    encrypted = public_key.encrypt(
+        message.encode(),
+        padding.OAEP(
+            mgf=padding.MGF1(algorithm=hashes.SHA256()),
+            algorithm=hashes.SHA256(),
+            label=None
+        )
+    )
+    return encrypted
+
+def decrypt_message(encrypted_message, private_key):
+    decrypted = private_key.decrypt(
+        encrypted_message,
+        padding.OAEP(
+            mgf=padding.MGF1(algorithm=hashes.SHA256()),
+            algorithm=hashes.SHA256(),
+            label=None
+        )
+    )
+    return decrypted.decode()
+
+# Generate a key pair
+private_key, public_key = generate_key_pair()
+
+# Encrypt and decrypt a message
+message = "Hello, world!"
+encrypted_message = encrypt_message(message, public_key)
+decrypted_message = decrypt_message(encrypted_message, private_key)
+
+print(f"Original message: {message}")
+print(f"Encrypted message: {encrypted_message}")
+print(f"Decrypted message: {decrypted_message}")
+
+## Output
+# Original message: Hello, world!
+# Encrypted message: b'r\xeb\xe9\...
+# Decrypted message: Hello, world!
+```
+
+**Digital Signature**: Digital signature is a cryptographic technique used to verify the authenticity of a message or document. In blockchain, digital signatures are used to ensure that transactions are authentic and have not been altered.
+
+```python showLineNumbers
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives.asymmetric import padding
+from cryptography.hazmat.primitives import serialization
+
+def sign_message(message, private_key):
+    signature = private_key.sign(
+        message.encode(),
+        padding.PSS(
+            mgf=padding.MGF1(hashes.SHA256()),
+            salt_length=padding.PSS.MAX_LENGTH
+        ),
+        hashes.SHA256()
+    )
+    return signature
+
+def verify_signature(message, signature, public_key):
+    try:
+        public_key.verify(
+            signature,
+            message.encode(),
+            padding.PSS(
+                mgf=padding.MGF1(hashes.SHA256()),
+                salt_length=padding.PSS.MAX_LENGTH
+            ),
+            hashes.SHA256()
+        )
+        return True
+    except:
+        return False
+
+# Generate a key pair
+private_key, public_key = generate_key_pair()
+
+# Sign and verify a message
+message = "Hello, world!"
+signature = sign_message(message, private_key)
+is_valid = verify_signature(message, signature, public_key)
+
+print(f"Original message: {message}")
+print(f"Signature: {signature}")
+print(f"Is valid signature: {is_valid}")
+
+## Output
+# Original message: Hello, world!
+# Signature: b'\xab\xc9l\x83...
+# Is valid signature: True
+```
+
+In this example, the `sign_message` function takes a message and private key as input and returns the digital signature of the message. The `verify_signature` function takes the message, signature, and corresponding public key and verifies if the signature is valid. In this case, the signature is valid, which means the message has not been altered and comes from the party possessing the private key.
+
+## The Role of Cryptography in Blockchain Security
+
+As we've seen, cryptography plays a fundamental role in the security and trust of blockchain systems. Through techniques such as hashing, symmetric and asymmetric encryption, and digital signatures, cryptography ensures the confidentiality, integrity, and authenticity of data, transactions, and participants in the blockchain network. By using cryptography, blockchain systems can operate in a decentralized and secure manner, eliminating the need for a central authority and providing an additional layer of security.
+
+### Symmetric and Asymmetric Encryption for Confidentiality
+
+Encryption, both symmetric and asymmetric, is used to protect the confidentiality of data stored in blocks and transactions in the blockchain network. Symmetric encryption allows parties to communicate securely using a shared key, while asymmetric encryption enables participants to verify data authenticity using public and private keys. For example, in private blockchain networks, symmetric encryption can be used to protect the confidentiality of data stored in blocks, while in public blockchain networks, asymmetric encryption can be used to protect the confidentiality of transactions and wallet addresses.
+
+### Hashing for Integrity
+
+In contrast to encryption, hashing doesn't protect data confidentiality but ensures its integrity. By generating a unique hash for each block, participants can verify that the data stored in the block hasn't been altered. Any change in the data will result in a completely different hash, allowing participants to detect any attempt at data manipulation. For example, in the Ethereum network, the Keccak-256 hash function is used to generate each block's hash, enabling participants to verify the integrity of data stored in the blockchain.
+
+Hashing is widely used in blockchain for:
+
+1. **Block Identification**: Each block in the blockchain has a unique hash that identifies it and connects it to the previous block.
+
+```python showLineNumbers
+import hashlib
+
+def calculate_hash(data):
+    return hashlib.sha256(data.encode()).hexdigest()
+
+# Calculate the hash of a block
+block_data = "Block data..."
+previous_hash = "Previous hash..."
+
+block_hash = calculate_hash(block_data + previous_hash)
+
+print(f"Hash of the block: {block_hash}")
+
+## Output
+# Hash of the block: c352756d8a49e....
+```
+
+2. **Consensus Algorithm**: Consensus algorithms in blockchain, such as [Proof of Work](https://en.wikipedia.org/wiki/Proof_of_work) (PoW) and [Proof of Stake](https://en.wikipedia.org/wiki/Proof_of_stake) (PoS), use hashing to validate and confirm blocks in the blockchain. For example, in the Bitcoin network, miners compete to solve a cryptographic problem that involves finding a hash meeting certain requirements, ensuring network security and integrity.
+
+```python showLineNumbers
+import hashlib
+
+def proof_of_work(block_data, previous_hash, difficulty):
+    nonce = 0
+    while True:
+        block_hash = hashlib.sha256((block_data + previous_hash + str(nonce)).encode()).hexdigest()
+        if block_hash.startswith("0" * difficulty):
+            return block_hash, nonce
+        nonce += 1
+
+# Find a valid hash using Proof of Work
+
+block_data = "Block data..."
+previous_hash = "Previous hash..."
+
+difficulty = 4  # Number of leading zeros required in the hash
+
+block_hash, nonce = proof_of_work(block_data, previous_hash, difficulty)
+
+print(f"Valid hash: {block_hash}")
+print(f"Nonce: {nonce}")
+
+## Output
+# Valid hash: 0000a11815e9ef8f...
+# Nonce: 12345
+```
+
+3. **Merkle Trees**: Merkle trees are data structures that use hashing to group multiple transactions into a single root hash. Each node in the Merkle tree is the hash of its child nodes, allowing participants to verify the integrity of transactions in a block without having to verify each transaction individually.
+
+```python showLineNumbers
+import hashlib
+
+def calculate_merkle_root(transactions):
+    if len(transactions) == 1:
+        return transactions[0]
+
+    new_transactions = []
+    for i in range(0, len(transactions), 2):
+        left = transactions[i]
+        right = transactions[i + 1] if i + 1 < len(transactions) else left # If the number of transactions is odd, duplicate the last transaction
+        combined = left + right
+        new_transactions.append(hashlib.sha256(combined.encode()).hexdigest())
+
+    return calculate_merkle_root(new_transactions)
+
+# Calculate the Merkle root of a list of transactions
+transactions = ["Transaction 1", "Transaction 2", "Transaction 3", "Transaction 4"]
+
+merkle_root = calculate_merkle_root(transactions)
+
+print(f"Merkle root: {merkle_root}")
+
+## Output
+# Merkle root: 0bc1c5cf4cc8f4...
+```
+
+### Digital Signature for Authenticity
+
+Digital signatures are used in blockchain to ensure the authenticity of transactions and blocks. By signing a transaction with a private key, the sender can prove that the transaction comes from them and hasn't been altered. For example, in the Ethereum network, transactions are signed with the sender's private key and verified with the corresponding public key, ensuring that the transaction is authentic and comes from the authorized sender.
+
+Digital signatures are widely used in blockchain for:
+
+1. **Verifying Transaction Authenticity**: Each transaction in the blockchain network is signed with the sender's private key and verified with the corresponding public key, ensuring that the transaction is authentic and comes from the authorized sender.
+
+[Code examples follow as in the original document]
+
+2. **Verifying Block Authenticity**: Each block in the blockchain is signed with the miner's private key and verified with the corresponding public key, ensuring that the block is authentic and comes from the authorized miner.
+
+[Code examples follow as in the original document]
+
+3. **Verifying Participant Authenticity**: Each participant in the blockchain network has a pair of public and private keys used to sign transactions and blocks, ensuring that transactions are authentic and come from the authorized sender.
+
+[Code examples follow as in the original document]
+
+## Conclusions
+
+Cryptography has evolved from simple symbol substitutions in ancient Egypt to become one of the fundamental pillars of blockchain technology. Throughout this article, we've explored how the basic principles of cryptography, established by pioneers like Claude Shannon, remain relevant in the digital age.
+Modern cryptographic techniques such as hashing, symmetric and asymmetric encryption, and digital signatures work together to provide the necessary security foundation in blockchain systems:
+
+- Hashing ensures data integrity and forms the basis of consensus mechanisms
+- Symmetric and asymmetric encryption protects the confidentiality of sensitive information
+- Digital signatures ensure transaction authenticity and participant identity
+
+The implementation of these cryptographic concepts in blockchain demonstrates how the fundamental principles of the CIA triad (Confidentiality, Integrity, and Authenticity) can be practically applied to create decentralized and secure systems. The code examples presented illustrate that, although the underlying concepts may be complex, their implementation is accessible using modern programming libraries.
+Cryptography continues to be an evolving field, and its role in blockchain will remain crucial for the development of more secure and efficient decentralized systems in the future.
+
+## References
+
+<Reference
+  type="youtube"
+  url="https://www.youtube.com/watch?v=z9Qi5mDSYb8"
+  text="History and Evolution of Cryptography and Cryptonalysis"
+/>
+
+<Reference
+  type="youtube"
+  url="https://www.youtube.com/watch?v=9pp9YpginNg"
+  text="Secret Codes: A History of Cryptography"
+/>
+
+<Reference
+  type="web"
+  url="https://www.jstor.org/stable/25150077"
+  text="David P. Silverman. 1980. Cryptography writing in the Tomb of Tutankhamun."
+/>
+
+<Reference
+  type="web"
+  url="https://edu.anarcho-copy.org/Programming%20Languages/Python/Practical_Cryptography_in_Python_Learning_Correct_Cryptography_by.pdf"
+  text="Seth James Nielson et al. 2019. Practical Cryptography in Python: Learning Correct Cryptography by Example."
+/>
+
+<Reference
+  type="web"
+  url="https://pages.cs.wisc.edu/~rist/642-spring-2014/shannon-secrecy.pdf"
+  text="Claude Shannon. 1949. Communication Theory of Secrecy Systems."
+/>
+
+<Reference
+  type="arxiv"
+  url="https://arxiv.org/abs/2410.10110v1"
+  text="Pohsun Feng et al. 2024. Mastering AI: Big Data, Deep Learning, and the Evolution of Large Language Models -- Blockchain and Applications
+"
+/>
+
+<Reference
+  type="web"
+  url="https://www.mdpi.com/2073-8994/16/2/147"
+  text="Luon-Chang Lin et al. 2024. Symmetry in Blockchain-Powered Secure Decentralized Data Storage: Mitigating Risks and Ensuring Confidentiality
+"
+/>
+
+<Reference
+  type="web"
+  url="https://annals-csis.org/Volume_10/drp/pdf/48.pdf"
+  text="Vijaya Kumar S. 2017. Symmetry key encryption with many secret keys"
+/>

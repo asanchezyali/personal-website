@@ -7,9 +7,19 @@
       <language>en-us</language>
       <managingEditor>asanchezyali@gmail.com (Alejandro Sánchez Yalí)</managingEditor>
       <webMaster>asanchezyali@gmail.com (Alejandro Sánchez Yalí)</webMaster>
-      <lastBuildDate>Tue, 17 Sep 2024 05:00:00 GMT</lastBuildDate>
+      <lastBuildDate>Wed, 06 Nov 2024 05:00:00 GMT</lastBuildDate>
       <atom:link href="https://asanchezyali.com/feed.xml" rel="self" type="application/rss+xml"/>
       
+  <item>
+    <guid>https://asanchezyali.com/blog/en/blockchain/20241106Blockchain</guid>
+    <title>Cryptography: The Fundamental Pillar of Blockchain</title>
+    <link>https://asanchezyali.com/blog/en/blockchain/20241106Blockchain</link>
+    <description>This article explores the evolution and foundations of cryptography, from its origins in ancient Egypt to its crucial role in blockchain technology. We begin with a historical journey that includes Egyptian hieroglyphics and Caesar cipher, accompanied by practical implementations in Python. We examine the modern principles established by Claude Shannon and the CIA security triad (Confidentiality, Integrity, and Authenticity). The central part of the article delves into how modern cryptography underpins blockchain technology through techniques such as hashing, symmetric and asymmetric encryption, illustrated with practical code examples. This 40-minute tutorial provides a solid understanding of how cryptography has evolved to become the fundamental pillar of security and trust in blockchain systems.</description>
+    <pubDate>Wed, 06 Nov 2024 05:00:00 GMT</pubDate>
+    <author>asanchezyali@gmail.com (Alejandro Sánchez Yalí)</author>
+    <category>blockchain</category><category>smart-contracts</category><category>dapps</category><category>cryptography</category>
+  </item>
+
   <item>
     <guid>https://asanchezyali.com/blog/en/ai/20240917ZeroShot</guid>
     <title>Zero-Shot Text Classification</title>
