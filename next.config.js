@@ -1,18 +1,20 @@
+const { withContentlayer } = require('next-contentlayer2')
+
 const withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE === 'true',
 })
 
-// Updated ContentSecurityPolicy to include Google Analytics domains
+// You might need to insert additional domains in script-src if you are using external services
 const ContentSecurityPolicy = `
   default-src 'self';
-  script-src 'self' 'unsafe-eval' 'unsafe-inline' giscus.app https://www.googletagmanager.com https://www.google-analytics.com;
+  script-src 'self' 'unsafe-eval' 'unsafe-inline' giscus.app analytics.umami.is statichunt.com http://www.youtube.com;
   style-src 'self' 'unsafe-inline';
-  img-src * blob: data:;
-  media-src 'none';
-  connect-src *;
+  img-src * blob: data: statichunt.com;
+  media-src 'self' *.s3.amazonaws.com;
+  connect-src * statichunt.com;
   font-src 'self';
-  frame-src giscus.app
-`
+  frame-src giscus.app https://www.youtube.com/ https://www.youtube-nocookie.com/
+`;
 
 const securityHeaders = [
   // https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP
@@ -26,11 +28,6 @@ const securityHeaders = [
     value: 'strict-origin-when-cross-origin',
   },
   // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Frame-Options
-  {
-    key: 'X-Frame-Options',
-    value: 'DENY',
-  },
-  // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Content-Type-Options
   {
     key: 'X-Content-Type-Options',
     value: 'nosniff',
@@ -50,38 +47,44 @@ const securityHeaders = [
     key: 'Permissions-Policy',
     value: 'camera=(), microphone=(), geolocation=()',
   },
-]
+];
 
-module.exports = withBundleAnalyzer({
-  reactStrictMode: true,
-  pageExtensions: ['js', 'jsx', 'md', 'mdx'],
-  eslint: {
-    dirs: ['pages', 'components', 'lib', 'layouts', 'scripts'],
-  },
-  async headers() {
-    return [
-      {
-        source: '/(.*)',
-        headers: securityHeaders,
-      },
-    ]
-  },
-  webpack: (config, { dev, isServer }) => {
-    config.module.rules.push({
-      test: /\.svg$/,
-      use: ['@svgr/webpack'],
-    })
-
-    if (!dev && !isServer) {
-      // Replace React with Preact only in client production build
-      Object.assign(config.resolve.alias, {
-        'react/jsx-runtime.js': 'preact/compat/jsx-runtime',
-        react: 'preact/compat',
-        'react-dom/test-utils': 'preact/test-utils',
-        'react-dom': 'preact/compat',
+/**
+ * @type {import('next/dist/next-server/server/config').NextConfig}
+ **/
+module.exports = () => {
+  const plugins = [withContentlayer, withBundleAnalyzer]
+  return plugins.reduce((acc, next) => next(acc), {
+    reactStrictMode: true,
+    pageExtensions: ['ts', 'tsx', 'js', 'jsx', 'md', 'mdx'],
+    eslint: {
+      dirs: ['app', 'components', 'layouts', 'scripts'],
+    },
+    images: {
+      domains: ['api.qrserver.com'],
+      remotePatterns: [
+        {
+          protocol: 'https',
+          hostname: 'picsum.photos',
+          pathname: '**',
+        },
+      ],
+    },
+    async headers() {
+      return [
+        {
+          source: '/(.*)',
+          headers: securityHeaders,
+        },
+      ]
+    },
+    webpack: (config, options) => {
+      config.module.rules.push({
+        test: /\.svg$/,
+        use: ['@svgr/webpack'],
       })
-    }
 
-    return config
-  },
-})
+      return config
+    },
+  })
+}
