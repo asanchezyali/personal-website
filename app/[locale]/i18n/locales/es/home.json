@@ -1,0 +1,64 @@
+{
+  "hero": {
+    "title_part1": "Innovación empresarial",
+    "title_part2": "con",
+    "title_part3": "soluciones digitales",
+    "description": "Transformamos su visión en realidad digital, impulsando el crecimiento y la eficiencia de su empresa. Nuestras soluciones personalizadas optimizan procesos, mejoran la experiencia del cliente y lo posicionan a la vanguardia de su industria.",
+    "contact_button": "Contáctenos"
+  },
+
+  "services": {
+    "software_development": {
+      "title": "Desarrollo de software personalizado",
+      "description": "Creamos soluciones de software a medida que potencian la eficiencia de su empresa. Desde sistemas de gestión integral hasta herramientas de análisis avanzado, nuestras aplicaciones se adaptan perfectamente a sus procesos únicos, impulsando la innovación y el crecimiento.",
+      "tag": "desarrollo_modular"
+    },
+    "technology_consulting": {
+      "title": "Consultoría estratégica en TI",
+      "description": "Nuestros expertos analizan en profundidad sus necesidades tecnológicas, diseñan planes estratégicos de TI y le guían en su transformación digital. Optimizamos su infraestructura tecnológica para mantener y aumentar su ventaja competitiva en el mercado.",
+      "tag": "asesoría_experta"
+    },
+    "innovation": {
+      "title": "Inteligencia Artificial y Blockchain",
+      "description": "Impulsamos la innovación mediante la implementación de soluciones basadas en IA y tecnología blockchain. Desarrollamos sistemas inteligentes, automatizamos procesos complejos y creamos aplicaciones descentralizadas (dApps) que revolucionan la manera en que las empresas operan y compiten en el mercado digital.",
+      "tag": "innovación_tecnológica"
+    },
+    "button": "Más información"
+  },
+
+  "stack": {
+    "title": "Nuestras tecnologías",
+    "description": "Implementamos tecnologías de vanguardia para crear soluciones innovadoras que impulsan el crecimiento de tu empresa."
+  },
+
+  "blog": "Blog",
+  "greeting": "Lo más reciente",
+  "description": "Un blog creado con Next.js, i18n y Tailwind.css",
+  "more": "Leer más",
+  "all": "Todos los artículos",
+
+  "moreaboutme": "Más sobre mí",
+
+  "featured": "Destacado",
+  "morefeatured": "Más artículos destacados",
+  "morerecent": "Más artículos recientes",
+
+  "search": "Buscar",
+  "searchposts": "Buscar artículos",
+  "comment": "Cargar comentarios",
+  "pub": "Publicado el",
+  "authors": "Autores",
+  "name": "Nombre",
+  "nexta": "Siguiente artículo",
+  "preva": "Artículo anterior",
+  "nextp": "Siguiente",
+  "prevp": "Anterior",
+  "of": "de",
+  "back": "Volver al blog",
+  "twitter": "Comentar en Twitter",
+  "github": "Ver en GitHub",
+  "draft": "En desarrollo",
+  "noposts": "No se encontraron artículos",
+  "poststagged": "Ver los posts etiquetados",
+  "showTags": "Mostrar etiquetas"
+}
