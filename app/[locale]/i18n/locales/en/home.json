@@ -1,0 +1,62 @@
+{
+  "hero": {
+    "title_part1": "Business Innovation",
+    "title_part2": "with",
+    "title_part3": "Digital Solutions",
+    "description": "We transform your vision into digital reality, driving your company's growth and efficiency. Our customized solutions optimize processes, enhance customer experience, and position you at the forefront of your industry.",
+    "contact_button": "Contact us"
+  },
+
+  "services": {
+    "software_development": {
+      "title": "Custom Software Development",
+      "description": "We create tailored software solutions that enhance your company's efficiency. From comprehensive management systems to advanced analytics tools, our applications perfectly adapt to your unique processes, driving innovation and growth.",
+      "tag": "modular_development"
+    },
+
+    "technology_consulting": {
+      "title": "Strategic IT Consulting",
+      "description": "Our experts thoroughly analyze your technological needs, design strategic IT plans, and guide you through your digital transformation. We optimize your technological infrastructure to maintain and enhance your competitive advantage in the market.",
+      "tag": "expert_consulting"
+    },
+    "innovation": {
+      "title": "Artificial Intelligence and Blockchain",
+      "description": "We drive innovation through the implementation of AI-based solutions and blockchain technology. We develop intelligent systems, automate complex processes, and create decentralized applications (dApps) that revolutionize the way companies operate and compete in the digital market.",
+      "tag": "technological_innovation"
+    },
+    "button": "Learn More"
+  },
+
+  "stack": {
+    "title": "We know & love",
+    "description": "We use the latest technologies to create innovative solutions that drive your business forward."
+  },
+
+  "blog": "Blog",
+  "greeting": "Latest",
+  "description": "Business Innovation with Digital Solutions",
+  "more": "Read more",
+  "all": "All posts",
+  "moreaboutme": "More about me",
+  "featured": "Featured",
+  "morefeatured": "More featured posts",
+  "morerecent": "More recent posts",
+  "search": "Search articles",
+  "searchposts": "Search posts",
+  "comment": "Load Comments",
+  "pub": "Published on",
+  "authors": "Authors",
+  "name": "Name",
+  "nexta": "Next Article",
+  "preva": "Previous Article",
+  "nextp": "Next",
+  "prevp": "Previous",
+  "of": "of",
+  "back": "Back to the blog",
+  "twitter": "Discuss on Twitter",
+  "github": "View on GitHub",
+  "draft": "Under Construction",
+  "noposts": "No posts found",
+  "poststagged": "View posts tagged",
+  "showTags": "Show Tags"
+}
