@@ -19,7 +19,7 @@ const BlogHeader = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-5xl font-bold text-transparent dark:from-white dark:via-gray-200 dark:to-white sm:text-6xl"
+            className="text-6xl font-bold text-gray-900 dark:text-gray-100"
           >
             {t('title_part_1')}
             <br />
