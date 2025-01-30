@@ -53,7 +53,7 @@ const QRButton: React.FC<QRButtonProps> = ({ buttonText, buttonClassName }) => {
     if (navigator.share) {
       navigator
         .share({
-          title: 'Pi Agents',
+          title: 'Yali Dev',
           text: t('shareText'),
           url: window.location.href,
         })

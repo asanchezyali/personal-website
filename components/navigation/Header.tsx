@@ -27,7 +27,7 @@ const Header = () => {
               aria-label={siteMetadata.headerTitle}
               className="font-ubuntu text-2xl font-bold text-gray-900 dark:text-white"
             >
-              Pi Agents
+              Yali Dev
             </Link>
           </div>
           <div className="absolute left-1/2 hidden -translate-x-1/2 transform md:block">
