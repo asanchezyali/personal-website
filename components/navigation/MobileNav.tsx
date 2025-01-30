@@ -147,12 +147,12 @@ const MobileNav = () => {
                   transition={{ duration: 0.2 }}
                   className="overflow-hidden"
                 >
-                  {authors.map((author) => {
+                  {authors.map((author, index) => {
                     const { name, avatar, language, slug } = author
                     if (language === locale) {
                       return (
                         <Link
-                          key={name}
+                          key={index}
                           href={`/${locale}/about/${slug}`}
                           onClick={onToggleNav}
                           className="flex items-center space-x-3 rounded-lg px-8 py-3 text-gray-700 transition-colors hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-800"
