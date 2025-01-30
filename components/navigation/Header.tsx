@@ -33,9 +33,8 @@ const Header = () => {
           <div className="absolute left-1/2 hidden -translate-x-1/2 transform md:block">
             <nav className="flex items-center space-x-8">
               {headerNavLinks
-                .filter((link) => link.href !== '/')
                 .map((link) => {
-                  const isSelected = pathname!.includes(link.href as string)
+                  const isSelected = pathname!.includes(link.href as string) 
                   return (
                     <Link
                       key={link.title}
