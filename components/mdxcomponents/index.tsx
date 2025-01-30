@@ -2,14 +2,19 @@ import TOCInline from 'pliny/ui/TOCInline'
 import Pre from 'pliny/ui/Pre'
 import BlogNewsletterForm from '../newletter/BlogNewsLetterForm'
 import type { MDXComponents } from 'mdx/types'
-import Image from './Image'
 import CustomLink from './Link'
 import TableWrapper from './TableWrapper'
 import Audioplayer from './Audioplayer'
 import WebsiteEmbed from './WebsiteEmbed'
+import MathBox from './MathBox'
+import ImageBox from './ImageBox'
+import Reference from './Reference'
+import { PseudoCodeLine, PseudoCode } from './PseudoCode'
 
 export const components: MDXComponents = {
-  Image,
+  PseudoCode,
+  PseudoCodeLine,
+  ImageBox,
   TOCInline,
   a: CustomLink,
   pre: Pre,
@@ -17,4 +22,6 @@ export const components: MDXComponents = {
   BlogNewsletterForm,
   Audioplayer,
   WebsiteEmbed,
+  MathBox,
+  Reference,
 }
