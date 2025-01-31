@@ -89,17 +89,9 @@ export default function RootLayout({
         <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#000" />
         <link rel="alternate" type="application/rss+xml" href="/feed.xml" />
       </head>
-      <body className="relative bg-white pl-[calc(100vw-100%)] text-black antialiased dark:bg-gray-900 dark:text-white">
+      <body className="relative bg-white pl-[calc(100vw-100%)] text-black antialiased dark:bg-black dark:text-white">
         {/* Patrón de puntos - versión cuadrícula más visible */}
-        <div
-          className="pointer-events-none fixed inset-0 opacity-[0.05] dark:opacity-[0.07]"
-          style={{
-            backgroundImage: `
-              radial-gradient(circle at center, currentColor 1.5px, transparent 1.5px)
-            `,
-            backgroundSize: '20px 20px',
-          }}
-        />
+
 
         <div className="relative">
           <TwSizeIndicator />

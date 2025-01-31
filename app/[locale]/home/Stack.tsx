@@ -182,8 +182,8 @@ const TechnologiesSection = () => {
       </motion.div>
 
       <div className="relative w-full">
-        <div className="absolute inset-y-0 left-0 z-10 w-32 bg-gradient-to-r from-white to-transparent dark:from-gray-900" />
-        <div className="absolute inset-y-0 right-0 z-10 w-32 bg-gradient-to-l from-white to-transparent dark:from-gray-900" />
+        <div className="absolute inset-y-0 left-0 z-10 w-32 bg-gradient-to-r from-white to-transparent dark:from-black" />
+        <div className="absolute inset-y-0 right-0 z-10 w-32 bg-gradient-to-l from-white to-transparent dark:from-black" />
 
         <div className="flex flex-col gap-16">
           <Slider items={rows.row1} direction="left" speed={200} />

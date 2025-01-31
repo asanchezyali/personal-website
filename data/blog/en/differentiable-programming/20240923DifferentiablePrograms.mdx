@@ -35,8 +35,8 @@ A practical example of a computation chain is image processing, where an image c
 <ImageBox
   src="/images/differentiable-programs/figure1.svg"
   alt="Computation Chain"
-  width="750px"
-  height="150px"
+  width="750"
+  height="150"
 >
   **Figure 1**. Representation of a computation chain as a sequence of function compositions. Each
   intermediate node symbolizes a function. The initial arrow indicates the input, and the final one,
@@ -147,8 +147,8 @@ When a program has multiple inputs, we always group them into a single input $s_
 <ImageBox
   src="/images/differentiable-programs/figure2.svg"
   alt="Computation Chain"
-  width="750px"
-  height="150px"
+  width="750"
+  height="150"
 >
   **Figure 2**. Two possible representations of a program. **Left:** Functions are represented as
   nodes and dependencies as edges. **Right:** Functions are represented as nodes and dependencies as
@@ -522,8 +522,8 @@ In this configuration, a decoder function $p_{1:l} = f^d(x; w)$ maps a vector $x
 <ImageBox
   src="/images/differentiable-programs/RNNv1.svg"
   alt="Computation Chain"
-  width="500px"
-  height="350px"
+  width="500"
+  height="350"
 >
   **Figure 3**. One to many (decoding). A vector $x \in \mathbb{R}^d$ is mapped to a sequence of vectors $p_{1:l} \in \mathbb{R}^{l\times m}$.
 </ImageBox>
@@ -548,8 +548,8 @@ In this configuration, an encoder function $p = f^e(x_{1:l}; w)$ is defined that
 <ImageBox
   src="/images/differentiable-programs/RNNv2.svg"
   alt="Computation Chain"
-  width="500px"
-  height="350px"
+  width="500"
+  height="350"
 >
   **Figure 4**. Many to one (encoding). A sequence of vectors $x_{1:l} \in \mathbb{R}^{l\times d}$ is mapped to a vector $p \in \mathbb{R}^m$.
 </ImageBox>
@@ -577,8 +577,8 @@ In this configuration, an alignment function $p_{1:l} = f^a(x_{1:l}; w)$ is defi
 <ImageBox
   src="/images/differentiable-programs/RNNv3.svg"
   alt="Computation Chain"
-  width="500px"
-  height="350px"
+  width="500"
+  height="350"
 >
   **Figure 4**. Many to many (aligned). A sequence of vectors $x_{1:l} \in \mathbb{R}^{l\times d}$ is mapped to a sequence of vectors $p_{1:l} \in \mathbb{R}^{l\times m}$.
 </ImageBox>
@@ -603,8 +603,8 @@ In this configuration, an alignment function $p_{1:l'} = f^u(x_{1:l}; w)$ is def
 <ImageBox
   src="/images/differentiable-programs/RNNv4.svg"
   alt="Computation Chain"
-  width="500px"
-  height="600px"
+  width="500"
+  height="600"
 >
   **Figure 5**. Many to many (unaligned). A sequence of vectors $x_{1:l} \in \mathbb{R}^{l\times d}$ is mapped to a sequence of vectors $p_{1:l'} \in \mathbb{R}^{l'\times m}$.
 </ImageBox>
