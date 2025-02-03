@@ -2,7 +2,7 @@ import { sortPosts, allCoreContent } from 'pliny/utils/contentlayer'
 import { allBlogs } from 'contentlayer/generated'
 import { LocaleTypes } from './i18n/settings'
 import HeroSection from './home/Hero'
-import ServicesSection from './home/Services'
+import BlogPreview from './home/Services'
 import TechnologiesSection from './home/Stack'
 
 type HomeProps = {
@@ -18,7 +18,7 @@ export default async function Page({ params: { locale } }: HomeProps) {
   return (
     <>
       <HeroSection />
-      <ServicesSection />
+      <BlogPreview posts={filteredPosts} params={{ locale }} />
       <TechnologiesSection />
     </>
   )
