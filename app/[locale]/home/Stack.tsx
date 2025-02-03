@@ -187,8 +187,6 @@ const TechnologiesSection = () => {
 
         <div className="flex flex-col gap-16">
           <Slider items={rows.row1} direction="left" speed={200} />
-          <Slider items={rows.row2} direction="right" speed={200} />
-          <Slider items={rows.row3} direction="left" speed={200} />
         </div>
       </div>
     </section>
