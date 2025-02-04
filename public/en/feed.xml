@@ -1,0 +1,124 @@
+
+  <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+      <title>Yali Dev</title>
+      <link>https://tailwind-nextjs-starter-blog-i18n.vercel.app/blog</link>
+      <description>Business Innovation with Digital Solutions</description>
+      <language>en</language>
+      <managingEditor>alejandro@piagents.dev (Yali Dev)</managingEditor>
+      <webMaster>alejandro@piagents.dev (Yali Dev)</webMaster>
+      <lastBuildDate>Wed, 06 Nov 2024 05:00:00 GMT</lastBuildDate>
+      <atom:link href="https://tailwind-nextjs-starter-blog-i18n.vercel.app/feed.xml" rel="self" type="application/rss+xml"/>
+      
+  <item>
+    <guid>https://tailwind-nextjs-starter-blog-i18n.vercel.app/blog/blockchain/20241106Blockchain</guid>
+    <title>Cryptography: The Fundamental Pillar of Blockchain</title>
+    <link>https://tailwind-nextjs-starter-blog-i18n.vercel.app/blog/blockchain/20241106Blockchain</link>
+    <description>This article explores the evolution and foundations of cryptography, from its origins in ancient Egypt to its crucial role in blockchain technology. We begin with a historical journey that includes Egyptian hieroglyphics and Caesar cipher, accompanied by practical implementations in Python. We examine the modern principles established by Claude Shannon and the CIA security triad (Confidentiality, Integrity, and Authenticity). The central part of the article delves into how modern cryptography underpins blockchain technology through techniques such as hashing, symmetric and asymmetric encryption, illustrated with practical code examples. This 40-minute tutorial provides a solid understanding of how cryptography has evolved to become the fundamental pillar of security and trust in blockchain systems.</description>
+    <pubDate>Wed, 06 Nov 2024 05:00:00 GMT</pubDate>
+    <author>alejandro@piagents.dev (Yali Dev)</author>
+    <category>blockchain</category><category>smart-contracts</category><category>dapps</category><category>cryptography</category>
+  </item>
+
+  <item>
+    <guid>https://tailwind-nextjs-starter-blog-i18n.vercel.app/blog/ai/20240917ZeroShot</guid>
+    <title>Zero-Shot Text Classification</title>
+    <link>https://tailwind-nextjs-starter-blog-i18n.vercel.app/blog/ai/20240917ZeroShot</link>
+    <description>Zero-Shot Text Classification (ZSTC) is a machine learning technique that allows models to classify texts into categories without having been previously trained on those specific categories. It uses pre-trained language models, such as BART or GPT, which have learned to understand semantic relationships between words and phrases during their pre-training. This approach allows the model to generalize its knowledge and make inferences about new categories based on a given text, without the need for labeled examples.</description>
+    <pubDate>Tue, 17 Sep 2024 05:00:00 GMT</pubDate>
+    <author>alejandro@piagents.dev (Yali Dev)</author>
+    <category>AI</category><category>Zero-Shot Learning</category><category>Transformers</category><category>Hugging Face</category>
+  </item>
+
+  <item>
+    <guid>https://tailwind-nextjs-starter-blog-i18n.vercel.app/blog/differentiable-programming/20240923DifferentiablePrograms</guid>
+    <title>Neural networks represented as DAGs of parameterized computational programs</title>
+    <link>https://tailwind-nextjs-starter-blog-i18n.vercel.app/blog/differentiable-programming/20240923DifferentiablePrograms</link>
+    <description>Neural networks can be viewed as algorithms with adjustable parameters, optimized through machine learning. This approach allows us to address them from a broader mathematical and computational perspective. In this article, we will explore how to represent these algorithms as directed acyclic graphs (DAGs).</description>
+    <pubDate>Fri, 23 Aug 2024 05:00:00 GMT</pubDate>
+    <author>alejandro@piagents.dev (Yali Dev)</author>
+    <category>mathematics</category><category>computer science</category>
+  </item>
+
+  <item>
+    <guid>https://tailwind-nextjs-starter-blog-i18n.vercel.app/blog/ai-avatars/20240703DigitalHuman</guid>
+    <title>Revolutionize Animation: Build a Digital Human with Large Language Models</title>
+    <link>https://tailwind-nextjs-starter-blog-i18n.vercel.app/blog/ai-avatars/20240703DigitalHuman</link>
+    <description>A Step-by-Step Guide to Creating Your Next AI-Powered Avatar.</description>
+    <pubDate>Wed, 03 Jul 2024 05:00:00 GMT</pubDate>
+    <author>alejandro@piagents.dev (Yali Dev)</author>
+    <category>ai-avatar</category><category>digital-human</category><category>artificial intelligence</category>
+  </item>
+
+  <item>
+    <guid>https://tailwind-nextjs-starter-blog-i18n.vercel.app/blog/ai-avatars/2024020AIAvatar</guid>
+    <title>Kraken the Code: How to build a talking avatar</title>
+    <link>https://tailwind-nextjs-starter-blog-i18n.vercel.app/blog/ai-avatars/2024020AIAvatar</link>
+    <description>Create your own conversational avatar with Azure Cognitive, LangChain, and OpenAI.</description>
+    <pubDate>Tue, 20 Feb 2024 05:00:00 GMT</pubDate>
+    <author>alejandro@piagents.dev (Yali Dev)</author>
+    <category>ai-avatar</category><category>digital-human</category><category>artificial intelligence</category>
+  </item>
+
+  <item>
+    <guid>https://tailwind-nextjs-starter-blog-i18n.vercel.app/blog/number-theory/20230108DivisionAlgorithm</guid>
+    <title>Division Algorithm</title>
+    <link>https://tailwind-nextjs-starter-blog-i18n.vercel.app/blog/number-theory/20230108DivisionAlgorithm</link>
+    <description>A division algorithm is a process that divides one number (called the dividend) by another number (called the divisor) and obtains the quotient and remainder of the division. A division algorithm can be implemented in Python using a while loop and subtracting the divisor from the dividend in each iteration. Knowing how a division algorithm works and how to implement it on our own is useful for understanding better how divisions work and can be useful in situations where we cannot use predefined libraries or functions.</description>
+    <pubDate>Tue, 10 Jan 2023 05:00:00 GMT</pubDate>
+    <author>alejandro@piagents.dev (Yali Dev)</author>
+    <category>mathematics</category><category>number-theory</category><category>python</category>
+  </item>
+
+  <item>
+    <guid>https://tailwind-nextjs-starter-blog-i18n.vercel.app/blog/modular-arithmetic/20220510ModularArithmetic</guid>
+    <title>How to build a modular arithmetic library in Python</title>
+    <link>https://tailwind-nextjs-starter-blog-i18n.vercel.app/blog/modular-arithmetic/20220510ModularArithmetic</link>
+    <description>In this tutorial, we are going to learn how to create a library for modular arithmetic, using operator overloading and redefining the built-in functions for NumPy.</description>
+    <pubDate>Wed, 05 Oct 2022 05:00:00 GMT</pubDate>
+    <author>alejandro@piagents.dev (Yali Dev)</author>
+    <category>python</category><category>operator-overloading</category><category>number-theory</category><category>lights out game</category>
+  </item>
+
+  <item>
+    <guid>https://tailwind-nextjs-starter-blog-i18n.vercel.app/blog/blockchain/20220323SolanaNFTandIPFS</guid>
+    <title>Create Your Own NFT Collection on Solana with IPFS</title>
+    <link>https://tailwind-nextjs-starter-blog-i18n.vercel.app/blog/blockchain/20220323SolanaNFTandIPFS</link>
+    <description>Learn how to create your own NFT collection on Solana using IPFS. Discover how NFTs are revolutionizing digital property rights and how you can leverage this technology on Solana.</description>
+    <pubDate>Wed, 23 Mar 2022 05:00:00 GMT</pubDate>
+    <author>alejandro@piagents.dev (Yali Dev)</author>
+    <category>solana</category><category>nft</category><category>metaplex</category>
+  </item>
+
+  <item>
+    <guid>https://tailwind-nextjs-starter-blog-i18n.vercel.app/blog/blockchain/20220310Solana</guid>
+    <title>Developing Dapps on Solana</title>
+    <link>https://tailwind-nextjs-starter-blog-i18n.vercel.app/blog/blockchain/20220310Solana</link>
+    <description>Solana is a high-performance blockchain that enables the development of decentralized applications (Dapps) using tools such as Anchor and the Phantom crypto wallet. In this tutorial, you will learn how to build the base code for your own Dapp on Solana.</description>
+    <pubDate>Thu, 10 Mar 2022 05:00:00 GMT</pubDate>
+    <author>alejandro@piagents.dev (Yali Dev)</author>
+    <category>solana</category><category>dapps</category>
+  </item>
+
+  <item>
+    <guid>https://tailwind-nextjs-starter-blog-i18n.vercel.app/blog/ml/20210712MachineLearning</guid>
+    <title>Exploring Machine and Human Learning: Principles and Processes</title>
+    <link>https://tailwind-nextjs-starter-blog-i18n.vercel.app/blog/ml/20210712MachineLearning</link>
+    <description>What allows us to learn as human beings? In general, we acquire much of our knowledge through our experience with objects and the world around us. This means that we learn from the information and data we gather about them, rather than relying on abstract mathematical definitions.</description>
+    <pubDate>Mon, 12 Jul 2021 05:00:00 GMT</pubDate>
+    <author>alejandro@piagents.dev (Yali Dev)</author>
+    <category>machine-learning</category><category>mathematics</category>
+  </item>
+
+  <item>
+    <guid>https://tailwind-nextjs-starter-blog-i18n.vercel.app/blog/operator-overloading/20210615OperatorOverloadingInPython</guid>
+    <title>Operator Overloading in Python</title>
+    <link>https://tailwind-nextjs-starter-blog-i18n.vercel.app/blog/operator-overloading/20210615OperatorOverloadingInPython</link>
+    <description>What is operator overloading and how does it work in Python?</description>
+    <pubDate>Tue, 15 Jun 2021 05:00:00 GMT</pubDate>
+    <author>alejandro@piagents.dev (Yali Dev)</author>
+    <category>python</category><category>operators</category><category>operator-overloading</category><category>classes</category>
+  </item>
+
+    </channel>
+  </rss>
