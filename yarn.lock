@@ -9914,7 +9914,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-dom@npm:^18.3.1":
+"react-dom@npm:^18.2.0":
   version: 18.3.1
   resolution: "react-dom@npm:18.3.1"
   dependencies:
@@ -10023,7 +10023,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react@npm:^18.3.1":
+"react@npm:^18.2.0":
   version: 18.3.1
   resolution: "react@npm:18.3.1"
   dependencies:
@@ -11639,8 +11639,8 @@ __metadata:
     postcss: ^8.4.33
     prettier: ^3.2.4
     prettier-plugin-tailwindcss: ^0.5.11
-    react: ^18.3.1
-    react-dom: ^18.3.1
+    react: ^18.2.0
+    react-dom: ^18.2.0
     react-h5-audio-player: ^3.9.1
     react-hook-form: ^7.53.1
     react-hot-toast: ^2.4.1

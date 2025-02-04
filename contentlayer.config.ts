@@ -187,7 +187,6 @@ export default makeSource({
   contentDirPath: 'data',
   documentTypes: [Blog, Authors],
   mdx: {
-    cwd: process.cwd(),
     remarkPlugins: [
       remarkExtractFrontmatter,
       remarkGfm,

@@ -1,11 +1,10 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from '../mdxcomponents/Link'
 import siteMetadata from '@/data/siteMetadata'
 import headerNavLinks from '@/data/headerNavLinks'
-import { Authors, allAuthors } from 'contentlayer/generated'
 import { useParams } from 'next/navigation'
 import { useTranslation } from 'app/[locale]/i18n/client'
 import type { LocaleTypes } from 'app/[locale]/i18n/settings'
@@ -27,14 +26,29 @@ const navIcons = {
 const MobileNav = () => {
   const locale = useParams()?.locale as LocaleTypes
   const { t } = useTranslation(locale, 'common')
-  const authors = allAuthors
-    .filter((a) => a.language === locale)
-    .sort((a, b) => (a.default === b.default ? 0 : a.default ? -1 : 1)) as Authors[]
-
-  const mainAuthor = allAuthors.filter((a) => a.default === true && a.language === locale)
-
+  const [authors, setAuthors] = useState([])
+  const [mainAuthor, setMainAuthor] = useState([])
   const [navShow, setNavShow] = useState<boolean>(false)
   const [accordionOpen, setAccordionOpen] = useState<boolean>(false)
+
+  useEffect(() => {
+    const loadAuthors = async () => {
+      try {
+        const { allAuthors } = await import('contentlayer/generated')
+        setAuthors(
+          allAuthors
+            .filter((a) => a.language === locale)
+            .sort((a, b) => (a.default === b.default ? 0 : a.default ? -1 : 1))
+        )
+        setMainAuthor(allAuthors.filter((a) => a.default === true && a.language === locale))
+      } catch (error) {
+        console.error('Error loading authors:', error)
+        setAuthors([])
+        setMainAuthor([])
+      }
+    }
+    loadAuthors()
+  }, [locale])
 
   const onToggleNav = () => {
     setNavShow((status) => {
@@ -147,7 +161,7 @@ const MobileNav = () => {
                   transition={{ duration: 0.2 }}
                   className="overflow-hidden"
                 >
-                  {authors.map((author, index) => {
+                  {authors.map((author: any, index: number) => {
                     const { name, avatar, language, slug } = author
                     if (language === locale) {
                       return (
@@ -175,7 +189,7 @@ const MobileNav = () => {
             )}
 
             {!siteMetadata.multiauthors &&
-              mainAuthor.map((author) => {
+              mainAuthor.map((author: any) => {
                 const { name, language, slug } = author
                 if (language === locale) {
                   return (
