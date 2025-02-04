@@ -39,4 +39,4 @@ _More posts to come! Stay tuned._ 🎉
 ## 🙏 Thank You!
 
 Thank you for visiting my repository and taking an interest in my blog. I hope you find the content insightful and
-valuable. If you have any suggestions, questions, or feedback, feel free to reach out. Happy reading! 😊
+valuable. If you have any suggestions, questions, or feedback, feel free to reach out. Happy reading!
