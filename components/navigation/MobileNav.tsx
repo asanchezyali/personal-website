@@ -15,6 +15,15 @@ import QRButton from '../qr/QRButton'
 import LangSwitch from '../langswitch'
 import ThemeSwitch from '../theme/ThemeSwitch'
 
+// Definimos la interfaz para Author
+interface Author {
+  name: string
+  avatar?: string
+  language: string
+  slug: string
+  default?: boolean
+}
+
 const navIcons = {
   home: Home,
   blog: BookOpen,
@@ -26,21 +35,23 @@ const navIcons = {
 const MobileNav = () => {
   const locale = useParams()?.locale as LocaleTypes
   const { t } = useTranslation(locale, 'common')
-  const [authors, setAuthors] = useState([])
-  const [mainAuthor, setMainAuthor] = useState([])
+  const [authors, setAuthors] = useState<Author[]>([])
+  const [mainAuthor, setMainAuthor] = useState<Author[]>([])
   const [navShow, setNavShow] = useState<boolean>(false)
   const [accordionOpen, setAccordionOpen] = useState<boolean>(false)
 
   useEffect(() => {
     const loadAuthors = async () => {
       try {
-        const { allAuthors } = await import('contentlayer/generated')
+        const generated = await import('contentlayer/generated')
+        const loadedAuthors = generated.allAuthors as Author[]
+        
         setAuthors(
-          allAuthors
+          loadedAuthors
             .filter((a) => a.language === locale)
             .sort((a, b) => (a.default === b.default ? 0 : a.default ? -1 : 1))
         )
-        setMainAuthor(allAuthors.filter((a) => a.default === true && a.language === locale))
+        setMainAuthor(loadedAuthors.filter((a) => a.default === true && a.language === locale))
       } catch (error) {
         console.error('Error loading authors:', error)
         setAuthors([])
@@ -161,7 +172,7 @@ const MobileNav = () => {
                   transition={{ duration: 0.2 }}
                   className="overflow-hidden"
                 >
-                  {authors.map((author: any, index: number) => {
+                  {authors.map((author, index) => {
                     const { name, avatar, language, slug } = author
                     if (language === locale) {
                       return (
@@ -189,7 +200,7 @@ const MobileNav = () => {
             )}
 
             {!siteMetadata.multiauthors &&
-              mainAuthor.map((author: any) => {
+              mainAuthor.map((author) => {
                 const { name, language, slug } = author
                 if (language === locale) {
                   return (
