@@ -1,3 +1,4 @@
+import React from 'react'
 import { Metadata } from 'next'
 import ListLayout from '@/layouts/ListLayout'
 import { allCoreContent, sortPosts } from 'pliny/utils/contentlayer'
@@ -27,7 +28,6 @@ export default async function BlogPage({ params: { locale } }: BlogPageProps) {
   return (
     <>
       <HeroSection />
-      <ListLayout params={{ locale: locale }} posts={filteredPosts} title={t('all')} />
       <TechnologiesSection />
     </>
   )
