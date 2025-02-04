@@ -6,6 +6,7 @@ import { genPageMetadata } from 'app/[locale]/seo'
 import { LocaleTypes } from './i18n/settings'
 import { createTranslation } from './i18n/server'
 import HeroSection from './home/Hero'
+import TechnologiesSection from './home/Stack'
 
 type BlogPageProps = {
   params: { locale: LocaleTypes }
@@ -27,6 +28,7 @@ export default async function BlogPage({ params: { locale } }: BlogPageProps) {
     <>
       <HeroSection />
       <ListLayout params={{ locale: locale }} posts={filteredPosts} title={t('all')} />
+      <TechnologiesSection />
     </>
   )
 }
