@@ -4,7 +4,9 @@
     "title_1": "I'm Alejandro Sánchez Yalí",
     "title_2": "Specialized in developing smart applications that integrate modern web technologies with artificial intelligence and blockchain.",
     "button_1": "Contact Me",
-    "button_2": "More About Me"
+    "button_2": "More About Me",
+    "blog_section":"Insights on AI, Blockchain, and Cutting-Edge Tech",
+    "blog_description":"Exploring technology, development, and innovation through detailed analyses and practical guides"
   },
 
   "stack": {
