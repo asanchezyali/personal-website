@@ -61,8 +61,13 @@ module.exports = () => {
       dirs: ['app', 'components', 'layouts', 'scripts'],
     },
     images: {
-      domains: ['api.qrserver.com'],
       remotePatterns: [
+        {
+          protocol: 'https',
+          hostname: 'api.qrserver.com',
+          pathname: '**',
+
+        },
         {
           protocol: 'https',
           hostname: 'picsum.photos',
