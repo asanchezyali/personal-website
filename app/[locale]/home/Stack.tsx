@@ -130,10 +130,6 @@ const TechnologiesSection = () => {
                     ? 'flex h-12 w-12 items-center justify-center rounded-full bg-[#471069]/90 dark:bg-[#30C5D2]/10 md:h-16 md:w-16'
                     : ''
                 }`}
-                whileHover={{
-                  scale: 1.1,
-                  transition: { duration: 0.2 },
-                }}
               >
                 <tech.icon
                   className={`${
