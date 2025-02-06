@@ -168,9 +168,6 @@ const TechnologiesSection = () => {
       >
         <h2 className="mb-6 text-4xl font-bold md:text-5xl">
           {t('stack.title')}
-          <span className="text-gradient-fallback bg-gradient-to-r from-[#30C5D2] to-[#9821e2] bg-clip-text text-transparent">
-            {'</>'}
-          </span>
         </h2>
         <p className="mx-auto max-w-2xl text-xl text-gray-600 dark:text-gray-300">
           {t('stack.description')}
