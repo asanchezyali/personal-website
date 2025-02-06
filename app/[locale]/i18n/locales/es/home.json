@@ -1,10 +1,10 @@
 {
   "hero": {
-    "title_part1": "Innovación empresarial",
-    "title_part2": "con",
-    "title_part3": "soluciones digitales",
-    "description": "Transformamos su visión en realidad digital, impulsando el crecimiento y la eficiencia de su empresa. Nuestras soluciones personalizadas optimizan procesos, mejoran la experiencia del cliente y lo posicionan a la vanguardia de su industria.",
-    "contact_button": "Contáctenos"
+    "roll": "Desarrollador de software y consultor de TI",
+    "title_1": "Soy Alejandro Sánchez Yalí",
+    "title_2": "Desarrollador de software y consultor de TI especializado en la creación de aplicaciones inteligentes que combinan tecnologías web modernas con inteligencia artificial y blockchain.",
+    "button_1": "Contáctame",
+    "button_2": "Más sobre mí"
   },
 
   "services": {

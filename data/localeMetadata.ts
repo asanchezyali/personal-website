@@ -3,11 +3,11 @@ type Metadata = {
 }
 
 export const maintitle: Metadata = {
-  en: 'Smart, Precise, and Limitless Solutions',
-  es: 'Soluciones inteligentes, precisas y sin límites',
+  en: 'Smart, Adaptive, and Future-Ready Solutions',
+  es: 'Soluciones inteligentes, adaptativas y preparadas para el futuro',
 }
 
 export const maindescription: Metadata = {
-  en: 'Smart, Precise, and Limitless Solutions',
-  es: 'Soluciones inteligentes, precisas y sin límites',
+  en: 'Smart, Adaptive, and Future-Ready Solutions',
+  es: 'Soluciones inteligentes, adaptativas y preparadas para el futuro',
 }
