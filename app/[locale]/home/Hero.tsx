@@ -102,6 +102,28 @@ const HeroSection = () => {
                 />
               </svg>
             </a>
+
+            <a
+              className="inline-flex items-center rounded-lg bg-white/10 px-6 py-2.5 text-sm font-medium text-white transition-all hover:bg-white/20"
+              href="https://github.com/asanchezyali/technical-resume/blob/technical-resume/technical_resume.pdf"
+              target="_blank"
+            >
+              {t('hero.button_2')}
+              <svg
+                className="ml-2 h-4 w-4"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </a>
           </div>
 
           <div className="flex items-center justify-center space-x-5 lg:justify-start">
