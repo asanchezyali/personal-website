@@ -2,8 +2,8 @@
 const siteMetadata = {
   title: 'Yali Dev',
   author: 'Yali Dev',
-  headerTitle: 'TailwindBlog',
-  description: 'Business Innovation with Digital Solutions',
+  headerTitle: 'Yali Dev Blog',
+  description: 'A space dedicated to exploring the intersections of mathematics, computer science, software development, artificial intelligence, and deep learning. Sharing ideas, experiences, and discoveries in the fascinating world of technology.',
   language: 'en',
   theme: 'system', // system, dark or light
   siteUrl: 'https://tailwind-nextjs-starter-blog-i18n.vercel.app',
