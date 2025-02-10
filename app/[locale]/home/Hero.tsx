@@ -59,7 +59,7 @@ const HeroSection = () => {
 
       {/* Main Content */}
       <motion.div
-        className="relative z-10 flex w-full flex-col items-center justify-between gap-8 lg:flex-row lg:gap-12"
+        className="relative flex w-full flex-col items-center justify-between gap-8 lg:flex-row lg:gap-12"
         initial="hidden"
         animate="visible"
         variants={containerVariants}
