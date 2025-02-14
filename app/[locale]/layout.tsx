@@ -89,7 +89,7 @@ export default function RootLayout({
         <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#000" />
         <link rel="alternate" type="application/rss+xml" href="/feed.xml" />
       </head>
-      <body className="relative bg-white pl-[calc(100vw-100%)] text-black antialiased dark:bg-black dark:text-white">
+      <body className="relative bg-white pl-[calc(100vw-100%)] text-black antialiased dark:bg-black dark:text-white min-w-[300px]">
         {/* Patrón de puntos - versión cuadrícula más visible */}
 
 

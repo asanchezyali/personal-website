@@ -21,9 +21,7 @@ const BlogHeader = () => {
             transition={{ duration: 0.5 }}
             className="text-6xl font-bold text-gray-900 dark:text-gray-100"
           >
-            {t('title_part_1')}
-            <br />
-            {t('title_part_2')}
+            {t('title')}
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -40,13 +38,7 @@ const BlogHeader = () => {
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5, delay: 0.4 }}
         >
-          <Link
-            href={`/${locale}/tags`}
-            className="group flex items-center gap-2 rounded-lg border border-gray-200 bg-white/50 px-4 py-2 text-sm font-medium text-gray-600 shadow-sm backdrop-blur-sm transition-all duration-300 hover:border-primary-500 hover:bg-primary-50 hover:text-primary-600 hover:shadow-md dark:border-gray-700 dark:bg-gray-800/50 dark:text-gray-300 dark:hover:border-primary-500 dark:hover:bg-primary-950 dark:hover:text-primary-400"
-          >
-            <Tag className="h-4 w-4 transition-transform duration-300 group-hover:scale-110" />
-            Explore Tags
-          </Link>
+
         </motion.div>
       </div>
     </div>
