@@ -11,8 +11,7 @@ canonicalUrl: https://www.asanchezyali.com/blog/es/blockchain/20230326Blockchain
 headerImage: '/images/blockchain/post-solana.webp'
 images: ['/images/blockchain/post-solana.webp']
 language: 'en'
-authors:
-    - Alejandro Sánchez Yalí
+authors: ['yali']
 ---
 
 The history of cryptography is a fascinating journey that reflects humanity's eternal need to protect information. From ancient civilizations to the modern digital era, cryptography has constantly evolved, adapting to new needs and challenges.
@@ -407,7 +406,7 @@ def calculate_merkle_root(transactions):
     new_transactions = []
     for i in range(0, len(transactions), 2):
         left = transactions[i]
-        right = transactions[i + 1] if i + 1 < len(transactions) else left # If the number of transactions is odd, duplicate the last transaction
+        right = transactions[i + 1] if i + 1 < len(transactions) else left 
         combined = left + right
         new_transactions.append(hashlib.sha256(combined.encode()).hexdigest())
 
