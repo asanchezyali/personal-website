@@ -18,49 +18,50 @@ const Header = () => {
   const pathname = usePathname()
 
   return (
-    <header className="w-full py-6">
-      <div className="relative flex items-center justify-between">
-        <div className="w-32">
-          <Link
-            href={`/${locale}/`}
-            aria-label={siteMetadata.headerTitle}
-            className="font-ubuntu text-2xl font-bold text-gray-900 dark:text-white"
-          >
-            Yali Dev
-          </Link>
-        </div>
-        <div className="absolute left-1/2 hidden -translate-x-1/2 transform md:block">
-          <nav className="flex items-center space-x-8">
-            {headerNavLinks
-              .filter((link) => link.href !== '/')
-              .map((link) => {
-                const isSelected = pathname!.includes(link.href as string)
+    <header className="w-full bg-white py-6 dark:bg-black">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="relative flex items-center justify-between">
+          <div className="w-32">
+            <Link
+              href={`/${locale}/`}
+              aria-label={siteMetadata.headerTitle}
+              className="font-ubuntu text-2xl font-bold text-gray-900 transition-colors hover:text-primary-600 dark:text-white dark:hover:text-primary-400"
+            >
+              Yali Dev
+            </Link>
+          </div>
+          <div className="absolute left-1/2 hidden -translate-x-1/2 transform md:block">
+            <nav className="flex items-center space-x-6">
+              {headerNavLinks.map((link) => {
+                const isSelected =
+                  link.href === '/' ? pathname === '/' : pathname.startsWith(link.href as string)
                 return (
                   <Link
                     key={link.title}
                     href={`/${locale}${link.href}`}
-                    className={`text-sm font-medium transition-colors duration-200 hover:text-[#30C5D2] ${
+                    className={`text-sm font-medium transition-colors duration-200 ${
                       isSelected
-                        ? 'text-[#3e4647] dark:text-[#30C5D2]'
-                        : 'text-gray-600 dark:text-gray-300'
+                        ? 'text-primary-600 dark:text-primary-400'
+                        : 'text-gray-600 hover:text-primary-600 dark:text-gray-300 dark:hover:text-primary-400'
                     }`}
                   >
                     {`${t(link.title.toLowerCase())}`}
                   </Link>
                 )
               })}
-          </nav>
-        </div>
+            </nav>
+          </div>
 
-        <div className="w-32">
-          <div className="flex items-center justify-end md:space-x-5">
-            <SearchButton />
-            <div className="hidden md:flex md:items-center md:space-x-6">
-              <QRButton />
-              <LangSwitch />
-              <ThemeSwitch />
+          <div className="w-32">
+            <div className="flex items-center justify-end md:space-x-5">
+              <SearchButton />
+              <div className="hidden md:flex md:items-center md:space-x-6">
+                <QRButton />
+                <LangSwitch />
+                <ThemeSwitch />
+              </div>
+              <MobileNav />
             </div>
-            <MobileNav />
           </div>
         </div>
       </div>
