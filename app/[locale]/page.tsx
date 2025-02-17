@@ -3,7 +3,7 @@ import { Metadata } from 'next'
 import { genPageMetadata } from 'app/[locale]/seo'
 import { LocaleTypes } from './i18n/settings'
 import HeroSection from './home/Hero'
-import TechnologiesSection from './home/Stack'
+import TechnologiesSection from './home/TecnologiesSection'
 import BlogPreview from './home/BlogPreview'
 
 type BlogPageProps = {
