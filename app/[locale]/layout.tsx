@@ -1,8 +1,9 @@
+import type React from 'react'
 import 'css/tailwind.css'
 import 'pliny/search/algolia.css'
 
 import { overlock, ubuntu, lato } from './fonts'
-import { Analytics, AnalyticsConfig } from 'pliny/analytics'
+import { Analytics, type AnalyticsConfig } from 'pliny/analytics'
 import { SearchProvider } from '@/components/search/SearchProvider'
 import Header from '@/components/navigation/Header'
 import SectionContainer from '@/components/SectionContainer'
@@ -10,9 +11,9 @@ import Footer from '@/components/navigation/Footer'
 import siteMetadata from '@/data/siteMetadata'
 import { maintitle, maindescription } from '@/data/localeMetadata'
 import { ThemeProvider } from '@/components/theme/ThemeContext'
-import { Metadata } from 'next'
+import type { Metadata } from 'next'
 import { dir } from 'i18next'
-import { LocaleTypes, locales } from './i18n/settings'
+import { type LocaleTypes, locales } from './i18n/settings'
 import TwSizeIndicator from '@/components/helper/TwSizeIndicator'
 
 export async function generateStaticParams() {
@@ -89,10 +90,10 @@ export default function RootLayout({
         <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#000" />
         <link rel="alternate" type="application/rss+xml" href="/feed.xml" />
       </head>
-      <body className="relative bg-white pl-[calc(100vw-100%)] text-black antialiased dark:bg-black dark:text-white min-w-[300px]">
-        {/* Patrón de puntos - versión cuadrícula más visible */}
-
-
+      <body className="relative min-w-[300px] bg-white text-black antialiased dark:bg-black dark:text-white">
+        <div className="absolute inset-0 -z-10 h-full w-full bg-white dark:bg-black">
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:14px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]"></div>
+        </div>
         <div className="relative">
           <TwSizeIndicator />
           <ThemeProvider>
