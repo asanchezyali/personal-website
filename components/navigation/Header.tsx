@@ -30,7 +30,7 @@ const Header = () => {
               Yali Dev
             </Link>
           </div>
-          <div className="absolute left-1/2 hidden -translate-x-1/2 transform md:block">
+          <div className="absolute left-1/2 hidden -translate-x-1/2 transform rounded-lg bg-gray-100 px-4 py-2 shadow-md dark:bg-gray-800/50 md:block">
             <nav className="flex items-center space-x-6">
               {headerNavLinks.map((link) => {
                 const isSelected =
