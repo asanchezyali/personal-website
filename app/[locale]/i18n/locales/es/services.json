@@ -1,0 +1,46 @@
+{
+  "title": "Servicios Profesionales",
+  "description": "Especialización en desarrollo web moderno, integración de IA y tecnología blockchain.",
+  "services_1": {
+    "title": "Desarrollo de software y consultoría en IA",
+    "description": "Soluciones a medida en desarrollo full-stack, integración de modelos de IA y automatización de procesos.",
+    "icon": "Code2",
+    "features": [
+      "Desarrollo Full-Stack (React/Next.js, Django/FastAPI, NestJS)",
+      "Integración de IA y modelos de lenguaje (LLMs, LangChain, LangGraph)",
+      "Optimización y escalado de sistemas de ML",
+      "Desarrollo de APIs y arquitecturas escalables",
+      "Implementación en la nube y MLOps (AWS, Docker, CI/CD)"
+    ],
+    "ctaText": "Programar Consulta",
+    "ctaLink": "https://cal.com/asanchezyali/software-development-ai-consulting"
+  },
+  "services_2": {
+    "title": "Educación en programación y IA",
+    "description": "Formación personalizada en fundamentos de programación y conceptos de IA para individuos y equipos.",
+    "icon": "BookOpen",
+    "features": [
+      "Fundamentos de programación",
+      "Conceptos de IA y Machine Learning",
+      "Matemáticas para IA",
+      "Desarrollo de proyectos prácticos",
+      "Mentoría individualizada"
+    ],
+    "ctaText": "Programar Sesión",
+    "ctaLink": "https://cal.com/asanchezyali/programming-ai-education"
+  },
+  "services_3": {
+    "title": "Colaboraciones y oportunidades profesionales",
+    "description": "Abierto a proyectos desafiantes y roles estratégicos en empresas innovadoras de tecnología.",
+    "icon": "Briefcase",
+    "features": [
+      "Desarrollo Full-Stack Senior (React, Next.js, FastAPI, NestJS)",
+      "Ingeniería de IA/ML (LLMs, TensorFlow, PyTorch, JAX)",
+      "Diseño y optimización de arquitecturas escalables",
+      "Liderazgo técnico y mentoría de equipos",
+      "Desarrollo de soluciones Web3 y blockchain"
+    ],
+    "ctaText": "Conectemos",
+    "ctaLink": "https://cal.com/asanchezyali/full-time-opportunities"
+  }
+}
