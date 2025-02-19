@@ -5,17 +5,15 @@ import Comments from '@/components/comments/Comments'
 import WalineComments from '@/components/comments/walinecomponents/walineComments'
 import Link from '@/components/mdxcomponents/Link'
 import PageTitle from '@/components/PageTitle'
-import SectionContainer from '@/components/SectionContainer'
 import Tag from '@/components/tag'
 import siteMetadata from '@/data/siteMetadata'
 import ScrollTopAndComment from '@/components/scroll'
 import { createTranslation } from 'app/[locale]/i18n/server'
 import { LocaleTypes } from 'app/[locale]/i18n/settings'
-import { PostSeriesBox } from '@/components/seriescard'
-import Share from '@/components/share'
 import { Toc } from 'pliny/mdx-plugins'
 import Sidetoc from '@/components/sidetoc'
 import Image from '@/components/mdxcomponents/Image'
+import DonateButtons from '@/components/donatebuttons/DonateButtons'
 
 const editUrl = (path) => `${siteMetadata.siteRepo}/blob/main/data/${path}`
 const discussUrl = (path) =>
@@ -150,7 +148,7 @@ export default async function PostLayout({
                     )}
                   </div>
                 )}
-                <div className="pt-4 xl:pt-8">
+                <div className="py-4 ">
                   <Link
                     href={`/${locale}/${basePath}`}
                     className="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
@@ -159,6 +157,7 @@ export default async function PostLayout({
                     &larr;{t('back')}
                   </Link>
                 </div>
+                <DonateButtons /> 
               </div>
             </div>
           </aside>
