@@ -48,12 +48,8 @@ export default async function PostLayout({
   const basePath = path.split('/')[0]
   const { t } = await createTranslation(locale, 'home')
   const tableOfContents: Toc = toc as unknown as Toc
-
-  console.log(tags)
-
   return (
     <>
-      <ScrollTopAndComment />
       <article className="py-8">
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-4">
           <div className="lg:col-span-3">
@@ -154,13 +150,22 @@ export default async function PostLayout({
                     )}
                   </div>
                 )}
+                <div className="pt-4 xl:pt-8">
+                  <Link
+                    href={`/${locale}/${basePath}`}
+                    className="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
+                    aria-label="Back to the blog"
+                  >
+                    &larr;{t('back')}
+                  </Link>
+                </div>
               </div>
             </div>
           </aside>
         </div>
-
-        <Sidetoc toc={tableOfContents} />
       </article>
+      <ScrollTopAndComment />
+      <Sidetoc toc={tableOfContents} />
     </>
   )
 }
