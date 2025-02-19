@@ -73,55 +73,34 @@ const ServicesSection = () => {
 
   const services = [
     {
-      title: 'IT Consulting & Development',
-      description:
-        'Expert solutions in modern web development, AI integration, and blockchain technology.',
+      title: `${t('services_1.title')}`,
+      description: `${t('services_1.description')}`,
       icon: Code2,
-      features: [
-        'Full-Stack Development (React/Next.js, Django/FastAPI, NestJS)',
-        'AI & LLM Integration',
-        'Smart Contract Development',
-        'Custom API Development',
-        'Cloud Deployment & DevOps',
-      ],
-      ctaText: 'Schedule Consultation',
-      ctaLink: 'https://cal.com/asanchezyali/30min',
+      features: t('services_1.features', { returnObjects: true }),
+      ctaText: `${t('services_1.ctaText')}`,
+      ctaLink: `${t('services_1.ctaLink')}`,
     },
     {
-      title: 'Programming & AI Education',
-      description:
-        'Personalized training in programming fundamentals and AI concepts for individuals and teams.',
+      title: `${t('services_2.title')}`,
+      description: `${t('services_2.description')}`,
       icon: BookOpen,
-      features: [
-        'Programming Fundamentals',
-        'AI & Machine Learning Concepts',
-        'Mathematics for AI',
-        'Practical Project Development',
-        'One-on-One Mentoring',
-      ],
-      ctaText: 'Book a Session',
-      ctaLink: 'https://cal.com/asanchezyali/30min',
+      features: t('services_2.features', { returnObjects: true }),
+      ctaText: `${t('services_2.ctaText')}`,
+      ctaLink: `${t('services_2.ctaLink')}`,
     },
     {
-      title: 'Full-Time Opportunities',
-      description:
-        'Open to full-time positions and long-term collaborations in innovative tech companies.',
+      title: `${t('services_3.title')}`,
+      description: `${t('services_3.description')}`,
       icon: Briefcase,
-      features: [
-        'Senior Full-Stack Development',
-        'AI/ML Engineering',
-        'Technical Leadership',
-        'Architecture Design',
-        'Team Mentoring',
-      ],
-      ctaText: "Let's Connect",
-      ctaLink: 'https://cal.com/asanchezyali/30min',
+      features: t('services_3.features', { returnObjects: true }),
+      ctaText: `${t('services_3.ctaText')}`,
+      ctaLink: `${t('services_3.ctaLink')}`,
     },
   ]
 
   return (
     <div className="bg-gray-50 dark:bg-black">
-      <div className="container mx-auto px-4 py-24 sm:px-6 lg:px-8">
+      <div className="container mx-auto py-24">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -130,11 +109,10 @@ const ServicesSection = () => {
           className="text-center"
         >
           <h2 className="mb-4 font-ubuntu text-4xl font-bold text-gray-900 dark:text-white lg:text-5xl">
-            Professional Services
+            {t('title')}
           </h2>
           <p className="mx-auto mb-16 max-w-2xl font-lato text-lg text-gray-600 dark:text-gray-300">
-            Specialized expertise in modern web development, AI integration, and technical
-            education. Let's build something amazing together.
+            {t('description')}
           </p>
         </motion.div>
 

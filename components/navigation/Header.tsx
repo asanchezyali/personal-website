@@ -19,7 +19,6 @@ const Header = () => {
 
   return (
     <header className="w-full bg-white py-6 dark:bg-black">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="relative flex items-center justify-between">
           <div className="w-32">
             <Link
@@ -64,7 +63,6 @@ const Header = () => {
             </div>
           </div>
         </div>
-      </div>
     </header>
   )
 }
