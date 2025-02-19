@@ -1,0 +1,44 @@
+{
+  "hero": {
+    "roll": "Software Developer & IT Consultant",
+    "title_1": "I'm Alejandro Sánchez Yalí",
+    "title_2": "Specialized in developing smart applications that integrate modern web technologies with artificial intelligence and blockchain.",
+    "button_1": "Contact Me",
+    "button_2": "More About Me",
+    "blog_section":"Notes on AI, Blockchain, and Cutting-Edge Tech",
+    "blog_description":"Exploring technology, development, and innovation through detailed analyses and practical guides"
+  },
+
+  "stack": {
+      "title": "Building bit by bit",
+      "description": "I love experimenting with modern technologies to create unique solutions that solve real problems. Every line of code is an opportunity to learn something new."
+  },
+
+  "blog": "Blog",
+  "greeting": "Latest",
+  "description": "A space dedicated to exploring the intersections of mathematics, computer science, software development, artificial intelligence, and deep learning. Sharing ideas, experiences, and discoveries in the fascinating world of technology.",
+  "more": "Read more",
+  "all": "All posts",
+  "moreaboutme": "More about me",
+  "featured": "Featured",
+  "morefeatured": "More featured posts",
+  "morerecent": "More recent posts",
+  "search": "Search articles",
+  "searchposts": "Search posts",
+  "comment": "Load Comments",
+  "pub": "Published on",
+  "authors": "Authors",
+  "name": "Name",
+  "nexta": "Next Article",
+  "preva": "Previous Article",
+  "nextp": "Next",
+  "prevp": "Previous",
+  "of": "of",
+  "back": "Back to the blog",
+  "twitter": "Discuss on Twitter",
+  "github": "View on GitHub",
+  "draft": "Under Construction",
+  "noposts": "No posts found",
+  "poststagged": "View posts tagged",
+  "showTags": "Show Tags"
+}

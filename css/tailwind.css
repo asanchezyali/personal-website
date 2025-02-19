@@ -1,6 +1,43 @@
+@import 'waline.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.text-gradient-fallback {
+  background: linear-gradient(to right, #30c5d2, #9821e2) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  color: transparent !important;
+}
+
+.right-2 {
+  right: 0.5rem;
+}
+
+.top-2 {
+  top: 0.5rem;
+}
+
+.bg-gray-700 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(55 65 81 / var(--tw-bg-opacity));
+}
+
+.text-gray-300 {
+  --tw-text-opacity: 1;
+  color: rgb(209 213 219 / var(--tw-text-opacity));
+}
+
+.border-green-400 {
+  --tw-border-opacity: 1;
+  border-color: rgb(74 222 128 / var(--tw-border-opacity));
+}
+
+.text-green-400 {
+  --tw-text-opacity: 1;
+  color: rgb(74 222 128 / var(--tw-text-opacity));
+}
 
 .task-list-item::before {
   @apply hidden;
@@ -14,13 +51,49 @@
   @apply mt-12 border-t border-gray-200 pt-8 dark:border-gray-700;
 }
 
+.data-footnote-backref {
+  @apply no-underline;
+}
+
 .csl-entry {
   @apply my-5;
 }
 
+.overflow-y-auto::-webkit-scrollbar {
+  width: 2px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-track {
+  background-color: #f1f1f1;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb {
+  background-color: #9c9c9c;
+  border-radius: 5px;
+}
+
+/* https://stackoverflow.com/questions/61083813/how-to-avoid-internal-autofill-selected-style-to-be-applied */
 input:-webkit-autofill,
 input:-webkit-autofill:focus {
-  transition: background-color 600000s 0s, color 600000s 0s;
+  transition:
+    background-color 600000s 0s,
+    color 600000s 0s;
+}
+
+.content-header-link {
+  opacity: 0;
+  margin-left: -24px;
+  padding-right: 4px;
+}
+
+.content-header:hover .content-header-link,
+.content-header-link:hover {
+  opacity: 1;
+}
+
+.linkicon {
+  display: inline-block;
+  vertical-align: middle;
 }
 
 .giscus-frame {
@@ -81,5 +154,20 @@ a:has(> span.icon-link) {
     overflow-x: auto;
     overflow-y: hidden;
     width: 250px !important;
+  }
+}
+
+
+@media only screen and (max-width: 600px) {
+  .katex-display {
+    overflow-x: auto;
+    overflow-y: hidden;
+    width: 250px !important;
+  }
+  .katex-display .katex {
+    display: inline-block !important;
+  }
+  .katex-display > .katex > .katex-html > .tag {
+    right: -100px !important;
   }
 }

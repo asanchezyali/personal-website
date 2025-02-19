@@ -4,7 +4,10 @@
 /node_modules
 /.pnp
 .pnp.js
-.contentlayer
+/.yarn/*
+!/.yarn/releases
+!/.yarn/plugins
+!/.yarn/sdks
 .yarn
 
 # testing
@@ -13,11 +16,18 @@
 # next.js
 /.next/
 /out/
+public/sitemap.xml
 .vercel
 
 # production
 /build
+*.xml
 
+# rss feed
+/public/feed.xml
+
+# search
+/public/search.json
 
 # misc
 .DS_Store
@@ -33,4 +43,6 @@ yarn-error.log*
 .env.development.local
 .env.test.local
 .env.production.local
-.env
+
+# Contentlayer
+.contentlayer

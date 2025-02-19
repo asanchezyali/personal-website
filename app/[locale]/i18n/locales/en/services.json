@@ -1,0 +1,45 @@
+{
+  "title": "Professional Services",
+  "description": "Specialized in modern web development, AI integration, and blockchain technology.",
+  "services_1": {
+    "title": "Software Development & AI Consulting",
+    "description": "Custom solutions in full-stack development, AI model integration, and process automation.",
+    "icon": "Code2",
+    "features": [
+      "Full-Stack Development (React/Next.js, Django/FastAPI, NestJS)",
+      "AI and LLM Integration (LLMs, LangChain, LangGraph)",
+      "ML system optimization and scaling",
+      "API development and scalable architectures",
+      "Cloud deployment and MLOps (AWS, Docker, CI/CD)"
+    ],
+    "ctaText": "Schedule a Consultation",
+    "ctaLink": "https://cal.com/asanchezyali/software-development-ai-consulting"
+  },
+  "services_2": {
+    "title": "Programming & AI Education",
+    "description": "Personalized training in programming fundamentals and AI concepts for individuals and teams.",
+    "icon": "BookOpen",
+    "features": [
+      "Programming fundamentals",
+      "AI and Machine Learning concepts",
+      "Mathematics for AI",
+      "Hands-on project development",
+      "Personalized mentorship"
+    ],
+    "ctaText": "Schedule a Session",
+    "ctaLink": "https://cal.com/asanchezyali/programming-ai-education"
+  },
+  "services_3": {
+    "title": "Full-Time Opportunities",
+    "description": "Open to full-time positions and long-term collaborations in innovative tech companies.",
+    "icon": "Briefcase",
+    "features": [
+      "Senior Full-Stack Development (React, Next.js, FastAPI, NestJS)",
+      "AI/ML Engineering (LLMs, TensorFlow, PyTorch, JAX)",
+      "Scalable architecture design and optimization",
+      "Web3 and blockchain solutions development"
+    ],
+    "ctaText": "Let's Connect",
+    "ctaLink": "https://cal.com/asanchezyali/full-time-opportunities"
+  }
+}

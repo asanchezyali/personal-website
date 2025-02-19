@@ -1,15 +1,15 @@
 ---
 title: 'Cómo construir una biblioteca de aritmética modular en Python'
 date: '2022/10/05'
-tags: ['python', 'sobrecarga-de-operadores', 'teoría-de-números', 'juego-luces-fuera']
+tags: ['python', 'sobrecarga-de-operadores', 'teoría-de-números', 'light-out-game']
 draft: false
-time: '18 min'
 summary: 'En este tutorial, aprenderemos cómo crear una biblioteca para aritmética modular, usando sobrecarga de operadores y redefiniendo las funciones incorporadas de NumPy.'
 bibliography: references-data.bib
 canonicalUrl: 'https://www.asanchezyali.com/blog/es/modular-arithmetic/20220510ModularArithmetic'
 headerImage: '/images/modular-arithmetic-library/header.webp'
 images: ['/images/modular-arithmetic-library/header.webp']
 language: 'es'
+authors: ['yali']
 ---
 
 <div className="text-center text-sm italic text-gray-500">
@@ -22,8 +22,8 @@ Hace años, estaba construyendo mi versión del [Juego Luces Fuera](https://www.
 <ImageBox
   src="/images/modular-arithmetic-library/modular_fig1.png"
   alt="Juego Luces Fuera"
-  width="700px"
-  height="250px"
+  width="700"
+  height="250"
 >
   **Figura 1**. Juego Luces Fuera. Madsen, 2010.
   [Fuente](http://cau.ac.kr/~mhhgtx/courses/LinearAlgebra/references/MadsenLightsOut.pdf).
@@ -110,8 +110,8 @@ Observemos el reloj analógico de 12 horas a continuación. Supongamos que el re
 <ImageBox
   src="/images/modular-arithmetic-library/modular_fig2.png"
   alt="Aritmética del reloj"
-  width="700px"
-  height="300px"
+  width="700"
+  height="300"
 >
   **Figura 2**. Aritmética del reloj. Universidad de Waterloo, 2019.
   [Fuente](https://www.cemc.uwaterloo.ca/events/mathcircles/2019-20/Fall/Junior78_Nov12_Soln.pdf).
@@ -122,8 +122,8 @@ Ahora, ¿qué hora sería después de 12 horas? Después de 12 horas, serían la
 <ImageBox
   src="/images/modular-arithmetic-library/modular_fig3.png"
   alt="Aritmética del reloj"
-  width="700px"
-  height="300px"
+  width="700"
+  height="300"
 >
   **Figura 3**. Aritmética del reloj. Universidad de Waterloo, 2019.
   [Fuente](https://www.cemc.uwaterloo.ca/events/mathcircles/2019-20/Fall/Junior78_Nov12_Soln.pdf).
@@ -150,8 +150,8 @@ $$
 <ImageBox
   src="/images/modular-arithmetic-library/modular_fig4.png"
   alt="Aritmética del reloj"
-  width="700px"
-  height="400px"
+  width="700"
+  height="400"
 >
   **Figura 4**. Aritmética del reloj. Universidad de Waterloo, 2019.
   [Fuente](https://www.cemc.uwaterloo.ca/events/mathcircles/2019-20/Fall/Junior78_Nov12_Soln.pdf).
@@ -162,8 +162,8 @@ En general, todos aquellos números que dejan el mismo resto que 17 dividido por
 <ImageBox
   src="/images/modular-arithmetic-library/modular_fig5.png"
   alt="Aritmética del reloj"
-  width="700px"
-  height="450px"
+  width="700"
+  height="450"
 >
   **Figura 5**. Aritmética del reloj. Universidad de Waterloo, 2019.
   [Fuente](https://www.cemc.uwaterloo.ca/events/mathcircles/2019-20/Fall/Junior78_Nov12_Soln.pdf).

@@ -1,0 +1,47 @@
+{
+  "title": "¿Somos tu agencia?",
+  "closeButton": "Cerrar formulario",
+  "description": "Para asegurarnos de que podemos ofrecerte el mejor servicio, por favor completa este breve formulario:",
+  "formTitle": "Formulario de Contacto",
+  "companyName": {
+    "label": "¿Cuál es el nombre de tu empresa?",
+    "placeholder": "Ej: TechSolutions SAS",
+    "error": "Por favor ingresa el nombre de tu empresa"
+  },
+  "email": {
+    "label": "¿Cuál es tu email de contacto?",
+    "placeholder": "tu@email.com",
+    "error": "Por favor ingresa un email válido"
+  },
+  "solutions": {
+    "label": "¿Qué soluciones tecnológicas te interesan?",
+    "options": {
+      "mobileDev": "Desarrollo Móvil",
+      "desktopDev": "Desarrollo Web",
+      "ai": "Inteligencia Artificial",
+      "blockchain": "Blockchain",
+      "cloudDevops": "Cloud & DevOps",
+      "other": "Otro"
+    },
+    "error": "Selecciona al menos una opción"
+  },
+  "urgency": {
+    "label": "¿Cuál es tu nivel de urgencia?",
+    "placeholder": "Selecciona una opción",
+    "options": {
+      "immediate": "Inmediato (1-2 semanas)",
+      "shortTerm": "Corto plazo (1-2 meses)",
+      "mediumTerm": "Mediano plazo (3-6 meses)",
+      "exploring": "Solo explorando opciones"
+    },
+    "error": "Por favor selecciona el nivel de urgencia"
+  },
+  "message": {
+    "label": "¿Algo más que quieras contarnos? (opcional)",
+    "placeholder": "Cuéntanos más sobre tu proyecto o necesidades específicas..."
+  },
+  "submit": {
+    "default": "¡Comencemos tu proyecto!",
+    "sending": "Enviando..."
+  }
+}

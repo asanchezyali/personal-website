@@ -3,9 +3,8 @@ title: 'El código Kraken: Cómo construir un avatar parlante'
 subtitle: 'Crea tu propio avatar conversacional con Azure Cognitive, LangChain y OpenAI.'
 date: '2024/02/20'
 lastmod: '2024-02-20'
-tags: ['avatar-ia', 'inteligencia artificial', 'openai', 'gpt', 'lip-sync']
+tags: ['avatar-ia', 'inteligencia-artificial', 'openai', 'gpt', 'lip-sync']
 draft: false
-time: '47 min'
 summary: 'Crea tu propio avatar conversacional con Azure Cognitive, LangChain y OpenAI.'
 layout: PostLayout
 bibliography: references-data.bib
@@ -13,6 +12,7 @@ canonicalUrl: 'https://www.asanchezyali.com/blog/es/ai-avatars/2024020AIAvatar'
 headerImage: '/images/ai-avatars/header-post1.png'
 images: ['/images/ai-avatars/header-post1.png']
 language: 'es'
+authors: ['yali']
 ---
 
 <div className="text-center text-sm italic text-gray-500">
@@ -48,8 +48,8 @@ Antes de sumergirnos en el océano de la construcción, familiaricémonos con la
 <ImageBox
   src="/images/ai-avatars/fig1.gif"
   alt="Zippy, el cefalópodo conversacional."
-  width="800px"
-  height="500px"
+  width="800"
+  height="500"
 >
   **Figura 1**. Zippy, el cefalópodo conversacional.
 </ImageBox>
@@ -156,8 +156,8 @@ La animación varía significativamente, dependiendo del diseño del avatar. Par
 <ImageBox
   src="/images/ai-avatars/fig2.png"
   alt="Foto de perfil de Zippy (el bot asistente para el equipo de Monadical)."
-  width="728px"
-  height="313px"
+  width="728"
+  height="313"
 >
   **Figura 2**. Foto de perfil de Zippy (el bot asistente para el equipo de Monadical).
 </ImageBox>
@@ -173,8 +173,8 @@ Primero, comenzaremos con la imagen de Zippy. Los recursos necesarios, incluyend
 <ImageBox
   src="/images/ai-avatars/fig3.png"
   alt="Selecciona la boca de Zippy y actualiza el ID a ZippyMouth."
-  width="800px"
-  height="500px"
+  width="800"
+  height="500"
 >
   **Figura 3**. Selecciona la boca de Zippy y actualiza el ID a ZippyMouth.
 </ImageBox>
@@ -184,8 +184,8 @@ Primero, comenzaremos con la imagen de Zippy. Los recursos necesarios, incluyend
 <ImageBox
   src="/images/ai-avatars/fig4.png"
   alt="Guarda las imágenes como SVGs Optimizados."
-  width="800px"
-  height="500px"
+  width="800"
+  height="500"
 >
   **Figura 4**. Guarda las imágenes como SVGs Optimizados.
 </ImageBox>
@@ -195,8 +195,8 @@ Cuando estés guardando los cambios, asegúrate de que la configuración en Opci
 <ImageBox
   src="/images/ai-avatars/fig5.png"
   alt="Configuración básica para guardar en SVG Optimizado."
-  width="439px"
-  height="450px"
+  width="439"
+  height="450"
 >
   **Figura 5**. Panel de configuración para optimizar la salida SVG, mostrando varias opciones de
   documento y formato para personalizar el archivo SVG exportado.
@@ -205,8 +205,8 @@ Cuando estés guardando los cambios, asegúrate de que la configuración en Opci
 <ImageBox
   src="/images/ai-avatars/fig6.png"
   alt="Configuración básica para guardar en SVG Optimizado."
-  width="439px"
-  height="450px"
+  width="439"
+  height="450"
 >
   **Figura 6**. Panel de opciones avanzadas de optimización SVG, mostrando configuraciones para la
   precisión de coordenadas, acortamiento de valores de color, conversión de atributos y varias
@@ -216,8 +216,8 @@ Cuando estés guardando los cambios, asegúrate de que la configuración en Opci
 <ImageBox
   src="/images/ai-avatars/fig7.png"
   alt="Configuración básica para guardar en SVG Optimizado."
-  width="439px"
-  height="450px"
+  width="439"
+  height="450"
 >
   **Figura 7**. Interfaz de configuración de optimización de ID SVG, mostrando opciones para
   gestionar y personalizar identificadores de elementos dentro del archivo SVG, incluyendo
@@ -295,8 +295,8 @@ La base para este paso involucra las 22 imágenes de boca que hemos preparado, c
 <ImageBox
   src="/images/ai-avatars/fig8.png"
   alt="IDs de Visemas, fonemas y visemas."
-  width="800px"
-  height="1500px"
+  width="800"
+  height="1500"
 >
   **Figura 8**. IDs de Visemas, fonemas y visemas.
 </ImageBox>
@@ -312,8 +312,8 @@ Aunque esto pueda parecer un poco tedioso, piensa en ello como el día de pierna
 <ImageBox
   src="/images/ai-avatars/fig9.png"
   alt="IDs de Visemas, fonemas y visemas."
-  width="800px"
-  height="500px"
+  width="800"
+  height="500"
 >
   **Figura 9**. Para cada modificación en la apariencia de la boca, es necesario asignar un ID
   fácilmente reconocible, como ZippyMouth (u otro identificador memorable) para agilizar la
@@ -449,8 +449,8 @@ Puedes encontrar el código final [aquí](https://github.com/Monadical-SAS/zippy
 <ImageBox
   src="/images/ai-avatars/fig10.png"
   alt="Interfaz para interactuar con Zippy"
-  width="800px"
-  height="500px"
+  width="800"
+  height="500"
 >
   **Figura 10**. Interfaz para interactuar con Zippy
 </ImageBox>
@@ -493,8 +493,8 @@ Hasta ahora, hemos construido los elementos visuales de nuestro avatar. La sigui
 <ImageBox
   src="/images/ai-avatars/fig11.gif"
   alt="¿Cuál es el plan, cerebro?"
-  width="800px"
-  height="500px"
+  width="800"
+  height="500"
 >
   **Figura 10**. ¿Cuál es el plan, cerebro?
 </ImageBox>
@@ -509,7 +509,7 @@ El plan, Pinky, es integrar nuestra aplicación con los servicios [Azure Cogniti
 
 4. **Sincronizar la boca del avatar:** Por último, el audio producido y los visemas se utilizan para animar la boca de Zippy, asegurando que los movimientos de los labios del avatar estén sincronizados con el audio.
 
-<ImageBox src="/images/ai-avatars/fig12.png" alt="Flujo de trabajo" width="800px" height="700px">
+<ImageBox src="/images/ai-avatars/fig12.png" alt="Flujo de trabajo" width="800" height="700">
   **Figura 11**. Flujo de trabajo
 </ImageBox>
 
@@ -878,7 +878,7 @@ Cada cuadro dentro de BlendShapes contiene un array de 55 posiciones faciales re
 
 En este tutorial, usaremos los IDs de Visema para generar movimientos faciales para nuestro avatar. Sin embargo, ¡si este tutorial alcanza las 100k vistas, prometo escribir dos posts más sobre Animación SVG 2D y Formas de Mezcla 3D, respectivamente.
 
-<ImageBox src="/images/ai-avatars/fig13.gif" alt="Rick y Morty" width="800px" height="700px">
+<ImageBox src="/images/ai-avatars/fig13.gif" alt="Rick y Morty" width="800" height="700">
   **Figura 11**. Rick y Morty
 </ImageBox>
 
@@ -1355,7 +1355,7 @@ export default function AvatarApp() {
 
 ¡Con esto, la implementación de nuestro avatar está completa!
 
-<ImageBox src="/images/ai-avatars/fig14.gif" alt="Futurama" width="800px" height="700px">
+<ImageBox src="/images/ai-avatars/fig14.gif" alt="Futurama" width="800" height="700">
   **Figura 14**. Futurama
 </ImageBox>
 
@@ -1414,7 +1414,7 @@ La combinación de Azure Cognitive Services, LangChain y OpenAI no solo nos capa
 
 Así que, ya seas un marinero experimentado en el mar de las interacciones humano-máquina o apenas estés izando tu ancla, nunca ha habido un momento más emocionante para zarpar hacia el futuro, y que los descubrimientos más emocionantes yacen bajo la superficie. ¡Mejor ponerse en marcha!
 
-<ImageBox src="/images/ai-avatars/fig15.gif" alt="Kraken" width="800px" height="700px">
+<ImageBox src="/images/ai-avatars/fig15.gif" alt="Kraken" width="800" height="700">
   **Figura 15**. Kraken
 </ImageBox>
 

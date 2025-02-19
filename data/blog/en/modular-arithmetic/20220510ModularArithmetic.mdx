@@ -1,15 +1,15 @@
 ---
 title: 'How to build a modular arithmetic library in Python'
 date: '2022/10/05'
-tags: ['python', 'operator-overloading', 'number-theory', 'lights out game']
+tags: ['python', 'operator-overloading', 'number-theory', 'lights-out-game']
 draft: false
-time: '18 min'
 summary: 'In this tutorial, we are going to learn how to create a library for modular arithmetic, using operator overloading and redefining the built-in functions for NumPy.'
 bibliography: references-data.bib
 canonicalUrl: 'https://www.asanchezyali.com/blog/en/modular-arithmetic/20220510ModularArithmetic'
 headerImage: '/images/modular-arithmetic-library/header.webp'
 images: ['/images/modular-arithmetic-library/header.webp']
 language: 'en'
+authors: ['yali']
 ---
 
 _Written by Alejandro Sánchez Yalí. Originally published 2022-10-05 on the [Monadical blog](https://monadical.com/blog.html)._
@@ -19,8 +19,8 @@ Years ago, I was building my version of the [Lights Out Game](https://www.lights
 <ImageBox
   src="/images/modular-arithmetic-library/modular_fig1.png"
   alt="Lights Out Game"
-  width="700px"
-  height="250px"
+  width="700"
+  height="250"
 >
   **Figura 1**. Lights Out Game. Madsen, 2010.
   [Source](http://cau.ac.kr/~mhhgtx/courses/LinearAlgebra/references/MadsenLightsOut.pdf).
@@ -106,8 +106,8 @@ Let’s look at the $12$-hour analog clock below. Suppose the clock reads $5$ o�
 <ImageBox
   src="/images/modular-arithmetic-library/modular_fig2.png"
   alt="Clock arithmetic"
-  width="700px"
-  height="300px"
+  width="700"
+  height="300"
 >
   **Figura 2**. Clock arithmetic. University Waterloo, 2019.
   [source](https://www.cemc.uwaterloo.ca/events/mathcircles/2019-20/Fall/Junior78_Nov12_Soln.pdf).
@@ -118,8 +118,8 @@ Now, what time would it be after $12$ hours? After $12$ hours, it would be $5$ o
 <ImageBox
   src="/images/modular-arithmetic-library/modular_fig3.png"
   alt="Clock arithmetic"
-  width="700px"
-  height="300px"
+  width="700"
+  height="300"
 >
   **Figura 3**. Clock arithmetic. University Waterloo, 2019.
   [Source](https://www.cemc.uwaterloo.ca/events/mathcircles/2019-20/Fall/Junior78_Nov12_Soln.pdf).
@@ -146,8 +146,8 @@ $$
 <ImageBox
   src="/images/modular-arithmetic-library/modular_fig4.png"
   alt="Clock arithmetic"
-  width="700px"
-  height="400px"
+  width="700"
+  height="400"
 >
   **Figura 4**. Clock arithmetic. University Waterloo, 2019.
   [Source](https://www.cemc.uwaterloo.ca/events/mathcircles/2019-20/Fall/Junior78_Nov12_Soln.pdf).
@@ -158,8 +158,8 @@ In general, all those numbers that leave the same remainder as $17$ divided by $
 <ImageBox
   src="/images/modular-arithmetic-library/modular_fig5.png"
   alt="Clock arithmetic"
-  width="700px"
-  height="450px"
+  width="700"
+  height="450"
 >
   **Figura 5**. Clock arithmetic. University Waterloo, 2019.
   [Source](https://www.cemc.uwaterloo.ca/events/mathcircles/2019-20/Fall/Junior78_Nov12_Soln.pdf).

@@ -1,169 +1,115 @@
-const defaultTheme = require('tailwindcss/defaultTheme')
-const colors = require('tailwindcss/colors')
+// @ts-check
+const { fontFamily } = require("tailwindcss/defaultTheme")
+const colors = require("tailwindcss/colors")
 
+/** @type {import("tailwindcss/types").Config } */
 module.exports = {
-  experimental: {
-    optimizeUniversalDefaults: true,
-  },
   content: [
-    './pages/**/*.js',
-    './tags/**/*.js',
-    './components/**/*.js',
-    './layouts/**/*.js',
-    './lib/**/*.js',
-    './data/**/*.mdx',
+    "./node_modules/pliny/**/*.js",
+    "./app/**/*.{js,ts,jsx,tsx}",
+    "./components/**/*.{js,ts,tsx}",
+    "./layouts/**/*.{js,ts,tsx}",
+    "./data/**/*.mdx",
   ],
-  darkMode: 'class',
+  darkMode: "class",
   theme: {
     extend: {
-      spacing: {
-        '9/16': '56.25%',
-      },
       lineHeight: {
-        11: '2.75rem',
-        12: '3rem',
-        13: '3.25rem',
-        14: '3.5rem',
+        11: "2.75rem",
+        12: "3rem",
+        13: "3.25rem",
+        14: "3.5rem",
       },
       fontFamily: {
-        sans: ['InterVariable', ...defaultTheme.fontFamily.sans],
+        ubuntu: ["var(--font-ubuntu)", ...fontFamily.sans],
+        lato: ["var(--font-lato)", ...fontFamily.sans],
+        roboto: ["var(--font-roboto)", ...fontFamily.sans],
       },
       colors: {
-        primary: colors.teal,
-        gray: colors.neutral,
+        primary: {
+          50: "#f0f9ff",
+          100: "#e0f2fe",
+          200: "#bae6fd",
+          300: "#7dd3fc",
+          400: "#38bdf8",
+          500: "#0ea5e9",
+          600: "#0284c7",
+          700: "#0369a1",
+          800: "#075985",
+          900: "#0c4a6e",
+        },
+        secondary: {
+          50: "#fdf4ff",
+          100: "#fae8ff",
+          200: "#f5d0fe",
+          300: "#f0abfc",
+          400: "#e879f9",
+          500: "#d946ef",
+          600: "#c026d3",
+          700: "#a21caf",
+          800: "#86198f",
+          900: "#701a75",
+        },
+        gray: {
+          50: "#f9fafb",
+          100: "#f3f4f6",
+          200: "#e5e7eb",
+          300: "#d1d5db",
+          400: "#9ca3af",
+          500: "#6b7280",
+          600: "#4b5563",
+          700: "#374151",
+          800: "#1f2937",
+          900: "#111827",
+        },
       },
-      typography: (theme) => ({
+      backgroundColor: {
+        light: "#ffffff",
+        dark: "#121212",
+      },
+      textColor: {
+        light: "#111827",
+        dark: "#f3f4f6",
+      },
+      typography: ({ theme }) => ({
         DEFAULT: {
           css: {
-            color: theme('colors.gray.700'),
             a: {
-              color: theme('colors.primary.500'),
-              '&:hover': {
-                color: `${theme('colors.primary.600')} !important`,
+              color: theme("colors.primary.500"),
+              "&:hover": {
+                color: `${theme("colors.primary.600")}`,
               },
-              code: { color: theme('colors.primary.400') },
+              code: { color: theme("colors.primary.400") },
             },
-            h1: {
-              fontWeight: '700',
-              letterSpacing: theme('letterSpacing.tight'),
-              color: theme('colors.gray.900'),
-            },
-            h2: {
-              fontWeight: '700',
-              letterSpacing: theme('letterSpacing.tight'),
-              color: theme('colors.gray.900'),
+            "h1,h2": {
+              fontWeight: "700",
+              letterSpacing: theme("letterSpacing.tight"),
             },
             h3: {
-              fontWeight: '600',
-              color: theme('colors.gray.900'),
-            },
-            'h4,h5,h6': {
-              color: theme('colors.gray.900'),
-            },
-            pre: {
-              backgroundColor: theme('colors.gray.800'),
+              fontWeight: "600",
             },
             code: {
-              color: theme('colors.pink.500'),
-              backgroundColor: theme('colors.gray.100'),
-              paddingLeft: '4px',
-              paddingRight: '4px',
-              paddingTop: '2px',
-              paddingBottom: '2px',
-              borderRadius: '0.25rem',
-            },
-            'code::before': {
-              content: 'none',
-            },
-            'code::after': {
-              content: 'none',
-            },
-            details: {
-              backgroundColor: theme('colors.gray.100'),
-              paddingLeft: '4px',
-              paddingRight: '4px',
-              paddingTop: '2px',
-              paddingBottom: '2px',
-              borderRadius: '0.25rem',
-            },
-            hr: { borderColor: theme('colors.gray.200') },
-            'ol li::marker': {
-              fontWeight: '600',
-              color: theme('colors.gray.500'),
-            },
-            'ul li::marker': {
-              backgroundColor: theme('colors.gray.500'),
-            },
-            strong: { color: theme('colors.gray.600') },
-            blockquote: {
-              color: theme('colors.gray.900'),
-              borderLeftColor: theme('colors.gray.200'),
+              color: theme("colors.indigo.500"),
             },
           },
         },
-        dark: {
+        invert: {
           css: {
-            color: theme('colors.gray.300'),
             a: {
-              color: theme('colors.primary.500'),
-              '&:hover': {
-                color: `${theme('colors.primary.400')} !important`,
+              color: theme("colors.primary.500"),
+              "&:hover": {
+                color: `${theme("colors.primary.400")}`,
               },
-              code: { color: theme('colors.primary.400') },
+              code: { color: theme("colors.primary.400") },
             },
-            h1: {
-              fontWeight: '700',
-              letterSpacing: theme('letterSpacing.tight'),
-              color: theme('colors.gray.100'),
-            },
-            h2: {
-              fontWeight: '700',
-              letterSpacing: theme('letterSpacing.tight'),
-              color: theme('colors.gray.100'),
-            },
-            h3: {
-              fontWeight: '600',
-              color: theme('colors.gray.100'),
-            },
-            'h4,h5,h6': {
-              color: theme('colors.gray.100'),
-            },
-            pre: {
-              backgroundColor: theme('colors.gray.800'),
-            },
-            code: {
-              backgroundColor: theme('colors.gray.800'),
-            },
-            details: {
-              backgroundColor: theme('colors.gray.800'),
-            },
-            hr: { borderColor: theme('colors.gray.700') },
-            'ol li::marker': {
-              fontWeight: '600',
-              color: theme('colors.gray.400'),
-            },
-            'ul li::marker': {
-              backgroundColor: theme('colors.gray.400'),
-            },
-            strong: { color: theme('colors.gray.100') },
-            thead: {
-              th: {
-                color: theme('colors.gray.100'),
-              },
-            },
-            tbody: {
-              tr: {
-                borderBottomColor: theme('colors.gray.700'),
-              },
-            },
-            blockquote: {
-              color: theme('colors.gray.100'),
-              borderLeftColor: theme('colors.gray.700'),
+            "h1,h2,h3,h4,h5,h6": {
+              color: theme("colors.gray.100"),
             },
           },
         },
       }),
     },
   },
-  plugins: [require('@tailwindcss/forms'), require('@tailwindcss/typography')],
+  plugins: [require("@tailwindcss/forms"), require("@tailwindcss/typography")],
 }
+
