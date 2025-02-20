@@ -56,7 +56,7 @@ const TocBody = ({ toc }: TocBodyProps) => {
         className="fixed inset-y-0 right-0 z-50 h-full w-full overflow-y-auto border-l border-gray-200 bg-white shadow-xl dark:border-gray-800 dark:bg-black md:max-w-[320px]"
       >
         <div className="flex h-full flex-col">
-          <div className="sticky top-0 z-10 border-b border-gray-200 bg-white/95 backdrop-blur-sm dark:border-gray-800 dark:bg-black/95">
+          <div className="relative top-0 z-10 border-b border-gray-200 bg-white/95 backdrop-blur-sm dark:border-gray-800 dark:bg-black/95 h-[65px]">
             <div className="flex items-center justify-between p-6">
               <div className="pr-8">
                 <h2 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
@@ -65,12 +65,13 @@ const TocBody = ({ toc }: TocBodyProps) => {
               </div>
               <button
                 onClick={closeSidebar}
-                className="rounded-full bg-gray-100 p-2 text-gray-700 transition-colors hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
+                className="rounded-full bg-gray-100 p-2 text-gray-700 transition-colors hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700 absolute top-3 right-4"
                 aria-label={t('close')}
                 type="button"
               >
                 <X size={24} className="transition-transform duration-300 group-hover:rotate-90" />
               </button>
+     
             </div>
           </div>
 
