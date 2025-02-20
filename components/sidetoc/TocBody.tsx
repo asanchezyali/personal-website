@@ -74,7 +74,7 @@ const TocBody = ({ toc }: TocBodyProps) => {
             </div>
           </div>
 
-          <div className="flex-1 space-y-8 bg-gray-50 px-2 py-8 dark:bg-gray-900">
+          <div className="flex-1 space-y-8 px-2 py-8">
             <div className="ba overflow-y-auto">
               <TOCInline
                 toc={filteredToc}
