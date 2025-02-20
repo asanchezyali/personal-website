@@ -102,7 +102,7 @@ const MobileNav = () => {
         className="fixed inset-y-0 right-0 z-50 h-full w-full overflow-y-auto bg-white shadow-xl dark:bg-gray-950 md:max-w-sm"
       >
         <div className="flex h-full flex-col">
-          <div className="sticky top-0 z-10 flex items-center justify-between border-b border-gray-200 bg-white/95 px-4 py-4 backdrop-blur dark:border-gray-800 dark:bg-gray-950/95">
+          <div className="relative top-0 z-10 flex items-center justify-between border-b border-gray-200 bg-white/95 px-4 py-4 backdrop-blur dark:border-gray-800 dark:bg-gray-950/95">
             <div className="flex items-center space-x-4">
               <div className="flex flex-col">
                 <Link href={`/${locale}`} onClick={onToggleNav}>
@@ -110,14 +110,11 @@ const MobileNav = () => {
                     {siteMetadata.author}
                   </span>
                 </Link>
-                <span className="text-sm font-medium text-gray-500 dark:text-gray-400">
-                  {siteMetadata.description}
-                </span>
               </div>
             </div>
             <button
               onClick={onToggleNav}
-              className="rounded-full bg-gray-100 p-2 text-gray-700 transition-colors hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
+              className="rounded-full bg-gray-100 p-2 text-gray-700 transition-colors hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700 absolute top-3 right-4"
             >
               <X className="h-6 w-6" />
             </button>
