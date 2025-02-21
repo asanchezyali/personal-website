@@ -18,7 +18,7 @@ const Header = () => {
   const pathname = usePathname()
 
   return (
-    <header className="w-full bg-white py-6 dark:bg-black">
+    <header className="w-full py-6">
         <div className="relative flex items-center justify-between">
           <div className="w-32">
             <Link
