@@ -45,7 +45,7 @@ const MobileNav = () => {
       try {
         const generated = await import('contentlayer/generated')
         const loadedAuthors = generated.allAuthors as Author[]
-        
+
         setAuthors(
           loadedAuthors
             .filter((a) => a.language === locale)
@@ -112,11 +112,14 @@ const MobileNav = () => {
                 </Link>
               </div>
             </div>
+
             <button
               onClick={onToggleNav}
-              className="rounded-full bg-gray-100 p-2 text-gray-700 transition-colors hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700 absolute top-3 right-4"
+              className="rounded-lg bg-gray-100 p-2 text-gray-700 transition-colors hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
+              aria-label={t('close')}
+              type="button"
             >
-              <X className="h-6 w-6" />
+              <X className="h-5 w-5" />
             </button>
           </div>
 

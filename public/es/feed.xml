@@ -2,18 +2,18 @@
   <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
     <channel>
       <title>Yali Dev</title>
-      <link>https://tailwind-nextjs-starter-blog-i18n.vercel.app/es/blog</link>
-      <description>Business Innovation with Digital Solutions</description>
+      <link>https://asanchezyali.com/es/blog</link>
+      <description>A space dedicated to exploring the intersections of mathematics, computer science, software development, artificial intelligence, and deep learning. Sharing ideas, experiences, and discoveries in the fascinating world of technology.</description>
       <language>es</language>
       <managingEditor>alejandro@piagents.dev (Yali Dev)</managingEditor>
       <webMaster>alejandro@piagents.dev (Yali Dev)</webMaster>
       <lastBuildDate>Wed, 06 Nov 2024 05:00:00 GMT</lastBuildDate>
-      <atom:link href="https://tailwind-nextjs-starter-blog-i18n.vercel.app/es/feed.xml" rel="self" type="application/rss+xml"/>
+      <atom:link href="https://asanchezyali.com/es/feed.xml" rel="self" type="application/rss+xml"/>
       
   <item>
-    <guid>https://tailwind-nextjs-starter-blog-i18n.vercel.app/es/blog/blockchain/20241106Blockchain</guid>
+    <guid>https://asanchezyali.com/es/blog/blockchain/20241106Blockchain</guid>
     <title>Criptografía: El pilar fundamental del Blockchain</title>
-    <link>https://tailwind-nextjs-starter-blog-i18n.vercel.app/es/blog/blockchain/20241106Blockchain</link>
+    <link>https://asanchezyali.com/es/blog/blockchain/20241106Blockchain</link>
     <description>Este artículo explora la evolución y fundamentos de la criptografía, desde sus orígenes en el antiguo Egipto hasta su papel crucial en la tecnología blockchain. Comenzamos con un recorrido histórico que incluye los jeroglíficos egipcios y el cifrado César, acompañado de implementaciones prácticas en Python. Se examinan los principios modernos establecidos por Claude Shannon y la triada de seguridad CIA (Confidencialidad, Integridad y Autenticidad). La parte central del artículo profundiza en cómo la criptografía moderna sustenta la tecnología blockchain a través de técnicas como el hashing, cifrado simétrico y asimétrico, ilustradas con ejemplos prácticos de código. Este tutorial de 40 minutos proporciona una comprensión sólida de cómo la criptografía ha evolucionado para convertirse en el pilar fundamental de la seguridad y confianza en los sistemas blockchain.</description>
     <pubDate>Wed, 06 Nov 2024 05:00:00 GMT</pubDate>
     <author>alejandro@piagents.dev (Yali Dev)</author>
@@ -21,79 +21,79 @@
   </item>
 
   <item>
-    <guid>https://tailwind-nextjs-starter-blog-i18n.vercel.app/es/blog/ai/20241008ComputationalGraph</guid>
+    <guid>https://asanchezyali.com/es/blog/ai/20241008ComputationalGraph</guid>
     <title>Grafos computacionales en Python: potenciando el aprendizaje automático</title>
-    <link>https://tailwind-nextjs-starter-blog-i18n.vercel.app/es/blog/ai/20241008ComputationalGraph</link>
+    <link>https://asanchezyali.com/es/blog/ai/20241008ComputationalGraph</link>
     <description>Los grafos computacionales son una herramienta poderosa para el aprendizaje automático. En este artículo, aprenderás cómo usarlos en Python para mejorar tus modelos de aprendizaje automático.</description>
     <pubDate>Tue, 08 Oct 2024 05:00:00 GMT</pubDate>
     <author>alejandro@piagents.dev (Yali Dev)</author>
-    <category>IA</category><category>Python</category><category>Machine Learning</category><category>Grafos Computacionales</category><category>Deep Learning</category><category>Diferenciación Automática</category>
+    <category>ia</category><category>python</category><category>machine-learning</category><category>grafos-computacionales</category><category>deep-learning</category><category>diferenciación-automática</category>
   </item>
 
   <item>
-    <guid>https://tailwind-nextjs-starter-blog-i18n.vercel.app/es/blog/ai/20240917ZeroShot</guid>
+    <guid>https://asanchezyali.com/es/blog/ai/20240917ZeroShot</guid>
     <title>Clasificación Zero-Shot de texto</title>
-    <link>https://tailwind-nextjs-starter-blog-i18n.vercel.app/es/blog/ai/20240917ZeroShot</link>
+    <link>https://asanchezyali.com/es/blog/ai/20240917ZeroShot</link>
     <description>La clasificación Zero-Shot de texto (ZSTC) es una técnica de aprendizaje automatizado que permite a los modelos clasificar textos en categorías sin haber sido entrenados previamente en esas categorías específicas. Utiliza modelos de lenguaje pre-entrenados, como BART o GPT, que han aprendido a comprender las relaciones semánticas entre palabras y frases durante su pre-entrenamiento. Este enfoque permite al modelo generalizar su conocimiento y hacer inferencias sobre nuevas categorías basándose en un texto dado, sin necesidad de ejemplos etiquetados.</description>
     <pubDate>Tue, 17 Sep 2024 05:00:00 GMT</pubDate>
     <author>alejandro@piagents.dev (Yali Dev)</author>
-    <category>IA</category><category>Zero-Shot Learning</category><category>Transformers</category><category>Hugging Face</category>
+    <category>ia</category><category>zero-Shot-learning</category><category>transformers</category><category>hugging-face</category>
   </item>
 
   <item>
-    <guid>https://tailwind-nextjs-starter-blog-i18n.vercel.app/es/blog/differentiable-programming/20240923DifferentiablePrograms</guid>
+    <guid>https://asanchezyali.com/es/blog/differentiable-programming/20240923DifferentiablePrograms</guid>
     <title>Redes neuronales representadas como DAGs de programas computacionales parametrizados</title>
-    <link>https://tailwind-nextjs-starter-blog-i18n.vercel.app/es/blog/differentiable-programming/20240923DifferentiablePrograms</link>
+    <link>https://asanchezyali.com/es/blog/differentiable-programming/20240923DifferentiablePrograms</link>
     <description>Las redes neuronales se pueden ver como algoritmos con parámetros ajustables, optimizados mediante aprendizaje automatizado. Este enfoque nos permite abordarlas desde una perspectiva matemática y computacional más amplia. En este artículo, exploraremos cómo representar estos algoritmos como grafos dirigidos acíclicos (DAG).</description>
     <pubDate>Fri, 23 Aug 2024 05:00:00 GMT</pubDate>
     <author>alejandro@piagents.dev (Yali Dev)</author>
-    <category>matemáticas</category><category>ciencias de la computación</category>
+    <category>matemáticas</category><category>ciencias-de-la-computación</category>
   </item>
 
   <item>
-    <guid>https://tailwind-nextjs-starter-blog-i18n.vercel.app/es/blog/ai-avatars/20240703DigitalHuman</guid>
+    <guid>https://asanchezyali.com/es/blog/ai-avatars/20240703DigitalHuman</guid>
     <title>Revoluciona la animación: construye un humano digital con LLMs</title>
-    <link>https://tailwind-nextjs-starter-blog-i18n.vercel.app/es/blog/ai-avatars/20240703DigitalHuman</link>
+    <link>https://asanchezyali.com/es/blog/ai-avatars/20240703DigitalHuman</link>
     <description>Una Guía paso a paso para crear tu próximo avatar impulsado por IA.</description>
     <pubDate>Wed, 03 Jul 2024 05:00:00 GMT</pubDate>
     <author>alejandro@piagents.dev (Yali Dev)</author>
-    <category>avatar-ia</category><category>humano-digital</category><category>inteligencia artificial</category><category>llm</category><category>lipsync</category>
+    <category>avatar-ia</category><category>humano-digital</category><category>inteligencia-artificial</category><category>llm</category><category>lipsync</category>
   </item>
 
   <item>
-    <guid>https://tailwind-nextjs-starter-blog-i18n.vercel.app/es/blog/ai-avatars/2024020AIAvatar</guid>
+    <guid>https://asanchezyali.com/es/blog/ai-avatars/2024020AIAvatar</guid>
     <title>El código Kraken: Cómo construir un avatar parlante</title>
-    <link>https://tailwind-nextjs-starter-blog-i18n.vercel.app/es/blog/ai-avatars/2024020AIAvatar</link>
+    <link>https://asanchezyali.com/es/blog/ai-avatars/2024020AIAvatar</link>
     <description>Crea tu propio avatar conversacional con Azure Cognitive, LangChain y OpenAI.</description>
     <pubDate>Tue, 20 Feb 2024 05:00:00 GMT</pubDate>
     <author>alejandro@piagents.dev (Yali Dev)</author>
-    <category>avatar-ia</category><category>inteligencia artificial</category><category>openai</category><category>gpt</category><category>lip-sync</category>
+    <category>avatar-ia</category><category>inteligencia-artificial</category><category>openai</category><category>gpt</category><category>lip-sync</category>
   </item>
 
   <item>
-    <guid>https://tailwind-nextjs-starter-blog-i18n.vercel.app/es/blog/number-theory/20230108DivisionAlgorithm</guid>
+    <guid>https://asanchezyali.com/es/blog/number-theory/20230108DivisionAlgorithm</guid>
     <title>Algoritmo de la división</title>
-    <link>https://tailwind-nextjs-starter-blog-i18n.vercel.app/es/blog/number-theory/20230108DivisionAlgorithm</link>
+    <link>https://asanchezyali.com/es/blog/number-theory/20230108DivisionAlgorithm</link>
     <description>Un algoritmo de división es un proceso que divide un número (llamado el dividendo) por otro número (llamado el divisor) y obtiene el cociente y el resto de la división. Se puede implementar un algoritmo de división en Python utilizando un ciclo while y restando el divisor del dividendo en cada iteración. Conocer cómo funciona un algoritmo de división y cómo implementarlo por nuestra cuenta es útil para entender mejor cómo funcionan las divisiones y puede ser útil en situaciones donde no podemos utilizar librerías o funciones predefinidas.</description>
     <pubDate>Tue, 10 Jan 2023 05:00:00 GMT</pubDate>
     <author>alejandro@piagents.dev (Yali Dev)</author>
-    <category>matemáticas</category><category>teoría de numeros</category><category>python</category>
+    <category>matemáticas</category><category>teoría-de-números</category><category>python</category>
   </item>
 
   <item>
-    <guid>https://tailwind-nextjs-starter-blog-i18n.vercel.app/es/blog/modular-arithmetic/20220510ModularArithmetic</guid>
+    <guid>https://asanchezyali.com/es/blog/modular-arithmetic/20220510ModularArithmetic</guid>
     <title>Cómo construir una biblioteca de aritmética modular en Python</title>
-    <link>https://tailwind-nextjs-starter-blog-i18n.vercel.app/es/blog/modular-arithmetic/20220510ModularArithmetic</link>
+    <link>https://asanchezyali.com/es/blog/modular-arithmetic/20220510ModularArithmetic</link>
     <description>En este tutorial, aprenderemos cómo crear una biblioteca para aritmética modular, usando sobrecarga de operadores y redefiniendo las funciones incorporadas de NumPy.</description>
     <pubDate>Wed, 05 Oct 2022 05:00:00 GMT</pubDate>
     <author>alejandro@piagents.dev (Yali Dev)</author>
-    <category>python</category><category>sobrecarga-de-operadores</category><category>teoría-de-números</category><category>juego-luces-fuera</category>
+    <category>python</category><category>sobrecarga-de-operadores</category><category>teoría-de-números</category><category>light-out-game</category>
   </item>
 
   <item>
-    <guid>https://tailwind-nextjs-starter-blog-i18n.vercel.app/es/blog/blockchain/20220323SolanaNFTandIPFS</guid>
+    <guid>https://asanchezyali.com/es/blog/blockchain/20220323SolanaNFTandIPFS</guid>
     <title>Crea tu propia colección de NFTs en Solana con IPFS</title>
-    <link>https://tailwind-nextjs-starter-blog-i18n.vercel.app/es/blog/blockchain/20220323SolanaNFTandIPFS</link>
+    <link>https://asanchezyali.com/es/blog/blockchain/20220323SolanaNFTandIPFS</link>
     <description>Aprende cómo crear tu propia colección de NFTs en Solana utilizando IPFS. Descubre cómo los NFTs están revolucionando los derechos de propiedad digital y cómo puedes aprovechar esta tecnología en Solana.</description>
     <pubDate>Wed, 23 Mar 2022 05:00:00 GMT</pubDate>
     <author>alejandro@piagents.dev (Yali Dev)</author>
@@ -101,9 +101,9 @@
   </item>
 
   <item>
-    <guid>https://tailwind-nextjs-starter-blog-i18n.vercel.app/es/blog/blockchain/20220310Solana</guid>
+    <guid>https://asanchezyali.com/es/blog/blockchain/20220310Solana</guid>
     <title>Desarrollando Dapps en Solana</title>
-    <link>https://tailwind-nextjs-starter-blog-i18n.vercel.app/es/blog/blockchain/20220310Solana</link>
+    <link>https://asanchezyali.com/es/blog/blockchain/20220310Solana</link>
     <description>Solana es una blockchain de alto rendimiento que permite el desarrollo de aplicaciones descentralizadas (Dapps) mediante herramientas como Anchor y la criptocartera Phantom. En este tutorial, aprenderás a construir el código base para tu propia Dapp en Solana.</description>
     <pubDate>Thu, 10 Mar 2022 05:00:00 GMT</pubDate>
     <author>alejandro@piagents.dev (Yali Dev)</author>
@@ -111,9 +111,9 @@
   </item>
 
   <item>
-    <guid>https://tailwind-nextjs-starter-blog-i18n.vercel.app/es/blog/ml/20210712MachineLearning</guid>
+    <guid>https://asanchezyali.com/es/blog/ml/20210712MachineLearning</guid>
     <title>Explorando el aprendizaje de máquinas y humanos: principios y procesos</title>
-    <link>https://tailwind-nextjs-starter-blog-i18n.vercel.app/es/blog/ml/20210712MachineLearning</link>
+    <link>https://asanchezyali.com/es/blog/ml/20210712MachineLearning</link>
     <description>¿Qué es lo que nos permite aprender como seres humanos? En general, adquirimos gran parte de nuestros conocimientos a través de nuestra experiencia con los objetos y el mundo que nos rodea. Esto significa que aprendemos a partir de la información y los datos que recopilamos sobre ellos, en lugar de depender de definiciones matemáticas abstractas.</description>
     <pubDate>Mon, 12 Jul 2021 05:00:00 GMT</pubDate>
     <author>alejandro@piagents.dev (Yali Dev)</author>
@@ -121,9 +121,9 @@
   </item>
 
   <item>
-    <guid>https://tailwind-nextjs-starter-blog-i18n.vercel.app/es/blog/operator-overloading/20210615OperatorOverloadingInPython</guid>
+    <guid>https://asanchezyali.com/es/blog/operator-overloading/20210615OperatorOverloadingInPython</guid>
     <title>Sobrecarga de operadores en Python</title>
-    <link>https://tailwind-nextjs-starter-blog-i18n.vercel.app/es/blog/operator-overloading/20210615OperatorOverloadingInPython</link>
+    <link>https://asanchezyali.com/es/blog/operator-overloading/20210615OperatorOverloadingInPython</link>
     <description>¿Qué es la sobrecarga de operadores y cómo funciona en Python?</description>
     <pubDate>Tue, 15 Jun 2021 05:00:00 GMT</pubDate>
     <author>alejandro@piagents.dev (Yali Dev)</author>
