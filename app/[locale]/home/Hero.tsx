@@ -40,7 +40,7 @@ const HeroSection = () => {
   }
 
   return (
-    <div className="bg-whitedark:bg-black relative flex min-h-[calc(100vh-84px)] items-center justify-center">
+    <div className="relative flex min-h-[calc(100vh-84px)] items-center justify-center bg-white dark:bg-black">
       <motion.div
         className="relative flex w-full flex-col-reverse items-center justify-between gap-12 lg:flex-row lg:gap-16"
         initial="hidden"
@@ -157,16 +157,16 @@ const HeroSection = () => {
           className="relative h-64 w-64 sm:h-80 sm:w-80 lg:h-96 lg:w-96"
           variants={childVariants}
         >
-          <div className="relative h-full w-full overflow-hidden rounded-full shadow-xl">
-            <div className="absolute inset-0 bg-gradient-to-br from-primary-300 to-secondary-300 opacity-20 dark:from-primary-600 dark:to-secondary-600 dark:opacity-30"></div>
+          <div className="relative h-full w-full">
             <Image
               src="/me.png"
               alt="Profile"
               fill
-              className="object-cover"
+              className="object-cover object-center"
               sizes="(max-width: 640px) 256px, (max-width: 1024px) 320px, 384px"
               priority
             />
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-white dark:to-black"></div>
           </div>
         </motion.div>
       </motion.div>
