@@ -8,6 +8,7 @@ import useSidebarStore from './store'
 import { Toc, TocItem as OriginalTocItem } from 'pliny/mdx-plugins/remark-toc-headings'
 import { X } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useEffect, useState } from 'react'
 
 interface TocBodyProps {
   toc: Toc
@@ -31,6 +32,17 @@ const TocBody = ({ toc }: TocBodyProps) => {
   const locale = useParams()?.locale as LocaleTypes
   const { t } = useTranslation(locale, 'common')
   const { sidebarOpen, closeSidebar } = useSidebarStore()
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768)
+    }
+    
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
 
   if (!sidebarOpen) {
     return null
@@ -41,6 +53,7 @@ const TocBody = ({ toc }: TocBodyProps) => {
   return (
     <AnimatePresence>
       <motion.div
+        key="overlay"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
@@ -49,40 +62,38 @@ const TocBody = ({ toc }: TocBodyProps) => {
         onClick={closeSidebar}
       />
       <motion.div
-        initial={{ x: '100%' }}
-        animate={{ x: 0 }}
-        exit={{ x: '100%' }}
+        key="content"
+        className="fixed inset-x-0 bottom-0 z-50 h-[50vh] w-full bg-white shadow-xl dark:bg-black md:inset-x-auto md:right-0 md:top-0 md:h-full md:w-[320px] md:border-l md:border-gray-200 dark:md:border-gray-800"
+        initial={isMobile ? { y: '100%' } : { x: '100%' }}
+        animate={isMobile ? { y: '0%' } : { x: '0%' }}
+        exit={isMobile ? { y: '100%' } : { x: '100%' }}
         transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-        className="fixed inset-y-0 right-0 z-50 h-full w-full overflow-y-auto border-l border-gray-200 bg-white shadow-xl dark:border-gray-800 dark:bg-black md:max-w-[320px]"
       >
-        <div className="flex h-full flex-col">
-          <div className="relative top-0 z-10 border-b border-gray-200 bg-white/95 backdrop-blur-sm dark:border-gray-800 dark:bg-black/95 h-[65px]">
-            <div className="flex items-center justify-between p-6">
-              <div className="pr-8">
-                <h2 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-                  {t('sidetoc')}
-                </h2>
-              </div>
+        <div className="flex h-full flex-col overflow-hidden rounded-t-2xl md:rounded-none">
+          <div className="sticky top-0 z-10 border-b border-gray-200 bg-white/95 px-4 py-3 backdrop-blur dark:border-gray-800 dark:bg-black/95">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+                {t('sidetoc')}
+              </h2>
               <button
                 onClick={closeSidebar}
-                className="rounded-full bg-gray-100 p-2 text-gray-700 transition-colors hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700 absolute top-3 right-4"
+                className="rounded-lg bg-gray-100 p-2 text-gray-700 transition-colors hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
                 aria-label={t('close')}
                 type="button"
               >
-                <X size={24} className="transition-transform duration-300 group-hover:rotate-90" />
+                <X className="h-5 w-5" />
               </button>
-     
             </div>
           </div>
-
-          <div className="flex-1 space-y-8 px-2 py-8">
-            <div className="ba overflow-y-auto">
+          
+          <div className="flex-1 overflow-y-auto px-4 py-4">
+            <nav>
               <TOCInline
                 toc={filteredToc}
-                ulClassName="space-y-3 overflow-y-auto text-gray-600 dark:text-gray-300 text-[0.9rem]"
-                liClassName="pl-4 hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200"
+                ulClassName="space-y-2 text-sm text-gray-600 dark:text-gray-300"
+                liClassName="hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200"
               />
-            </div>
+            </nav>
           </div>
         </div>
       </motion.div>
