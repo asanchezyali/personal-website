@@ -99,7 +99,6 @@ const ServicesSection = () => {
   ]
 
   return (
-    <div className="bg-gray-50 dark:bg-black">
       <div className="container mx-auto py-24">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -122,7 +121,6 @@ const ServicesSection = () => {
           ))}
         </div>
       </div>
-    </div>
   )
 }
 

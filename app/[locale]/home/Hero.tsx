@@ -40,7 +40,7 @@ const HeroSection = () => {
   }
 
   return (
-    <div className="relative flex min-h-[calc(100vh-84px)] items-center justify-center bg-white dark:bg-black">
+    <div className="relative flex min-h-[calc(100vh-84px)] items-center justify-center">
       <motion.div
         className="relative flex w-full flex-col-reverse items-center justify-between gap-12 lg:flex-row lg:gap-16"
         initial="hidden"
