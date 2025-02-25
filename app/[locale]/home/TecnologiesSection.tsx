@@ -129,7 +129,6 @@ const TechnologiesSection = () => {
 
   return (
     <section className="py-20">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -150,7 +149,6 @@ const TechnologiesSection = () => {
           <div className="absolute inset-y-0 right-0 z-10 w-32 bg-gradient-to-l from-white to-transparent dark:from-black" />
           <Slider items={technologies} />
         </div>
-      </div>
     </section>
   )
 }
