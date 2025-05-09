@@ -19,7 +19,7 @@ const PhotoCloud = () => {
   useEffect(() => {
     const timer = setInterval(() => {
       setMainIndex((prev) => (prev + 1) % images.length)
-    }, 15000) // Aumentado a 15 segundos
+    }, 10000) // Aumentado a 15 segundos
     return () => clearInterval(timer)
   }, [])
 
@@ -44,12 +44,7 @@ const PhotoCloud = () => {
               alt="Main"
               fill
               className="object-contain shadow-2xl"
-              style={{ 
-                objectPosition: 'center',
-                borderRadius: '1rem', // 1rem = rounded-2xl
-              }}
               priority={mainIndex === 0}
-              sizes="(max-width: 768px) 90vw, 500px"
             />
           </motion.div>
         </AnimatePresence>
@@ -117,7 +112,7 @@ const HeroSection = () => {
           </motion.div>
 
           <motion.h1
-            className="mb-6 font-ubuntu text-4xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-5xl lg:text-6xl"
+            className="mb-6 font-ubuntu text-3xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-4xl lg:text-5xl"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.6 }}
