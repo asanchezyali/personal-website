@@ -25,7 +25,7 @@ const PhotoCloud = () => {
 
   return (
     <div className="absolute bottom-0 right-0 top-0 w-1/2 overflow-hidden">
-      <div className="absolute inset-0 z-20 bg-gradient-to-l from-transparent via-white/60 to-white/95 dark:via-black/60 dark:to-black/95" />
+      <div className="absolute inset-0 z-20 " />
 
       {/* Imagen Principal */}
       <div className="absolute inset-0 flex items-center justify-center">
@@ -36,14 +36,14 @@ const PhotoCloud = () => {
             animate={{ opacity: 1, scale: 1, x: 0 }}
             exit={{ opacity: 0, scale: 0.9, x: -50 }}
             transition={{ duration: 1.2 }}
-            className="relative z-30 h-[400px] w-auto overflow-hidden rounded-2xl"
-            style={{ minWidth: '300px', maxWidth: '500px' }}
+            className="relative z-30 h-[400px] w-auto"
+            style={{ minWidth: '300px', width: '100%' }}
           >
             <Image
               src={images[mainIndex]}
               alt="Main"
               fill
-              className="object-contain shadow-2xl"
+              className="object-contain shadow-2xl rounded-2xl"
               priority={mainIndex === 0}
             />
           </motion.div>
