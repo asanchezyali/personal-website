@@ -1,44 +1,95 @@
 'use client'
 
-import { motion, useScroll, useTransform } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { useParams } from 'next/navigation'
 import { useTranslation } from 'app/[locale]/i18n/client'
 import type { LocaleTypes } from 'app/[locale]/i18n/settings'
 import Image from 'next/image'
 import { Github, Linkedin, Twitter, Instagram } from 'lucide-react'
 import DiscordIcon from '@/components/svgcomponents/discordicon'
-import { useRef } from 'react'
+import { useState, useEffect } from 'react'
 
-const ImageGrid = () => {
-  const ref = useRef(null)
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start start", "end start"]
-  })
+const PhotoCloud = () => {
+  const [mainIndex, setMainIndex] = useState(0)
+  const images = Array.from(
+    { length: 14 },
+    (_, i) => `/images/home/${String(i + 1).padStart(2, '0')}_picture.jpg`
+  )
 
-  const images = Array.from({ length: 14 }, (_, i) => `/images/home/${String(i + 1).padStart(2, '0')}_picture.jpg`)
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setMainIndex((prev) => (prev + 1) % images.length)
+    }, 15000) // Aumentado a 15 segundos
+    return () => clearInterval(timer)
+  }, [])
 
   return (
-    <div ref={ref} className="absolute inset-0 overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-r from-white via-white/90 to-transparent dark:from-black dark:via-black/90 dark:to-transparent z-10" />
-      <div className="grid grid-cols-4 gap-4">
-        {images.map((src, index) => (
+    <div className="absolute bottom-0 right-0 top-0 w-1/2 overflow-hidden">
+      <div className="absolute inset-0 z-20 bg-gradient-to-l from-transparent via-white/60 to-white/95 dark:via-black/60 dark:to-black/95" />
+
+      {/* Imagen Principal */}
+      <div className="absolute inset-0 flex items-center justify-center">
+        <AnimatePresence mode="wait">
           <motion.div
-            key={src}
-            style={{
-              y: useTransform(scrollYProgress, [0, 1], [0, (index % 2 === 0 ? 100 : -100)])
-            }}
-            className="relative h-40 rounded-lg overflow-hidden opacity-40"
+            key={mainIndex}
+            initial={{ opacity: 0, scale: 1.1, x: 50 }}
+            animate={{ opacity: 1, scale: 1, x: 0 }}
+            exit={{ opacity: 0, scale: 0.9, x: -50 }}
+            transition={{ duration: 1.2 }}
+            className="relative z-30 h-[400px] w-auto overflow-hidden rounded-2xl"
+            style={{ minWidth: '300px', maxWidth: '500px' }}
           >
             <Image
-              src={src}
-              alt={`Grid image ${index + 1}`}
+              src={images[mainIndex]}
+              alt="Main"
               fill
-              className="object-cover"
-              sizes="(max-width: 768px) 25vw, 20vw"
+              className="object-contain shadow-2xl"
+              style={{ 
+                objectPosition: 'center',
+                borderRadius: '1rem', // 1rem = rounded-2xl
+              }}
+              priority={mainIndex === 0}
+              sizes="(max-width: 768px) 90vw, 500px"
             />
           </motion.div>
-        ))}
+        </AnimatePresence>
+
+        {/* Imágenes Flotantes */}
+        <div className="absolute inset-0 flex items-center justify-center">
+          {[
+            { top: '15%', right: '15%', size: 'w-32 h-40' },
+            { top: '25%', right: '55%', size: 'w-36 h-44' },
+            { top: '60%', right: '20%', size: 'w-32 h-40' },
+            { top: '45%', right: '45%', size: 'w-28 h-36' },
+            { top: '70%', right: '40%', size: 'w-32 h-40' },
+          ].map((pos, index) => {
+            const imgIndex = (mainIndex + index + 1) % images.length
+            return (
+              <motion.div
+                key={`${pos.top}-${pos.right}`}
+                className={`absolute ${pos.size} z-10`}
+                style={{ top: pos.top, right: pos.right }}
+                initial={{ opacity: 0 }}
+                animate={{
+                  opacity: 0.4,
+                  y: [0, 8, 0],
+                  transition: {
+                    y: { repeat: Infinity, duration: 3, ease: 'easeInOut', delay: index * 0.5 },
+                  },
+                }}
+              >
+                <Image
+                  src={images[imgIndex]}
+                  alt={`Float ${index}`}
+                  fill
+                  className="rounded-xl object-cover"
+                  style={{ objectPosition: 'center' }}
+                  sizes="(max-width: 1024px) 25vw, 20vw"
+                />
+              </motion.div>
+            )
+          })}
+        </div>
       </div>
     </div>
   )
@@ -48,59 +99,50 @@ const HeroSection = () => {
   const locale = useParams()?.locale as LocaleTypes
   const { t } = useTranslation(locale, 'home')
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        duration: 0.5,
-        when: 'beforeChildren',
-        staggerChildren: 0.2,
-      },
-    },
-  }
-
-  const childVariants = {
-    hidden: {
-      opacity: 0,
-      y: 20,
-    },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.8,
-        ease: [0.6, -0.05, 0.01, 0.99],
-      },
-    },
-  }
-
   return (
-    <div className="relative flex min-h-[calc(100vh-84px)] items-center">
-      <ImageGrid />
-      <motion.div
-        className="relative z-20 flex w-full flex-col items-start justify-center"
-        initial="hidden"
-        animate="visible"
-        variants={containerVariants}
-      >
-        <motion.div className="max-w-2xl" variants={childVariants}>
-          <div className="mb-6 inline-flex items-center rounded-full bg-gray-100/80 px-4 py-2 backdrop-blur-sm dark:bg-gray-800/50">
-            <span className="mr-2 h-2 w-2 rounded-full bg-primary-600" />
-            <span className="text-sm text-gray-600 dark:text-gray-300">{t('hero.roll')}</span>
-          </div>
+    <div className="relative flex h-[calc(100vh-84px)] items-center bg-transparent">
+      <div className="flex h-full w-full items-center">
+        <motion.div
+          className="relative z-30 flex max-w-[600px] flex-col justify-center"
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+        >
+          <motion.div
+            className="mb-6 inline-flex items-center self-start rounded-full bg-gray-100 px-3 py-1.5 backdrop-blur-sm transition-colors hover:bg-gray-200 dark:bg-white/10 dark:hover:bg-white/15"
+            whileHover={{ scale: 1.02 }}
+          >
+            <span className="mr-2 h-1.5 w-1.5 rounded-full bg-primary-500" />
+            <span className="text-sm text-gray-600 dark:text-white/90">{t('hero.roll')}</span>
+          </motion.div>
 
-          <h1 className="mb-6 font-ubuntu text-4xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-5xl lg:text-6xl">
+          <motion.h1
+            className="mb-6 font-ubuntu text-4xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-5xl lg:text-6xl"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.6 }}
+          >
             {t('hero.title_1')}
-          </h1>
+          </motion.h1>
 
-          <p className="mb-8 font-lato text-lg leading-relaxed text-gray-600 dark:text-gray-300 sm:text-xl">
+          <motion.p
+            className="mb-8 font-lato text-lg leading-relaxed text-gray-600 dark:text-gray-300 sm:text-xl"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.8 }}
+          >
             {t('hero.title_2')}
-          </p>
+          </motion.p>
 
-          <div className="mb-8 flex flex-col space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0">
-            <a
-              className="group inline-flex w-[180px] items-center justify-center rounded-lg bg-primary-600 px-6 py-2.5 text-sm font-medium text-white transition-all hover:bg-primary-700 hover:shadow-lg dark:bg-primary-500 dark:hover:bg-primary-600"
+          <motion.div
+            className="mb-8 flex flex-col space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 1 }}
+          >
+            <motion.a
+              whileHover={{ scale: 1.02 }}
+              className="group inline-flex w-[180px] items-center justify-center rounded-xl bg-primary-500 px-6 py-2.5 text-sm font-medium text-white transition-all hover:bg-primary-600 dark:hover:bg-primary-400"
               href="https://cal.com/asanchezyali/30min"
               target="_blank"
               rel="noopener noreferrer"
@@ -120,10 +162,11 @@ const HeroSection = () => {
                   strokeLinejoin="round"
                 />
               </svg>
-            </a>
+            </motion.a>
 
-            <a
-              className="group inline-flex w-[180px] items-center justify-center rounded-lg bg-gray-200/80 px-6 py-2.5 text-sm font-medium text-gray-800 backdrop-blur-sm transition-all hover:bg-gray-300 hover:shadow-lg hover:text-primary-600 dark:bg-white/10 dark:text-white dark:hover:bg-white/20"
+            <motion.a
+              whileHover={{ scale: 1.02 }}
+              className="group inline-flex w-[180px] items-center justify-center rounded-xl bg-gray-100 px-6 py-2.5 text-sm font-medium text-gray-900 backdrop-blur-sm transition-all hover:bg-gray-200 dark:bg-white/10 dark:text-white dark:hover:bg-white/15"
               href="https://github.com/asanchezyali/technical-resume/blob/technical-resume/technical_resume.pdf"
               target="_blank"
               rel="noreferrer"
@@ -143,58 +186,40 @@ const HeroSection = () => {
                   strokeLinejoin="round"
                 />
               </svg>
-            </a>
-          </div>
+            </motion.a>
+          </motion.div>
 
-          <div className="flex space-x-5">
-            <motion.a
-              whileHover={{ scale: 1.1 }}
-              href="https://github.com/asanchezyali"
-              className="text-gray-600 transition-colors hover:text-primary-600 dark:text-gray-400 dark:hover:text-primary-400"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Github className="h-5 w-5" />
-            </motion.a>
-            <motion.a
-              whileHover={{ scale: 1.1 }}
-              href="https://www.linkedin.com/in/asanchezyali/"
-              className="text-gray-600 transition-colors hover:text-primary-600 dark:text-gray-400 dark:hover:text-primary-400"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Linkedin className="h-5 w-5" />
-            </motion.a>
-            <motion.a
-              whileHover={{ scale: 1.1 }}
-              href="https://x.com/asanchezyali"
-              className="text-gray-600 transition-colors hover:text-primary-600 dark:text-gray-400 dark:hover:text-primary-400"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Twitter className="h-5 w-5" />
-            </motion.a>
-            <motion.a
-              whileHover={{ scale: 1.1 }}
-              href="https://www.instagram.com/asanchezyali/"
-              className="text-gray-600 transition-colors hover:text-primary-600 dark:text-gray-400 dark:hover:text-primary-400"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Instagram className="h-5 w-5" />
-            </motion.a>
-            <motion.a
-              whileHover={{ scale: 1.1 }}
-              href="https://discord.gg/gJ3vCgSWeh"
-              className="text-gray-600 transition-colors hover:text-primary-600 dark:text-gray-400 dark:hover:text-primary-400"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <DiscordIcon />
-            </motion.a>
-          </div>
+          <motion.div
+            className="flex space-x-6"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 1.2 }}
+          >
+            {[
+              { icon: Github, href: 'https://github.com/asanchezyali' },
+              { icon: Linkedin, href: 'https://www.linkedin.com/in/asanchezyali/' },
+              { icon: Twitter, href: 'https://x.com/asanchezyali' },
+              { icon: Instagram, href: 'https://www.instagram.com/asanchezyali/' },
+              { icon: DiscordIcon, href: 'https://discord.gg/gJ3vCgSWeh' },
+            ].map((social, index) => (
+              <motion.a
+                key={social.href}
+                whileHover={{ scale: 1.1, y: -2 }}
+                href={social.href}
+                className="text-gray-600 transition-colors hover:text-primary-600 dark:text-white/70 dark:hover:text-primary-400"
+                target="_blank"
+                rel="noopener noreferrer"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 1.2 + index * 0.1 }}
+              >
+                <social.icon className="h-5 w-5" />
+              </motion.a>
+            ))}
+          </motion.div>
         </motion.div>
-      </motion.div>
+        <PhotoCloud />
+      </div>
     </div>
   )
 }
