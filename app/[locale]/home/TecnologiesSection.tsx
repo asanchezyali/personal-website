@@ -150,7 +150,6 @@ const TechnologiesSection = () => {
           <div className="absolute inset-y-0 right-0 z-10 w-32 bg-gradient-to-l from-white to-transparent dark:from-black" />
           <Slider items={technologies} />
         </div>
-      </div>
     </section>
   )
 }
