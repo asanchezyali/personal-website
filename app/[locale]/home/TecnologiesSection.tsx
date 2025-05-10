@@ -141,7 +141,6 @@ const TechnologiesSection = () => {
           {t('stack.description')}
         </p>
       </motion.div>
-
       <div className="relative w-full">
         <div className="absolute inset-y-0 left-0 z-10 w-32 bg-gradient-to-r from-white to-transparent dark:from-black" />
         <div className="absolute inset-y-0 right-0 z-10 w-32 bg-gradient-to-l from-white to-transparent dark:from-black" />
