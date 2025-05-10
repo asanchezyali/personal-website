@@ -14,7 +14,7 @@ export default function BlogPreview() {
   const filteredPosts = posts.filter((post) => post.language === locale)
 
   return (
-    <div className="space-y-12 py-16">
+    <div className="mx-auto space-y-12 py-16">
       <div className="relative">
         <div className="pointer-events-none absolute inset-0">
           <div className="absolute left-1/4 top-1/2 h-32 w-32 -translate-x-1/2 transform rounded-full bg-primary-300/20 dark:bg-primary-700/20 blur-2xl" />
@@ -40,4 +40,3 @@ export default function BlogPreview() {
     </div>
   )
 }
-
