@@ -35,6 +35,8 @@
     "i18next-resources-to-backend": "^1.2.0",
     "image-size": "1.1.1",
     "lucide-react": "latest",
+    "mdx-mermaid": "^2.0.3",
+    "mermaid": "^11.6.0",
     "next": "^14.2.10",
     "next-contentlayer2": "0.4.6",
     "next-themes": "^0.3.0",

@@ -29,6 +29,7 @@ import rehypePresetMinify from 'rehype-preset-minify'
 import siteMetadata from './data/siteMetadata'
 import { allCoreContent, sortPosts } from 'pliny/utils/contentlayer.js'
 import { fallbackLng, secondLng } from './app/[locale]/i18n/locales'
+import mdxMermaid from 'mdx-mermaid'
 
 const root = process.cwd()
 const isProduction = process.env.NODE_ENV === 'production'
@@ -194,6 +195,7 @@ export default makeSource({
       remarkMath,
       remarkImgToJsx,
       remarkAlert,
+      [mdxMermaid, { output: 'svg' }],
     ],
     rehypePlugins: [
       rehypeSlug,
