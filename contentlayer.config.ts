@@ -52,9 +52,8 @@ const computedFields: ComputedFields = {
   slug: {
     type: 'string',
     resolve: (doc) => {
-      // Split the flattenedPath by '/' and take the last part
       const pathParts = doc._raw.flattenedPath.split('/');
-      return pathParts.slice(2).join('/')
+      return pathParts[pathParts.length - 1];
     },
   },
   path: {
@@ -184,9 +183,26 @@ export const Authors = defineDocumentType(() => ({
   computedFields,
 }))
 
+export const Project = defineDocumentType(() => ({
+  name: 'Project',
+  filePathPattern: 'projects/**/*.mdx',
+  contentType: 'mdx',
+  fields: {
+    title: { type: 'string', required: true },
+    date: { type: 'date', required: true },
+    language: { type: 'string', required: true },
+    tags: { type: 'list', of: { type: 'string' }, default: [] },
+    summary: { type: 'string' },
+    images: { type: 'json' },
+    draft: { type: 'boolean' },
+    showReadMore: { type: 'boolean' },
+  },
+  computedFields,
+}))
+
 export default makeSource({
   contentDirPath: 'data',
-  documentTypes: [Blog, Authors],
+  documentTypes: [Blog, Authors, Project],
   mdx: {
     remarkPlugins: [
       remarkExtractFrontmatter,
