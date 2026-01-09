@@ -3,7 +3,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import siteMetadata from '@/data/siteMetadata'
-import { Authors, allAuthors } from 'contentlayer/generated'
+import { authors as allAuthors, type Authors } from '#site/content'
 import { Fragment, useRef, useState, useMemo } from 'react'
 import {
   Menu,
@@ -36,12 +36,23 @@ const AuthorsMenu = ({ className }: AuthorsMenuProps) => {
     () =>
       allAuthors
         .filter((a) => a.language === locale)
-        .sort((a, b) => (a.default === b.default ? 0 : a.default ? -1 : 1)),
+        .sort((a, b) => (a.default === b.default ? 0 : a.default ? -1 : 1))
+        .map((a) => ({
+          ...a,
+          // Extract slug from Velite's format (authors/locale/slug)
+          slug: a.slug.split('/').slice(2).join('/'),
+        })),
     [locale]
   ) as Authors[]
 
   const mainAuthor = useMemo(
-    () => allAuthors.filter((a) => a.default === true && a.language === locale),
+    () =>
+      allAuthors
+        .filter((a) => a.default === true && a.language === locale)
+        .map((a) => ({
+          ...a,
+          slug: a.slug.split('/').slice(2).join('/'),
+        })),
     [locale]
   ) as Authors[]
 

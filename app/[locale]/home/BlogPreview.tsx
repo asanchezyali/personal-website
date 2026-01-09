@@ -1,8 +1,8 @@
 "use client"
 import { useParams } from "next/navigation"
 import ListLayout from "@/layouts/ListLayout"
-import { allCoreContent, sortPosts } from "pliny/utils/contentlayer"
-import { allBlogs } from "contentlayer/generated"
+import { sortByDate } from "@/components/util/sortByDate"
+import { posts as allBlogs } from "#site/content"
 import { useTranslation } from "../i18n/client"
 import type { LocaleTypes } from "../i18n/settings"
 import { motion } from "framer-motion"
@@ -10,7 +10,7 @@ import { motion } from "framer-motion"
 export default function BlogPreview() {
   const locale = useParams()?.locale as LocaleTypes
   const { t } = useTranslation(locale, "home")
-  const posts = allCoreContent(sortPosts(allBlogs))
+  const posts = sortByDate(allBlogs as any) as any
   const filteredPosts = posts.filter((post) => post.language === locale)
 
   return (

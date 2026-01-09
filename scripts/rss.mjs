@@ -3,17 +3,26 @@ import path from 'path';
 import { slug } from 'github-slugger';
 import { escape } from 'pliny/utils/htmlEscaper.js';
 import siteMetadata from '../data/siteMetadata.js';
-import tagData from '../app/[locale]/tag-data.json' assert { type: 'json' };
-import { allBlogs } from '../.contentlayer/generated/index.mjs';
-import { sortPosts } from 'pliny/utils/contentlayer.js';
+import tagData from '../app/[locale]/tag-data.json' with { type: 'json' };
+import { posts as allBlogs } from '../.velite/index.js';
 
 const defaultLocale = 'en';
 
+// Simple sort by date function to replace pliny's sortPosts
+const sortByDate = (posts) => {
+  return [...posts].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+};
+
+// Extract the actual slug from Velite's format (blog/locale/slug -> slug)
+const getPostSlug = (post) => {
+  return post.slug.split('/').slice(2).join('/');
+};
+
 const generateRssItem = (config, post, locale) => `
   <item>
-    <guid>${config.siteUrl}${defaultLocale === locale ? '' : '/' + locale}/blog/${post.slug}</guid>
+    <guid>${config.siteUrl}${defaultLocale === locale ? '' : '/' + locale}/blog/${getPostSlug(post)}</guid>
     <title>${escape(post.title)}</title>
-    <link>${config.siteUrl}${defaultLocale === locale ? '' : '/' + locale}/blog/${post.slug}</link>
+    <link>${config.siteUrl}${defaultLocale === locale ? '' : '/' + locale}/blog/${getPostSlug(post)}</link>
     ${post.summary ? `<description>${escape(post.summary)}</description>` : ''}
     ${post.date ? `<pubDate>${new Date(post.date).toUTCString()}</pubDate>` : ''}
     <author>${config.email} (${config.author})</author>
@@ -43,7 +52,7 @@ async function generateRSS(config, allBlogs, locale, page = 'feed.xml') {
 
   // RSS for blog posts
   if (publishPosts.length > 0) {
-    const rss = generateRss(config, sortPosts(publishPosts), locale);
+    const rss = generateRss(config, sortByDate(publishPosts), locale);
     const directoryPath = path.join('public', locale);
     mkdirSync(directoryPath, { recursive: true }); // Create the directory if it doesn't exist
     writeFileSync(path.join(directoryPath, page), rss);
@@ -55,7 +64,7 @@ async function generateRSS(config, allBlogs, locale, page = 'feed.xml') {
       post.tags.map((t) => slug(t)).includes(tag)
     );
     if (filteredTagPosts.length > 0) {
-      const rss = generateRss(config, sortPosts(filteredTagPosts), locale, `tags/${tag}/${page}`);
+      const rss = generateRss(config, sortByDate(filteredTagPosts), locale, `tags/${tag}/${page}`);
       const rssPath = path.join('public', locale, 'tags', tag);
       mkdirSync(rssPath, { recursive: true }); // Create the directory if it doesn't exist
       writeFileSync(path.join(rssPath, page), rss);

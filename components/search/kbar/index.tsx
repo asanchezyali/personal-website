@@ -3,8 +3,16 @@ import type { Action } from 'kbar'
 import { KBarProvider } from 'kbar'
 import { useRouter } from 'next/navigation.js'
 import { KBarModal } from './KBarModal'
-import { CoreContent, MDXDocument } from 'pliny/utils/contentlayer'
 import { formatDate } from 'pliny/utils/formatDate'
+
+// Define a generic post type for search purposes
+interface SearchPost {
+  path: string
+  title: string
+  summary?: string
+  date: string
+  language: string
+}
 
 export interface KBarSearchProps {
   searchDocumentsPath: string | false
@@ -45,7 +53,7 @@ export const KBarSearchProvider: FC<{
   const [dataLoaded, setDataLoaded] = useState(false)
 
   useEffect(() => {
-    const mapPosts = (posts: CoreContent<MDXDocument>[]) => {
+    const mapPosts = (posts: SearchPost[]) => {
       const actions: Action[] = []
       for (const post of posts) {
         actions.push({

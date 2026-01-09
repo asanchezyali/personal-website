@@ -10,7 +10,6 @@ import MathBox from './MathBox'
 import ImageBox from './ImageBox'
 import Reference from './Reference'
 import { PseudoCodeLine, PseudoCode } from './PseudoCode'
-import { Mermaid } from 'mdx-mermaid/lib/Mermaid'
 
 export const components: MDXComponents = {
   PseudoCode,
@@ -25,6 +24,4 @@ export const components: MDXComponents = {
   WebsiteEmbed,
   MathBox,
   Reference,
-  mermaid: Mermaid,
-  Mermaid,
 }

@@ -1,22 +1,25 @@
 import { Metadata } from 'next'
-import { Authors, allAuthors } from 'contentlayer/generated'
-import { MDXLayoutRenderer } from 'pliny/mdx-components'
+import { authors as allAuthors } from '#site/content'
+import type { Authors } from '#site/content'
 import AuthorLayout from '@/layouts/AuthorLayout'
-import { coreContent } from 'pliny/utils/contentlayer'
 import { genPageMetadata } from 'app/[locale]/seo'
 import { createTranslation } from 'app/[locale]/i18n/server'
 import { LocaleTypes } from 'app/[locale]/i18n/settings'
 import { notFound } from 'next/navigation'
+import { MDXContent } from '@/components/mdxcomponents/MDXContent'
 
 type AboutProps = {
-  params: { authors: string[]; locale: LocaleTypes }
+  params: Promise<{ authors: string[]; locale: LocaleTypes }>
 }
 
-export async function generateMetadata({
-  params: { authors, locale },
-}: AboutProps): Promise<Metadata | undefined> {
+export async function generateMetadata(props: AboutProps): Promise<Metadata | undefined> {
+  const params = await props.params
+  const { authors, locale } = params
   const authorSlug = decodeURI(authors.join('/'))
-  const author = allAuthors.find((a) => a.slug === authorSlug && a.language === locale) as Authors
+  // Velite keeps full path: authors/locale/slug
+  const author = allAuthors.find(
+    (a) => a.slug === `authors/${locale}/${authorSlug}` && a.language === locale
+  ) as Authors
   if (!author) {
     return
   }
@@ -28,18 +31,24 @@ export async function generateMetadata({
   })
 }
 
-export default async function Page({ params: { authors, locale } }: AboutProps) {
+export default async function Page(props: AboutProps) {
+  const params = await props.params
+  const { authors, locale } = params
   const authorSlug = decodeURI(authors.join('/'))
-  const author = allAuthors.find((a) => a.slug === authorSlug && a.language === locale) as Authors
-  const authorIndex = allAuthors.findIndex((p) => p.slug === authorSlug)
+  // Velite keeps full path: authors/locale/slug
+  const author = allAuthors.find(
+    (a) => a.slug === `authors/${locale}/${authorSlug}` && a.language === locale
+  ) as Authors
+  const authorIndex = allAuthors.findIndex(
+    (p) => p.slug === `authors/${locale}/${authorSlug}` && p.language === locale
+  )
   if (authorIndex === -1) {
     return notFound()
   }
-  const mainContent = coreContent(author)
 
   return (
-    <AuthorLayout params={{ locale: locale }} content={mainContent}>
-      <MDXLayoutRenderer code={author.body.code} />
+    <AuthorLayout params={{ locale: locale }} content={author}>
+      <MDXContent code={author.content} />
     </AuthorLayout>
   )
 }

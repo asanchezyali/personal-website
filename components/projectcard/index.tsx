@@ -26,7 +26,7 @@ const Card: React.FC<CardProps> = ({ title, description, imgSrc, href }) => {
       variants={variants}
       initial="hidden"
       animate="enter"
-      transition={{ type: 'linear' }}
+      transition={{ ease: 'linear' }}
       className="md max-w-[544px] md:w-1/2"
     >
       <div

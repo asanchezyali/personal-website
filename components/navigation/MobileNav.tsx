@@ -15,7 +15,7 @@ import QRButton from '../qr/QRButton'
 import LangSwitch from '../langswitch'
 import ThemeSwitch from '../theme/ThemeSwitch'
 
-// Definimos la interfaz para Author
+// Define Author interface
 interface Author {
   name: string
   avatar?: string
@@ -43,15 +43,23 @@ const MobileNav = () => {
   useEffect(() => {
     const loadAuthors = async () => {
       try {
-        const generated = await import('contentlayer/generated')
-        const loadedAuthors = generated.allAuthors as Author[]
+        const generated = await import('#site/content')
+        const loadedAuthors = generated.authors as Author[]
 
-        setAuthors(
-          loadedAuthors
-            .filter((a) => a.language === locale)
-            .sort((a, b) => (a.default === b.default ? 0 : a.default ? -1 : 1))
+        // Process authors and extract slug for navigation
+        const processedAuthors = loadedAuthors
+          .filter((a) => a.language === locale)
+          .sort((a, b) => (a.default === b.default ? 0 : a.default ? -1 : 1))
+          .map((a) => ({
+            ...a,
+            // Extract slug from Velite's format (authors/locale/slug)
+            slug: a.slug.split('/').slice(2).join('/'),
+          }))
+
+        setAuthors(processedAuthors)
+        setMainAuthor(
+          processedAuthors.filter((a) => a.default === true && a.language === locale)
         )
-        setMainAuthor(loadedAuthors.filter((a) => a.default === true && a.language === locale))
       } catch (error) {
         console.error('Error loading authors:', error)
         setAuthors([])

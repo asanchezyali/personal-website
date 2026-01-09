@@ -44,5 +44,6 @@ yarn-error.log*
 .env.test.local
 .env.production.local
 
-# Contentlayer
+# Contentlayer / Velite
 .contentlayer
+.velite

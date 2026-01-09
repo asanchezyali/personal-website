@@ -1,6 +1,5 @@
 import { ReactNode } from 'react'
-import { CoreContent } from 'pliny/utils/contentlayer'
-import type { Blog, Authors } from 'contentlayer/generated'
+import type { Blog, Authors } from '#site/content'
 import Comments from '@/components/comments/Comments'
 import WalineComments from '@/components/comments/walinecomponents/walineComments'
 import Link from '@/components/mdxcomponents/Link'
@@ -26,8 +25,8 @@ const postDateTemplate: Intl.DateTimeFormatOptions = {
 }
 
 interface LayoutProps {
-  content: CoreContent<Blog>
-  authorDetails: CoreContent<Authors>[]
+  content: Blog
+  authorDetails: Authors[]
   next?: { slug: string; title: string }
   prev?: { slug: string; title: string }
   children: ReactNode
@@ -46,6 +45,11 @@ export default async function PostLayout({
   const basePath = path.split('/')[0]
   const { t } = await createTranslation(locale, 'home')
   const tableOfContents: Toc = toc as unknown as Toc
+
+  // Extract slug from Velite's format for prev/next navigation
+  const prevSlug = prev?.slug ? prev.slug.split('/').slice(2).join('/') : null
+  const nextSlug = next?.slug ? next.slug.split('/').slice(2).join('/') : null
+
   return (
     <>
       <article className="py-8">
@@ -126,23 +130,23 @@ export default async function PostLayout({
                 )}
                 {(next || prev) && (
                   <div className="flex justify-between py-4 xl:block xl:space-y-8 xl:py-8">
-                    {prev && prev.slug && (
+                    {prev && prevSlug && (
                       <div>
                         <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">
                           {t('preva')}
                         </p>
                         <div className="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400">
-                          <Link href={`/${locale}/blog/${prev.slug}`}>{prev.title}</Link>
+                          <Link href={`/${locale}/blog/${prevSlug}`}>{prev.title}</Link>
                         </div>
                       </div>
                     )}
-                    {next && next.slug && (
+                    {next && nextSlug && (
                       <div>
                         <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">
                           {t('nexta')}
                         </p>
                         <div className="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400">
-                          <Link href={`/${locale}/blog/${next.slug}`}>{next.title}</Link>
+                          <Link href={`/${locale}/blog/${nextSlug}`}>{next.title}</Link>
                         </div>
                       </div>
                     )}
@@ -157,7 +161,7 @@ export default async function PostLayout({
                     &larr;{t('back')}
                   </Link>
                 </div>
-                <DonateButtons /> 
+                <DonateButtons />
               </div>
             </div>
           </aside>

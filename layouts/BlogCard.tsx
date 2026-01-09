@@ -3,12 +3,11 @@
 import { useState } from 'react'
 import Link from '@/components/mdxcomponents/Link'
 import { formatDate } from 'pliny/utils/formatDate'
-import type { CoreContent } from 'pliny/utils/contentlayer'
-import type { Blog } from 'contentlayer/generated'
+import type { Blog } from '#site/content'
 import type { LocaleTypes } from 'app/[locale]/i18n/settings'
 
 interface BlogCardProps {
-  post: CoreContent<Blog>
+  post: Blog
   locale: LocaleTypes
   onTagClick: (tag: string) => void
 }
@@ -19,9 +18,12 @@ export default function BlogCard({ post, locale, onTagClick }: BlogCardProps) {
   const visibleTags = showAllTags ? post.tags : post.tags.slice(0, 3)
   const remainingTags = post.tags.length - 3
 
+  // Extract just the post slug from Velite's slug format (blog/locale/slug)
+  const postSlug = post.slug.split('/').slice(2).join('/')
+
   return (
     <div className="group relative h-full overflow-hidden rounded-xl bg-white shadow-lg transition-all duration-300 hover:shadow-xl dark:bg-gray-800">
-      <Link href={`/${locale}/blog/${post.slug}`} className="block h-full">
+      <Link href={`/${locale}/blog/${postSlug}`} className="block h-full">
         <div className="relative h-48 w-full overflow-hidden">
           {post.headerImage ? (
             <img

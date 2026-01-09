@@ -4,9 +4,8 @@ import { ReactNode } from 'react'
 import { KBarSearchProvider } from './kbar'
 import { useParams, useRouter } from 'next/navigation'
 import siteMetadata from '@/data/siteMetadata'
-import { Authors, allAuthors } from 'contentlayer/generated'
-import { CoreContent } from 'pliny/utils/contentlayer'
-import { Blog } from 'contentlayer/generated'
+import { authors as allAuthors } from '#site/content'
+import type { Authors, Blog } from '#site/content'
 import { LocaleTypes } from 'app/[locale]/i18n/settings'
 import { useTranslation } from 'app/[locale]/i18n/client'
 import { fallbackLng } from 'app/[locale]/i18n/locales'
@@ -26,13 +25,15 @@ export const SearchProvider = ({ children }: SearchProviderProps) => {
 
   const authorSearchItems = authors.map((author) => {
     const { name, slug } = author
+    // Extract slug from Velite's format (authors/locale/slug)
+    const authorSlug = slug.split('/').slice(2).join('/')
     return {
       id: slug,
       name: name,
       keywords: '',
       shortcut: [],
       section: locale === fallbackLng ? 'Authors' : 'Auteurs',
-      perform: () => router.push(`/${locale}/about/${slug}`),
+      perform: () => router.push(`/${locale}/about/${authorSlug}`),
       icon: (
         <i>
           <AboutIcon />
@@ -126,14 +127,15 @@ export const SearchProvider = ({ children }: SearchProviderProps) => {
         ],
         onSearchDocumentsLoad(json) {
           return json
-            .filter((post: CoreContent<Blog>) => post.language === locale)
-            .map((post: CoreContent<Blog>) => ({
+            .filter((post: Blog) => post.language === locale)
+            .map((post: Blog) => ({
               id: post.path,
               name: post.title,
               keywords: post?.summary || '',
               section: t('content'),
               subtitle: post.tags.join(', '),
-              perform: () => router.push(`/${locale}/blog/${post.slug}`),
+              // Extract slug from Velite's format (blog/locale/slug)
+              perform: () => router.push(`/${locale}/blog/${post.slug.split('/').slice(2).join('/')}`),
             }))
         },
       }}

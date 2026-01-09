@@ -5,12 +5,12 @@ import { LocaleTypes } from '../i18n/settings'
 import ServicesSection from './ServicesSection'
 
 type ServicesPageProps = {
-  params: { locale: LocaleTypes }
+  params: Promise<{ locale: LocaleTypes }>
 }
 
-export async function generateMetadata({
-  params: { locale },
-}: ServicesPageProps): Promise<Metadata> {
+export async function generateMetadata(props: ServicesPageProps): Promise<Metadata> {
+  const params = await props.params
+  const { locale } = params
   return genPageMetadata({
     title: 'Services',
     description:
@@ -19,7 +19,9 @@ export async function generateMetadata({
   })
 }
 
-export default async function ServicesPage({ params: { locale } }: ServicesPageProps) {
+export default async function ServicesPage(props: ServicesPageProps) {
+  const params = await props.params
+  const { locale } = params
   return (
     <div className="min-h-screen">
       <ServicesSection />
