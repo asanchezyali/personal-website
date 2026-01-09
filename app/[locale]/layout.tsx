@@ -20,7 +20,14 @@ export async function generateStaticParams() {
   return locales.map((locale) => ({ locale }))
 }
 
-export async function generateMetadata({ params: { locale } }): Promise<Metadata> {
+type LayoutProps = {
+  children: React.ReactNode
+  params: Promise<{ locale: LocaleTypes }>
+}
+
+export async function generateMetadata(props: { params: Promise<{ locale: LocaleTypes }> }): Promise<Metadata> {
+  const params = await props.params
+  const { locale } = params
   return {
     metadataBase: new URL(siteMetadata.siteUrl),
     title: {
@@ -65,13 +72,11 @@ export async function generateMetadata({ params: { locale } }): Promise<Metadata
   }
 }
 
-export default function RootLayout({
-  children,
-  params: { locale },
-}: {
-  children: React.ReactNode
-  params: { locale: LocaleTypes }
-}) {
+export default async function RootLayout(props: LayoutProps) {
+  const params = await props.params
+  const { locale } = params
+  const { children } = props
+
   return (
     <html
       lang={locale}

@@ -1,11 +1,9 @@
 import 'css/prism.css'
 import 'katex/dist/katex.css'
 import { Metadata } from 'next'
-import { components } from '@/components/mdxcomponents'
-import { MDXLayoutRenderer } from 'pliny/mdx-components'
-import { sortPosts, coreContent, allCoreContent } from 'pliny/utils/contentlayer'
-import { allBlogs, allAuthors } from 'contentlayer/generated'
-import type { Authors, Blog } from 'contentlayer/generated'
+import { sortByDate } from '@/components/util/sortByDate'
+import { posts as allBlogs, authors as allAuthors } from '#site/content'
+import type { Authors, Blog } from '#site/content'
 import PostSimple from '@/layouts/PostSimple'
 import PostLayout from '@/layouts/PostLayout'
 import PostBanner from '@/layouts/PostBanner'
@@ -13,9 +11,10 @@ import siteMetadata from '@/data/siteMetadata'
 import { maintitle } from '@/data/localeMetadata'
 import { notFound } from 'next/navigation'
 import { LocaleTypes } from 'app/[locale]/i18n/settings'
+import { MDXContent } from '@/components/mdxcomponents/MDXContent'
 
 interface BlogPageProps {
-  params: { slug: string[]; locale: LocaleTypes }
+  params: Promise<{ slug: string[]; locale: LocaleTypes }>
 }
 
 const defaultLayout = 'PostLayout'
@@ -25,12 +24,17 @@ const layouts = {
   PostBanner,
 }
 
-async function getPostFromParams({ params: { slug, locale } }: BlogPageProps): Promise<any> {
+async function getPostFromParams(props: BlogPageProps): Promise<any> {
+  const params = await props.params
+  const { slug, locale } = params
   const dslug = decodeURI(slug.join('/'))
-  const post = allBlogs.filter((p) => p.language === locale).find((p) => p.slug === dslug) as Blog
+  // Velite keeps full path: blog/locale/slug
+  const post = allBlogs
+    .filter((p) => p.language === locale)
+    .find((p) => p.slug === `blog/${locale}/${dslug}`) as Blog
 
   if (!post) {
-    null
+    return null
   }
 
   if (post?.series) {
@@ -53,22 +57,27 @@ async function getPostFromParams({ params: { slug, locale } }: BlogPageProps): P
   return post
 }
 
-export async function generateMetadata({
-  params: { slug, locale },
-}: BlogPageProps): Promise<Metadata | undefined> {
+export async function generateMetadata(props: BlogPageProps): Promise<Metadata | undefined> {
+  const params = await props.params
+  const { slug, locale } = params
   const dslug = decodeURI(slug.join('/'))
-  const post = allBlogs.find((p) => p.slug === dslug && p.language === locale) as Blog
+  const post = allBlogs.find(
+    (p) => p.slug === `blog/${locale}/${dslug}` && p.language === locale
+  ) as Blog
   if (!post) {
     return
   }
   const author = allAuthors.filter((a) => a.language === locale).find((a) => a.default === true)
-  const authorList = post.authors || author
-  const authorDetails = authorList.map((author) => {
-    const authorResults = allAuthors
-      .filter((a) => a.language === locale)
-      .find((a) => a.slug.includes(author))
-    return coreContent(authorResults as Authors)
-  })
+  const authorList = post.authors || [author]
+  const authorDetails = authorList
+    .map((authorSlug) => {
+      const authorResults = allAuthors
+        .filter((a) => a.language === locale)
+        .find((a) => a.slug.includes(authorSlug as string))
+      return authorResults as Authors
+    })
+    .filter((a): a is Authors => a !== undefined)
+
   const publishedAt = new Date(post.date).toISOString()
   const modifiedAt = new Date(post.lastmod || post.date).toISOString()
   const authors = authorDetails.map((author) => author.name)
@@ -107,33 +116,45 @@ export async function generateMetadata({
 }
 
 export const generateStaticParams = async () => {
-  const paths = allBlogs.map((p) => ({ slug: p.slug.split('/') }))
+  const paths = allBlogs.map((p) => ({
+    locale: p.language,
+    slug: p.slug.split('/').slice(2), // Remove 'blog/locale' from slug
+  }))
   return paths
 }
 
-export default async function Page({ params: { slug, locale } }: BlogPageProps) {
+export default async function Page(props: BlogPageProps) {
+  const params = await props.params
+  const { slug, locale } = params
   const dslug = decodeURI(slug.join('/'))
+
   // Filter out drafts in production + locale filtering
-  const sortedCoreContents = allCoreContent(
-    sortPosts(allBlogs.filter((p) => p.language === locale))
-  )
-  const postIndex = sortedCoreContents.findIndex((p) => p.slug === dslug)
+  const sortedPosts = sortByDate(allBlogs.filter((p) => p.language === locale)) as Blog[]
+  const postIndex = sortedPosts.findIndex((p) => p.slug === `blog/${locale}/${dslug}`)
+
   if (postIndex === -1) {
     return notFound()
   }
 
-  const prev = sortedCoreContents[postIndex + 1]
-  const next = sortedCoreContents[postIndex - 1]
-  const post = await getPostFromParams({ params: { slug, locale } })
+  const prev = sortedPosts[postIndex + 1]
+  const next = sortedPosts[postIndex - 1]
+  const post = await getPostFromParams(props)
+
+  if (!post) {
+    return notFound()
+  }
+
   const author = allAuthors.filter((a) => a.language === locale).find((a) => a.default === true)
-  const authorList = post.authors || author
-  const authorDetails = authorList.map((author) => {
-    const authorResults = allAuthors
-      .filter((a) => a.language === locale)
-      .find((a) => a.slug.includes(author))
-    return coreContent(authorResults as Authors)
-  })
-  const mainContent = coreContent(post)
+  const authorList = post.authors || [author]
+  const authorDetails = authorList
+    .map((authorSlug) => {
+      const authorResults = allAuthors
+        .filter((a) => a.language === locale)
+        .find((a) => a.slug.includes(authorSlug as string))
+      return authorResults as Authors
+    })
+    .filter((a): a is Authors => a !== undefined)
+
   const jsonLd = post.structuredData
   jsonLd['author'] = authorDetails.map((author) => {
     return {
@@ -151,13 +172,13 @@ export default async function Page({ params: { slug, locale } }: BlogPageProps) 
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <Layout
-        content={mainContent}
+        content={post}
         authorDetails={authorDetails}
         next={next}
         prev={prev}
         params={{ locale: locale }}
       >
-        <MDXLayoutRenderer code={post.body.code} components={components} toc={post.toc} />
+        <MDXContent code={post.content} toc={post.toc} />
       </Layout>
     </>
   )

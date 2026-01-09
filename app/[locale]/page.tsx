@@ -6,18 +6,22 @@ import HeroSection from './home/Hero'
 import TechnologiesSection from './home/TecnologiesSection'
 import BlogPreview from './home/BlogPreview'
 
-type BlogPageProps = {
-  params: { locale: LocaleTypes }
+type HomeProps = {
+  params: Promise<{ locale: LocaleTypes }>
 }
 
-export async function generateMetadata({ params: { locale } }: BlogPageProps): Promise<Metadata> {
+export async function generateMetadata(props: HomeProps): Promise<Metadata> {
+  const params = await props.params
+  const { locale } = params
   return genPageMetadata({
     title: 'Blog',
     params: { locale: locale },
   })
 }
 
-export default async function BlogPage({ params: { locale } }: BlogPageProps) {
+export default async function Page(props: HomeProps) {
+  const params = await props.params
+  const { locale } = params
   return (
     <>
       <HeroSection />

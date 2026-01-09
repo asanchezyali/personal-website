@@ -1,5 +1,5 @@
 import { ReactNode } from 'react'
-import type { Authors } from 'contentlayer/generated'
+import type { Authors } from '#site/content'
 import SocialIcon from '@/components/social-icons'
 import Image from '@/components/mdxcomponents/Image'
 
@@ -8,7 +8,7 @@ import { createTranslation } from 'app/[locale]/i18n/server'
 
 interface AuthorLayoutProps {
   children: ReactNode
-  content: Omit<Authors, '_id' | '_raw' | 'body'>
+  content: Authors
   params: { locale: LocaleTypes }
 }
 

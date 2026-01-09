@@ -1,14 +1,10 @@
 'use client'
 import React from 'react'
 import { motion } from 'framer-motion'
-import { useRouter } from 'next/navigation'
+import { useRouter, useParams } from 'next/navigation'
 import { LocaleTypes } from '../i18n/settings'
 import { useTagStore } from '@/components/util/useTagStore'
 import { useCallback } from 'react'
-
-interface TagsProps {
-  params: { locale: LocaleTypes }
-}
 
 const container = {
   hidden: { opacity: 0 },
@@ -32,19 +28,19 @@ function TagCard({ tag, count, locale }: { tag: string; count: number; locale: s
   const handleClick = useCallback(
     (e: React.MouseEvent) => {
       e.preventDefault()
-      // Si el tag ya está seleccionado, lo deseleccionamos
+      // If the tag is already selected, deselect it
       if (selectedTag === tag) {
         setSelectedTag('')
       } else {
         setSelectedTag(tag)
       }
-      // Navegamos al blog después de actualizar el estado
+      // Navigate to blog after updating the state
       router.push(`/${locale}/blog`)
     },
     [tag, selectedTag, setSelectedTag, router, locale]
   )
 
-  // Determinar si este tag está seleccionado
+  // Determine if this tag is selected
   const isSelected = selectedTag === tag
 
   return (
@@ -83,7 +79,8 @@ function TagCard({ tag, count, locale }: { tag: string; count: number; locale: s
   )
 }
 
-export default function Tags({ params: { locale } }: TagsProps) {
+export default function Tags() {
+  const locale = useParams()?.locale as LocaleTypes
   const tagData = require(`app/[locale]/tag-data.json`)
   const tagCounts = tagData[locale]
   const sortedTags = Object.keys(tagCounts).sort((a, b) => tagCounts[b] - tagCounts[a])

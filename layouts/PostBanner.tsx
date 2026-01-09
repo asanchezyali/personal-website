@@ -1,8 +1,7 @@
 import { ReactNode } from 'react'
 import Image from '@/components/mdxcomponents/Image'
 import Bleed from 'pliny/ui/Bleed'
-import { CoreContent } from 'pliny/utils/contentlayer'
-import type { Blog } from 'contentlayer/generated'
+import type { Blog } from '#site/content'
 import Comments from '@/components/comments/Comments'
 import WalineComments from '@/components/comments/walinecomponents/walineComments'
 import Link from '@/components/mdxcomponents/Link'
@@ -17,7 +16,7 @@ import { Toc } from 'pliny/mdx-plugins'
 import Sidetoc from '@/components/sidetoc'
 
 interface PostBannerProps {
-  content: CoreContent<Blog>
+  content: Blog
   children: ReactNode
   next?: { slug: string; title: string }
   prev?: { slug: string; title: string }
@@ -35,6 +34,10 @@ export default function PostMinimal({
   const tableOfContents: Toc = toc as unknown as Toc
   const displayImage =
     images && images.length > 0 ? images[0] : 'https://picsum.photos/seed/picsum/800/400'
+
+  // Extract slug from Velite's format for prev/next navigation
+  const prevSlug = prev?.slug ? prev.slug.split('/').slice(2).join('/') : null
+  const nextSlug = next?.slug ? next.slug.split('/').slice(2).join('/') : null
 
   return (
     <>
@@ -70,10 +73,10 @@ export default function PostMinimal({
             </div>
             <footer>
               <div className="flex flex-col text-sm font-medium sm:flex-row sm:justify-between sm:text-base">
-                {prev && prev.slug && (
+                {prev && prevSlug && (
                   <div className="pt-4 xl:pt-8">
                     <Link
-                      href={`/${locale}/blog/${prev.slug}`}
+                      href={`/${locale}/blog/${prevSlug}`}
                       className="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
                       aria-label={`Previous post: ${prev.title}`}
                     >
@@ -81,10 +84,10 @@ export default function PostMinimal({
                     </Link>
                   </div>
                 )}
-                {next && next.slug && (
+                {next && nextSlug && (
                   <div className="pt-4 xl:pt-8">
                     <Link
-                      href={`/${locale}/blog/${next.slug}`}
+                      href={`/${locale}/blog/${nextSlug}`}
                       className="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
                       aria-label={`Next post: ${next.title}`}
                     >

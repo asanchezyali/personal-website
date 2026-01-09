@@ -3,8 +3,7 @@
 import { useState, useEffect } from "react"
 import { useTagStore } from "@/components/util/useTagStore"
 import { motion } from "framer-motion"
-import type { CoreContent } from "pliny/utils/contentlayer"
-import type { Blog } from "contentlayer/generated"
+import type { Blog } from "#site/content"
 import { sortByDate } from "@/components/util/sortByDate"
 import Pagination from "./Pagination"
 import tagData from "app/[locale]/tag-data.json"
@@ -21,9 +20,9 @@ interface PaginationProps {
 
 interface ListLayoutProps {
   params: { locale: LocaleTypes }
-  posts: CoreContent<Blog>[]
+  posts: Blog[]
   title: string
-  initialDisplayPosts?: CoreContent<Blog>[]
+  initialDisplayPosts?: Blog[]
   pagination?: PaginationProps
 }
 
@@ -36,7 +35,7 @@ const container = {
       staggerChildren: 0.1,
     },
   },
-}
+} as const
 
 const item = {
   hidden: {
@@ -47,7 +46,7 @@ const item = {
     opacity: 1,
     y: 0,
     transition: {
-      type: "spring",
+      type: "spring" as const,
       stiffness: 100,
       damping: 15,
       duration: 0.3,
@@ -57,7 +56,7 @@ const item = {
 
 export default function ListLayoutWithTags({ params: { locale }, posts, title }: ListLayoutProps) {
   // Initialize state with empty values
-  const [displayPosts, setDisplayPosts] = useState<CoreContent<Blog>[]>([])
+  const [displayPosts, setDisplayPosts] = useState<Blog[]>([])
   const [currentPage, setCurrentPage] = useState(1)
   const [isClient, setIsClient] = useState(false)
 
@@ -136,4 +135,3 @@ export default function ListLayoutWithTags({ params: { locale }, posts, title }:
     </div>
   )
 }
-

@@ -1,7 +1,6 @@
 import { ReactNode } from 'react'
 import { formatDate } from 'pliny/utils/formatDate'
-import { CoreContent } from 'pliny/utils/contentlayer'
-import type { Blog } from 'contentlayer/generated'
+import type { Blog } from '#site/content'
 import WalineComments from '@/components/comments/walinecomponents/walineComments'
 import Comments from '@/components/comments/Comments'
 import Link from '@/components/mdxcomponents/Link'
@@ -17,7 +16,7 @@ import { Toc } from 'pliny/mdx-plugins'
 import Sidetoc from '@/components/sidetoc'
 
 interface PostSimpleProps {
-  content: CoreContent<Blog>
+  content: Blog
   children: ReactNode
   next?: { slug: string; title: string }
   prev?: { slug: string; title: string }
@@ -34,6 +33,11 @@ export default async function PostLayout({
   const { slug, date, title, language, series, toc } = content
   const tableOfContents: Toc = toc as unknown as Toc
   const { t } = await createTranslation(locale, 'home')
+
+  // Extract slug from Velite's format for prev/next navigation
+  const prevSlug = prev?.slug ? prev.slug.split('/').slice(2).join('/') : null
+  const nextSlug = next?.slug ? next.slug.split('/').slice(2).join('/') : null
+
   return (
     <>
       <ScrollTopAndComment />
@@ -74,10 +78,10 @@ export default async function PostLayout({
               </div>
               <footer>
                 <div className="flex flex-col text-sm font-medium sm:flex-row sm:justify-between sm:text-base">
-                  {prev && prev.slug && (
+                  {prev && prevSlug && (
                     <div className="pt-4 xl:pt-8">
                       <Link
-                        href={`/${locale}/blog/${prev.slug}`}
+                        href={`/${locale}/blog/${prevSlug}`}
                         className="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
                         aria-label={`Previous post: ${prev.title}`}
                       >
@@ -85,10 +89,10 @@ export default async function PostLayout({
                       </Link>
                     </div>
                   )}
-                  {next && next.slug && (
+                  {next && nextSlug && (
                     <div className="pt-4 xl:pt-8">
                       <Link
-                        href={`/${locale}/blog/${next.slug}`}
+                        href={`/${locale}/blog/${nextSlug}`}
                         className="text-primary-500 hover:text-primary-600 dark:hover:text-primary-400"
                         aria-label={`Next post: ${next.title}`}
                       >

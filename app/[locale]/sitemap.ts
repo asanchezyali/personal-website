@@ -1,5 +1,5 @@
 import { MetadataRoute } from 'next'
-import { allBlogs, allAuthors } from 'contentlayer/generated'
+import { posts as allBlogs, authors as allAuthors } from '#site/content'
 import siteMetadata from '@/data/siteMetadata'
 import { fallbackLng, secondLng } from './i18n/locales'
 
@@ -10,16 +10,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const blogRoutes = allBlogs
     .filter((post) => !post.draft)
     .flatMap((post) => {
-      const mainUrl = `${siteUrl}/${fallbackLng}/blog/${post.slug}`
+      // Extract slug from Velite's format (blog/locale/slug)
+      const postSlug = post.slug.split('/').slice(2).join('/')
+      const mainUrl = `${siteUrl}/${fallbackLng}/blog/${postSlug}`
       const alternatepostsUrls: { url: string; lang: string }[] = []
 
       if (post.language !== fallbackLng) {
-        const alternatepostsUrl = `${siteUrl}/${post.language}/blog/${post.slug}`
+        const alternatepostsUrl = `${siteUrl}/${post.language}/blog/${postSlug}`
         alternatepostsUrls.push({ url: alternatepostsUrl, lang: post.language })
       }
 
       if (post.language !== secondLng) {
-        const alternatepostsUrl = `${siteUrl}/${secondLng}/blog/${post.slug}`
+        const alternatepostsUrl = `${siteUrl}/${secondLng}/blog/${postSlug}`
         alternatepostsUrls.push({ url: alternatepostsUrl, lang: secondLng })
       }
 
@@ -27,16 +29,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
     })
 
   const authorsRoutes = allAuthors.flatMap((author) => {
-    const mainUrl = `${siteUrl}/${fallbackLng}/about/${author.slug}`
+    // Extract slug from Velite's format (authors/locale/slug)
+    const authorSlug = author.slug.split('/').slice(2).join('/')
+    const mainUrl = `${siteUrl}/${fallbackLng}/about/${authorSlug}`
     const alternateauthorsUrls: { url: string; lang: string }[] = []
 
     if (author.language !== fallbackLng) {
-      const alternateauthorsUrl = `${siteUrl}/${author.language}/about/${author.slug}`
+      const alternateauthorsUrl = `${siteUrl}/${author.language}/about/${authorSlug}`
       alternateauthorsUrls.push({ url: alternateauthorsUrl, lang: author.language })
     }
 
     if (author.language !== secondLng) {
-      const alternateauthorsUrl = `${siteUrl}/${secondLng}/about/${author.slug}`
+      const alternateauthorsUrl = `${siteUrl}/${secondLng}/about/${authorSlug}`
       alternateauthorsUrls.push({ url: alternateauthorsUrl, lang: secondLng })
     }
 

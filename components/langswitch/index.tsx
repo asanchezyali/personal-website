@@ -6,7 +6,6 @@ import { LocaleTypes, locales } from 'app/[locale]/i18n/settings'
 import { Globe } from 'lucide-react'
 import {
   Menu,
-  Transition,
   RadioGroup,
   MenuButton,
   MenuItems,
@@ -62,57 +61,34 @@ const LangSwitch = () => {
   return (
     <div ref={menubarRef} className="relative inline-block text-left">
       <Menu>
-        {({ open }) => (
-          <>
-            <MenuButton
-              className="inline-flex items-center justify-center gap-2 rounded-md py-2 font-bold leading-5 text-gray-700 dark:text-white"
-              aria-haspopup="true"
-              aria-expanded={open}
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-            >
-              <Globe className="h-5 w-5" />
-              <span>{currentLocale}</span>
-            </MenuButton>
-            <Transition
-              show={open}
-              enter="transition-all ease-out duration-300"
-              enterFrom="opacity-0 scale-95 translate-y-[-10px]"
-              enterTo="opacity-100 scale-100 translate-y-0"
-              leave="transition-all ease-in duration-200"
-              leaveFrom="opacity-100 scale-100 translate-y-0"
-              leaveTo="opacity-0 scale-95 translate-y-[10px]"
-            >
-              <MenuItems
-                className="absolute right-0 z-50 mt-2 w-32 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none dark:bg-gray-800"
-                aria-orientation="vertical"
-                onBlur={() => setIsMenuOpen(false)}
-              >
-                <RadioGroup>
-                  <div className="py-1">
-                    {locales.map((newLocale: string) => (
-                      <Radio key={newLocale} value={newLocale}>
-                        <MenuItem>
-                          {({ active }) => (
-                            <button
-                              onClick={() => handleLinkClick(newLocale)}
-                              className={`w-full px-4 py-2 text-left text-sm ${
-                                active
-                                  ? 'bg-gray-100 text-primary-500 dark:bg-gray-700 dark:text-primary-400'
-                                  : 'text-gray-700 dark:text-gray-200'
-                              }`}
-                            >
-                              {getLanguageLabel(newLocale)}
-                            </button>
-                          )}
-                        </MenuItem>
-                      </Radio>
-                    ))}
-                  </div>
-                </RadioGroup>
-              </MenuItems>
-            </Transition>
-          </>
-        )}
+        <MenuButton
+          className="inline-flex items-center justify-center gap-2 rounded-md py-2 font-bold leading-5 text-gray-700 dark:text-white"
+          aria-haspopup="true"
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
+        >
+          <Globe className="h-5 w-5" />
+          <span>{currentLocale}</span>
+        </MenuButton>
+        <MenuItems
+          className="absolute right-0 z-50 mt-2 w-32 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none dark:bg-gray-800"
+        >
+          <RadioGroup>
+            <div className="py-1">
+              {locales.map((newLocale: string) => (
+                <Radio key={newLocale} value={newLocale}>
+                  <MenuItem>
+                    <button
+                      onClick={() => handleLinkClick(newLocale)}
+                      className="w-full px-4 py-2 text-left text-sm text-gray-700 data-[focus]:bg-gray-100 data-[focus]:text-primary-500 dark:text-gray-200 dark:data-[focus]:bg-gray-700 dark:data-[focus]:text-primary-400"
+                    >
+                      {getLanguageLabel(newLocale)}
+                    </button>
+                  </MenuItem>
+                </Radio>
+              ))}
+            </div>
+          </RadioGroup>
+        </MenuItems>
       </Menu>
     </div>
   )
