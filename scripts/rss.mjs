@@ -3,7 +3,7 @@ import path from 'path';
 import { slug } from 'github-slugger';
 import { escape } from 'pliny/utils/htmlEscaper.js';
 import siteMetadata from '../data/siteMetadata.js';
-import tagData from '../app/[locale]/tag-data.json' assert { type: 'json' };
+import tagData from '../app/[locale]/tag-data.json' with { type: 'json' };
 import { posts as allBlogs } from '../.velite/index.js';
 
 const defaultLocale = 'en';
