@@ -1,0 +1,55 @@
+---
+title: 'Building Production-Ready MCP Servers with FastAPI and Domain-Driven Design'
+date: '2026/01/12'
+tags: ['ai', 'mcp', 'fastapi', 'domain-driven-design']
+draft: false
+summary: 'A practical guide to implementing Anthropic's Model Context Protocol for scalable AI integrations using FastAPI and
+Domain-Driven Design principles.'
+bibliography: references-data.bib
+canonicalUrl: 'https://www.asanchezyali.com/blog/es/ai/20260112MCP/'
+headerImage: '/images/ai/zero-shot.jpg'
+images: ['/images/ai/zero-shot.jpg']
+language: 'en'
+authors: ['yali']
+---
+
+A practical guide to implementing Anthropic's Model Context Protocol for scalable AI integrations using FastAPI and
+Domain-Driven Design principles.
+
+## The problem: brilliant AI models, isolated data
+
+Large Language Models (LLMs) are remarkable reasoners and generators of human-like text, until you ask them to work with
+your current data of your work. A model might understand complex business logic, debug intricate code, and explain
+quantum physics, but it struggles to provide accurate answers when the context is outside its training data. For
+example, it can't access your company's internal documents, databases, or proprietary knowledge bases.
+
+This isn't a limitation of intelligence; it's a limitation of context. LLMs can only work with the information they have
+been trained on, which is often static and outdated.
+
+The traditional approach to solving this problem has been to fine-tune models on specific datasets or to use Retrieval-Augmented Generation (RAG) techniques. However, these methods can be resource-intensive, time-consuming, and may not
+always yield the desired results. Moreover, they often require significant engineering effort to integrate with existing
+systems. Anthropic call the «M x N integration problem». If you have M different AI applications and N different data
+sources, you end up Building «M x N» custom integrations. Every new AI model required new connectors . Every new data
+source multiplies the maintenance burden.
+
+The result? Fragmented codebases, duplicated effort, and AI systems that remain frustratingly disconnected from the data
+that matters most.
+
+## Model Context Protocol - MCP
+
+Released by Anthropic in November 2024, the Model Context Protocol (MCP) is an open standard that acts as a universal
+interface between AI models and external systems. You can think of MCP like USB-C for AI applications. Just a USB-C
+provides a standardized way to connect devices to various perripherals, MCP provides a standardized way to connect AI
+models to different data sources and tools through a common API.
+
+## What MCP actually is?
+
+MCP is not a library or framework, it;s a protocol specification. It defines:
+
+- How AI clients discover available tools and resources.
+- How requests and responses are structured (JSON-RPC 2.0).
+- How authentication and authorization work.
+- How to maintain context across multiple interactions.
+
+The key insight is simple: instead of «M x N» custom integrations, you build «M + N» components. Each AI application
+implements the MCP client protocol once. Everything connects.
