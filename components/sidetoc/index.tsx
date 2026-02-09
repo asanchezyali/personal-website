@@ -26,4 +26,3 @@ const Sidetoc = ({ toc }: SidetocProps) => {
 }
 
 export default Sidetoc
-

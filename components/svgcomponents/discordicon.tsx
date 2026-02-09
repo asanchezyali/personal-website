@@ -1,6 +1,6 @@
-const DiscordIcon = () => (
+const DiscordIcon = ({ className = 'h-5 w-5' }: { className?: string }) => (
   <svg
-    className="h-5 w-5"
+    className={className}
     viewBox="0 0 24 24"
     fill="currentColor"
     xmlns="http://www.w3.org/2000/svg"

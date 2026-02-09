@@ -48,7 +48,6 @@ yarn-error.log*
 .contentlayer
 .velite
 
-
-# Claude files
-!CLAUDE.md
+# Claude Code memory files (keep root CLAUDE.md only)
 CLAUDE.md
+!/CLAUDE.md
