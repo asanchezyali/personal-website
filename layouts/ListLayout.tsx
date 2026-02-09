@@ -1,16 +1,16 @@
-"use client"
+'use client'
 
-import { useState, useEffect } from "react"
-import { useTagStore } from "@/components/util/useTagStore"
-import { motion } from "framer-motion"
-import type { Blog } from "#site/content"
-import { sortByDate } from "@/components/util/sortByDate"
-import Pagination from "./Pagination"
-import tagData from "app/[locale]/tag-data.json"
-import { POSTS_PER_PAGE } from "@/data/postsPerPage"
-import { useTranslation } from "app/[locale]/i18n/client"
-import type { LocaleTypes } from "app/[locale]/i18n/settings"
-import BlogCard from "./BlogCard"
+import { useState, useEffect } from 'react'
+import { useTagStore } from '@/components/util/useTagStore'
+import { motion } from 'framer-motion'
+import type { Blog } from '#site/content'
+import { sortByDate } from '@/components/util/sortByDate'
+import Pagination from './Pagination'
+import tagData from 'app/[locale]/tag-data.json'
+import { POSTS_PER_PAGE } from '@/data/postsPerPage'
+import { useTranslation } from 'app/[locale]/i18n/client'
+import type { LocaleTypes } from 'app/[locale]/i18n/settings'
+import BlogCard from './BlogCard'
 
 interface PaginationProps {
   totalPages: number
@@ -46,7 +46,7 @@ const item = {
     opacity: 1,
     y: 0,
     transition: {
-      type: "spring" as const,
+      type: 'spring' as const,
       stiffness: 100,
       damping: 15,
       duration: 0.3,
@@ -60,7 +60,7 @@ export default function ListLayoutWithTags({ params: { locale }, posts, title }:
   const [currentPage, setCurrentPage] = useState(1)
   const [isClient, setIsClient] = useState(false)
 
-  const { t } = useTranslation(locale, "home")
+  const { t } = useTranslation(locale, 'home')
   const selectedTag = useTagStore((state) => state.selectedTag)
   const setSelectedTag = useTagStore((state) => state.setSelectedTag)
 
@@ -80,7 +80,9 @@ export default function ListLayoutWithTags({ params: { locale }, posts, title }:
 
   const updateDisplayPosts = () => {
     const sortedPosts = sortByDate(posts)
-    const filteredPosts = selectedTag ? sortedPosts.filter((post) => post.tags.includes(selectedTag)) : sortedPosts
+    const filteredPosts = selectedTag
+      ? sortedPosts.filter((post) => post.tags.includes(selectedTag))
+      : sortedPosts
 
     const localePosts = filteredPosts.filter((post) => post.language === locale)
     const postsPerPage = POSTS_PER_PAGE
@@ -91,7 +93,7 @@ export default function ListLayoutWithTags({ params: { locale }, posts, title }:
   }
 
   const handleTagClick = (tag: string) => {
-    setSelectedTag(tag === selectedTag ? "" : tag)
+    setSelectedTag(tag === selectedTag ? '' : tag)
     setCurrentPage(1)
   }
 
@@ -105,7 +107,9 @@ export default function ListLayoutWithTags({ params: { locale }, posts, title }:
   }
 
   const tagCountMap = tagData[locale]
-  const totalPages = Math.ceil(posts.filter((post) => post.language === locale).length / POSTS_PER_PAGE)
+  const totalPages = Math.ceil(
+    posts.filter((post) => post.language === locale).length / POSTS_PER_PAGE
+  )
 
   return (
     <div className="mx-auto max-w-screen-xl">
@@ -123,7 +127,12 @@ export default function ListLayoutWithTags({ params: { locale }, posts, title }:
       </motion.div>
 
       {totalPages > 1 && (
-        <motion.div className="mt-12" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.2 }}>
+        <motion.div
+          className="mt-12"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.2 }}
+        >
           <Pagination
             totalPages={totalPages}
             currentPage={currentPage}

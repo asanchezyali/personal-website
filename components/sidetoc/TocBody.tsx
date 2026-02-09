@@ -38,7 +38,7 @@ const TocBody = ({ toc }: TocBodyProps) => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 768)
     }
-    
+
     checkMobile()
     window.addEventListener('resize', checkMobile)
     return () => window.removeEventListener('resize', checkMobile)
@@ -85,7 +85,7 @@ const TocBody = ({ toc }: TocBodyProps) => {
               </button>
             </div>
           </div>
-          
+
           <div className="flex-1 overflow-y-auto px-4 py-4">
             <nav>
               <TOCInline

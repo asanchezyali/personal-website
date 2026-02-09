@@ -25,7 +25,9 @@ type LayoutProps = {
   params: Promise<{ locale: LocaleTypes }>
 }
 
-export async function generateMetadata(props: { params: Promise<{ locale: LocaleTypes }> }): Promise<Metadata> {
+export async function generateMetadata(props: {
+  params: Promise<{ locale: LocaleTypes }>
+}): Promise<Metadata> {
   const params = await props.params
   const { locale } = params
   return {

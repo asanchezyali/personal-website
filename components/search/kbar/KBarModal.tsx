@@ -86,7 +86,7 @@ export const KBarModal: React.FC<KBarModalProps> = ({ actions, isLoading }) => {
   return (
     <>
       <KBarPortal>
-        <KBarPositioner className="bg-gray-300/50 p-4 backdrop-blur backdrop-filter dark:bg-black/50 z-[100]">
+        <KBarPositioner className="z-[100] bg-gray-300/50 p-4 backdrop-blur backdrop-filter dark:bg-black/50">
           <KBarAnimator className="w-full max-w-xl">
             <div
               style={{ zIndex: '100' }}

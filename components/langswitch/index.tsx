@@ -4,14 +4,7 @@ import { useOuterClick } from '../util/useOuterClick'
 import { useTagStore } from '@/components/util/useTagStore'
 import { LocaleTypes, locales } from 'app/[locale]/i18n/settings'
 import { Globe } from 'lucide-react'
-import {
-  Menu,
-  RadioGroup,
-  MenuButton,
-  MenuItems,
-  Radio,
-  MenuItem,
-} from '@headlessui/react'
+import { Menu, RadioGroup, MenuButton, MenuItems, Radio, MenuItem } from '@headlessui/react'
 
 const LangSwitch = () => {
   const pathname = usePathname()
@@ -53,7 +46,7 @@ const LangSwitch = () => {
   const getLanguageLabel = (locale: string) => {
     const labels: Record<string, string> = {
       en: '🇺🇸 English',
-      es: '🇨🇴 Español'
+      es: '🇨🇴 Español',
     }
     return labels[locale] || locale
   }
@@ -69,9 +62,7 @@ const LangSwitch = () => {
           <Globe className="h-5 w-5" />
           <span>{currentLocale}</span>
         </MenuButton>
-        <MenuItems
-          className="absolute right-0 z-50 mt-2 w-32 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none dark:bg-gray-800"
-        >
+        <MenuItems className="absolute right-0 z-50 mt-2 w-32 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none dark:bg-gray-800">
           <RadioGroup>
             <div className="py-1">
               {locales.map((newLocale: string) => (
