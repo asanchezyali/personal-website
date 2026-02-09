@@ -135,7 +135,8 @@ export const SearchProvider = ({ children }: SearchProviderProps) => {
               section: t('content'),
               subtitle: post.tags.join(', '),
               // Extract slug from Velite's format (blog/locale/slug)
-              perform: () => router.push(`/${locale}/blog/${post.slug.split('/').slice(2).join('/')}`),
+              perform: () =>
+                router.push(`/${locale}/blog/${post.slug.split('/').slice(2).join('/')}`),
             }))
         },
       }}

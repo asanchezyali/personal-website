@@ -9,7 +9,17 @@ import { useParams } from 'next/navigation'
 import { useTranslation } from 'app/[locale]/i18n/client'
 import type { LocaleTypes } from 'app/[locale]/i18n/settings'
 import { motion } from 'framer-motion'
-import { Home, BookOpen, Phone, Users, ChevronDown, Menu, X, FolderKanban } from 'lucide-react'
+import {
+  Home,
+  BookOpen,
+  Phone,
+  Users,
+  ChevronDown,
+  Menu,
+  X,
+  FolderKanban,
+  Handshake,
+} from 'lucide-react'
 import SearchButton from '../search/SearchButton'
 import QRButton from '../qr/QRButton'
 import LangSwitch from '../langswitch'
@@ -28,6 +38,7 @@ const navIcons = {
   home: Home,
   blog: BookOpen,
   projects: FolderKanban,
+  collaborate: Handshake,
   contact: Phone,
   about: Users,
 }
@@ -57,9 +68,7 @@ const MobileNav = () => {
           }))
 
         setAuthors(processedAuthors)
-        setMainAuthor(
-          processedAuthors.filter((a) => a.default === true && a.language === locale)
-        )
+        setMainAuthor(processedAuthors.filter((a) => a.default === true && a.language === locale))
       } catch (error) {
         console.error('Error loading authors:', error)
         setAuthors([])

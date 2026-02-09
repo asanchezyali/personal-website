@@ -1,0 +1,97 @@
+{
+  "hero": {
+    "title": "Collaborate",
+    "description": "I'm a software developer with a mathematical background, passionate about AI, open source, and knowledge sharing. Let's build something together."
+  },
+  "journey": {
+    "title": "Professional Journey",
+    "description": "Over a decade of experience across academia, startups, and product teams — from teaching mathematics to shipping AI-powered products.",
+    "resume_cta": "View Full Resume",
+    "milestones": [
+      {
+        "year": "2025 – Present",
+        "role": "AI Specialist",
+        "company": "Lapzo",
+        "description": "Building intelligent learning systems powered by LLMs, RAG pipelines, and agentic workflows."
+      },
+      {
+        "year": "2024 – Present",
+        "role": "Freelance Consultant",
+        "company": "Independent",
+        "description": "AI consulting and full-stack development for startups — from conversational agents to image generation platforms."
+      },
+      {
+        "year": "2021 – 2024",
+        "role": "Full Stack Developer",
+        "company": "Monadical",
+        "description": "Developed AI avatar systems, real-time video pipelines, and open-source tooling with Python, React, and Three.js."
+      },
+      {
+        "year": "2018 – 2020",
+        "role": "Full Stack Developer",
+        "company": "BCFort",
+        "description": "Built blockchain-based platforms and scalable web applications using React, NestJS, and cloud infrastructure."
+      },
+      {
+        "year": "2010 – 2021",
+        "role": "Professor",
+        "company": "Universidad de Antioquia",
+        "description": "Taught mathematics, linear algebra, and calculus. Mentored students in mathematical modeling and computational thinking."
+      }
+    ]
+  },
+  "projects": {
+    "title": "Featured Projects",
+    "description": "A selection of projects I've built or led — spanning AI, full-stack development, and workflow automation.",
+    "project_1": {
+      "title": "Morpheus",
+      "description": "AI image generation platform enabling users to create custom images from text prompts and reference photos.",
+      "technologies": ["Python", "FastAPI", "React", "Stable Diffusion"]
+    },
+    "project_2": {
+      "title": "Digital Human / Zippy",
+      "description": "AI-powered 3D avatars with real-time speech, facial animation, and conversational capabilities.",
+      "technologies": ["OpenAI GPT", "Whisper", "ElevenLabs", "Three.js"]
+    },
+    "project_3": {
+      "title": "CREARIA Agent",
+      "description": "WhatsApp-based customer service agent using RAG and tool orchestration for automated support.",
+      "technologies": ["RAG", "MCP", "LangChain", "WhatsApp API"]
+    },
+    "project_4": {
+      "title": "ROCKET CODE",
+      "description": "Monorepo-based workflow automation platform for development teams with shared component libraries.",
+      "technologies": ["NX Monorepo", "React", "NestJS", "PostgreSQL"]
+    }
+  },
+  "community": {
+    "title": "Free Study Community",
+    "description": "Every Wednesday at 8:00 PM (Colombia, UTC-5), I host a free study group on mathematics, software engineering, and AI. Sessions in Spanish — everyone is welcome.",
+    "discord_cta": "Join Discord",
+    "github_cta": "Follow on GitHub"
+  },
+  "connect": {
+    "title": "Let's Connect",
+    "description": "Whether you want to collaborate on a project, join the study community, or just say hi — here's how to reach me.",
+    "channel_1": {
+      "name": "Discord",
+      "description": "Join the study community and weekly sessions.",
+      "cta": "Join Server"
+    },
+    "channel_2": {
+      "name": "GitHub",
+      "description": "Explore my open-source projects and contributions.",
+      "cta": "View Profile"
+    },
+    "channel_3": {
+      "name": "LinkedIn",
+      "description": "Connect professionally and see my work history.",
+      "cta": "Connect"
+    },
+    "channel_4": {
+      "name": "Schedule a Chat",
+      "description": "Book a 30-minute call to discuss ideas or projects.",
+      "cta": "Book a Call"
+    }
+  }
+}

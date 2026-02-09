@@ -1,10 +1,10 @@
 {
   "hero": {
-    "roll": "Software Developer & IT Consultant",
+    "roll": "Software Developer & AI Specialist",
     "title_1": "I'm Alejandro Sánchez Yalí",
     "title_2": "Specialized in developing smart applications that integrate modern web technologies with artificial intelligence and blockchain.",
     "button_1": "Contact Me",
-    "button_2": "More About Me",
+    "button_2": "Let's Collaborate",
     "blog_section":"Notes on AI, Blockchain, and Cutting-Edge Tech",
     "blog_description":"Exploring technology, development, and innovation through detailed analyses and practical guides"
   },
@@ -40,5 +40,17 @@
   "draft": "Under Construction",
   "noposts": "No posts found",
   "poststagged": "View posts tagged",
-  "showTags": "Show Tags"
+  "showTags": "Show Tags",
+  "community": {
+    "title": "Study Community",
+    "description": "Join a weekly study group to explore mathematics, software engineering, and artificial intelligence together.",
+    "schedule": "Every Wednesday at 8:00 PM (Colombia, UTC-5)",
+    "language_note": "Sessions are conducted in Spanish",
+    "topics_title": "Rotating Topics",
+    "topic_1": "Mathematics",
+    "topic_2": "Software Engineering",
+    "topic_3": "Artificial Intelligence",
+    "discord_cta": "Join Discord",
+    "github_cta": "Follow on GitHub"
+  }
 }

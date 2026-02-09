@@ -174,7 +174,7 @@ const AuthorsMenu = ({ className }: AuthorsMenuProps) => {
                   <motion.span
                     layoutId="tab"
                     transition={{ type: 'spring', duration: 0.4 }}
-                    className="absolute inset-0 z-0 rounded-md bg-heading-500"
+                    className="bg-heading-500 absolute inset-0 z-0 rounded-md"
                   ></motion.span>
                 )}
               </Link>
