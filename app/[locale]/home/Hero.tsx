@@ -270,7 +270,7 @@ const HeroSection = () => {
               { icon: Linkedin, href: 'https://www.linkedin.com/in/asanchezyali/' },
               { icon: Twitter, href: 'https://x.com/asanchezyali' },
               { icon: Instagram, href: 'https://www.instagram.com/asanchezyali/' },
-              { icon: DiscordIcon, href: 'https://discord.gg/gJ3vCgSWeh' },
+              { icon: DiscordIcon, href: 'https://discord.com/invite/RTfBvmm5?event=1470225763084013599' },
             ].map((social, index) => (
               <motion.a
                 key={social.href}
