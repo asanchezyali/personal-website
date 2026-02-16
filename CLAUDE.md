@@ -40,7 +40,7 @@ yarn analyze      # Bundle size analysis
 
 ### Key Path Aliases (tsconfig.json)
 
-- `@/components/*`, `@/data/*`, `@/layouts/*`, `@/css/*` — standard imports
+- `@/components/*`, `@/data/*`, `@/layouts/*`, `@/css/*`, `@/lib/*` — standard imports
 - `#site/content` — Velite-generated content (posts, authors)
 
 ### Blog Post Frontmatter
@@ -55,9 +55,25 @@ Layout components in `layouts/`: `PostLayout` (default blog post), `PostSimple`,
 
 KBar-based command palette. Reads from `search.json` generated at build time. Configuration in `data/siteMetadata.js`.
 
-### Styling
+### Styling & Component System
 
 Tailwind CSS 3 with class-based dark mode. Custom theme colors defined in `tailwind.config.js`. Typography plugin for prose content. Prettier plugin auto-sorts Tailwind classes.
+
+**shadcn/ui** component primitives in `components/ui/` — built on Radix UI + CVA + tailwind-merge:
+- `button.tsx` — variants: default, destructive, outline, secondary, ghost, link, gradient, shimmer. Supports `asChild` for polymorphic rendering
+- `badge.tsx` — variants: default, secondary, destructive, outline, tag
+- `input.tsx`, `textarea.tsx`, `label.tsx`, `checkbox.tsx` — form primitives
+- `dialog.tsx` — modal dialogs (Radix Dialog)
+- `sheet.tsx` — side panels (Radix Dialog, used for contact form, QR code, mobile nav)
+- `card.tsx` — Card/CardHeader/CardTitle/CardDescription/CardContent/CardFooter
+- `separator.tsx` — horizontal/vertical dividers
+- `dropdown-menu.tsx` — menus with radio groups (Radix DropdownMenu, used for theme switch, language switch, authors menu)
+
+**Utility:** `lib/utils.ts` exports `cn()` (clsx + tailwind-merge) for conditional class merging.
+
+**CSS Variables:** `css/tailwind.css` defines HSL-based CSS variables in `:root` and `.dark` for background, foreground, card, popover, muted, accent, destructive, border, ring, primary, secondary. Gradient colors available as `--gradient-from` (#30c5d2) and `--gradient-to` (#9821e2).
+
+**Configuration:** `components.json` at project root configures shadcn/ui (New York style, RSC enabled, CSS variables).
 
 ### Site Configuration
 

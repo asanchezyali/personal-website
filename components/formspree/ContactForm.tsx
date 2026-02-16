@@ -7,6 +7,10 @@ import { useTranslation } from 'app/[locale]/i18n/client'
 import type { LocaleTypes } from 'app/[locale]/i18n/settings'
 import { useParams } from 'next/navigation'
 import { motion } from 'framer-motion'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
+import { Label } from '@/components/ui/label'
+import { Button } from '@/components/ui/button'
 
 const digitalSolutions = [
   'mobileDev',
@@ -86,50 +90,27 @@ export const ContactForm: React.FC<ContactFormProps> = ({ onClose }) => {
     }
   }
 
-  const inputClassName = `
-    mt-2 block w-full rounded-lg border bg-gray-900/30 px-4 py-3 
-    text-white placeholder-gray-400 backdrop-blur-sm
-    transition-all duration-300
-    border-gray-700/50
-    focus:border-[#30C5D2] focus:bg-gray-900/50 focus:ring-1 focus:ring-[#30C5D2]
-    hover:border-[#30C5D2]/30 hover:bg-gray-900/40
-  `
+  const inputClassName =
+    'mt-2 rounded-lg border-gray-700/50 bg-gray-900/30 px-4 py-3 text-white placeholder-gray-400 backdrop-blur-sm transition-all duration-300 focus:border-[#30C5D2] focus:bg-gray-900/50 focus:ring-1 focus:ring-[#30C5D2] hover:border-[#30C5D2]/30 hover:bg-gray-900/40'
 
-  const labelClassName = `
-    block text-sm font-medium text-gray-300
-    transition-colors duration-300
-  `
+  const labelClassName = 'text-sm font-medium text-gray-300 transition-colors duration-300'
 
-  const selectClassName = `
-    mt-2 block w-full appearance-none rounded-lg border bg-gray-900/30 
-    px-4 py-3 text-white backdrop-blur-sm
-    transition-all duration-300
-    border-gray-700/50
-    focus:border-[#30C5D2] focus:bg-gray-900/50 focus:ring-1 focus:ring-[#30C5D2]
-    hover:border-[#30C5D2]/30 hover:bg-gray-900/40
-  `
+  const selectClassName =
+    'mt-2 block w-full appearance-none rounded-lg border border-gray-700/50 bg-gray-900/30 px-4 py-3 text-white backdrop-blur-sm transition-all duration-300 focus:border-[#30C5D2] focus:bg-gray-900/50 focus:ring-1 focus:ring-[#30C5D2] hover:border-[#30C5D2]/30 hover:bg-gray-900/40'
 
-  const checkboxGroupClassName = `
-    mt-3 grid grid-cols-2 gap-4 rounded-lg border border-gray-700/50 
-    bg-gray-900/30 p-4 backdrop-blur-sm
-    transition-all duration-300
-    hover:border-[#30C5D2]/30 hover:bg-gray-900/40
-  `
+  const checkboxGroupClassName =
+    'mt-3 grid grid-cols-2 gap-4 rounded-lg border border-gray-700/50 bg-gray-900/30 p-4 backdrop-blur-sm transition-all duration-300 hover:border-[#30C5D2]/30 hover:bg-gray-900/40'
 
-  const checkboxClassName = `
-    h-4 w-4 rounded border-gray-600 bg-gray-800/50
-    text-[#30C5D2] transition-colors duration-300
-    focus:ring-2 focus:ring-[#30C5D2] focus:ring-offset-0
-    hover:border-[#30C5D2]/50
-  `
+  const checkboxClassName =
+    'h-4 w-4 rounded border-gray-600 bg-gray-800/50 text-[#30C5D2] transition-colors duration-300 focus:ring-2 focus:ring-[#30C5D2] focus:ring-offset-0 hover:border-[#30C5D2]/50'
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <div>
-        <label htmlFor="companyName" className={labelClassName}>
+        <Label htmlFor="companyName" className={labelClassName}>
           {t('companyName.label')}
-        </label>
-        <input
+        </Label>
+        <Input
           id="companyName"
           placeholder={t('companyName.placeholder')}
           {...register('companyName')}
@@ -139,10 +120,10 @@ export const ContactForm: React.FC<ContactFormProps> = ({ onClose }) => {
       </div>
 
       <div>
-        <label htmlFor="email" className={labelClassName}>
+        <Label htmlFor="email" className={labelClassName}>
           {t('email.label')}
-        </label>
-        <input
+        </Label>
+        <Input
           id="email"
           type="email"
           placeholder={t('email.placeholder')}
@@ -165,12 +146,12 @@ export const ContactForm: React.FC<ContactFormProps> = ({ onClose }) => {
                   value={solution}
                   className={checkboxClassName}
                 />
-                <label
+                <Label
                   htmlFor={`need-${solution}`}
                   className="text-sm text-gray-300 transition-colors duration-300 hover:text-[#30C5D2]"
                 >
                   {t(`solutions.options.${solution}`)}
-                </label>
+                </Label>
               </div>
             ))}
           </div>
@@ -179,9 +160,9 @@ export const ContactForm: React.FC<ContactFormProps> = ({ onClose }) => {
       </div>
 
       <div>
-        <label htmlFor="urgency" className={labelClassName}>
+        <Label htmlFor="urgency" className={labelClassName}>
           {t('urgency.label')}
-        </label>
+        </Label>
         <select id="urgency" {...register('urgency')} className={selectClassName}>
           <option value="">{t('urgency.placeholder')}</option>
           <option value="immediate">{t('urgency.options.immediate')}</option>
@@ -193,10 +174,10 @@ export const ContactForm: React.FC<ContactFormProps> = ({ onClose }) => {
       </div>
 
       <div>
-        <label htmlFor="message" className={labelClassName}>
+        <Label htmlFor="message" className={labelClassName}>
           {t('message.label')}
-        </label>
-        <textarea
+        </Label>
+        <Textarea
           id="message"
           {...register('message')}
           rows={4}
@@ -205,29 +186,26 @@ export const ContactForm: React.FC<ContactFormProps> = ({ onClose }) => {
         />
       </div>
 
-      <motion.button
+      <Button
         type="submit"
         disabled={!isValid || isSubmitting}
-        className={`
-          group relative w-full overflow-hidden rounded-lg 
-          bg-gradient-to-r from-[#30C5D2] to-[#9821e2]
-          p-[1px] transition-all duration-300
-          ${!isValid || isSubmitting ? 'opacity-50' : 'hover:scale-[1.02]'}
-        `}
-        whileHover={{ scale: isValid && !isSubmitting ? 1.02 : 1 }}
+        variant="gradient"
+        className={`group relative w-full overflow-hidden rounded-lg p-[1px] ${
+          !isValid || isSubmitting ? 'opacity-50' : 'hover:scale-[1.02]'
+        }`}
+        asChild
       >
-        <div
-          className={`
-            relative rounded-lg bg-gray-900/90 px-8 py-4
-            transition-all duration-300
-            group-hover:bg-gray-900/70
-          `}
+        <motion.button
+          whileHover={{ scale: isValid && !isSubmitting ? 1.02 : 1 }}
+          disabled={!isValid || isSubmitting}
         >
-          <span className="block text-center text-lg font-semibold text-white">
-            {isSubmitting ? t('submit.sending') : t('submit.default')}
-          </span>
-        </div>
-      </motion.button>
+          <div className="relative rounded-lg bg-gray-900/90 px-8 py-4 transition-all duration-300 group-hover:bg-gray-900/70">
+            <span className="block text-center text-lg font-semibold text-white">
+              {isSubmitting ? t('submit.sending') : t('submit.default')}
+            </span>
+          </div>
+        </motion.button>
+      </Button>
     </form>
   )
 }

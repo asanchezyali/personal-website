@@ -1,4 +1,6 @@
 import { ValidationError } from '@formspree/react'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
 
 interface FormInputsProps {
   name: string
@@ -23,7 +25,7 @@ export const FormInputs: React.FC<FormInputsProps> = ({
 }) => {
   return (
     <>
-      <input
+      <Input
         required
         autoComplete="name"
         id="fullName"
@@ -32,9 +34,9 @@ export const FormInputs: React.FC<FormInputsProps> = ({
         placeholder={t('name')}
         value={name}
         onChange={handleNameChange}
-        className="mb-2 w-full rounded-md border-black bg-white p-2 text-black outline-none transition disabled:cursor-not-allowed disabled:bg-neutral-900 disabled:opacity-70 dark:border-white dark:bg-black dark:text-white"
+        className="mb-2 border-black bg-white text-black dark:border-white dark:bg-black dark:text-white"
       />
-      <input
+      <Input
         required
         autoComplete="email"
         id="email"
@@ -43,17 +45,17 @@ export const FormInputs: React.FC<FormInputsProps> = ({
         placeholder={t('mail')}
         value={email}
         onChange={handleEmailChange}
-        className="mb-2 w-full rounded-md border-black bg-white p-2 text-base text-black outline-none transition disabled:cursor-not-allowed disabled:bg-neutral-900 disabled:opacity-70 dark:border-white dark:bg-black dark:text-white"
+        className="mb-2 border-black bg-white text-base text-black dark:border-white dark:bg-black dark:text-white"
       />
       <ValidationError prefix="Email" field="email" errors={state.errors} />
-      <textarea
+      <Textarea
         required
         id="message"
         name="message"
         placeholder={t('message')}
         value={message}
         onChange={handleMessageChange}
-        className="mb-2 w-full rounded-md border-black bg-white p-2 text-base text-black outline-none transition disabled:cursor-not-allowed disabled:bg-neutral-900 disabled:opacity-70 dark:border-white dark:bg-black dark:text-white"
+        className="mb-2 border-black bg-white text-base text-black dark:border-white dark:bg-black dark:text-white"
       />
       <ValidationError prefix="Message" field="message" errors={state.errors} />
     </>

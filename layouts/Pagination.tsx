@@ -1,5 +1,6 @@
 import { useTranslation } from 'app/[locale]/i18n/client'
 import { LocaleTypes } from 'app/[locale]/i18n/settings'
+import { Button } from '@/components/ui/button'
 
 interface PaginationProps {
   totalPages: number
@@ -32,21 +33,23 @@ export default function Pagination({
   return (
     <div className="space-y-2 pb-8 pt-6 md:space-y-5">
       <nav className="flex justify-between">
-        {!prevPage && (
-          <button className="cursor-auto disabled:opacity-50" disabled={!prevPage}>
-            {t('prevp')}
-          </button>
-        )}
-        {prevPage && <button onClick={handlePrevPage}> {t('prevp')}</button>}
-        <span>
+        <Button
+          variant="ghost"
+          disabled={!prevPage}
+          onClick={handlePrevPage}
+        >
+          {t('prevp')}
+        </Button>
+        <span className="flex items-center">
           {currentPage} of {totalPages}
         </span>
-        {!nextPage && (
-          <button className="cursor-auto disabled:opacity-50" disabled={!nextPage}>
-            {t('nextp')}
-          </button>
-        )}
-        {nextPage && <button onClick={handleNextPage}>{t('nextp')}</button>}
+        <Button
+          variant="ghost"
+          disabled={!nextPage}
+          onClick={handleNextPage}
+        >
+          {t('nextp')}
+        </Button>
       </nav>
     </div>
   )

@@ -5,6 +5,7 @@ import Link from '@/components/mdxcomponents/Link'
 import { formatDate } from 'pliny/utils/formatDate'
 import type { Blog } from '#site/content'
 import type { LocaleTypes } from 'app/[locale]/i18n/settings'
+import { Badge } from '@/components/ui/badge'
 
 interface BlogCardProps {
   post: Blog
@@ -50,27 +51,29 @@ export default function BlogCard({ post, locale, onTagClick }: BlogCardProps) {
           <div className={`${showAllTags ? 'mt-4' : ''}`}>
             <div className={`flex flex-wrap gap-2 ${showAllTags ? '' : 'h-8 overflow-hidden'}`}>
               {visibleTags.map((tag) => (
-                <button
+                <Badge
                   key={tag}
+                  variant="tag"
+                  className="cursor-pointer"
                   onClick={(e) => {
                     e.preventDefault()
                     onTagClick(tag)
                   }}
-                  className="inline-block rounded-md bg-primary-100 px-2 py-1 text-xs font-medium text-primary-600 transition-colors hover:bg-primary-200 dark:bg-primary-900/30 dark:text-primary-400 dark:hover:bg-primary-900/50"
                 >
                   {tag}
-                </button>
+                </Badge>
               ))}
               {!showAllTags && remainingTags > 0 && (
-                <button
+                <Badge
+                  variant="outline"
+                  className="cursor-pointer bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-400 dark:hover:bg-gray-600"
                   onClick={(e) => {
                     e.preventDefault()
                     setShowAllTags(true)
                   }}
-                  className="inline-block rounded-md bg-gray-100 px-2 py-1 text-xs font-medium text-gray-600 transition-colors hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-400 dark:hover:bg-gray-600"
                 >
                   +{remainingTags}
-                </button>
+                </Badge>
               )}
             </div>
           </div>

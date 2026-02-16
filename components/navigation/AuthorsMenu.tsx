@@ -4,21 +4,17 @@ import Image from 'next/image'
 import Link from 'next/link'
 import siteMetadata from '@/data/siteMetadata'
 import { authors as allAuthors, type Authors } from '#site/content'
-import { Fragment, useRef, useState, useMemo } from 'react'
-import {
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuItems,
-  Radio,
-  RadioGroup,
-  Transition,
-} from '@headlessui/react'
-import { useOuterClick } from '../util/useOuterClick'
+import { useMemo } from 'react'
 import { useParams, usePathname } from 'next/navigation'
 import { LocaleTypes } from 'app/[locale]/i18n/settings'
 import { useTranslation } from 'app/[locale]/i18n/client'
 import { motion } from 'framer-motion'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 
 type AuthorsMenuProps = {
   className: string
@@ -39,7 +35,6 @@ const AuthorsMenu = ({ className }: AuthorsMenuProps) => {
         .sort((a, b) => (a.default === b.default ? 0 : a.default ? -1 : 1))
         .map((a) => ({
           ...a,
-          // Extract slug from Velite's format (authors/locale/slug)
           slug: a.slug.split('/').slice(2).join('/'),
         })),
     [locale]
@@ -56,62 +51,15 @@ const AuthorsMenu = ({ className }: AuthorsMenuProps) => {
     [locale]
   ) as Authors[]
 
-  const [isOpen, setIsOpen] = useState(false)
-
-  const toggleMenu = () => {
-    setIsOpen(!isOpen)
-  }
-
-  const closeMenu = () => {
-    setIsOpen(false)
-  }
-
-  const menubarRef = useRef<HTMLDivElement>(null)
-  useOuterClick(menubarRef, closeMenu)
-
   const isSelected = authors.some((author) => author.slug.includes(lastSection)) && filterSections
-
-  const renderAuthorLink = (author: Authors) => {
-    const { name, avatar, slug } = author
-    return (
-      <Radio key={name} value={name}>
-        <MenuItem>
-          {({ focus }) => (
-            <div
-              className={`${
-                focus ? 'bg-gray-100 dark:bg-gray-600' : 'hover:bg-gray-100 dark:hover:bg-gray-600'
-              } group flex w-full items-center rounded-md px-2 py-2 text-sm hover:text-primary-500 dark:hover:text-primary-500`}
-            >
-              <div className="mr-2">
-                <Image
-                  className="rounded-full"
-                  src={avatar ?? ''}
-                  alt="avatar"
-                  title="avatar"
-                  width={25}
-                  height={25}
-                />
-              </div>
-              <Link href={`/${locale}/about/${slug}`} onClick={closeMenu}>
-                {name}
-              </Link>
-            </div>
-          )}
-        </MenuItem>
-      </Radio>
-    )
-  }
 
   return (
     <>
       {siteMetadata.multiauthors ? (
-        <div ref={menubarRef} className={className}>
-          <Menu as="div" className="relative inline-block text-left font-medium leading-5">
-            <div>
-              <MenuButton
-                className="flex transform-gpu items-center space-x-1 transition-transform duration-300"
-                onClick={toggleMenu}
-              >
+        <div className={className}>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="flex transform-gpu items-center space-x-1 transition-transform duration-300 focus:outline-none">
                 <div
                   className={`hidden font-medium ${
                     isSelected
@@ -128,32 +76,31 @@ const AuthorsMenu = ({ className }: AuthorsMenuProps) => {
                     ></motion.span>
                   )}
                 </div>
-              </MenuButton>
-            </div>
-            <Transition
-              as={Fragment}
-              show={isOpen}
-              enter="transition-all ease-out duration-300"
-              enterFrom="opacity-0 scale-95 translate-y-[-10px]"
-              enterTo="opacity-100 scale-100 translate-y-0"
-              leave="transition-all ease-in duration-200"
-              leaveFrom="opacity-100 scale-100 translate-y-0"
-              leaveTo="opacity-0 scale-95 translate-y-[10px]"
-            >
-              <MenuItems
-                className="absolute right-0 z-50 mt-2 w-40 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none dark:bg-gray-800"
-                as="div"
-              >
-                <RadioGroup>
-                  <div className="p-1">
-                    {authors.map(
-                      (author) => author.language === locale && renderAuthorLink(author)
-                    )}
-                  </div>
-                </RadioGroup>
-              </MenuItems>
-            </Transition>
-          </Menu>
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-40">
+              {authors
+                .filter((author) => author.language === locale)
+                .map((author) => (
+                  <DropdownMenuItem key={author.name} asChild className="cursor-pointer">
+                    <Link
+                      href={`/${locale}/about/${author.slug}`}
+                      className="flex w-full items-center hover:text-primary-500 dark:hover:text-primary-500"
+                    >
+                      <Image
+                        className="mr-2 rounded-full"
+                        src={author.avatar ?? ''}
+                        alt="avatar"
+                        title="avatar"
+                        width={25}
+                        height={25}
+                      />
+                      {author.name}
+                    </Link>
+                  </DropdownMenuItem>
+                ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       ) : (
         <div className={className}>
