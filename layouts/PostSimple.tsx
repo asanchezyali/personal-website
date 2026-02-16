@@ -12,7 +12,6 @@ import { createTranslation } from 'app/[locale]/i18n/server'
 import { LocaleTypes } from 'app/[locale]/i18n/settings'
 import { PostSeriesBox } from '@/components/seriescard'
 import Share from '@/components/share'
-import { Toc } from 'pliny/mdx-plugins'
 import Sidetoc from '@/components/sidetoc'
 
 interface PostSimpleProps {
@@ -31,7 +30,6 @@ export default async function PostLayout({
   params: { locale },
 }: PostSimpleProps) {
   const { slug, date, title, language, series, toc } = content
-  const tableOfContents: Toc = toc as unknown as Toc
   const { t } = await createTranslation(locale, 'home')
 
   // Extract slug from Velite's format for prev/next navigation
@@ -41,7 +39,7 @@ export default async function PostLayout({
   return (
     <>
       <ScrollTopAndComment />
-      <Sidetoc toc={tableOfContents} />
+      <Sidetoc toc={toc} />
       <SectionContainer>
         <article>
           <div>

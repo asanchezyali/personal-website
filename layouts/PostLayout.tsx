@@ -9,7 +9,6 @@ import siteMetadata from '@/data/siteMetadata'
 import ScrollTopAndComment from '@/components/scroll'
 import { createTranslation } from 'app/[locale]/i18n/server'
 import { LocaleTypes } from 'app/[locale]/i18n/settings'
-import { Toc } from 'pliny/mdx-plugins'
 import Sidetoc from '@/components/sidetoc'
 import Image from '@/components/mdxcomponents/Image'
 import DonateButtons from '@/components/donatebuttons/DonateButtons'
@@ -44,7 +43,6 @@ export default async function PostLayout({
   const { filePath, path, slug, date, title, tags, language, series, toc, headerImage } = content
   const basePath = path.split('/')[0]
   const { t } = await createTranslation(locale, 'home')
-  const tableOfContents: Toc = toc as unknown as Toc
 
   // Extract slug from Velite's format for prev/next navigation
   const prevSlug = prev?.slug ? prev.slug.split('/').slice(2).join('/') : null
@@ -168,7 +166,7 @@ export default async function PostLayout({
         </div>
       </article>
       <ScrollTopAndComment />
-      <Sidetoc toc={tableOfContents} />
+      <Sidetoc toc={toc} />
     </>
   )
 }

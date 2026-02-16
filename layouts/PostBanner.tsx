@@ -12,7 +12,6 @@ import ScrollTopAndComment from '@/components/scroll'
 import { PostSeriesBox } from '@/components/seriescard'
 import Share from '@/components/share'
 import { LocaleTypes } from 'app/[locale]/i18n/settings'
-import { Toc } from 'pliny/mdx-plugins'
 import Sidetoc from '@/components/sidetoc'
 
 interface PostBannerProps {
@@ -31,7 +30,6 @@ export default function PostMinimal({
   params: { locale },
 }: PostBannerProps) {
   const { slug, title, images, series, toc } = content
-  const tableOfContents: Toc = toc as unknown as Toc
   const displayImage =
     images && images.length > 0 ? images[0] : 'https://picsum.photos/seed/picsum/800/400'
 
@@ -42,7 +40,7 @@ export default function PostMinimal({
   return (
     <>
       <ScrollTopAndComment />
-      <Sidetoc toc={tableOfContents} />
+      <Sidetoc toc={toc} />
       <SectionContainer>
         <article>
           <div>

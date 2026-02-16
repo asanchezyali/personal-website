@@ -1,31 +1,42 @@
 'use client'
 
-import TOCInline from 'pliny/ui/TOCInline'
 import { useTranslation } from 'app/[locale]/i18n/client'
 import { LocaleTypes } from 'app/[locale]/i18n/settings'
 import { useParams } from 'next/navigation'
 import useSidebarStore from './store'
-import { Toc, TocItem as OriginalTocItem } from 'pliny/mdx-plugins/remark-toc-headings'
 import { X } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useEffect, useState } from 'react'
 
+interface VeliteTocItem {
+  title: string
+  url: string
+  items: VeliteTocItem[]
+}
+
 interface TocBodyProps {
-  toc: Toc
+  toc: VeliteTocItem[]
 }
 
-interface TocItem extends OriginalTocItem {
-  children?: TocItem[]
+interface FlatTocItem {
+  value: string
+  url: string
+  depth: number
 }
 
-const filterToc = (toc: TocItem[]): TocItem[] => {
-  return toc.map((item) => {
-    const modifiedValue = item.url.replace(/-\d+$/, '')
-    return {
-      ...item,
-      url: modifiedValue,
+const flattenToc = (items: VeliteTocItem[], depth = 2): FlatTocItem[] => {
+  const result: FlatTocItem[] = []
+  for (const item of items) {
+    result.push({
+      value: item.title,
+      url: item.url.replace(/-\d+$/, ''),
+      depth,
+    })
+    if (item.items && item.items.length > 0) {
+      result.push(...flattenToc(item.items, depth + 1))
     }
-  })
+  }
+  return result
 }
 
 const TocBody = ({ toc }: TocBodyProps) => {
@@ -48,7 +59,7 @@ const TocBody = ({ toc }: TocBodyProps) => {
     return null
   }
 
-  const filteredToc = filterToc(toc as TocItem[])
+  const flatToc = flattenToc(toc as VeliteTocItem[])
 
   return (
     <AnimatePresence>
@@ -88,11 +99,19 @@ const TocBody = ({ toc }: TocBodyProps) => {
 
           <div className="flex-1 overflow-y-auto px-4 py-4">
             <nav>
-              <TOCInline
-                toc={filteredToc}
-                ulClassName="space-y-2 text-sm text-gray-600 dark:text-gray-300"
-                liClassName="hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200"
-              />
+              <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-300">
+                {flatToc.map((item, index) => (
+                  <li
+                    key={index}
+                    className="transition-colors duration-200 hover:text-primary-600 dark:hover:text-primary-400"
+                    style={{ paddingLeft: `${(item.depth - 2) * 1}rem` }}
+                  >
+                    <a href={item.url} onClick={closeSidebar}>
+                      {item.value}
+                    </a>
+                  </li>
+                ))}
+              </ul>
             </nav>
           </div>
         </div>

@@ -46,7 +46,7 @@ const JourneySection = () => {
               transition={{ duration: 0.4, delay: index * 0.1 }}
               className="relative mb-10 last:mb-0"
             >
-              <div className="absolute -left-[calc(2rem+5px)] top-1.5 h-3 w-3 rounded-full bg-primary-500" />
+              <div className="absolute -left-[calc(2rem+7px)] top-1 h-3 w-3 rounded-full bg-primary-500" />
               <span className="mb-1 block font-lato text-sm font-medium text-primary-600 dark:text-primary-400">
                 {milestone.year}
               </span>
