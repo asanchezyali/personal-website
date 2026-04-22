@@ -14,8 +14,8 @@ const Project = () => {
     show: {
       opacity: 1,
       transition: {
-        delayChildren: 0.8, // Delay all children to start after header
-        staggerChildren: 0.2, // Stagger each project card
+        delayChildren: 0.2,
+        staggerChildren: 0.1,
       },
     },
   }

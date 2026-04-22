@@ -46,12 +46,12 @@ export const CModal: React.FC<cModalProps> = ({
       initial="hidden"
       animate="enter"
       transition={{ ease: 'linear' }}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-gray-300/50 p-4 backdrop-blur backdrop-filter dark:bg-black/50"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-gray-300/50 p-4 backdrop-blur backdrop-filter dark:bg-gray-950/50"
     >
       <div className="relative mx-auto my-3 h-full w-full sm:h-auto sm:w-2/5 sm:max-w-xl">
         <div
           ref={modalContentRef}
-          className="relative flex h-full w-full flex-col rounded-lg border-0 bg-white shadow-lg outline-none focus:outline-none dark:bg-black lg:h-auto"
+          className="relative flex h-full w-full flex-col rounded-lg border-0 bg-white shadow-lg outline-none focus:outline-none dark:bg-gray-950 lg:h-auto"
         >
           <div className="flex items-center justify-between p-6">
             <div className="text-heading-400 ml-2 flex flex-row items-center text-3xl font-semibold">

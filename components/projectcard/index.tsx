@@ -27,12 +27,12 @@ const Card: React.FC<CardProps> = ({ title, description, imgSrc, href }) => {
       initial="hidden"
       animate="enter"
       transition={{ ease: 'linear' }}
-      className="md max-w-[544px] md:w-1/2"
+      className="w-full"
     >
       <div
         className={`${
           imgSrc && 'h-full'
-        }  overflow-hidden rounded-md border-2 border-gray-200 border-opacity-60 dark:border-gray-700`}
+        }  cursor-pointer overflow-hidden rounded-xl border border-gray-200/60 bg-transparent transition-colors duration-300 hover:border-gray-300 dark:border-gray-800/60 dark:hover:border-gray-700`}
       >
         {imgSrc &&
           (href ? (
@@ -76,7 +76,7 @@ const Card: React.FC<CardProps> = ({ title, description, imgSrc, href }) => {
           {href && (
             <Link
               href={href.startsWith('http') ? href : `/${locale}${href}`}
-              className="text-base font-medium leading-6 text-[#3e4647] hover:text-[#30C5D2] dark:text-[#30C5D2]"
+              className="text-base font-medium leading-6 text-gray-600 hover:text-primary-500 dark:text-primary-400 dark:hover:text-primary-300"
               aria-label={`${t('linkto')}${title}`}
             >
               {href.startsWith('http') ? `${t('visit')}` : `${t('read')}`} &rarr;

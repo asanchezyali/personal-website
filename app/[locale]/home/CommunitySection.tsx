@@ -7,9 +7,9 @@ import { Github, Calendar, Globe } from 'lucide-react'
 import DiscordIcon from '@/components/svgcomponents/discordicon'
 
 const TOPICS = [
-  { key: 'topic_1', emoji: '📐' },
-  { key: 'topic_2', emoji: '💻' },
-  { key: 'topic_3', emoji: '🤖' },
+  { key: 'topic_1' },
+  { key: 'topic_2' },
+  { key: 'topic_3' },
 ]
 
 const CommunitySection = () => {
@@ -39,7 +39,7 @@ const CommunitySection = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5, delay: 0.2 }}
-          className="rounded-2xl bg-white p-8 shadow-lg dark:bg-gray-800/50 md:p-12"
+          className="rounded-2xl border border-gray-200/60 bg-transparent p-8 dark:border-gray-800/60 md:p-12"
         >
           <h3 className="mb-6 text-center font-ubuntu text-xl font-semibold text-gray-900 dark:text-white">
             {t('community.topics_title')}
@@ -52,9 +52,8 @@ const CommunitySection = () => {
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.4, delay: 0.3 + index * 0.1 }}
-                className="flex flex-col items-center rounded-xl bg-gray-50 p-6 dark:bg-gray-700/50"
+                className="flex flex-col items-center rounded-xl border border-gray-200/40 p-6 dark:border-gray-800/40"
               >
-                <span className="mb-3 text-3xl">{topic.emoji}</span>
                 <span className="font-lato font-medium text-gray-900 dark:text-gray-100">
                   {t(`community.${topic.key}`)}
                 </span>
@@ -87,7 +86,7 @@ const CommunitySection = () => {
               href="https://github.com/asanchezyali"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-6 py-3 font-medium text-gray-900 transition-colors hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:hover:bg-gray-700"
+              className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-transparent px-6 py-3 font-medium text-gray-900 transition-colors hover:border-gray-400 dark:border-gray-600 dark:text-gray-100 dark:hover:border-gray-500"
             >
               <Github className="h-5 w-5" />
               {t('community.github_cta')}

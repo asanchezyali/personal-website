@@ -107,7 +107,7 @@ const HeroSection = () => {
                 scale: { duration: 0.4, delay: 0.8 + tag.delay },
                 y: { duration: 3, repeat: Infinity, ease: 'easeInOut', delay: tag.delay },
               }}
-              className="absolute z-20 hidden rounded-full border border-primary-200/50 bg-white/80 px-3 py-1 text-xs font-medium text-gray-700 shadow-sm backdrop-blur-sm dark:border-primary-700/50 dark:bg-gray-800/80 dark:text-gray-300 md:block"
+              className="absolute z-20 hidden rounded-full border border-primary-200/50 bg-transparent px-3 py-1 text-xs font-medium text-gray-700 backdrop-blur-sm dark:border-primary-700/50 dark:text-gray-300 md:block"
               style={{ top: tag.top, left: tag.left, right: tag.right, bottom: tag.bottom }}
             >
               {tag.label}

@@ -1,4 +1,4 @@
-import { Ubuntu, Lato, Overlock } from 'next/font/google'
+import { Ubuntu, Lato } from 'next/font/google'
 
 const ubuntu = Ubuntu({
   subsets: ['latin'],
@@ -12,10 +12,4 @@ const lato = Lato({
   weight: ['100', '300', '400', '700', '900'],
 })
 
-const overlock = Overlock({
-  subsets: ['latin'],
-  variable: '--font-overlock',
-  weight: ['400', '700', '900'],
-})
-
-export { ubuntu, lato, overlock }
+export { ubuntu, lato }

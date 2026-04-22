@@ -67,7 +67,7 @@ export default async function PostLayout({
                     <PostSeriesBox data={series} />
                   </div>
                 )}
-                <div className="prose max-w-none pb-8 pt-10 dark:prose-invert">{children}</div>
+                <div className="prose max-w-3xl pb-8 pt-10 dark:prose-invert">{children}</div>
               </div>
               <Share title={title} slug={slug} />
               <div className="pb-6 pt-6 text-center text-gray-700 dark:text-gray-300" id="comment">

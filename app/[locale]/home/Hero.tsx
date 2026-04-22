@@ -9,6 +9,7 @@ import { Github, Linkedin, Twitter, Instagram } from 'lucide-react'
 import DiscordIcon from '@/components/svgcomponents/discordicon'
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
+import { useReducedMotion } from '@/components/util/useReducedMotion'
 
 const imageList = Array.from(
   { length: 14 },
@@ -16,12 +17,9 @@ const imageList = Array.from(
 )
 
 const MobileImageGrid = () => {
+  const prefersReducedMotion = useReducedMotion()
   return (
     <div className="absolute inset-0 lg:hidden">
-      {/* Overlay gradient for better text contrast */}
-      {/* No overlay — let the background grid show through */}
-
-      {/* Grid container with smaller images */}
       <div className="absolute inset-0 grid grid-cols-3 gap-1.5 p-2 opacity-70">
         {imageList.slice(0, 9).map((image, index) => (
           <motion.div
@@ -31,24 +29,28 @@ const MobileImageGrid = () => {
               height: index % 3 === 1 ? '200px' : '180px',
               opacity: index === 4 ? 0.9 : 0.7,
             }}
-            initial={{ opacity: 0, scale: 0.9 }}
+            initial={prefersReducedMotion ? false : { opacity: 0, scale: 0.9 }}
             animate={{
               opacity: index === 4 ? 0.9 : 0.7,
               scale: 1,
-              y: [0, index % 2 === 0 ? -5 : 5, 0],
+              ...(prefersReducedMotion ? {} : { y: [0, index % 2 === 0 ? -5 : 5, 0] }),
             }}
-            transition={{
-              duration: 2,
-              delay: index * 0.1,
-              y: {
-                duration: 3,
-                repeat: Infinity,
-                repeatType: 'reverse',
-                ease: 'easeInOut',
-              },
-            }}
+            transition={
+              prefersReducedMotion
+                ? { duration: 0 }
+                : {
+                    duration: 2,
+                    delay: index * 0.05,
+                    y: {
+                      duration: 3,
+                      repeat: Infinity,
+                      repeatType: 'reverse',
+                      ease: 'easeInOut',
+                    },
+                  }
+            }
           >
-            <motion.div className="absolute inset-0" whileHover={{ scale: 1.05 }}>
+            <div className="absolute inset-0">
               <Image
                 src={image}
                 alt={`Ambient ${index + 1}`}
@@ -60,18 +62,17 @@ const MobileImageGrid = () => {
                 sizes="(max-width: 640px) 33vw, 120px"
                 priority={index === 4}
               />
-            </motion.div>
+            </div>
           </motion.div>
         ))}
       </div>
-
-      {/* No decorative overlay */}
     </div>
   )
 }
 
 const PhotoCloud = () => {
   const [mainIndex, setMainIndex] = useState(0)
+  const prefersReducedMotion = useReducedMotion()
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -84,19 +85,15 @@ const PhotoCloud = () => {
 
   return (
     <div className="absolute bottom-0 right-0 top-0 w-full overflow-hidden md:w-1/2">
-      {/* No overlay — let the background grid show through */}
-
-      {/* Desktop Photo Cloud */}
       <div className="hidden lg:block">
-        {/* Imagen Principal */}
         <div className="absolute inset-0 flex items-center justify-center">
           <AnimatePresence mode="wait">
             <motion.div
               key={mainIndex}
-              initial={{ opacity: 0, scale: 1.1, x: 50 }}
+              initial={prefersReducedMotion ? false : { opacity: 0, scale: 1.1, x: 50 }}
               animate={{ opacity: 1, scale: 1, x: 0 }}
-              exit={{ opacity: 0, scale: 0.9, x: -50 }}
-              transition={{ duration: 1.2 }}
+              exit={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, scale: 0.9, x: -50 }}
+              transition={{ duration: prefersReducedMotion ? 0.3 : 1.2 }}
               className="relative z-30 h-[400px] w-[300px]"
             >
               <div className="relative h-full w-full overflow-hidden rounded-2xl">
@@ -115,7 +112,6 @@ const PhotoCloud = () => {
             </motion.div>
           </AnimatePresence>
 
-          {/* Imágenes Flotantes */}
           <div className="absolute inset-0 flex items-center justify-center">
             {[
               { top: '15%', right: '15%', size: 'w-32 h-40' },
@@ -133,10 +129,17 @@ const PhotoCloud = () => {
                   initial={{ opacity: 0 }}
                   animate={{
                     opacity: 0.4,
-                    y: [0, 8, 0],
-                    transition: {
-                      y: { repeat: Infinity, duration: 3, ease: 'easeInOut', delay: index * 0.5 },
-                    },
+                    ...(prefersReducedMotion ? {} : { y: [0, 8, 0] }),
+                    transition: prefersReducedMotion
+                      ? { duration: 0.3 }
+                      : {
+                          y: {
+                            repeat: Infinity,
+                            duration: 3,
+                            ease: 'easeInOut',
+                            delay: index * 0.5,
+                          },
+                        },
                   }}
                 >
                   <Image
@@ -154,7 +157,6 @@ const PhotoCloud = () => {
         </div>
       </div>
 
-      {/* Mobile and Tablet Image Grid */}
       <MobileImageGrid />
     </div>
   )
@@ -163,53 +165,58 @@ const PhotoCloud = () => {
 const HeroSection = () => {
   const locale = useParams()?.locale as LocaleTypes
   const { t } = useTranslation(locale, 'home')
+  const prefersReducedMotion = useReducedMotion()
+
+  const animate = !prefersReducedMotion
 
   return (
-    <div className="relative flex min-h-[calc(100vh-84px)] items-center bg-transparent">
+    <div className="relative flex min-h-dvh items-center bg-transparent pt-6">
       <div className="flex h-full w-full items-center">
         <motion.div
           className="relative z-30 flex w-full max-w-[600px] flex-col justify-center px-4 md:px-0"
-          initial={{ opacity: 0, x: -20 }}
+          initial={animate ? { opacity: 0, x: -20 } : false}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
+          transition={{ duration: 0.6, delay: 0.1 }}
         >
           <motion.div
             className="mb-6 inline-flex items-center self-start rounded-full border border-primary-200 bg-primary-50 px-4 py-1.5 dark:border-primary-800 dark:bg-primary-900/20"
-            whileHover={{ scale: 1.02 }}
+            whileHover={animate ? { scale: 1.02 } : undefined}
           >
             <span className="mr-2 h-2 w-2 rounded-full bg-green-500" />
-            <span className="text-sm font-medium text-primary-700 dark:text-primary-300">{t('hero.roll')}</span>
+            <span className="text-sm font-medium text-primary-700 dark:text-primary-300">
+              {t('hero.roll')}
+            </span>
           </motion.div>
 
           <motion.h1
             className="mb-6 font-ubuntu text-3xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-4xl lg:text-5xl"
-            initial={{ opacity: 0, y: 20 }}
+            initial={animate ? { opacity: 0, y: 20 } : false}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.6 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
           >
             {t('hero.title_1')}
           </motion.h1>
 
           <motion.p
             className="mb-8 font-lato text-lg leading-relaxed text-gray-600 dark:text-gray-300 sm:text-xl"
-            initial={{ opacity: 0, y: 20 }}
+            initial={animate ? { opacity: 0, y: 20 } : false}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.8 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
           >
             {t('hero.title_2')}
           </motion.p>
 
           <motion.div
             className="mb-8 flex items-center gap-4"
-            initial={{ opacity: 0, y: 20 }}
+            initial={animate ? { opacity: 0, y: 20 } : false}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 1 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
           >
             <a
               href="https://cal.com/asanchezyali/30min"
               target="_blank"
               rel="noopener noreferrer"
-              className="group inline-flex items-center gap-2 rounded-xl bg-primary-500 px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-primary-600"
+              className="group inline-flex items-center gap-2 rounded-xl bg-primary-500 px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-primary-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
             >
               {t('hero.button_1')}
               <svg
@@ -229,7 +236,7 @@ const HeroSection = () => {
 
             <Link
               href={`/${locale}/collaborate`}
-              className="group inline-flex items-center gap-2 rounded-xl bg-gray-900 px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-gray-800 dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100"
+              className="group inline-flex items-center gap-2 rounded-xl bg-gray-900 px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-gray-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100"
             >
               {t('hero.button_2')}
               <svg
@@ -249,28 +256,38 @@ const HeroSection = () => {
           </motion.div>
 
           <motion.div
-            className="flex space-x-6"
-            initial={{ opacity: 0, y: 20 }}
+            className="flex space-x-4"
+            initial={animate ? { opacity: 0, y: 20 } : false}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 1.2 }}
+            transition={{ duration: 0.6, delay: 0.5 }}
           >
             {[
-              { icon: Github, href: 'https://github.com/asanchezyali' },
-              { icon: Linkedin, href: 'https://www.linkedin.com/in/asanchezyali/' },
-              { icon: Twitter, href: 'https://x.com/asanchezyali' },
-              { icon: Instagram, href: 'https://www.instagram.com/asanchezyali/' },
-              { icon: DiscordIcon, href: 'https://discord.com/invite/RTfBvmm5?event=1470225763084013599' },
-            ].map((social, index) => (
+              { icon: Github, href: 'https://github.com/asanchezyali', label: 'GitHub' },
+              {
+                icon: Linkedin,
+                href: 'https://www.linkedin.com/in/asanchezyali/',
+                label: 'LinkedIn',
+              },
+              { icon: Twitter, href: 'https://x.com/asanchezyali', label: 'X (Twitter)' },
+              {
+                icon: Instagram,
+                href: 'https://www.instagram.com/asanchezyali/',
+                label: 'Instagram',
+              },
+              {
+                icon: DiscordIcon,
+                href: 'https://discord.com/invite/RTfBvmm5?event=1470225763084013599',
+                label: 'Discord',
+              },
+            ].map((social) => (
               <motion.a
                 key={social.href}
-                whileHover={{ scale: 1.1, y: -2 }}
+                whileHover={animate ? { scale: 1.1, y: -2 } : undefined}
                 href={social.href}
-                className="text-gray-600 transition-colors hover:text-primary-600 dark:text-white/70 dark:hover:text-primary-400"
+                aria-label={social.label}
+                className="inline-flex h-10 w-10 items-center justify-center rounded-lg text-gray-600 transition-colors hover:text-primary-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 dark:text-white/70 dark:hover:text-primary-400"
                 target="_blank"
                 rel="noopener noreferrer"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 1.2 + index * 0.1 }}
               >
                 <social.icon className="h-5 w-5" />
               </motion.a>

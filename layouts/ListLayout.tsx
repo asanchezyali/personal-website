@@ -11,6 +11,7 @@ import { POSTS_PER_PAGE } from '@/data/postsPerPage'
 import { useTranslation } from 'app/[locale]/i18n/client'
 import type { LocaleTypes } from 'app/[locale]/i18n/settings'
 import BlogCard from './BlogCard'
+import { useReducedMotion } from '@/components/util/useReducedMotion'
 
 interface PaginationProps {
   totalPages: number
@@ -31,10 +32,15 @@ const container = {
   show: {
     opacity: 1,
     transition: {
-      delayChildren: 0.8,
-      staggerChildren: 0.1,
+      delayChildren: 0.2,
+      staggerChildren: 0.05,
     },
   },
+} as const
+
+const containerReduced = {
+  hidden: { opacity: 1 },
+  show: { opacity: 1 },
 } as const
 
 const item = {
@@ -54,6 +60,11 @@ const item = {
   },
 }
 
+const itemReduced = {
+  hidden: { opacity: 1, y: 0 },
+  show: { opacity: 1, y: 0 },
+}
+
 export default function ListLayoutWithTags({ params: { locale }, posts, title }: ListLayoutProps) {
   // Initialize state with empty values
   const [displayPosts, setDisplayPosts] = useState<Blog[]>([])
@@ -63,6 +74,7 @@ export default function ListLayoutWithTags({ params: { locale }, posts, title }:
   const { t } = useTranslation(locale, 'home')
   const selectedTag = useTagStore((state) => state.selectedTag)
   const setSelectedTag = useTagStore((state) => state.setSelectedTag)
+  const prefersReducedMotion = useReducedMotion()
 
   // Use useEffect to handle client-side operations
   useEffect(() => {
@@ -114,13 +126,13 @@ export default function ListLayoutWithTags({ params: { locale }, posts, title }:
   return (
     <div className="mx-auto max-w-screen-xl">
       <motion.div
-        variants={container}
+        variants={prefersReducedMotion ? containerReduced : container}
         initial="hidden"
         animate="show"
         className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
       >
         {displayPosts.map((post) => (
-          <motion.div key={post.slug} variants={item}>
+          <motion.div key={post.slug} variants={prefersReducedMotion ? itemReduced : item}>
             <BlogCard post={post} locale={locale} onTagClick={handleTagClick} />
           </motion.div>
         ))}
@@ -131,7 +143,7 @@ export default function ListLayoutWithTags({ params: { locale }, posts, title }:
           className="mt-12"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 1.2 }}
+          transition={{ delay: 0.3 }}
         >
           <Pagination
             totalPages={totalPages}

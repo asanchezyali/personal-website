@@ -22,24 +22,24 @@ export default function BlogCard({ post, locale, onTagClick }: BlogCardProps) {
   const postSlug = post.slug.split('/').slice(2).join('/')
 
   return (
-    <div className="group relative h-full overflow-hidden rounded-xl bg-white shadow-lg transition-all duration-300 hover:shadow-xl dark:bg-gray-800">
+    <div className="group relative h-full cursor-pointer rounded-xl border border-gray-200/60 bg-transparent transition-colors duration-300 hover:border-gray-300 dark:border-gray-800/60 dark:hover:border-gray-700">
       <Link href={`/${locale}/blog/${postSlug}`} className="block h-full">
-        <div className="relative h-48 w-full overflow-hidden">
+        <div className="relative h-48 w-full overflow-hidden rounded-t-xl">
           {post.headerImage ? (
             <img
               src={post.headerImage || '/placeholder.svg'}
               alt={post.title}
-              className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
+              className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
             />
           ) : (
-            <div className="h-full w-full bg-gray-200 dark:bg-gray-700" />
+            <div className="h-full w-full bg-gray-100 dark:bg-gray-800/50" />
           )}
         </div>
         <div className="p-4">
-          <div className="mb-2 text-xs text-gray-500 dark:text-gray-400">
+          <div className="mb-1 text-xs text-gray-400 dark:text-gray-500">
             <time dateTime={post.date}>{formatDate(post.date, locale)}</time>
           </div>
-          <h2 className="mb-2 line-clamp-2 text-lg font-bold text-gray-900 dark:text-white">
+          <h2 className="mb-2 line-clamp-2 text-lg font-bold leading-snug text-gray-900 dark:text-white">
             {post.title}
           </h2>
           {post.summary && (

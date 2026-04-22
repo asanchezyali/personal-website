@@ -19,21 +19,21 @@ const channels = [
     icon: Github,
     link: 'https://github.com/asanchezyali',
     brandClass:
-      'inline-flex w-full items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-900 transition-colors hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:hover:bg-gray-700',
+      'inline-flex w-full items-center justify-center gap-2 rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm font-medium text-gray-900 transition-colors hover:border-gray-400 dark:border-gray-600 dark:text-gray-100 dark:hover:border-gray-500',
   },
   {
     key: 'channel_3',
     icon: Linkedin,
     link: 'https://www.linkedin.com/in/asanchezyali/',
     brandClass:
-      'inline-flex w-full items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-900 transition-colors hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:hover:bg-gray-700',
+      'inline-flex w-full items-center justify-center gap-2 rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm font-medium text-gray-900 transition-colors hover:border-gray-400 dark:border-gray-600 dark:text-gray-100 dark:hover:border-gray-500',
   },
   {
     key: 'channel_4',
     icon: Calendar,
     link: 'https://cal.com/asanchezyali/30min',
     brandClass:
-      'inline-flex w-full items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-900 transition-colors hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:hover:bg-gray-700',
+      'inline-flex w-full items-center justify-center gap-2 rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm font-medium text-gray-900 transition-colors hover:border-gray-400 dark:border-gray-600 dark:text-gray-100 dark:hover:border-gray-500',
   },
 ]
 
@@ -68,7 +68,7 @@ const ConnectSection = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="flex flex-col items-center rounded-2xl bg-white p-8 shadow-lg dark:bg-gray-800/50"
+              className="flex flex-col items-center rounded-2xl border border-gray-200/60 bg-transparent p-8 dark:border-gray-800/60"
             >
               <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-primary-100 dark:bg-primary-900/20">
                 <Icon className="h-7 w-7 text-primary-600 dark:text-primary-400" />

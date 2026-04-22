@@ -51,7 +51,7 @@ const ProjectsSection = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="overflow-hidden rounded-2xl bg-white shadow-lg dark:bg-gray-800/50"
+              className="overflow-hidden rounded-2xl border border-gray-200/60 bg-transparent dark:border-gray-800/60"
             >
               {/* Project image */}
               <div className="relative h-64 w-full overflow-hidden">
@@ -63,7 +63,7 @@ const ProjectsSection = () => {
                   sizes="(max-width: 768px) 100vw, 50vw"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
-                <div className="absolute bottom-4 left-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/90 dark:bg-gray-900/90">
+                <div className="absolute bottom-4 left-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/80 backdrop-blur-sm dark:bg-gray-950/80">
                   <Icon className="h-5 w-5 text-primary-600 dark:text-primary-400" />
                 </div>
               </div>

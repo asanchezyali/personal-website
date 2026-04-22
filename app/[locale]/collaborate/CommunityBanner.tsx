@@ -17,7 +17,7 @@ const CommunityBanner = () => {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.5 }}
-      className="mt-16 rounded-2xl bg-white p-8 shadow-lg dark:bg-gray-800/50 md:p-12"
+      className="mt-16 rounded-2xl border border-gray-200/60 bg-transparent p-8 dark:border-gray-800/60 md:p-12"
     >
       <div className="flex flex-col items-center gap-6 md:flex-row md:items-center md:gap-8">
         {/* Avatar */}
@@ -53,7 +53,7 @@ const CommunityBanner = () => {
             href="https://github.com/asanchezyali"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-6 py-3 font-medium text-gray-900 transition-colors hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:hover:bg-gray-700"
+            className="inline-flex items-center justify-center gap-2 rounded-lg border border-gray-300 bg-transparent px-6 py-3 font-medium text-gray-900 transition-colors hover:border-gray-400 dark:border-gray-600 dark:text-gray-100 dark:hover:border-gray-500"
           >
             <Github className="h-5 w-5" />
             {t('community.github_cta')}

@@ -63,14 +63,14 @@ const TocBody = ({ toc }: TocBodyProps) => {
       />
       <motion.div
         key="content"
-        className="fixed inset-x-0 bottom-0 z-50 h-[50vh] w-full bg-white shadow-xl dark:bg-black md:inset-x-auto md:right-0 md:top-0 md:h-full md:w-[320px] md:border-l md:border-gray-200 dark:md:border-gray-800"
+        className="fixed inset-x-0 bottom-0 z-50 h-[50vh] w-full bg-white shadow-xl dark:bg-gray-950 md:inset-x-auto md:right-0 md:top-0 md:h-full md:w-[320px] md:border-l md:border-gray-200 dark:md:border-gray-800"
         initial={isMobile ? { y: '100%' } : { x: '100%' }}
         animate={isMobile ? { y: '0%' } : { x: '0%' }}
         exit={isMobile ? { y: '100%' } : { x: '100%' }}
         transition={{ type: 'spring', damping: 30, stiffness: 300 }}
       >
         <div className="flex h-full flex-col overflow-hidden rounded-t-2xl md:rounded-none">
-          <div className="sticky top-0 z-10 border-b border-gray-200 bg-white/95 px-4 py-3 backdrop-blur dark:border-gray-800 dark:bg-black/95">
+          <div className="sticky top-0 z-10 border-b border-gray-200 bg-white/95 px-4 py-3 backdrop-blur dark:border-gray-800 dark:bg-gray-950/95">
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
                 {t('sidetoc')}

@@ -78,7 +78,7 @@ export default async function PostLayout({
               </dl>
               <PageTitle>{title}</PageTitle>
             </header>
-            <div className="prose max-w-none dark:prose-invert">{children}</div>
+            <div className="prose max-w-3xl dark:prose-invert">{children}</div>
             <footer className="mt-8">
               <div className="mt-6 text-center text-gray-700 dark:text-gray-300" id="comment">
                 {siteMetadata.iswaline && <WalineComments />}

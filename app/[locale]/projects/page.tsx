@@ -27,11 +27,9 @@ export default async function Projects(props: ProjectsProps) {
   return (
     <>
       <ProjectHeader />
-      <div className="divide-y divide-gray-200 dark:divide-gray-700">
-        <div className="container flex justify-center">
-          <div className="flex w-full flex-wrap">
-            <Project />
-          </div>
+      <div className="container">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <Project />
         </div>
       </div>
     </>

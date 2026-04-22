@@ -19,18 +19,18 @@ const Header = () => {
 
   return (
     <header className="w-full py-6">
-      <div className="relative flex items-center justify-between">
-        <div className="w-32">
+      <div className="flex items-center justify-between">
+        <div className="flex-shrink-0">
           <Link
             href={`/${locale}/`}
             aria-label={siteMetadata.headerTitle}
-            className="font-ubuntu text-2xl font-bold text-gray-900 transition-colors hover:text-primary-600 dark:text-white dark:hover:text-primary-400"
+            className="font-ubuntu text-2xl font-bold text-gray-900 transition-colors hover:text-primary-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 dark:text-white dark:hover:text-primary-400"
           >
             Yali Dev
           </Link>
         </div>
-        <div className="absolute left-1/2 hidden -translate-x-1/2 transform rounded-lg bg-gray-100 px-4 py-2 shadow-md dark:bg-gray-800/50 md:block">
-          <nav className="flex items-center space-x-6">
+        <div className="hidden flex-1 justify-center md:flex">
+          <nav className="flex items-center space-x-6 rounded-lg border border-gray-200/60 bg-transparent px-4 py-2 dark:border-gray-800/60">
             {headerNavLinks.map((link) => {
               const isSelected =
                 link.href === '/' ? pathname === '/' : pathname.startsWith(link.href as string)
@@ -38,7 +38,7 @@ const Header = () => {
                 <Link
                   key={link.title}
                   href={`/${locale}${link.href}`}
-                  className={`text-sm font-medium transition-colors duration-200 ${
+                  className={`text-sm font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 ${
                     isSelected
                       ? 'text-primary-600 dark:text-primary-400'
                       : 'text-gray-600 hover:text-primary-600 dark:text-gray-300 dark:hover:text-primary-400'
@@ -51,7 +51,7 @@ const Header = () => {
           </nav>
         </div>
 
-        <div className="w-32">
+        <div className="flex-shrink-0">
           <div className="flex items-center justify-end md:space-x-5">
             <SearchButton />
             <div className="hidden md:flex md:items-center md:space-x-6">

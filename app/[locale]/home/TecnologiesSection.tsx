@@ -31,6 +31,7 @@ import SQLite from '@/components/theme/icons/SQLite'
 import Turso from '@/components/theme/icons/Turso'
 import TailwindCSS from '@/components/theme/icons/Tailwind'
 import { useState, useEffect } from 'react'
+import { useReducedMotion } from '@/components/util/useReducedMotion'
 
 const whiteIcons = ['Three.js', 'Express.js', 'Flask', 'Ollama']
 
@@ -68,19 +69,24 @@ const TechnologiesSection = () => {
   const locale = useParams()?.locale as LocaleTypes
   const { t } = useTranslation(locale, 'home')
   const [technologies, setTechnologies] = useState(TECHNOLOGIES)
-  const [isClient, setIsClient] = useState(false)
+  const prefersReducedMotion = useReducedMotion()
 
   useEffect(() => {
     const shuffled = [...TECHNOLOGIES].sort(() => Math.random() - 0.5)
     setTechnologies(shuffled)
-    setIsClient(true)
   }, [])
 
-  const InfiniteLoopSlider = ({ children, duration }) => {
+  const InfiniteLoopSlider = ({
+    children,
+    duration,
+  }: {
+    children: React.ReactNode[]
+    duration: number
+  }) => {
     return (
       <div className="relative flex w-fit">
         <motion.div
-          animate={{ x: [-children.length * 160, 0] }}
+          animate={prefersReducedMotion ? {} : { x: [-children.length * 160, 0] }}
           transition={{
             x: { duration: duration, repeat: Number.POSITIVE_INFINITY, ease: 'linear' },
           }}
@@ -93,7 +99,7 @@ const TechnologiesSection = () => {
     )
   }
 
-  const Slider = ({ items, speed = 200 }) => {
+  const Slider = ({ items, speed = 200 }: { items: typeof TECHNOLOGIES; speed?: number }) => {
     return (
       <div className="flex w-full overflow-hidden">
         <InfiniteLoopSlider duration={speed}>
@@ -102,7 +108,7 @@ const TechnologiesSection = () => {
               key={`${tech.name}-${index}`}
               className="flex flex-shrink-0 flex-col items-center justify-center gap-y-2"
             >
-              <motion.div
+              <div
                 className={`${
                   whiteIcons.includes(tech.name)
                     ? 'flex h-12 w-12 items-center justify-center rounded-full bg-primary-100 dark:bg-primary-800/20 md:h-16 md:w-16'
@@ -116,7 +122,7 @@ const TechnologiesSection = () => {
                       : 'h-12 w-12 md:h-16 md:w-16'
                   }`}
                 />
-              </motion.div>
+              </div>
               <span className="text-sm text-gray-700 dark:text-gray-300">{tech.name}</span>
             </div>
           ))}
@@ -128,10 +134,10 @@ const TechnologiesSection = () => {
   return (
     <section className="mx-auto py-20">
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={prefersReducedMotion ? false : { opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
-        transition={{ duration: 0.8 }}
+        transition={{ duration: 0.6 }}
         className="mb-16 text-center"
       >
         <h2 className="mb-6 font-ubuntu text-4xl font-bold text-gray-900 dark:text-gray-100 md:text-5xl">
@@ -142,8 +148,8 @@ const TechnologiesSection = () => {
         </p>
       </motion.div>
       <div className="relative w-full">
-        <div className="absolute inset-y-0 left-0 z-10 w-32 bg-gradient-to-r from-white to-transparent dark:from-black" />
-        <div className="absolute inset-y-0 right-0 z-10 w-32 bg-gradient-to-l from-white to-transparent dark:from-black" />
+        <div className="absolute inset-y-0 left-0 z-10 w-32 bg-gradient-to-r from-white to-transparent dark:from-gray-950" />
+        <div className="absolute inset-y-0 right-0 z-10 w-32 bg-gradient-to-l from-white to-transparent dark:from-gray-950" />
         <Slider items={technologies} />
       </div>
     </section>

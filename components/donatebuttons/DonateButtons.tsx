@@ -8,7 +8,7 @@ const DonateButtons = () => {
         href="https://ko-fi.com/asanchezyali"
         target="_blank"
         rel="noopener noreferrer"
-        className="flex h-8 items-center rounded-full bg-white px-4 text-sm font-medium text-gray-700 shadow hover:bg-blue-50 hover:text-blue-600 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700 dark:hover:text-blue-400"
+        className="flex h-8 items-center rounded-full border border-gray-200 bg-transparent px-4 text-sm font-medium text-gray-700 hover:border-blue-300 hover:text-blue-600 dark:border-gray-700 dark:text-gray-200 dark:hover:border-blue-600 dark:hover:text-blue-400"
       >
         <Coffee className="mr-2 h-4 w-4 text-blue-500" />
         Buy coffee
@@ -18,7 +18,7 @@ const DonateButtons = () => {
         href="https://www.paypal.com/paypalme/asanchezyali"
         target="_blank"
         rel="noopener noreferrer"
-        className="flex h-8 items-center rounded-full bg-white px-4 text-sm font-medium text-gray-700 shadow hover:bg-red-50 hover:text-red-600 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700 dark:hover:text-red-400"
+        className="flex h-8 items-center rounded-full border border-gray-200 bg-transparent px-4 text-sm font-medium text-gray-700 hover:border-red-300 hover:text-red-600 dark:border-gray-700 dark:text-gray-200 dark:hover:border-red-600 dark:hover:text-red-400"
       >
         <Heart className="mr-2 h-4 w-4 text-red-500" />
         Tip me

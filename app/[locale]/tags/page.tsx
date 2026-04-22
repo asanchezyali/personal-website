@@ -47,13 +47,13 @@ function TagCard({ tag, count, locale }: { tag: string; count: number; locale: s
     <motion.div variants={item} className="group">
       <button
         onClick={handleClick}
-        className={`relative block w-full overflow-hidden rounded-xl ${
+        className={`relative block w-full cursor-pointer overflow-hidden rounded-xl border ${
           isSelected
-            ? 'bg-primary-500/20 dark:bg-primary-500/30'
-            : 'bg-white/80 dark:bg-gray-800/40'
-        } p-4 shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl`}
+            ? 'border-primary-500 bg-primary-500/5 dark:bg-primary-500/10'
+            : 'border-gray-200/60 bg-transparent hover:border-gray-300 dark:border-gray-800/60 dark:hover:border-gray-700'
+        } p-4 transition-all duration-300 hover:scale-[1.02] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500`}
       >
-        <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 via-transparent to-primary-500/10 opacity-0 transition-opacity group-hover:opacity-100 dark:from-cyan-500/5 dark:via-transparent dark:to-primary-500/5" />
+        {/* subtle hover highlight */}
         <div className="relative flex items-center justify-between">
           <span
             className={`text-lg font-medium ${

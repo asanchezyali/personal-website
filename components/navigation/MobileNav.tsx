@@ -5,7 +5,7 @@ import Image from 'next/image'
 import Link from '../mdxcomponents/Link'
 import siteMetadata from '@/data/siteMetadata'
 import headerNavLinks from '@/data/headerNavLinks'
-import { useParams } from 'next/navigation'
+import { useParams, usePathname } from 'next/navigation'
 import { useTranslation } from 'app/[locale]/i18n/client'
 import type { LocaleTypes } from 'app/[locale]/i18n/settings'
 import { motion } from 'framer-motion'
@@ -46,6 +46,7 @@ const navIcons = {
 const MobileNav = () => {
   const locale = useParams()?.locale as LocaleTypes
   const { t } = useTranslation(locale, 'common')
+  const pathname = usePathname()
   const [authors, setAuthors] = useState<Author[]>([])
   const [mainAuthor, setMainAuthor] = useState<Author[]>([])
   const [navShow, setNavShow] = useState<boolean>(false)
@@ -150,11 +151,19 @@ const MobileNav = () => {
 
             {headerNavLinks.map((link) => {
               const IconComponent = navIcons[link.title.toLowerCase() as keyof typeof navIcons]
+              const isActive =
+                link.href === '/'
+                  ? pathname === `/${locale}` || pathname === `/${locale}/`
+                  : pathname.startsWith(`/${locale}${link.href}`)
               return (
                 <motion.div key={link.title} whileHover={{ x: 4 }}>
                   <Link
                     href={`/${locale}${link.href}`}
-                    className="flex items-center space-x-4 rounded-lg px-4 py-3 text-gray-700 transition-colors hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-800"
+                    className={`flex items-center space-x-4 rounded-lg px-4 py-3 transition-colors ${
+                      isActive
+                        ? 'bg-primary-50 text-primary-600 dark:bg-primary-900/20 dark:text-primary-400'
+                        : 'text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-800'
+                    }`}
                     onClick={onToggleNav}
                   >
                     {IconComponent && <IconComponent className="h-5 w-5" />}
