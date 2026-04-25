@@ -10,7 +10,6 @@ import siteMetadata from '@/lib/siteMetadata'
 interface AboutPageProps {
   author: Authors
   locale: LocaleTypes
-  children: React.ReactNode
 }
 
 const timeline = [
@@ -57,7 +56,7 @@ const elsewhere = [
   { icon: dcIcon, href: siteMetadata.discord, title: 'Topofilosofía', desc: 'The study community. Topology, CS, slow conversation.', hl: 'Join the Discord →' },
 ]
 
-export default function AboutPage({ author, locale, children }: AboutPageProps) {
+export default function AboutPage({ author, locale }: AboutPageProps) {
   return (
     <>
       {/* Hero */}
@@ -66,7 +65,7 @@ export default function AboutPage({ author, locale, children }: AboutPageProps) 
           <div>
             <span className="eyebrow">About</span>
             <h1>I build software for <span className="accent">ideas worth thinking hard about</span>.</h1>
-            <div className="lead">{children}</div>
+            <p className="lead">I&apos;m Alejandro — a software developer, mathematician, and AI specialist based in Medellín, Colombia. I work on the intersection of machine learning, Web3, and everyday web software.</p>
             <div className="quick">
               <span>◉ Medellín, Colombia</span>
               <span>◎ Available for projects</span>
