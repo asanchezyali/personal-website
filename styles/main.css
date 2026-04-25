@@ -212,7 +212,7 @@ html.dark .site-footer .f-tag { color: var(--g-600); }
   background: var(--bg); padding: 4px 4px 4px 16px;
   transition: border-color .2s var(--ease);
 }
-html.dark .site-footer .news-form { border-color: var(--g-800); background: color-mix(in oklab, var(--bg) 80%, var(--g-900)); }
+html.dark .site-footer .news-form { border-color: var(--g-200); background: transparent; }
 .site-footer .news-form:focus-within { border-color: var(--p-500); }
 .site-footer .news-ic { color: var(--g-500); display: flex; }
 .site-footer .news-form input {
@@ -220,7 +220,7 @@ html.dark .site-footer .news-form { border-color: var(--g-800); background: colo
   padding: 10px 12px; font: inherit; font-size: 14px; color: var(--fg);
   min-width: 0;
 }
-.site-footer .news-form input::placeholder { color: var(--g-400); }
+.site-footer .news-form input::placeholder { color: var(--g-500); }
 .site-footer .news-form button {
   border: 0; padding: 10px 18px; border-radius: 999px;
   background: var(--fg); color: var(--bg); font: inherit; font-size: 13px; font-weight: 600;
@@ -244,8 +244,7 @@ html.dark .site-footer .news-form { border-color: var(--g-800); background: colo
   padding-top: 32px;
   font-size: 13px; color: var(--g-500);
 }
-.site-footer .f-copy strong { color: var(--g-700); font-weight: 600; }
-html.dark .site-footer .f-copy strong { color: var(--g-200); }
+.site-footer .f-copy strong { color: var(--fg); font-weight: 600; }
 .site-footer .f-copy .pin { color: var(--p-500); margin: 0 2px; }
 .site-footer .socials { display: flex; gap: 6px; }
 
