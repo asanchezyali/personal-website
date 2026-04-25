@@ -128,31 +128,27 @@
   .community-card {
     max-width: 960px; margin: 0 auto;
     border: 1px solid var(--g-200); border-radius: 24px; padding: 48px;
-    background:
-      radial-gradient(600px 300px at top right, color-mix(in oklab, var(--p-200) 30%, transparent), transparent),
-      radial-gradient(500px 250px at bottom left, color-mix(in oklab, var(--s-400) 20%, transparent), transparent),
-      var(--bg);
+    background: var(--bg);
   }
   html.dark .community-card {
-    border-color: var(--g-800);
-    background:
-      radial-gradient(600px 300px at top right, color-mix(in oklab, var(--p-800) 40%, transparent), transparent),
-      radial-gradient(500px 250px at bottom left, color-mix(in oklab, var(--s-500) 20%, transparent), transparent),
-      var(--g-900);
+    border-color: var(--g-200);
+    background: var(--g-100);
   }
   .topics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 24px 0; }
   .topic {
     padding: 20px; border-radius: 14px;
-    border: 1px solid var(--g-200); background: color-mix(in oklab, var(--bg) 70%, transparent);
+    border: 1px solid var(--g-200);
+    background: var(--bg);
     display: flex; flex-direction: column; gap: 8px; align-items: center; text-align: center;
   }
-  html.dark .topic { border-color: var(--g-800); background: color-mix(in oklab, var(--g-900) 70%, transparent); }
+  html.dark .topic { border-color: var(--g-200); background: var(--g-100); }
   .topic .emoji { font-size: 28px; }
-  .topic .t { font-weight: 600; font-family: var(--f-ubuntu); }
-  .meta-rows { display: flex; flex-direction: column; gap: 10px; align-items: center; color: var(--g-600); font-size: 15px; margin: 24px 0; }
+  .topic .t { font-weight: 600; font-family: var(--f-ubuntu); color: var(--fg); }
+  .meta-rows { display: flex; flex-direction: column; gap: 10px; align-items: center; color: var(--g-500); font-size: 15px; margin: 24px 0; }
   html.dark .meta-rows { color: var(--g-600); }
   .meta-rows .mr { display: inline-flex; gap: 10px; align-items: center; }
-  .meta-rows svg { color: var(--p-500); }
+  .meta-rows svg { color: var(--s-500); }
+  html.dark .meta-rows svg { color: var(--s-400); }
   .cta-row { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 16px; }
   .btn.discord { background: #5865F2; color: #fff; }
   .btn.discord:hover { background: #4752C4; }
