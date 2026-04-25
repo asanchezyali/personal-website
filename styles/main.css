@@ -133,11 +133,9 @@ html.dark .btn.ghost { border-color: var(--g-300); color: var(--g-600); }
     radial-gradient(ellipse 80% 60% at 15% 0%, color-mix(in oklab, var(--p-100) 70%, transparent), transparent 60%),
     radial-gradient(ellipse 60% 50% at 95% 20%, color-mix(in oklab, var(--s-100) 60%, transparent), transparent 60%),
     var(--bg);
-  border-top: 1px solid var(--g-200);
   overflow: hidden;
 }
 html.dark .site-footer {
-  border-top-color: var(--g-800);
   background:
     radial-gradient(ellipse 80% 60% at 15% 0%, color-mix(in oklab, var(--p-900) 40%, transparent), transparent 60%),
     radial-gradient(ellipse 60% 50% at 95% 20%, color-mix(in oklab, var(--s-900) 30%, transparent), transparent 60%),
@@ -147,10 +145,9 @@ html.dark .site-footer {
 /* CTA block */
 .site-footer .f-cta {
   display: grid; grid-template-columns: 1.2fr 1fr; gap: 48px; align-items: end;
-  padding-bottom: 64px; border-bottom: 1px solid var(--g-200);
+  padding-bottom: 64px;
   margin-bottom: 56px;
 }
-html.dark .site-footer .f-cta { border-bottom-color: var(--g-800); }
 .site-footer .f-cta .eyebrow {
   display: inline-block; font-family: var(--f-ubuntu); text-transform: uppercase;
   letter-spacing: 0.18em; font-size: 11px; color: var(--s-500); font-weight: 500;
@@ -244,10 +241,9 @@ html.dark .site-footer .news-form { border-color: var(--g-800); background: colo
 .site-footer .f-bottom {
   display: flex; justify-content: space-between; align-items: center;
   gap: 24px; flex-wrap: wrap;
-  padding-top: 32px; border-top: 1px solid var(--g-200);
+  padding-top: 32px;
   font-size: 13px; color: var(--g-500);
 }
-html.dark .site-footer .f-bottom { border-top-color: var(--g-800); }
 .site-footer .f-copy strong { color: var(--g-700); font-weight: 600; }
 html.dark .site-footer .f-copy strong { color: var(--g-200); }
 .site-footer .f-copy .pin { color: var(--p-500); margin: 0 2px; }
