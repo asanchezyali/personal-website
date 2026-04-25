@@ -560,12 +560,12 @@
   }
 
 /* ===== collaborate.html ===== */
-.col-hero { padding: 64px 0 48px; text-align: center; }
+.col-hero { padding: 64px 0 48px; }
   .col-hero h1 { font-size: clamp(40px, 5.6vw, 64px); line-height: 1.05; margin: 16px 0 16px; }
   .col-hero h1 .accent { background: linear-gradient(90deg, var(--p-500), var(--s-500)); -webkit-background-clip: text; background-clip: text; color: transparent; }
-  .col-hero p { font-size: 18px; color: var(--g-600); max-width: 640px; margin: 0 auto 24px; }
+  .col-hero p { font-size: 18px; color: var(--g-600); max-width: 640px; margin: 0 0 24px; }
   html.dark .col-hero p { color: var(--g-600); }
-  .col-hero .ctas { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+  .col-hero .ctas { display: flex; gap: 10px; flex-wrap: wrap; }
 
   /* Services — 3 offers */
   .offers { padding: 48px 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
