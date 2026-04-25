@@ -1,4 +1,6 @@
 import type React from 'react'
+import 'styles/main.css'
+import 'styles/pages.css'
 import 'styles/tailwind.css'
 import { ubuntu, lato } from './fonts'
 import { Analytics, type AnalyticsConfig } from 'pliny/analytics'
@@ -7,6 +9,9 @@ import { maintitle, maindescription } from '@/lib/localeMetadata'
 import type { Metadata } from 'next'
 import { dir } from 'i18next'
 import { type LocaleTypes, locales } from '@/i18n/settings'
+import { ThemeProvider } from '@/shared/hooks/useTheme'
+import Header from '@/layout/Header'
+import Footer from '@/layout/Footer'
 
 export async function generateStaticParams() {
   return locales.map((locale) => ({ locale }))
@@ -42,7 +47,11 @@ export default async function RootLayout(props: LayoutProps) {
       </head>
       <body>
         <Analytics analyticsConfig={siteMetadata.analytics as AnalyticsConfig} />
-        <main className="wrap">{props.children}</main>
+        <ThemeProvider>
+          <Header />
+          <main>{props.children}</main>
+          <Footer />
+        </ThemeProvider>
       </body>
     </html>
   )
