@@ -232,7 +232,7 @@
   .featured .meta-row { display: flex; gap: 12px; align-items: center; font-family: var(--f-ubuntu); font-size: 12px; color: var(--s-500); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 16px; }
   html.dark .featured .meta-row { color: var(--s-400); }
   .featured h2 { font-size: clamp(28px, 3.2vw, 42px); line-height: 1.1; margin-bottom: 16px; }
-  .featured p.excerpt { font-size: 17px; color: var(--g-600); line-height: 1.65; margin: 0 0 24px; }
+  .featured p.excerpt { font-size: 17px; color: var(--g-600); line-height: 1.65; margin: 0 0 24px; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
   html.dark .featured p.excerpt { color: var(--g-600); }
   .featured .author { display: flex; gap: 10px; align-items: center; font-size: 14px; color: var(--g-600); }
   html.dark .featured .author { color: var(--g-600); }
@@ -252,11 +252,11 @@
     padding: 20px 8px; border-radius: 12px;
     transition: background .2s var(--ease);
   }
-  .post-row:hover { background: color-mix(in oklab, var(--p-50) 60%, transparent); }
-  html.dark .post-row:hover { background: color-mix(in oklab, var(--p-900) 25%, transparent); }
+  .post-row:hover { background: var(--g-100); }
+  html.dark .post-row:hover { background: var(--g-100); }
   .post-row .date { font-family: var(--f-ubuntu); font-size: 13px; color: var(--g-500); letter-spacing: 0.05em; text-transform: uppercase; }
   .post-row h3 { font-size: 19px; font-weight: 600; line-height: 1.35; margin: 0 0 6px; }
-  .post-row .snip { font-size: 14px; color: var(--g-600); line-height: 1.55; }
+  .post-row .snip { font-size: 14px; color: var(--g-600); line-height: 1.55; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
   html.dark .post-row .snip { color: var(--g-500); }
   .post-row .tags-inline { display: flex; gap: 6px; flex-wrap: wrap; }
   .post-row .tags-inline .chip { font-size: 11px; color: var(--g-600); background: var(--g-100); padding: 3px 10px; border-radius: 999px; }
@@ -266,8 +266,7 @@
     border: 1px solid var(--g-200); color: var(--g-500);
     transition: all .2s var(--ease);
   }
-  html.dark .post-row .arrow { border-color: var(--g-800); }
-  .post-row:hover .arrow { border-color: var(--p-500); background: var(--p-500); color: #fff; transform: translate(2px, -2px); }
+  .post-row:hover .arrow { border-color: var(--g-300); color: var(--fg); transform: translateX(2px); }
 
   @media (max-width: 900px) {
     .featured { grid-template-columns: 1fr; }
