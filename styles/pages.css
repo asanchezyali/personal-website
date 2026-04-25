@@ -464,7 +464,7 @@
   html.dark .sec-head p { color: var(--g-600); }
 
   .tline { max-width: 840px; margin: 0 auto; padding: 0 24px; position: relative; }
-  .tline::before { content: ''; position: absolute; left: 140px; top: 8px; bottom: 8px; width: 1px; background: var(--g-200); }
+  .tline::before { content: ''; position: absolute; left: 141px; top: 8px; bottom: 8px; width: 1px; background: var(--g-200); }
   html.dark .tline::before { background: var(--g-200); }
   .tline .row { display: grid; grid-template-columns: 120px 1fr; gap: 40px; padding: 24px 0; position: relative; }
   .tline .when { font-family: var(--f-ubuntu); font-size: 14px; font-weight: 500; color: var(--g-500); padding-top: 2px; text-align: right; }
