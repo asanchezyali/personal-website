@@ -537,13 +537,13 @@
   .el-card { display: block; padding: 22px; border: 1px solid var(--g-200); border-radius: 16px; transition: all .2s var(--ease); }
   html.dark .el-card { border-color: var(--g-200); }
   .el-card:hover { border-color: var(--p-500); transform: translateY(-2px); }
-  .el-card .ic { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 10px; background: var(--p-50); color: var(--p-600); margin-bottom: 14px; }
-  html.dark .el-card .ic { background: color-mix(in oklab, var(--p-900) 40%, transparent); color: var(--p-300); }
+  .el-card .ic { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 10px; background: var(--g-100); color: var(--fg); margin-bottom: 14px; }
+  html.dark .el-card .ic { background: var(--g-200); color: var(--fg); }
   .el-card h4 { font-size: 15px; margin-bottom: 4px; letter-spacing: -0.015em; }
   .el-card p { font-size: 13px; color: var(--g-600); margin: 0; line-height: 1.5; }
   html.dark .el-card p { color: var(--g-500); }
-  .el-card .hl { font-size: 11px; color: var(--p-600); font-family: var(--f-ubuntu); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 10px; display: inline-flex; align-items: center; gap: 4px; }
-  html.dark .el-card .hl { color: var(--p-400); }
+  .el-card .hl { font-size: 11px; color: var(--s-500); font-family: var(--f-ubuntu); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 10px; display: inline-flex; align-items: center; gap: 4px; }
+  html.dark .el-card .hl { color: var(--s-400); }
   @media (max-width: 900px) { .el-grid { grid-template-columns: repeat(2, 1fr); } }
 
   /* ---- CTA ---- */
