@@ -1,0 +1,28 @@
+<mxfile host="app.diagrams.net" modified="2023-04-08T13:27:11.215Z" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36" etag="2PyMAwPRM0eQrTpGKhfd" version="21.1.1" type="device">
+  <diagram id="I6mTqNFxRkKGehe-mBBv" name="Page-1">
+    <mxGraphModel dx="2074" dy="799" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="1" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="tZ6kM5p4ubWwltsxfKJq-12" value="" style="rounded=1;whiteSpace=wrap;html=1;sketch=1;fillStyle=solid;fontFamily=Times New Roman;fontSize=15;" parent="1" vertex="1">
+          <mxGeometry x="55" y="115" width="650" height="270" as="geometry" />
+        </mxCell>
+        <mxCell id="tZ6kM5p4ubWwltsxfKJq-9" style="edgeStyle=orthogonalEdgeStyle;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontFamily=Courier New;strokeColor=#660033;curved=1;dashed=1;" parent="1" source="tZ6kM5p4ubWwltsxfKJq-1" target="tZ6kM5p4ubWwltsxfKJq-8" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="tZ6kM5p4ubWwltsxfKJq-1" value="&lt;font style=&quot;font-size: 13px;&quot; face=&quot;Courier New&quot;&gt;Blockchain State `\sigma_t`&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillStyle=solid;fillColor=#d5e8d4;strokeColor=#82b366;sketch=1;" parent="1" vertex="1">
+          <mxGeometry x="160" y="220" width="100" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="tZ6kM5p4ubWwltsxfKJq-8" value="&lt;font style=&quot;font-size: 13px;&quot; face=&quot;Courier New&quot;&gt;Blockchain State `\sigma_{t+1}`&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillStyle=solid;fillColor=#d5e8d4;strokeColor=#82b366;sketch=1;" parent="1" vertex="1">
+          <mxGeometry x="480" y="220" width="100" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="tZ6kM5p4ubWwltsxfKJq-10" value="Transaction" style="shape=step;perimeter=stepPerimeter;whiteSpace=wrap;html=1;fixedSize=1;sketch=1;fillStyle=solid;fontFamily=Courier New;fillColor=#f8cecc;strokeColor=#b85450;" parent="1" vertex="1">
+          <mxGeometry x="310" y="160" width="140" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="tZ6kM5p4ubWwltsxfKJq-11" value="&lt;font style=&quot;font-size: 15px;&quot; face=&quot;Times New Roman&quot;&gt;Figura 1. Una Blockchain se puede entender como una maquina de estados basada en transacciones&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;sketch=1;fillStyle=solid;fontFamily=Courier New;fontSize=13;" parent="1" vertex="1">
+          <mxGeometry x="190" y="320" width="380" height="30" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

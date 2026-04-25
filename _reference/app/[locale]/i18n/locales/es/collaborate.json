@@ -1,0 +1,97 @@
+{
+  "hero": {
+    "title": "Colaborar",
+    "description": "Soy un desarrollador de software con formación matemática, apasionado por la IA, el código abierto y el intercambio de conocimiento. Construyamos algo juntos."
+  },
+  "journey": {
+    "title": "Trayectoria Profesional",
+    "description": "Más de una década de experiencia entre la academia, startups y equipos de producto — desde enseñar matemáticas hasta lanzar productos impulsados por IA.",
+    "resume_cta": "Ver Currículum Completo",
+    "milestones": [
+      {
+        "year": "2025 – Presente",
+        "role": "Especialista en IA",
+        "company": "Lapzo",
+        "description": "Construyendo sistemas de aprendizaje inteligentes impulsados por LLMs, pipelines RAG y flujos de trabajo agénticos."
+      },
+      {
+        "year": "2024 – Presente",
+        "role": "Consultor Freelance",
+        "company": "Independiente",
+        "description": "Consultoría en IA y desarrollo full-stack para startups — desde agentes conversacionales hasta plataformas de generación de imágenes."
+      },
+      {
+        "year": "2021 – 2024",
+        "role": "Desarrollador Full Stack",
+        "company": "Monadical",
+        "description": "Desarrollé sistemas de avatares IA, pipelines de video en tiempo real y herramientas open-source con Python, React y Three.js."
+      },
+      {
+        "year": "2018 – 2020",
+        "role": "Desarrollador Full Stack",
+        "company": "BCFort",
+        "description": "Construí plataformas basadas en blockchain y aplicaciones web escalables usando React, NestJS e infraestructura en la nube."
+      },
+      {
+        "year": "2010 – 2021",
+        "role": "Profesor",
+        "company": "Universidad de Antioquia",
+        "description": "Enseñé matemáticas, álgebra lineal y cálculo. Mentoría a estudiantes en modelado matemático y pensamiento computacional."
+      }
+    ]
+  },
+  "projects": {
+    "title": "Proyectos Destacados",
+    "description": "Una selección de proyectos que he construido o liderado — abarcando IA, desarrollo full-stack y automatización de flujos de trabajo.",
+    "project_1": {
+      "title": "Morpheus",
+      "description": "Plataforma de generación de imágenes con IA que permite crear imágenes personalizadas a partir de prompts de texto y fotos de referencia.",
+      "technologies": ["Python", "FastAPI", "React", "Stable Diffusion"]
+    },
+    "project_2": {
+      "title": "Digital Human / Zippy",
+      "description": "Avatares 3D impulsados por IA con habla en tiempo real, animación facial y capacidades conversacionales.",
+      "technologies": ["OpenAI GPT", "Whisper", "ElevenLabs", "Three.js"]
+    },
+    "project_3": {
+      "title": "CREARIA Agent",
+      "description": "Agente de servicio al cliente basado en WhatsApp usando RAG y orquestación de herramientas para soporte automatizado.",
+      "technologies": ["RAG", "MCP", "LangChain", "WhatsApp API"]
+    },
+    "project_4": {
+      "title": "ROCKET CODE",
+      "description": "Plataforma de automatización de flujos de trabajo basada en monorepo para equipos de desarrollo con bibliotecas de componentes compartidos.",
+      "technologies": ["NX Monorepo", "React", "NestJS", "PostgreSQL"]
+    }
+  },
+  "community": {
+    "title": "Comunidad de Estudio Gratuita",
+    "description": "Cada miércoles a las 8:00 PM (Colombia, UTC-5), organizo un grupo de estudio gratuito sobre matemáticas, ingeniería de software e IA. Sesiones en español — todos son bienvenidos.",
+    "discord_cta": "Unirse a Discord",
+    "github_cta": "Seguir en GitHub"
+  },
+  "connect": {
+    "title": "Conectemos",
+    "description": "Ya sea que quieras colaborar en un proyecto, unirte a la comunidad de estudio o simplemente saludar — aquí puedes encontrarme.",
+    "channel_1": {
+      "name": "Discord",
+      "description": "Únete a la comunidad de estudio y las sesiones semanales.",
+      "cta": "Unirse al Servidor"
+    },
+    "channel_2": {
+      "name": "GitHub",
+      "description": "Explora mis proyectos de código abierto y contribuciones.",
+      "cta": "Ver Perfil"
+    },
+    "channel_3": {
+      "name": "LinkedIn",
+      "description": "Conéctate profesionalmente y conoce mi trayectoria.",
+      "cta": "Conectar"
+    },
+    "channel_4": {
+      "name": "Agendar una Charla",
+      "description": "Reserva una llamada de 30 minutos para discutir ideas o proyectos.",
+      "cta": "Reservar Llamada"
+    }
+  }
+}

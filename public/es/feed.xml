@@ -7,9 +7,19 @@
       <language>es</language>
       <managingEditor>alejandro@piagents.dev (Yali Dev)</managingEditor>
       <webMaster>alejandro@piagents.dev (Yali Dev)</webMaster>
-      <lastBuildDate>Wed, 06 Nov 2024 05:00:00 GMT</lastBuildDate>
+      <lastBuildDate>Mon, 23 Feb 2026 05:00:00 GMT</lastBuildDate>
       <atom:link href="https://asanchezyali.com/es/feed.xml" rel="self" type="application/rss+xml"/>
       
+  <item>
+    <guid>https://asanchezyali.com/es/blog/distributed-systems/20260223DistributedCache</guid>
+    <title>Cache distribuido con Python: arquitecturas, estrategias y patrones modernos</title>
+    <link>https://asanchezyali.com/es/blog/distributed-systems/20260223DistributedCache</link>
+    <description>Exploramos en profundidad el cache distribuido con Python: desde fundamentos y arquitecturas (local, centralizado, híbrido) hasta estrategias de invalidación, políticas de desalojo, consistent hashing, tolerancia a fallos y observabilidad. Con ejemplos prácticos usando redis-py, cachetools y asyncio.</description>
+    <pubDate>Mon, 23 Feb 2026 05:00:00 GMT</pubDate>
+    <author>alejandro@piagents.dev (Yali Dev)</author>
+    <category>python</category><category>cache-distribuido</category><category>redis</category><category>sistemas-distribuidos</category><category>backend</category>
+  </item>
+
   <item>
     <guid>https://asanchezyali.com/es/blog/blockchain/20241106Blockchain</guid>
     <title>Criptografía: El pilar fundamental del Blockchain</title>

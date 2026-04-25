@@ -1,0 +1,47 @@
+{
+  "title": "Are we your agency?",
+  "closeButton": "Close form",
+  "description": "To ensure we can offer you the best service, please complete this brief form:",
+  "formTitle": "Contact Form",
+  "companyName": {
+    "label": "What is your company name?",
+    "placeholder": "Ex: TechSolutions Inc",
+    "error": "Please enter your company name"
+  },
+  "email": {
+    "label": "What is your contact email?",
+    "placeholder": "you@email.com",
+    "error": "Please enter a valid email"
+  },
+  "solutions": {
+    "label": "What technology solutions interest you?",
+    "options": {
+      "mobileDev": "Mobile Development",
+      "desktopDev": "Web Development",
+      "ai": "Artificial Intelligence",
+      "blockchain": "Blockchain",
+      "cloudDevops": "Cloud & DevOps",
+      "other": "Other"
+    },
+    "error": "Select at least one option"
+  },
+  "urgency": {
+    "label": "What is your urgency level?",
+    "placeholder": "Select an option",
+    "options": {
+      "immediate": "Immediate (1-2 weeks)",
+      "shortTerm": "Short term (1-2 months)",
+      "mediumTerm": "Medium term (3-6 months)",
+      "exploring": "Just exploring options"
+    },
+    "error": "Please select urgency level"
+  },
+  "message": {
+    "label": "Anything else you'd like to tell us? (optional)",
+    "placeholder": "Tell us more about your project or specific needs..."
+  },
+  "submit": {
+    "default": "Let's start your project!",
+    "sending": "Sending..."
+  }
+}

@@ -1,0 +1,19 @@
+@import './main.css';
+@import './pages.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* MDX utilities */
+.task-list-item::before { @apply hidden; }
+.task-list-item { @apply list-none; }
+.data-footnote-backref { @apply no-underline; }
+.csl-entry { @apply my-5; }
+.content-header-link { opacity: 0; margin-left: -24px; padding-right: 4px; }
+.content-header:hover .content-header-link, .content-header-link:hover { opacity: 1; }
+.linkicon { display: inline-block; vertical-align: middle; }
+
+input:-webkit-autofill, input:-webkit-autofill:focus {
+  transition: background-color 600000s 0s, color 600000s 0s;
+}
