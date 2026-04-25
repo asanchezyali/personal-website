@@ -79,9 +79,9 @@ html.dark .site-header { border-bottom-color: color-mix(in oklab, var(--g-200) 2
   transition: color .2s var(--ease), background .2s var(--ease);
 }
 html.dark .nav a { color: var(--g-600); }
-.nav a:hover { color: var(--p-500); }
-.nav a[aria-current="page"] { color: var(--p-500); background: var(--p-50); }
-html.dark .nav a[aria-current="page"] { background: color-mix(in oklab, var(--p-900) 40%, transparent); }
+.nav a:hover { color: var(--fg); }
+.nav a[aria-current="page"] { color: var(--fg); font-weight: 600; }
+html.dark .nav a[aria-current="page"] { color: var(--fg); }
 
 .header-tools { display: flex; gap: 6px; align-items: center; }
 .icon-btn {
