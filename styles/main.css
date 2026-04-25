@@ -1,31 +1,31 @@
-/* Shared styles — matching Yali Dev Tailwind tokens exactly.
-   primary = sky palette (50–900), secondary = fuchsia,
+/* Shared styles — Ink & Paper editorial palette.
+   primary = ink blue-black, accent = editorial red,
    fonts: Ubuntu (headings) + Lato (body), class-based dark mode. */
 
 @import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;500;700&family=Lato:wght@100;300;400;700;900&display=swap');
 
 :root {
-  /* primary — deep olive */
-  --p-50:#f5f4ec; --p-100:#e9e7d3; --p-200:#d3cfa6; --p-300:#b5b079;
-  --p-400:#8d8a4f; --p-500:#6b7339; --p-600:#556B2F; --p-700:#3D4F1F;
-  --p-800:#2c3a17; --p-900:#1c2410;
-  /* secondary — warm cinnabar / clay accent */
-  --s-400:#c75d3c; --s-500:#A0341E;
-  /* gray (warmer, paper-leaning) */
-  --g-50:#faf8f1; --g-100:#f1ede2; --g-200:#e5dfcd; --g-300:#cfc6ad;
-  --g-400:#a39c83; --g-500:#75705f; --g-600:#534f41; --g-700:#3a3729;
-  --g-800:#26241c; --g-900:#16140f;
-  --bg:#FAF8F1; --fg:#1c1a14;
+  /* primary — ink blue-black */
+  --p-50:#f0f1f8; --p-100:#d9dced; --p-200:#b3b8db; --p-300:#8d94c9;
+  --p-400:#5a63a8; --p-500:#1a1a2e; --p-600:#161628; --p-700:#121222;
+  --p-800:#0e0e1c; --p-900:#0a0a16;
+  /* secondary — editorial red */
+  --s-400:#ef5561; --s-500:#e63946;
+  /* gray — warm neutrals (paper-toned) */
+  --g-50:#FFFDF7; --g-100:#f7f5ef; --g-200:#ece9e0; --g-300:#ddd9ce;
+  --g-400:#b0aba0; --g-500:#807b70; --g-600:#5c5850; --g-700:#3d3a34;
+  --g-800:#252320; --g-900:#1a1917;
+  --bg:#FFFDF7; --fg:#1a1a2e;
 
   --f-ubuntu: 'Ubuntu', ui-sans-serif, system-ui, sans-serif;
   --f-lato:   'Lato',   ui-sans-serif, system-ui, sans-serif;
   --ease: cubic-bezier(.2,.7,.2,1);
 }
 html.dark {
-  --bg:#16140f; --fg:#f1ede2;
-  --g-50:#16140f; --g-100:#26241c; --g-200:#3a3729; --g-300:#534f41;
-  --g-400:#75705f; --g-500:#a39c83; --g-600:#cfc6ad; --g-700:#e5dfcd;
-  --g-800:#f1ede2; --g-900:#faf8f1;
+  --bg:#141420; --fg:#f0eee8;
+  --g-50:#141420; --g-100:#1e1e2e; --g-200:#2a2a3a; --g-300:#3d3d4e;
+  --g-400:#5c5c6e; --g-500:#8a8a9a; --g-600:#b0b0be; --g-700:#d0d0da;
+  --g-800:#e8e8ee; --g-900:#f5f5f8;
 }
 * { box-sizing: border-box; }
 html, body { margin:0; padding:0; background:var(--bg); color:var(--fg); }
