@@ -166,11 +166,8 @@
   html.dark .blog-hero p { color: var(--g-600); }
 
   .toolbar {
-    display: flex; flex-direction: column; gap: 16px;
+    display: flex; gap: 12px; align-items: center;
     padding: 24px 0; margin-bottom: 40px;
-  }
-  .toolbar .toolbar-row {
-    display: flex; gap: 14px; align-items: center;
   }
   .search-wrap {
     position: relative; flex: 1; min-width: 200px;
@@ -183,12 +180,40 @@
     transition: border-color .2s var(--ease);
   }
   .search-wrap input:focus { border-color: var(--g-300); }
-  .tag-bar {
-    display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px;
-    scrollbar-width: none; -ms-overflow-style: none;
+  /* Tag dropdown */
+  .tag-dropdown { position: relative; }
+  .tag-dropdown-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 12px 20px; border-radius: 999px;
+    border: 1px solid var(--g-200); background: transparent;
+    font: inherit; font-size: 14px; color: var(--fg); cursor: pointer;
+    transition: border-color .2s var(--ease);
+    white-space: nowrap;
   }
-  .tag-bar::-webkit-scrollbar { display: none; }
-  .tag { white-space: nowrap; flex-shrink: 0; }
+  .tag-dropdown-btn:hover { border-color: var(--g-300); }
+  .tag-dropdown-btn.has-filter { border-color: var(--s-500); color: var(--s-500); }
+  html.dark .tag-dropdown-btn.has-filter { color: var(--s-400); border-color: var(--s-400); }
+  .tag-dropdown-btn svg { width: 14px; height: 14px; transition: transform .2s var(--ease); }
+  .tag-dropdown-btn.open svg { transform: rotate(180deg); }
+  .tag-menu {
+    position: absolute; top: calc(100% + 8px); right: 0; z-index: 50;
+    min-width: 220px; max-height: 320px; overflow-y: auto;
+    border: 1px solid var(--g-200); border-radius: 16px;
+    background: var(--bg); padding: 8px;
+    box-shadow: 0 16px 40px -12px rgba(0,0,0,.2);
+  }
+  html.dark .tag-menu { background: var(--g-100); }
+  .tag-menu-item {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px 14px; border-radius: 10px; cursor: pointer;
+    font-size: 14px; color: var(--fg);
+    transition: background .15s var(--ease);
+  }
+  .tag-menu-item:hover { background: var(--g-100); }
+  html.dark .tag-menu-item:hover { background: var(--g-200); }
+  .tag-menu-item.active { background: var(--g-100); font-weight: 600; }
+  html.dark .tag-menu-item.active { background: var(--g-200); }
+  .tag-menu-item .count { font-size: 12px; color: var(--g-500); }
   .tag {
     font-size: 13px; padding: 8px 14px; border-radius: 999px;
     border: 1px solid var(--g-200); color: var(--g-600);

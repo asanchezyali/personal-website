@@ -18,6 +18,7 @@ export default function BlogPageClient({ locale, posts, tags }: BlogPageClientPr
   const { t: tb } = useTranslation(locale, 'blog')
   const [activeTag, setActiveTag] = useState<string | null>(null)
   const [search, setSearch] = useState('')
+  const [tagOpen, setTagOpen] = useState(false)
 
   function localHref(href: string) {
     if (locale === 'en') return href
@@ -71,32 +72,45 @@ export default function BlogPageClient({ locale, posts, tags }: BlogPageClientPr
         <p style={{ margin: 0 }}>{tb('description')}</p>
       </div>
 
-      {/* Toolbar */}
+      {/* Toolbar: search + tag dropdown */}
       <div className="toolbar">
-        <div className="toolbar-row">
-          <div className="search-wrap">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3-3"/></svg>
-            <input type="search" placeholder="Search posts, topics, tags…" value={search} onChange={(e) => setSearch(e.target.value)} />
-          </div>
+        <div className="search-wrap">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3-3"/></svg>
+          <input type="search" placeholder="Search posts, topics, tags…" value={search} onChange={(e) => setSearch(e.target.value)} />
         </div>
-        <div className="tag-bar">
+        <div className="tag-dropdown">
           <button
-            className={`tag${activeTag === null ? ' active' : ''}`}
-            onClick={() => { setActiveTag(null); setSearch('') }}
+            className={`tag-dropdown-btn${activeTag ? ' has-filter' : ''}${tagOpen ? ' open' : ''}`}
+            onClick={() => setTagOpen(!tagOpen)}
           >
-            All
+            {activeTag || 'All topics'}
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
           </button>
-          {Object.entries(tags)
-            .sort(([, a], [, b]) => b - a)
-            .map(([tag, count]) => (
-              <button
-                key={tag}
-                className={`tag${activeTag === tag ? ' active' : ''}`}
-                onClick={() => setActiveTag(activeTag === tag ? null : tag)}
-              >
-                {tag} ({count})
-              </button>
-            ))}
+          {tagOpen && (
+            <>
+              <div style={{ position: 'fixed', inset: 0, zIndex: 40 }} onClick={() => setTagOpen(false)} />
+              <div className="tag-menu">
+                <div
+                  className={`tag-menu-item${activeTag === null ? ' active' : ''}`}
+                  onClick={() => { setActiveTag(null); setTagOpen(false) }}
+                >
+                  All topics
+                </div>
+                {Object.entries(tags)
+                  .sort(([, a], [, b]) => b - a)
+                  .map(([tag, count]) => (
+                    <div
+                      key={tag}
+                      className={`tag-menu-item${activeTag === tag ? ' active' : ''}`}
+                      onClick={() => { setActiveTag(activeTag === tag ? null : tag); setTagOpen(false) }}
+                    >
+                      <span>{tag}</span>
+                      <span className="count">{count}</span>
+                    </div>
+                  ))}
+              </div>
+            </>
+          )}
         </div>
       </div>
 
