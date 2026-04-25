@@ -123,8 +123,8 @@ export default function CollaboratePage({ locale }: CollaboratePageProps) {
         </h1>
         <p>{t('hero.description')}</p>
         <div className="ctas">
-          <a href={`mailto:${siteMetadata.email}`} className="btn primary">
-            Start a conversation <span className="a">→</span>
+          <a href="https://cal.com/asanchezyali/30min" target="_blank" rel="noopener noreferrer" className="btn primary">
+            Book an intro call <span className="a">→</span>
           </a>
           <a href={siteMetadata.discord} target="_blank" rel="noreferrer" className="btn discord">
             Join Discord

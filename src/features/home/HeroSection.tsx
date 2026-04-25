@@ -66,7 +66,7 @@ export default function HeroSection({ locale }: HeroSectionProps) {
         </h1>
         <p className="lede">{t('hero.title_2')}</p>
         <div className="ctas">
-          <a href={`mailto:${siteMetadata.email}`} className="btn primary">
+          <a href="https://cal.com/asanchezyali/30min" target="_blank" rel="noopener noreferrer" className="btn primary">
             {t('hero.button_1')} <span className="a">→</span>
           </a>
           <Link href={localHref('/collaborate')} className="btn dark">

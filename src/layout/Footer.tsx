@@ -41,7 +41,7 @@ export default function Footer() {
             <p>Whether you have a project in mind or just want to connect — I&apos;m always open to a conversation.</p>
           </div>
           <div className="f-cta-actions">
-            <a href={`mailto:${siteMetadata.email}`} className="btn primary">
+            <a href="https://cal.com/asanchezyali/30min" target="_blank" rel="noopener noreferrer" className="btn primary">
               Start a conversation
               <span className="a">→</span>
             </a>

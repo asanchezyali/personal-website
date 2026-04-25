@@ -106,11 +106,9 @@ export default function AboutPage({ author, locale, children }: AboutPageProps) 
         </h2>
         <p>I&apos;m always open to interesting conversations, collaborations, and new challenges.</p>
         <div className="buttons">
-          {author.email && (
-            <a href={`mailto:${author.email}`} className="btn primary">
-              Say hello <span className="a">→</span>
-            </a>
-          )}
+          <a href="https://cal.com/asanchezyali/30min" target="_blank" rel="noopener noreferrer" className="btn primary">
+            Work with me <span className="a">→</span>
+          </a>
           {author.github && (
             <a href={author.github} target="_blank" rel="noreferrer" className="btn ghost">
               View GitHub
