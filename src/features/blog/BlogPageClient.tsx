@@ -17,6 +17,7 @@ export default function BlogPageClient({ locale, posts, tags }: BlogPageClientPr
   const { t } = useTranslation(locale, 'home')
   const { t: tb } = useTranslation(locale, 'blog')
   const [activeTag, setActiveTag] = useState<string | null>(null)
+  const [search, setSearch] = useState('')
 
   function localHref(href: string) {
     if (locale === 'en') return href
@@ -27,9 +28,16 @@ export default function BlogPageClient({ locale, posts, tags }: BlogPageClientPr
     .filter((p) => p.language === locale && !p.draft)
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
 
-  const filtered = activeTag
+  const afterTag = activeTag
     ? published.filter((p) => p.tags.some((tag) => tag.toLowerCase().replace(/\s+/g, '-') === activeTag))
     : published
+
+  const filtered = search.trim()
+    ? afterTag.filter((p) => {
+        const q = search.toLowerCase()
+        return p.title.toLowerCase().includes(q) || (p.summary || '').toLowerCase().includes(q) || p.tags.some((t) => t.toLowerCase().includes(q))
+      })
+    : afterTag
 
   const featured = filtered[0]
   const rest = filtered.slice(1)
@@ -63,29 +71,30 @@ export default function BlogPageClient({ locale, posts, tags }: BlogPageClientPr
         <p style={{ margin: 0 }}>{tb('description')}</p>
       </div>
 
-      {/* Toolbar: search + tags in one row */}
+      {/* Toolbar */}
       <div className="toolbar">
-        <div className="search-wrap">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3-3"/></svg>
-          <input type="search" placeholder="Search posts, topics, tags…" />
+        <div className="toolbar-row">
+          <div className="search-wrap">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3-3"/></svg>
+            <input type="search" placeholder="Search posts, topics, tags…" value={search} onChange={(e) => setSearch(e.target.value)} />
+          </div>
         </div>
         <div className="tag-bar">
           <button
             className={`tag${activeTag === null ? ' active' : ''}`}
-            onClick={() => setActiveTag(null)}
+            onClick={() => { setActiveTag(null); setSearch('') }}
           >
             All
           </button>
           {Object.entries(tags)
             .sort(([, a], [, b]) => b - a)
-            .slice(0, 6)
-            .map(([tag]) => (
+            .map(([tag, count]) => (
               <button
                 key={tag}
                 className={`tag${activeTag === tag ? ' active' : ''}`}
                 onClick={() => setActiveTag(activeTag === tag ? null : tag)}
               >
-                {tag}
+                {tag} ({count})
               </button>
             ))}
         </div>

@@ -166,14 +166,14 @@
   html.dark .blog-hero p { color: var(--g-600); }
 
   .toolbar {
-    display: flex; gap: 14px; align-items: center;
+    display: flex; flex-direction: column; gap: 16px;
     padding: 24px 0; margin-bottom: 40px;
   }
-  @media (max-width: 768px) {
-    .toolbar { flex-wrap: wrap; }
+  .toolbar .toolbar-row {
+    display: flex; gap: 14px; align-items: center;
   }
   .search-wrap {
-    position: relative; flex: 1; min-width: 260px;
+    position: relative; flex: 1; min-width: 200px;
   }
   .search-wrap svg { position: absolute; top: 50%; left: 16px; transform: translateY(-50%); color: var(--g-500); }
   .search-wrap input {
@@ -183,7 +183,12 @@
     transition: border-color .2s var(--ease);
   }
   .search-wrap input:focus { border-color: var(--g-300); }
-  .tag-bar { display: flex; gap: 8px; flex-wrap: wrap; }
+  .tag-bar {
+    display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px;
+    scrollbar-width: none; -ms-overflow-style: none;
+  }
+  .tag-bar::-webkit-scrollbar { display: none; }
+  .tag { white-space: nowrap; flex-shrink: 0; }
   .tag {
     font-size: 13px; padding: 8px 14px; border-radius: 999px;
     border: 1px solid var(--g-200); color: var(--g-600);
