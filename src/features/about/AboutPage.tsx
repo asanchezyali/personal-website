@@ -14,11 +14,11 @@ interface AboutPageProps {
 }
 
 const timeline = [
-  { when: '2024 — now', title: 'Independent software + AI consultant', where: 'Remote · Worldwide', desc: 'Designing and shipping AI, Web3, and web products for small teams who care about craft. I also write essays and run Topofilosofía, a weekly study community for mathematics and computer science.', lead: true },
-  { when: '2022 — 2024', title: 'Senior engineer · ML & blockchain', where: 'Various product teams', desc: 'Built retrieval systems, recommendation pipelines, and on-chain infrastructure.' },
-  { when: '2018 — 2022', title: 'Full-stack engineer', where: 'Startup-land, Latin America', desc: 'Shipped web platforms end-to-end. Learned the hard way that technical debt compounds faster than interest.' },
-  { when: '2016', title: 'M.Sc. in Mathematics', where: 'Universidad Nacional de Colombia', desc: 'Focused on topology and geometry. The habit of chasing a proof turned out to be the most portable skill.' },
-  { when: '~2014', title: 'First real program', where: 'A cluttered desk', desc: "A small simulation that shouldn't have worked, and somehow did. I've been chasing that feeling ever since." },
+  { when: '2025 — Present', title: 'AI Specialist', where: 'Lapzo', desc: 'Building intelligent learning systems powered by LLMs, RAG pipelines, and agentic workflows.', lead: true },
+  { when: '2024 — Present', title: 'Freelance Consultant', where: 'Independent', desc: 'AI consulting and full-stack development for startups — from conversational agents to image generation platforms.' },
+  { when: '2021 — 2024', title: 'Full Stack Developer', where: 'Monadical', desc: 'Developed AI avatar systems, real-time video pipelines, and open-source tooling with Python, React, and Three.js.' },
+  { when: '2018 — 2020', title: 'Full Stack Developer', where: 'BCFort', desc: 'Built blockchain-based platforms and scalable web applications using React, NestJS, and cloud infrastructure.' },
+  { when: '2010 — 2021', title: 'Professor', where: 'Universidad de Antioquia', desc: 'Taught mathematics, linear algebra, and calculus. Mentored students in mathematical modeling and computational thinking.' },
 ]
 
 const principles = [
