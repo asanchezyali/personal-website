@@ -22,10 +22,16 @@
   --ease: cubic-bezier(.2,.7,.2,1);
 }
 html.dark {
-  --bg:#141420; --fg:#f0eee8;
-  --g-50:#141420; --g-100:#1e1e2e; --g-200:#2a2a3a; --g-300:#3d3d4e;
-  --g-400:#5c5c6e; --g-500:#8a8a9a; --g-600:#b0b0be; --g-700:#d0d0da;
-  --g-800:#e8e8ee; --g-900:#f5f5f8;
+  --bg:#141420; --fg:#e8e6df;
+  --g-50:#141420; --g-100:#1c1c2c; --g-200:#262636; --g-300:#353545;
+  --g-400:#505062; --g-500:#78788a; --g-600:#a0a0b0; --g-700:#c8c8d2;
+  --g-800:#dddde4; --g-900:#ededf0;
+  /* override primary for better dark contrast */
+  --p-50:#1c1c30; --p-100:#252540; --p-200:#3a3a5c; --p-300:#6060a0;
+  --p-400:#8888cc; --p-500:#a0a0e0; --p-600:#b8b8f0; --p-700:#d0d0ff;
+  --p-800:#e0e0ff; --p-900:#f0f0ff;
+  /* brighter red in dark */
+  --s-400:#ff6b78; --s-500:#ff4757;
 }
 * { box-sizing: border-box; }
 html, body { margin:0; padding:0; background:var(--bg); color:var(--fg); }
