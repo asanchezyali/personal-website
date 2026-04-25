@@ -81,13 +81,13 @@
     min-width: 90px;
   }
   .tech .icon {
-    width: 56px; height: 56px; border-radius: 14px;
-    background: linear-gradient(135deg, var(--p-100), var(--s-400)22);
+    width: 64px; height: 64px;
     display: flex; align-items: center; justify-content: center;
-    font-weight: 700; font-family: var(--f-ubuntu); color: var(--p-700);
-    border: 1px solid var(--p-200);
   }
-  html.dark .tech .icon { background: color-mix(in oklab, var(--p-900) 30%, transparent); border-color: var(--p-800); color: var(--p-300); }
+  .tech .icon.needs-bg {
+    background: var(--g-100); border-radius: 14px; padding: 10px;
+  }
+  html.dark .tech .icon.needs-bg { background: var(--g-200); }
   .tech .label { font-size: 13px; color: var(--g-600); }
   html.dark .tech .label { color: var(--g-500); }
   @keyframes slide { to { transform: translateX(-50%); } }

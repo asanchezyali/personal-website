@@ -82,8 +82,8 @@ export default function TechStackSection({ locale }: TechStackSectionProps) {
         <div className="marquee" aria-hidden="true">
           {DOUBLED.map((tech, i) => (
             <div key={i} className="tech">
-              <div className="icon" style={NEEDS_BG.includes(tech.name) ? { padding: 8 } : undefined}>
-                <tech.icon className="h-8 w-8" />
+              <div className={`icon${NEEDS_BG.includes(tech.name) ? ' needs-bg' : ''}`}>
+                <tech.icon className={NEEDS_BG.includes(tech.name) ? 'h-8 w-8' : 'h-12 w-12 md:h-14 md:w-14'} />
               </div>
               <span className="label">{tech.name}</span>
             </div>
