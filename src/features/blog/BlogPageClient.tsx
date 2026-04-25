@@ -50,20 +50,20 @@ export default function BlogPageClient({ locale, posts, tags }: BlogPageClientPr
   }
 
   return (
-    <div className="wrap-narrow">
+    <div className="wrap">
       {/* Blog hero */}
-      <div className="blog-hero">
+      <div className="blog-hero" style={{ textAlign: 'left' }}>
         <span className="status-pill">
           <span className="dot" />
-          Writing
+          Writing Notebook
         </span>
         <h1>
           <span className="accent">{tb('title')}</span>
         </h1>
-        <p>{tb('description')}</p>
+        <p style={{ margin: 0 }}>{tb('description')}</p>
       </div>
 
-      {/* Toolbar */}
+      {/* Toolbar: search + tags in one row */}
       <div className="toolbar">
         <div className="search-wrap">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3-3"/></svg>
@@ -78,14 +78,14 @@ export default function BlogPageClient({ locale, posts, tags }: BlogPageClientPr
           </button>
           {Object.entries(tags)
             .sort(([, a], [, b]) => b - a)
-            .slice(0, 12)
-            .map(([tag, count]) => (
+            .slice(0, 6)
+            .map(([tag]) => (
               <button
                 key={tag}
                 className={`tag${activeTag === tag ? ' active' : ''}`}
                 onClick={() => setActiveTag(activeTag === tag ? null : tag)}
               >
-                {tag} ({count})
+                {tag}
               </button>
             ))}
         </div>

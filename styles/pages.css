@@ -162,12 +162,15 @@
     background: linear-gradient(90deg, var(--p-500), var(--s-500));
     -webkit-background-clip: text; background-clip: text; color: transparent;
   }
-  .blog-hero p { font-size: 18px; color: var(--g-600); max-width: 620px; margin: 0 auto; }
+  .blog-hero p { font-size: 18px; color: var(--g-600); max-width: 620px; }
   html.dark .blog-hero p { color: var(--g-600); }
 
   .toolbar {
-    display: flex; gap: 16px; align-items: center; flex-wrap: wrap;
+    display: flex; gap: 14px; align-items: center;
     padding: 24px 0; margin-bottom: 40px;
+  }
+  @media (max-width: 768px) {
+    .toolbar { flex-wrap: wrap; }
   }
   .search-wrap {
     position: relative; flex: 1; min-width: 260px;
