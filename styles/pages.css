@@ -641,7 +641,8 @@
   }
   .quote blockquote { font-size: 17px; line-height: 1.6; margin: 0 0 16px; color: var(--fg); font-style: italic; }
   .quote .who { display: flex; gap: 10px; align-items: center; }
-  .quote .avatar { width: 40px; height: 40px; border-radius: 50%; overflow: hidden; }
+  .quote .avatar { width: 40px; height: 40px; min-width: 40px; min-height: 40px; border-radius: 50%; overflow: hidden; }
+  .quote .avatar .ph { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: var(--g-200); color: var(--fg); font-size: 12px; font-weight: 600; }
   .quote .who .name { font-weight: 600; font-size: 14px; }
   .quote .who .role { font-size: 13px; color: var(--g-500); }
 
@@ -661,18 +662,17 @@
     padding: 18px; border: 1px solid var(--g-200); border-radius: 14px;
     transition: all .2s var(--ease);
   }
-  html.dark .channel { border-color: var(--g-800); }
-  .channel:hover { border-color: var(--p-400); transform: translateY(-1px); }
+  .channel:hover { border-color: var(--g-300); transform: translateY(-1px); }
   .channel .ic {
     width: 44px; height: 44px; border-radius: 50%;
-    background: var(--p-50); color: var(--p-600);
+    background: var(--g-100); color: var(--fg);
     display: flex; align-items: center; justify-content: center; flex-shrink: 0;
   }
-  html.dark .channel .ic { background: color-mix(in oklab, var(--p-900) 40%, transparent); color: var(--p-300); }
+  html.dark .channel .ic { background: var(--g-200); color: var(--fg); }
   .channel .lbl { font-family: var(--f-ubuntu); font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--g-500); margin-bottom: 2px; }
   .channel .val { font-size: 15px; font-weight: 500; }
   .channel .arr { margin-left: auto; color: var(--g-500); transition: transform .2s var(--ease); }
-  .channel:hover .arr { color: var(--p-500); transform: translate(3px, -3px); }
+  .channel:hover .arr { color: var(--fg); transform: translate(3px, -3px); }
 
   @media (max-width: 900px) {
     .offers, .steps, .pr-grid, .quotes, .contact { grid-template-columns: 1fr; }
