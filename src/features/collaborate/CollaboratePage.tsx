@@ -113,20 +113,22 @@ export default function CollaboratePage({ locale }: CollaboratePageProps) {
                 onClick={() => setExpandedIdx(isExpanded ? null : i)}
                 style={{ cursor: 'pointer' }}
               >
-                {projectImages[i] && (
-                  <div className="cover">
-                    <img src={projectImages[i]} alt={project.title} />
-                  </div>
-                )}
                 <div className="body">
-                  {project.role && <span className="role">{project.role}</span>}
-                  <h3>{project.title}</h3>
-                  <p>{project.description}</p>
-                  <div className="stack">
-                    {Array.isArray(project.technologies) && project.technologies.map((tech, j) => (
-                      <span key={j} className="chip">{tech}</span>
-                    ))}
+                  <div className="pr-header">
+                    <div className="pr-info">
+                      {project.role && <span className="role">{project.role}</span>}
+                      <h3>{project.title}</h3>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                      <div className="stack">
+                        {Array.isArray(project.technologies) && project.technologies.map((tech, j) => (
+                          <span key={j} className="chip">{tech}</span>
+                        ))}
+                      </div>
+                      <span className="pr-toggle" style={{ transform: isExpanded ? 'rotate(45deg)' : 'none' }}>+</span>
+                    </div>
                   </div>
+                  <p>{project.description}</p>
                   {/* Expanded content */}
                   {isExpanded && (
                     <div className="pr-expanded" onClick={(e) => e.stopPropagation()}>
@@ -156,7 +158,6 @@ export default function CollaboratePage({ locale }: CollaboratePageProps) {
                     </div>
                   )}
                 </div>
-                <span className="pr-toggle" style={{ transform: isExpanded ? 'rotate(45deg)' : 'none' }}>+</span>
               </article>
             )
           })}
