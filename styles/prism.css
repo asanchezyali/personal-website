@@ -16,11 +16,12 @@
 
 /* Code block styles */
 .code-highlight {
-  @apply float-left min-w-full;
+  display: table;
+  min-width: 100%;
 }
 
 .code-line {
-  @apply -mx-4 block border-l-4 border-transparent pl-4 pr-4;
+  display: table-row;
 }
 
 .code-line.inserted {
@@ -36,7 +37,13 @@
 }
 
 .line-number::before {
-  @apply mr-4 -ml-2 inline-block w-4 text-right text-gray-400;
+  display: table-cell;
+  padding-right: 16px;
+  padding-left: 0;
+  width: 2rem;
+  text-align: right;
+  color: #4a5568;
+  user-select: none;
   content: attr(line);
 }
 

@@ -10,10 +10,10 @@ interface ImageBoxProps {
 
 const ImageBox = ({ src, alt, width, height, children }) => {
   return (
-    <div className="mb-[-25px] mt-8 flex w-full flex-col items-center">
+    <div className="mt-8 mb-[50px] flex w-full flex-col items-center">
       <Image src={src} alt={alt} width={width} height={height} className="rounded-lg" />
       <div
-        className="mt-[-10px] text-[14px] text-gray-800 dark:text-gray-200"
+        className="mt-4 text-[14px] text-gray-800 dark:text-gray-200"
         style={{ maxWidth: width }}
       >
         {children}

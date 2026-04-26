@@ -308,6 +308,6 @@ html.dark .ph {
     position: absolute; top: 58px; left: 0; right: 0;
     background: var(--bg); border-bottom: 1px solid var(--g-200); padding: 8px 24px 16px;
   }
-  html.dark .nav.open { border-bottom-color: var(--g-800); }
+  html.dark .nav.open { border-bottom-color: var(--g-300); }
   .nav.open a { padding: 10px 12px; }
 }

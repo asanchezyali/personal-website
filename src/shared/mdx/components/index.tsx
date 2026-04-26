@@ -1,5 +1,5 @@
 import TOCInline from 'pliny/ui/TOCInline'
-import Pre from 'pliny/ui/Pre'
+import CodeBlock from './CodeBlock'
 import type { MDXComponents } from 'mdx/types'
 import CustomLink from './Link'
 import TableWrapper from './TableWrapper'
@@ -16,7 +16,7 @@ export const components: MDXComponents = {
   ImageBox,
   TOCInline,
   a: CustomLink,
-  pre: Pre,
+  pre: CodeBlock,
   table: TableWrapper,
   Audioplayer,
   WebsiteEmbed,

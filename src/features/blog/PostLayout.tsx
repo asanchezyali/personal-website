@@ -5,6 +5,7 @@ import { Blog, Authors } from '#site/content'
 import { LocaleTypes } from '@/i18n/settings'
 import { formatDate } from 'pliny/utils/formatDate'
 import ReadingProgress from './ReadingProgress'
+import TocFab from './TocFab'
 
 interface PostLayoutProps {
   content: Blog
@@ -29,6 +30,7 @@ export default function PostLayout({ content, author, locale, children, prev, ne
   return (
     <>
       <ReadingProgress />
+      <TocFab toc={content.toc ?? []} />
 
       {/* Hero */}
       <div className="post-hero">
@@ -40,7 +42,6 @@ export default function PostLayout({ content, author, locale, children, prev, ne
           ))}
         </div>
         <h1>{content.title}</h1>
-        {content.summary && <p className="sub">{content.summary}</p>}
       </div>
 
       {/* Cover image */}
@@ -87,12 +88,12 @@ export default function PostLayout({ content, author, locale, children, prev, ne
       </div>
 
       {/* Prose body */}
-      <article className="prose">
+      <article className="post-body">
         {children}
       </article>
 
       {/* Author box */}
-      <div style={{ maxWidth: 720, margin: '64px auto 0', padding: '0 24px' }}>
+      <div style={{ maxWidth: 1280, margin: '64px auto 0', padding: '0 24px' }}>
         <div className="author-box">
           <div className="avatar">
             {author.avatar ? (

@@ -285,8 +285,8 @@
   .cover-wrap > .ph { width: 100%; height: 100%; font-size: 14px; border-radius: 24px; }
 
   /* ---- Byline row (after image) ---- */
-  .byline { max-width: 720px; margin: 0 auto 48px; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; font-size: 14px; color: var(--g-600); border-top: 1px solid var(--g-200); border-bottom: 1px solid var(--g-200); padding-top: 16px; padding-bottom: 16px; }
-  html.dark .byline { border-color: var(--g-800); color: var(--g-600); }
+  .byline { max-width: 896px; margin: 0 auto 48px; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; font-size: 14px; color: var(--g-600); border-top: 1px solid var(--g-200); border-bottom: 1px solid var(--g-200); padding-top: 16px; padding-bottom: 16px; }
+  html.dark .byline { border-color: var(--g-300); color: var(--g-500); }
   .byline .left { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
   .byline .author { display: inline-flex; gap: 10px; align-items: center; }
   .byline .avatar { width: 28px; height: 28px; border-radius: 50%; overflow: hidden; }
@@ -308,7 +308,7 @@
   .toc-sheet[data-open="true"] { display: block; }
   .toc-sheet .backdrop { position: absolute; inset: 0; background: rgba(0,0,0,.4); backdrop-filter: blur(4px); animation: fadeIn .2s var(--ease); }
   .toc-sheet .panel { position: absolute; right: 24px; bottom: 80px; width: min(360px, calc(100vw - 48px)); max-height: 70vh; overflow-y: auto; background: var(--bg); border: 1px solid var(--g-200); border-radius: 20px; padding: 12px; box-shadow: 0 30px 60px -20px rgba(0,0,0,.4); animation: slideUp .22s var(--ease); }
-  html.dark .toc-sheet .panel { border-color: var(--g-800); background: var(--g-900); }
+  html.dark .toc-sheet .panel { border-color: var(--g-300); background: var(--g-100); }
   .toc-sheet .panel .lbl { font-family: var(--f-ubuntu); text-transform: uppercase; letter-spacing: 0.1em; font-size: 10px; color: var(--g-500); font-weight: 500; padding: 6px 14px 10px; display: block; }
   .toc-sheet a { display: block; padding: 10px 14px; border-radius: 10px; font-size: 14px; color: var(--g-600); line-height: 1.4; transition: all .15s var(--ease); }
   html.dark .toc-sheet a { color: var(--g-500); }
@@ -324,30 +324,32 @@
   .share-bar { position: fixed; left: 24px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 8px; z-index: 30; }
   .share-bar .lbl { font-family: var(--f-ubuntu); text-transform: uppercase; letter-spacing: 0.1em; font-size: 10px; color: var(--g-500); font-weight: 500; writing-mode: vertical-rl; transform: rotate(180deg); margin: 0 auto 6px; }
   .share-bar .ic-b { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--g-200); background: var(--bg); display: flex; align-items: center; justify-content: center; color: var(--g-600); transition: all .2s var(--ease); cursor: pointer; }
-  html.dark .share-bar .ic-b { border-color: var(--g-800); color: var(--g-400); background: var(--g-900); }
+  html.dark .share-bar .ic-b { border-color: var(--g-300); color: var(--g-500); background: var(--g-100); }
   .share-bar .ic-b:hover { color: var(--p-500); border-color: var(--p-500); transform: translateY(-1px); }
   .share-bar .ic-b.copied { color: var(--s-500); border-color: var(--s-500); }
   @media (max-width: 1200px) { .share-bar { display: none; } }
 
   .share-inline { display: none; justify-content: center; gap: 8px; margin-top: 24px; }
   .share-inline .ic-b { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--g-200); background: var(--bg); display: flex; align-items: center; justify-content: center; color: var(--g-600); transition: all .2s var(--ease); cursor: pointer; }
-  html.dark .share-inline .ic-b { border-color: var(--g-800); color: var(--g-400); background: var(--g-900); }
+  html.dark .share-inline .ic-b { border-color: var(--g-300); color: var(--g-500); background: var(--g-100); }
   .share-inline .ic-b:hover { color: var(--p-500); border-color: var(--p-500); }
   @media (max-width: 1200px) { .share-inline { display: flex; } }
 
   /* ---- Prose (centered, same width as .wrap-narrow) ---- */
-  .prose { max-width: 720px; margin: 56px auto 0; padding: 0 24px; font-size: 18px; line-height: 1.75; color: var(--g-700); }
-  html.dark .prose { color: var(--g-200); }
-  .prose h2 { font-family: var(--f-ubuntu); font-size: clamp(26px, 2.8vw, 34px); letter-spacing: -0.02em; margin: 56px 0 18px; color: var(--fg); scroll-margin-top: 140px; }
-  .prose h3 { font-family: var(--f-ubuntu); font-size: 22px; letter-spacing: -0.015em; margin: 40px 0 14px; color: var(--fg); scroll-margin-top: 140px; }
-  .prose p { margin: 0 0 22px; }
-  .prose a { color: var(--s-500); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
-  html.dark .prose a { color: var(--s-400); }
-  .prose strong { color: var(--fg); font-weight: 700; }
-  .prose em { font-style: italic; }
-  .prose ul, .prose ol { padding-left: 22px; margin: 0 0 22px; }
-  .prose li { margin-bottom: 8px; }
-  .prose > p:first-of-type::first-letter { font-family: var(--f-ubuntu); font-weight: 700; font-size: 4em; float: left; line-height: .9; margin: 6px 10px 0 0; background: linear-gradient(135deg, var(--p-500), var(--s-500)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .post-body { max-width: 896px; margin: 56px auto 0; padding: 0 24px; font-size: 18px; line-height: 1.75; color: var(--g-700); }
+  html.dark .post-body { color: var(--g-600); }
+  .post-body h2 { font-family: var(--f-ubuntu); font-size: clamp(26px, 2.8vw, 34px); letter-spacing: -0.02em; margin: 56px 0 18px; color: var(--fg); scroll-margin-top: 140px; }
+  .post-body h3 { font-family: var(--f-ubuntu); font-size: 22px; letter-spacing: -0.015em; margin: 40px 0 14px; color: var(--fg); scroll-margin-top: 140px; }
+  .post-body p { margin: 0 0 22px; }
+  .post-body a { color: var(--s-500); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+  html.dark .post-body a { color: var(--s-400); }
+  .post-body strong { color: var(--fg); font-weight: 700; }
+  .post-body em { font-style: italic; }
+  .post-body ul, .post-body ol { padding-left: 22px; margin: 0 0 22px; }
+  .post-body li { margin-bottom: 8px; }
+  .post-body figcaption { margin-top: 16px; font-size: 14px; color: var(--g-500); text-align: center; line-height: 1.5; }
+  .post-body figure { margin: 28px 0; }
+  .post-body > p:first-of-type::first-letter { font-family: var(--f-ubuntu); font-weight: 700; font-size: 4em; float: left; line-height: .9; margin: 6px 10px 0 0; background: linear-gradient(135deg, var(--p-500), var(--s-500)); -webkit-background-clip: text; background-clip: text; color: transparent; }
 
   .callout { border-left: 3px solid var(--p-500); background: color-mix(in oklab, var(--p-50) 80%, transparent); padding: 18px 20px; border-radius: 0 12px 12px 0; margin: 28px 0; font-size: 16px; line-height: 1.6; display: flex; gap: 14px; align-items: flex-start; }
   html.dark .callout { background: color-mix(in oklab, var(--p-900) 20%, transparent); }
@@ -358,10 +360,12 @@
   .callout p { margin: 0; }
   .callout strong { display: block; margin-bottom: 4px; }
 
-  .prose pre { background: #0f172a; color: #e2e8f0; padding: 20px 22px; border-radius: 12px; overflow-x: auto; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 14px; line-height: 1.6; margin: 24px 0; }
-  .prose pre .k { color: #c084fc; } .prose pre .s { color: #86efac; } .prose pre .c { color: #64748b; font-style: italic; } .prose pre .n { color: #fbbf24; } .prose pre .f { color: #60a5fa; }
-  .prose code { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: .9em; padding: 2px 6px; border-radius: 4px; background: var(--g-100); }
-  html.dark .prose code { background: var(--g-800); }
+  .post-body pre { background: #0f172a; color: #e2e8f0; padding: 20px 32px; border-radius: 12px; overflow-x: auto; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 14px; line-height: 1.6; margin: 24px 0; border: none; outline: none; box-shadow: none; }
+  .post-body div.relative { margin: 24px 0; border: none; outline: none; box-shadow: none; }
+  .post-body div.relative pre { margin: 0; }
+  .post-body pre .k { color: #c084fc; } .post-body pre .s { color: #86efac; } .post-body pre .c { color: #64748b; font-style: italic; } .post-body pre .n { color: #fbbf24; } .post-body pre .f { color: #60a5fa; }
+  .post-body code { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: .9em; padding: 2px 6px; border-radius: 4px; background: var(--g-100); }
+  html.dark .post-body code { background: var(--g-200); }
 
   .math-block { background: color-mix(in oklab, var(--p-50) 60%, transparent); border: 1px dashed var(--p-300); padding: 24px; border-radius: 12px; margin: 24px 0; text-align: center; font-family: "Latin Modern Math", Georgia, serif; font-style: italic; font-size: 20px; color: var(--g-800); }
   html.dark .math-block { background: color-mix(in oklab, var(--p-900) 20%, transparent); border-color: var(--p-700); color: var(--g-200); }
@@ -369,14 +373,14 @@
   .footnote-ref { font-size: .8em; vertical-align: super; color: var(--p-600); margin-left: 1px; text-decoration: none; }
   html.dark .footnote-ref { color: var(--p-400); }
   .footnotes { margin-top: 72px; padding-top: 24px; border-top: 1px solid var(--g-200); font-size: 14px; color: var(--g-500); }
-  html.dark .footnotes { border-top-color: var(--g-800); color: var(--g-500); }
+  html.dark .footnotes { border-top-color: var(--g-300); color: var(--g-500); }
   .footnotes ol { padding-left: 20px; margin: 0; }
   .footnotes li { margin-bottom: 12px; }
 
   /* ---- End-of-post: same wrap-narrow width as article ---- */
   .post-end { max-width: 1024px; margin: 80px auto 0; padding: 0 24px; }
-  .author-box { display: flex; gap: 20px; padding: 28px; border: 1px solid var(--g-200); border-radius: 20px; background: color-mix(in oklab, var(--p-50) 50%, transparent); max-width: 720px; margin: 0 auto; }
-  html.dark .author-box { border-color: var(--g-800); background: color-mix(in oklab, var(--p-900) 20%, transparent); }
+  .author-box { display: flex; gap: 20px; padding: 28px; border: 1px solid var(--g-200); border-radius: 20px; background: color-mix(in oklab, var(--p-50) 50%, transparent); max-width: 896px; margin: 0 auto; }
+  html.dark .author-box { border-color: var(--g-300); background: color-mix(in oklab, var(--p-100) 20%, transparent); }
   .author-box .avatar { width: 64px; height: 64px; border-radius: 50%; overflow: hidden; flex-shrink: 0; }
   .author-box h4 { font-size: 16px; margin-bottom: 4px; }
   .author-box p { font-size: 14px; color: var(--g-600); margin: 0; line-height: 1.6; }
@@ -401,10 +405,10 @@
   .rel-card p { font-size: 14px; color: var(--g-600); line-height: 1.55; flex: 1; margin: 0; }
   html.dark .rel-card p { color: var(--g-500); }
 
-  .comments { max-width: 720px; margin: 80px auto 0; }
+  .comments { max-width: 896px; margin: 80px auto 0; }
   .comments h3 { font-family: var(--f-ubuntu); font-size: 22px; margin-bottom: 20px; letter-spacing: -0.015em; }
   .comment-form { border: 1px solid var(--g-200); border-radius: 12px; padding: 16px; }
-  html.dark .comment-form { border-color: var(--g-800); }
+  html.dark .comment-form { border-color: var(--g-300); }
   .comment-form textarea { width: 100%; border: 0; outline: none; background: transparent; font: inherit; resize: vertical; min-height: 80px; color: var(--fg); }
   .comment-form .row { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
   .comment-form .muted { font-size: 12px; color: var(--g-500); }
@@ -506,7 +510,7 @@
   .tk-group li { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; font-size: 15px; }
   .tk-group li .nm { color: var(--fg); font-weight: 500; }
   .tk-group li .dt { flex: 1; border-bottom: 1px dotted var(--g-300); height: 8px; margin: 0 4px; }
-  html.dark .tk-group li .dt { border-color: var(--g-700); }
+  html.dark .tk-group li .dt { border-color: var(--g-400); }
   .tk-group li .cm { color: var(--g-500); font-size: 13px; font-style: italic; }
   @media (max-width: 720px) { .tk-grid { grid-template-columns: 1fr; } }
 
