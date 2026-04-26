@@ -571,11 +571,10 @@
   .offers { padding: 48px 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
   .offer {
     padding: 32px; border: 1px solid var(--g-200); border-radius: 20px;
-    display: flex; flex-direction: column; gap: 16px; background: var(--bg);
+    display: flex; flex-direction: column; gap: 16px; background: transparent;
     transition: all .3s var(--ease); position: relative; overflow: hidden;
   }
-  html.dark .offer { border-color: var(--g-800); background: var(--g-900); }
-  .offer:hover { transform: translateY(-4px); border-color: var(--p-400); box-shadow: 0 20px 40px -20px rgba(0,0,0,.2); }
+  .offer:hover { transform: translateY(-4px); border-color: var(--g-300); }
   .offer .shape {
     width: 56px; height: 56px; border-radius: 14px;
     background: linear-gradient(135deg, var(--p-500), var(--s-500)); color: #fff;
@@ -587,8 +586,8 @@
   .offer ul { padding-left: 18px; margin: 0; color: var(--g-600); font-size: 14px; }
   html.dark .offer ul { color: var(--g-500); }
   .offer li { margin-bottom: 6px; }
-  .offer .tag { font-family: var(--f-ubuntu); font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--p-600); }
-  html.dark .offer .tag { color: var(--p-400); }
+  .offer .tag { font-family: var(--f-ubuntu); font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--s-500); }
+  html.dark .offer .tag { color: var(--s-400); }
 
   /* Process */
   .process { padding: 80px 0; }
@@ -600,7 +599,7 @@
     content: ""; position: absolute; top: 28px; left: 8%; right: 8%;
     height: 1px; background: linear-gradient(90deg, transparent, var(--g-300), var(--g-300), transparent);
   }
-  html.dark .steps::before { background: linear-gradient(90deg, transparent, var(--g-800), var(--g-800), transparent); }
+  html.dark .steps::before { background: linear-gradient(90deg, transparent, var(--g-200), var(--g-200), transparent); }
   .step { text-align: center; position: relative; z-index: 1; }
   .step .num {
     width: 56px; height: 56px; border-radius: 50%;
@@ -608,7 +607,7 @@
     color: var(--p-600); font-family: var(--f-ubuntu); font-weight: 700; font-size: 20px;
     display: inline-flex; align-items: center; justify-content: center; margin-bottom: 16px;
   }
-  html.dark .step .num { background: var(--g-900); color: var(--p-300); }
+  html.dark .step .num { background: var(--bg); color: var(--fg); }
   .step h4 { font-family: var(--f-ubuntu); font-size: 17px; margin-bottom: 6px; }
   .step p { font-size: 14px; color: var(--g-600); line-height: 1.55; }
   html.dark .step p { color: var(--g-500); }
@@ -618,32 +617,29 @@
   .projects h2 { font-size: clamp(28px, 3.6vw, 40px); margin-bottom: 32px; text-align: center; }
   .pr-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
   .pr-card {
-    border: 1px solid var(--g-200); border-radius: 16px; overflow: hidden; background: var(--bg);
+    border: 1px solid var(--g-200); border-radius: 16px; overflow: hidden; background: transparent;
     display: flex; flex-direction: column; transition: all .3s var(--ease);
   }
-  html.dark .pr-card { border-color: var(--g-800); background: var(--g-900); }
-  .pr-card:hover { transform: translateY(-2px); border-color: var(--p-400); }
+  .pr-card:hover { transform: translateY(-2px); border-color: var(--g-300); }
   .pr-card .cover { aspect-ratio: 16/10; }
   .pr-card .cover .ph { width: 100%; height: 100%; }
   .pr-card .body { padding: 24px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
-  .pr-card .role { font-family: var(--f-ubuntu); font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--p-600); }
-  html.dark .pr-card .role { color: var(--p-400); }
+  .pr-card .role { font-family: var(--f-ubuntu); font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--s-500); }
+  html.dark .pr-card .role { color: var(--s-400); }
   .pr-card h3 { font-size: 20px; font-family: var(--f-ubuntu); font-weight: 600; letter-spacing: -0.015em; }
   .pr-card p { font-size: 14px; color: var(--g-600); line-height: 1.6; flex: 1; }
   html.dark .pr-card p { color: var(--g-600); }
   .pr-card .stack { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px; }
   .pr-card .chip { font-size: 11px; padding: 3px 10px; border-radius: 999px; background: var(--g-100); color: var(--g-700); }
-  html.dark .pr-card .chip { background: var(--g-800); color: var(--g-200); }
+  html.dark .pr-card .chip { background: var(--g-200); color: var(--g-600); }
 
   /* Testimonials */
   .quotes { padding: 48px 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
   .quote {
     padding: 28px; border: 1px solid var(--g-200); border-radius: 16px;
-    background: color-mix(in oklab, var(--p-50) 40%, transparent);
+    background: transparent;
   }
-  html.dark .quote { border-color: var(--g-800); background: color-mix(in oklab, var(--p-900) 15%, transparent); }
-  .quote blockquote { font-size: 17px; line-height: 1.6; margin: 0 0 16px; color: var(--g-800); font-style: italic; }
-  html.dark .quote blockquote { color: var(--g-200); }
+  .quote blockquote { font-size: 17px; line-height: 1.6; margin: 0 0 16px; color: var(--fg); font-style: italic; }
   .quote .who { display: flex; gap: 10px; align-items: center; }
   .quote .avatar { width: 40px; height: 40px; border-radius: 50%; overflow: hidden; }
   .quote .who .name { font-weight: 600; font-size: 14px; }
