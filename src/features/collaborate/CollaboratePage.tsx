@@ -115,17 +115,12 @@ export default function CollaboratePage({ locale }: CollaboratePageProps) {
               >
                 {projectImages[i] && (
                   <div className="cover">
-                    <img src={projectImages[i]} alt={project.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    <img src={projectImages[i]} alt={project.title} />
                   </div>
                 )}
                 <div className="body">
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                    <div>
-                      {project.role && <span className="role">{project.role}</span>}
-                      <h3>{project.title}</h3>
-                    </div>
-                    <span style={{ fontSize: 18, color: 'var(--g-500)', transition: 'transform .3s var(--ease)', transform: isExpanded ? 'rotate(45deg)' : 'none', flexShrink: 0, marginLeft: 12 }}>+</span>
-                  </div>
+                  {project.role && <span className="role">{project.role}</span>}
+                  <h3>{project.title}</h3>
                   <p>{project.description}</p>
                   <div className="stack">
                     {Array.isArray(project.technologies) && project.technologies.map((tech, j) => (
@@ -161,6 +156,7 @@ export default function CollaboratePage({ locale }: CollaboratePageProps) {
                     </div>
                   )}
                 </div>
+                <span className="pr-toggle" style={{ transform: isExpanded ? 'rotate(45deg)' : 'none' }}>+</span>
               </article>
             )
           })}
