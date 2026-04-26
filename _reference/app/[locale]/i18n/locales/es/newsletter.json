@@ -1,9 +1,0 @@
-{
-  "mail": "Dirección de correo electrónico",
-  "title": "Suscríbete al boletín",
-  "messageError": "¡Tu dirección de correo es inválida o ya está registrada!",
-  "placeholderSuccess": "¡Estás suscrito! 🎉",
-  "placeholderDefault": "Ingresa tu dirección de correo",
-  "buttonSuccess": "¡Gracias!",
-  "buttonDefault": "Suscribirse"
-}
