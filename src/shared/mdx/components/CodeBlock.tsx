@@ -19,7 +19,7 @@ export default function CodeBlock({ children }: { children: React.ReactNode }) {
         position: 'relative',
         margin: '24px 0',
         borderRadius: 12,
-        overflow: 'hidden',
+        overflow: 'auto',
         background: '#0f172a',
         border: '1px solid rgba(255,255,255,0.06)',
       }}

@@ -34,13 +34,6 @@ export default function PostLayout({ content, author, locale, children, prev, ne
 
       {/* Hero */}
       <div className="post-hero">
-        <div className="tag-row" style={{ justifyContent: 'center', display: 'flex', gap: 8, marginBottom: 20 }}>
-          {content.tags.map((tag) => (
-            <Link key={tag} href={localHref(`/tags/${tag}`)} className="chip" style={{ fontSize: 13 }}>
-              {tag}
-            </Link>
-          ))}
-        </div>
         <h1>{content.title}</h1>
       </div>
 
