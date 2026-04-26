@@ -6,6 +6,7 @@ import { LocaleTypes } from '@/i18n/settings'
 import { formatDate } from 'pliny/utils/formatDate'
 import ReadingProgress from './ReadingProgress'
 import TocFab from './TocFab'
+import ShareFab from './ShareFab'
 
 interface PostLayoutProps {
   content: Blog
@@ -31,6 +32,7 @@ export default function PostLayout({ content, author, locale, children, prev, ne
     <>
       <ReadingProgress />
       <TocFab toc={content.toc ?? []} />
+      <ShareFab title={content.title} slug={content.slug} />
 
       {/* Hero */}
       <div className="post-hero">
