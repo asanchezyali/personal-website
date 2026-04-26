@@ -1,5 +1,5 @@
 'use client'
-import React from 'react'
+import React, { useState } from 'react'
 import { useTranslation } from '@/i18n/client'
 import { LocaleTypes } from '@/i18n/settings'
 import siteMetadata from '@/lib/siteMetadata'
@@ -9,10 +9,16 @@ interface CollaboratePageProps { locale: LocaleTypes }
 export default function CollaboratePage({ locale }: CollaboratePageProps) {
   const { t } = useTranslation(locale, 'collaborate')
   const isEs = locale === 'es'
+  const [expandedIdx, setExpandedIdx] = useState<number | null>(null)
 
-  const projects = [1, 2, 3, 4].map((n) => ({
+  const projects = [1, 2, 3, 4, 5].map((n) => ({
     title: t(`projects.project_${n}.title`),
     description: t(`projects.project_${n}.description`),
+    role: t(`projects.project_${n}.role`),
+    context: t(`projects.project_${n}.context`),
+    problem: t(`projects.project_${n}.problem`),
+    solution: t(`projects.project_${n}.solution`),
+    link: t(`projects.project_${n}.link`),
     technologies: t(`projects.project_${n}.technologies`, { returnObjects: true }) as string[],
   }))
 
@@ -84,21 +90,67 @@ export default function CollaboratePage({ locale }: CollaboratePageProps) {
 
       {/* Projects */}
       <section className="projects">
-        <h2>{t('projects.title')}</h2>
+        <div className="sec-head">
+          <span className="eyebrow">{isEs ? 'Trabajo' : 'Work'}</span>
+          <h2>{t('projects.title')}</h2>
+          <p>{t('projects.description')}</p>
+        </div>
         <div className="pr-grid">
-          {projects.map((project, i) => (
-            <article key={i} className="pr-card">
-              <div className="body">
-                <h3>{project.title}</h3>
-                <p>{project.description}</p>
-                <div className="stack">
-                  {Array.isArray(project.technologies) && project.technologies.map((tech, j) => (
-                    <span key={j} className="chip">{tech}</span>
-                  ))}
+          {projects.map((project, i) => {
+            const isExpanded = expandedIdx === i
+            return (
+              <article
+                key={i}
+                className={`pr-card${isExpanded ? ' expanded' : ''}`}
+                onClick={() => setExpandedIdx(isExpanded ? null : i)}
+                style={{ cursor: 'pointer' }}
+              >
+                <div className="body">
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                    <div>
+                      {project.role && <span className="role">{project.role}</span>}
+                      <h3>{project.title}</h3>
+                    </div>
+                    <span style={{ fontSize: 18, color: 'var(--g-500)', transition: 'transform .3s var(--ease)', transform: isExpanded ? 'rotate(45deg)' : 'none', flexShrink: 0, marginLeft: 12 }}>+</span>
+                  </div>
+                  <p>{project.description}</p>
+                  <div className="stack">
+                    {Array.isArray(project.technologies) && project.technologies.map((tech, j) => (
+                      <span key={j} className="chip">{tech}</span>
+                    ))}
+                  </div>
+                  {/* Expanded content */}
+                  {isExpanded && (
+                    <div className="pr-expanded" onClick={(e) => e.stopPropagation()}>
+                      {project.context && (
+                        <div className="pr-section">
+                          <h4>{isEs ? 'Contexto' : 'Context'}</h4>
+                          <p>{project.context}</p>
+                        </div>
+                      )}
+                      {project.problem && (
+                        <div className="pr-section">
+                          <h4>{isEs ? 'Problema' : 'Problem'}</h4>
+                          <p>{project.problem}</p>
+                        </div>
+                      )}
+                      {project.solution && (
+                        <div className="pr-section">
+                          <h4>{isEs ? 'Solución' : 'Solution'}</h4>
+                          <p>{project.solution}</p>
+                        </div>
+                      )}
+                      {project.link && (
+                        <a href={project.link} target="_blank" rel="noopener noreferrer" className="btn primary" style={{ marginTop: 12, width: 'fit-content' }}>
+                          {isEs ? 'Ver proyecto' : 'View project'} <span className="a">→</span>
+                        </a>
+                      )}
+                    </div>
+                  )}
                 </div>
-              </div>
-            </article>
-          ))}
+              </article>
+            )
+          })}
         </div>
       </section>
 

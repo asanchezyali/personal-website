@@ -44,23 +44,53 @@
     "title": "Featured Projects",
     "description": "A selection of projects I've built or led — spanning AI, full-stack development, and workflow automation.",
     "project_1": {
-      "title": "Morpheus",
-      "description": "AI image generation platform enabling users to create custom images from text prompts and reference photos.",
-      "technologies": ["Python", "FastAPI", "React", "Stable Diffusion"]
+      "title": "Plixiq",
+      "description": "Multi-tenant AI platform that unifies LLM access for teams and businesses.",
+      "role": "Co-founder · Full-stack",
+      "context": "Companies need to experiment with multiple LLM providers without managing separate API keys, billing, and access controls for each team member.",
+      "problem": "LLM adoption in teams is fragmented — each developer signs up for their own accounts, costs are invisible, and there's no unified way to manage models, usage limits, or prompt routing.",
+      "solution": "Built a multi-tenant platform with LiteLLM as the unified model gateway, Next.js frontend, and Python backend. Teams get a single dashboard to manage models, track costs, set usage limits per user, and route prompts to the best provider automatically.",
+      "link": "https://plixiq.com/en",
+      "technologies": ["Python", "LiteLLM", "Next.js", "Multi-tenant", "PostgreSQL"]
     },
     "project_2": {
-      "title": "Digital Human / Zippy",
-      "description": "AI-powered 3D avatars with real-time speech, facial animation, and conversational capabilities.",
-      "technologies": ["OpenAI GPT", "Whisper", "ElevenLabs", "Three.js"]
+      "title": "Morpheus",
+      "description": "AI image generation platform enabling users to create custom images from text prompts and reference photos.",
+      "role": "Lead developer",
+      "context": "A creative tooling startup needed a production-ready image generation platform that could handle custom models and reference-based generation.",
+      "problem": "Existing tools lacked the ability to combine text prompts with reference photos for consistent brand imagery, and had no API for integration into existing workflows.",
+      "solution": "Built an end-to-end platform with FastAPI backend orchestrating Stable Diffusion pipelines, a React frontend with real-time preview, and a REST API for programmatic access.",
+      "link": "",
+      "technologies": ["Python", "FastAPI", "React", "Stable Diffusion"]
     },
     "project_3": {
-      "title": "CREARIA Agent",
-      "description": "WhatsApp-based customer service agent using RAG and tool orchestration for automated support.",
-      "technologies": ["RAG", "MCP", "LangChain", "WhatsApp API"]
+      "title": "Digital Human / Zippy",
+      "description": "AI-powered 3D avatars with real-time speech, facial animation, and conversational capabilities.",
+      "role": "Full-stack developer",
+      "context": "A research project at Monadical exploring the intersection of LLMs, speech synthesis, and 3D rendering for interactive digital humans.",
+      "problem": "Creating a convincing real-time digital human requires synchronizing speech generation, lip-sync, facial expressions, and conversational AI with low latency.",
+      "solution": "Integrated OpenAI GPT for conversation, Whisper for speech recognition, ElevenLabs for voice synthesis, and Three.js for 3D rendering — all connected through a real-time WebSocket pipeline.",
+      "link": "",
+      "technologies": ["OpenAI GPT", "Whisper", "ElevenLabs", "Three.js"]
     },
     "project_4": {
+      "title": "CREARIA Agent",
+      "description": "WhatsApp-based customer service agent using RAG and tool orchestration for automated support.",
+      "role": "AI engineer",
+      "context": "A company needed to automate their customer support on WhatsApp while maintaining the quality and accuracy of human agents.",
+      "problem": "Traditional chatbots fail when questions require access to specific business knowledge or when they need to perform actions like checking order status or scheduling appointments.",
+      "solution": "Built a RAG-powered agent with MCP tool orchestration that can search internal documentation, access business systems, and handle multi-turn conversations — all through the WhatsApp API.",
+      "link": "",
+      "technologies": ["RAG", "MCP", "LangChain", "WhatsApp API"]
+    },
+    "project_5": {
       "title": "ROCKET CODE",
       "description": "Monorepo-based workflow automation platform for development teams with shared component libraries.",
+      "role": "Full-stack developer",
+      "context": "A growing development agency needed to standardize their tooling, share components across projects, and automate repetitive development workflows.",
+      "problem": "Each project had its own setup, dependencies, and component implementations — leading to inconsistency, duplicated work, and slow onboarding for new team members.",
+      "solution": "Designed an NX monorepo architecture with shared React component libraries, NestJS microservices, and automated CI/CD pipelines. New projects could be scaffolded in minutes with consistent patterns.",
+      "link": "",
       "technologies": ["NX Monorepo", "React", "NestJS", "PostgreSQL"]
     }
   },

@@ -614,13 +614,20 @@
 
   /* Selected projects */
   .projects { padding: 48px 0; }
-  .projects h2 { font-size: clamp(28px, 3.6vw, 40px); margin-bottom: 32px; text-align: center; }
   .pr-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
   .pr-card {
     border: 1px solid var(--g-200); border-radius: 16px; overflow: hidden; background: transparent;
     display: flex; flex-direction: column; transition: all .3s var(--ease);
   }
   .pr-card:hover { transform: translateY(-2px); border-color: var(--g-300); }
+  .pr-card.expanded { grid-column: 1 / -1; transform: none; border-color: var(--g-300); }
+  .pr-card.expanded:hover { transform: none; }
+  .pr-expanded { margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--g-200); display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; }
+  .pr-section h4 { font-family: var(--f-ubuntu); font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--s-500); margin-bottom: 8px; }
+  html.dark .pr-section h4 { color: var(--s-400); }
+  .pr-section p { font-size: 14px; color: var(--g-600); line-height: 1.6; margin: 0; }
+  html.dark .pr-section p { color: var(--g-600); }
+  @media (max-width: 700px) { .pr-expanded { grid-template-columns: 1fr; } }
   .pr-card .cover { aspect-ratio: 16/10; }
   .pr-card .cover .ph { width: 100%; height: 100%; }
   .pr-card .body { padding: 24px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
