@@ -11,6 +11,14 @@ export default function CollaboratePage({ locale }: CollaboratePageProps) {
   const isEs = locale === 'es'
   const [expandedIdx, setExpandedIdx] = useState<number | null>(null)
 
+  const projectImages = [
+    '', // Plixiq — no image yet
+    '/images/ai-avatars/header-post2.png', // Morpheus
+    '/images/ai-avatars/header-post1.png', // Digital Human
+    '', // CREARIA
+    '/images/blockchain/post-solana.webp', // ROCKET CODE
+  ]
+
   const projects = [1, 2, 3, 4, 5].map((n) => ({
     title: t(`projects.project_${n}.title`),
     description: t(`projects.project_${n}.description`),
@@ -105,6 +113,11 @@ export default function CollaboratePage({ locale }: CollaboratePageProps) {
                 onClick={() => setExpandedIdx(isExpanded ? null : i)}
                 style={{ cursor: 'pointer' }}
               >
+                {projectImages[i] && (
+                  <div className="cover">
+                    <img src={projectImages[i]} alt={project.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  </div>
+                )}
                 <div className="body">
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                     <div>
