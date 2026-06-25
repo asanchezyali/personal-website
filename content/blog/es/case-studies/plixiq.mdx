@@ -43,36 +43,92 @@ Cada elección de abajo se hizo para optimizar las mismas dos cosas: **velocidad
 un equipo pequeño** y **type safety de punta a punta**. Esta es la versión corta, con el
 razonamiento.
 
-### Backend
+<StackList
+  title="Backend"
+  items={[
+    {
+      name: 'Python 3.12 + FastAPI',
+      what: 'API HTTP y webhooks',
+      why: 'Async-first, tipado con Pydantic, ideal para el manejo de mensajes en tiempo real.',
+    },
+    {
+      name: 'SQLModel',
+      what: 'ORM',
+      why: 'SQLAlchemy + Pydantic en uno — un solo modelo en vez de un modelo ORM y un schema aparte.',
+    },
+    {
+      name: 'PostgreSQL (Neon)',
+      what: 'Base de datos',
+      why: 'Escala bien; Neon agrega branching de base de datos para entornos de preview por PR.',
+    },
+    { name: 'Alembic', what: 'Migraciones', why: 'Esquema versionado, compatible con async.' },
+    {
+      name: 'LiteLLM',
+      what: 'Gateway de LLMs',
+      why: 'Una sola interfaz para muchos proveedores, con fallback y reintentos incorporados.',
+    },
+    {
+      name: 'ARQ',
+      what: 'Trabajos en background',
+      why: 'Cola sobre Redis, ligera y async-native — un Celery moderno y más pequeño.',
+    },
+    {
+      name: 'Redis (Upstash)',
+      what: 'Caché + pub/sub + cola',
+      why: 'Cachea la config del agente, respalda la cola de trabajos y propaga eventos en tiempo real.',
+    },
+    {
+      name: 'FastAPI Users',
+      what: 'Autenticación',
+      why: 'JWT en cookie HttpOnly, con roles RBAC de fábrica.',
+    },
+  ]}
+/>
 
-| Elección | Qué hace | Por qué |
-| --- | --- | --- |
-| **Python 3.12 + FastAPI** | API HTTP y webhooks | Async-first, tipado con Pydantic, ideal para manejo de mensajes en tiempo real |
-| **SQLModel** | ORM | SQLAlchemy + Pydantic en uno — un modelo en vez de un modelo ORM _y_ un schema |
-| **PostgreSQL (Neon)** | Base de datos | Escala bien; Neon agrega **branching de base de datos** para entornos de preview por PR |
-| **Alembic** | Migraciones | Esquema versionado, compatible con async |
-| **LiteLLM** | Gateway de LLMs | Una sola interfaz para muchos proveedores, con fallback y reintentos incorporados |
-| **ARQ** | Trabajos en background | Cola sobre Redis, ligera y async-native — un Celery moderno y más pequeño |
-| **Redis (Upstash)** | Caché + pub/sub + cola | Cachea la config del agente, respalda la cola de trabajos y propaga eventos en tiempo real |
-| **FastAPI Users** | Autenticación | JWT en cookie HttpOnly, roles RBAC de fábrica |
+<StackList
+  title="Frontend"
+  items={[
+    {
+      name: 'Next.js + React',
+      what: 'Panel de control',
+      why: 'SSR, un proxy /api del mismo origen para que las cookies "funcionen solas", y optimización de imágenes.',
+    },
+    { name: 'TypeScript (strict)', what: 'Todo', why: 'Type safety innegociable.' },
+    {
+      name: 'Effect',
+      what: 'Runtime async',
+      why: 'Errores tipados y reintentos — cada servicio devuelve Effect<T, TypedError> en vez de lanzar excepciones.',
+    },
+    {
+      name: 'Tailwind + shadcn/ui + Radix',
+      what: 'UI',
+      why: 'Estilos utility-first sobre primitivas accesibles y sin estilo.',
+    },
+    {
+      name: 'Server-Sent Events',
+      what: 'Tiempo real',
+      why: 'Actualizaciones en vivo unidireccionales sin el peso operativo de WebSockets.',
+    },
+  ]}
+/>
 
-### Frontend
-
-| Elección | Qué hace | Por qué |
-| --- | --- | --- |
-| **Next.js + React** | Panel de control | SSR, proxy `/api` del mismo origen para que las cookies "funcionen solas", optimización de imágenes |
-| **TypeScript (strict)** | Todo | Type safety innegociable |
-| **Effect** | Runtime async | Errores tipados y reintentos — cada servicio devuelve `Effect<T, TypedError>` en vez de lanzar excepciones |
-| **Tailwind + shadcn/ui + Radix** | UI | Estilos utility-first sobre primitivas accesibles y sin estilo |
-| **Server-Sent Events** | Tiempo real | Actualizaciones en vivo unidireccionales sin el peso operativo de WebSockets |
-
-### Infraestructura
-
-| Elección | Por qué |
-| --- | --- |
-| **Railway** | Despliegues por Git, secretos y entornos de preview automáticos por PR |
-| **Branching de Neon** | Una rama de base de datos desechable por pull request — los previews tienen datos reales y aislados |
-| **GitHub Actions** | Lint, import-linter y tests en cada PR antes de poder mergear |
+<StackList
+  title="Infraestructura"
+  items={[
+    {
+      name: 'Railway',
+      why: 'Despliegues por Git, secretos y entornos de preview automáticos por PR.',
+    },
+    {
+      name: 'Branching de Neon',
+      why: 'Una rama de base de datos desechable por pull request — los previews tienen datos reales y aislados.',
+    },
+    {
+      name: 'GitHub Actions',
+      why: 'Lint, import-linter y tests en cada PR antes de poder mergear.',
+    },
+  ]}
+/>
 
 Un detalle pequeño pero revelador: la capa de LLM usa **Groq** por defecto (rápido y gratis) y
 **cae a OpenAI** solo cuando Groq falla. LiteLLM convierte eso en una línea de configuración en vez
@@ -86,10 +142,15 @@ escalación, configuración de agentes, etc.). Cada contexto expone una API púb
 puede meterse en las entrañas de otro — una regla que se hace cumplir en CI con `import-linter`, no
 con buenas intenciones.
 
-<ImageBox src="/images/plixiq/architecture.png" alt="Arquitectura general de Plixiq: cliente en WhatsApp, API de Meta Cloud, backend FastAPI con un pipeline de mensajes y un gateway LiteLLM, PostgreSQL en Neon, Redis en Upstash y un panel Next.js para agentes humanos" width={920} height={560}>
-Arquitectura general. Un mensaje de WhatsApp entra por la Cloud API de Meta, el backend FastAPI lo
-pasa por el pipeline de mensajes y el gateway LiteLLM, y los agentes humanos ven todo en vivo desde
-el panel de Next.js vía SSE.
+<ImageBox
+  src="/images/plixiq/architecture.png"
+  alt="Arquitectura general de Plixiq: cliente en WhatsApp, API de Meta Cloud, backend FastAPI con un pipeline de mensajes y un gateway LiteLLM, PostgreSQL en Neon, Redis en Upstash y un panel Next.js para agentes humanos"
+  width={920}
+  height={560}
+>
+  Arquitectura general. Un mensaje de WhatsApp entra por la Cloud API de Meta, el backend FastAPI lo
+  pasa por el pipeline de mensajes y el gateway LiteLLM, y los agentes humanos ven todo en vivo
+  desde el panel de Next.js vía SSE.
 </ImageBox>
 
 ¿Por qué un monolito y no microservicios? Con un equipo pequeño, el impuesto operativo de los
@@ -103,9 +164,14 @@ hoy.
 El corazón de Plixiq es el pipeline que convierte un mensaje entrante de WhatsApp en una respuesta.
 Es un flujo lineal con una sola bifurcación: la transferencia a un humano.
 
-<ImageBox src="/images/plixiq/message-flow.png" alt="Pipeline de mensaje paso a paso: webhook de entrada, guarda de entrada, construcción del prompt, llamada al LLM, chequeo de escalación, guarda de salida, envío de respuesta, el cliente recibe — más una bifurcación de transferencia a humano" width={920} height={470}>
-El pipeline de mensaje, paso a paso. La mayoría de los mensajes fluye directo hacia una respuesta de
-IA; la rama punteada es donde una conversación se entrega a un humano.
+<ImageBox
+  src="/images/plixiq/message-flow.png"
+  alt="Pipeline de mensaje paso a paso: webhook de entrada, guarda de entrada, construcción del prompt, llamada al LLM, chequeo de escalación, guarda de salida, envío de respuesta, el cliente recibe — más una bifurcación de transferencia a humano"
+  width={920}
+  height={470}
+>
+  El pipeline de mensaje, paso a paso. La mayoría de los mensajes fluye directo hacia una respuesta
+  de IA; la rama punteada es donde una conversación se entrega a un humano.
 </ImageBox>
 
 Recorriéndolo:
@@ -134,8 +200,14 @@ El multi-tenancy es la columna vertebral: cada agente, conversación y mensaje p
 **Organización**. Esa única regla de alcance es lo que permite que un solo despliegue sirva con
 seguridad a muchos clientes aislados.
 
-<ImageBox src="/images/plixiq/data-model.png" alt="Modelo de datos central: la Organización posee AgentConfig y HumanAgents; AgentConfig tiene Conversaciones; las Conversaciones tienen Mensajes; los Usuarios tienen roles y se convierten en HumanAgents" width={920} height={470}>
-Las entidades centrales. Todo lo que está dentro de la frontera punteada pertenece a un solo tenant.
+<ImageBox
+  src="/images/plixiq/data-model.png"
+  alt="Modelo de datos central: la Organización posee AgentConfig y HumanAgents; AgentConfig tiene Conversaciones; las Conversaciones tienen Mensajes; los Usuarios tienen roles y se convierten en HumanAgents"
+  width={920}
+  height={470}
+>
+  Las entidades centrales. Todo lo que está dentro de la frontera punteada pertenece a un solo
+  tenant.
 </ImageBox>
 
 Algunas decisiones que vale la pena resaltar:
@@ -143,7 +215,7 @@ Algunas decisiones que vale la pena resaltar:
 - **Los roles son explícitos** — `SUPER_ADMIN`, `ADMIN`, `HUMAN_AGENT` — y la autenticación viaja
   en una cookie HttpOnly, así que el token nunca queda expuesto a JavaScript.
 - **El estado de la conversación es una máquina de estados pequeña** — `ACTIVE → WITH_HUMAN →
-  CLOSED` — que mantiene honesta la lógica de escalación y cierre automático.
+CLOSED` — que mantiene honesta la lógica de escalación y cierre automático.
 - **El uso de tokens se guarda por mensaje**, que es lo que hace posible, más adelante, reportar
   costos por tenant.
 
@@ -176,11 +248,11 @@ Los costos escalan casi por completo con el **uso de LLM y el volumen de mensaje
 infraestructura en sí es barata. Estas son estimaciones aproximadas, de orden de magnitud, para un
 despliegue en producción; no son facturas:
 
-| Escenario | Estimado mensual | Notas |
-| --- | --- | --- |
-| **Inicio / bajo volumen** | ~$60–80 | Tier gratis de Groq, tiers gratis de Neon + Upstash, un servicio pequeño de Railway por lado |
-| **Medio (~10k conversaciones)** | ~$150–250 | Base de datos de pago, uso del fallback de OpenAI, las tarifas por mensaje de WhatsApp empiezan a pesar |
-| **Alto (100k+ conversaciones)** | $500+ | Los costos por mensaje de LLM y WhatsApp dominan; la infra sigue siendo despreciable |
+| Escenario                       | Estimado mensual | Notas                                                                                                   |
+| ------------------------------- | ---------------- | ------------------------------------------------------------------------------------------------------- |
+| **Inicio / bajo volumen**       | ~$60–80          | Tier gratis de Groq, tiers gratis de Neon + Upstash, un servicio pequeño de Railway por lado            |
+| **Medio (~10k conversaciones)** | ~$150–250        | Base de datos de pago, uso del fallback de OpenAI, las tarifas por mensaje de WhatsApp empiezan a pesar |
+| **Alto (100k+ conversaciones)** | $500+            | Los costos por mensaje de LLM y WhatsApp dominan; la infra sigue siendo despreciable                    |
 
 El titular: una startup puede operar esto por el precio de un par de almuerzos al mes, y la curva de
 costo la domina un uso que solo pagas cuando ya tienes clientes.

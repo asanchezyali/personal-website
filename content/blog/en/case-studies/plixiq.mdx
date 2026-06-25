@@ -41,36 +41,92 @@ client isolated as its own tenant.
 Every choice below was made to optimize for the same two things: **developer velocity for a small
 team**, and **type safety end to end**. Here is the short version, with the reasoning.
 
-### Backend
+<StackList
+  title="Backend"
+  items={[
+    {
+      name: 'Python 3.12 + FastAPI',
+      what: 'HTTP & webhook API',
+      why: 'Async-first, Pydantic-typed, ideal for real-time message handling.',
+    },
+    {
+      name: 'SQLModel',
+      what: 'ORM',
+      why: 'SQLAlchemy + Pydantic in one — a single model instead of an ORM model and a separate schema.',
+    },
+    {
+      name: 'PostgreSQL (Neon)',
+      what: 'Primary database',
+      why: 'Scales well; Neon adds database branching for per-PR preview environments.',
+    },
+    { name: 'Alembic', what: 'Migrations', why: 'Versioned schema, async-friendly.' },
+    {
+      name: 'LiteLLM',
+      what: 'LLM gateway',
+      why: 'One interface for many providers, with built-in fallback and retries.',
+    },
+    {
+      name: 'ARQ',
+      what: 'Background jobs',
+      why: 'Lightweight, async-native Redis queue — a modern, smaller Celery.',
+    },
+    {
+      name: 'Redis (Upstash)',
+      what: 'Cache + pub/sub + queue',
+      why: 'Caches agent config, backs the job queue, and fans out real-time events.',
+    },
+    {
+      name: 'FastAPI Users',
+      what: 'Auth',
+      why: 'JWT in an HttpOnly cookie, with RBAC roles out of the box.',
+    },
+  ]}
+/>
 
-| Choice | What it does | Why |
-| --- | --- | --- |
-| **Python 3.12 + FastAPI** | HTTP & webhook API | Async-first, Pydantic-typed, ideal for real-time message handling |
-| **SQLModel** | ORM | SQLAlchemy + Pydantic in one — one model instead of an ORM model _and_ a schema |
-| **PostgreSQL (Neon)** | Primary database | Scales well; Neon adds **database branching** for per-PR preview environments |
-| **Alembic** | Migrations | Versioned schema, async-friendly |
-| **LiteLLM** | LLM gateway | One interface for many providers, with built-in fallback and retries |
-| **ARQ** | Background jobs | Lightweight, async-native Redis queue — a modern, smaller Celery |
-| **Redis (Upstash)** | Cache + pub/sub + queue | Caches agent config, backs the job queue, fans out real-time events |
-| **FastAPI Users** | Auth | JWT in an HttpOnly cookie, RBAC roles out of the box |
+<StackList
+  title="Frontend"
+  items={[
+    {
+      name: 'Next.js + React',
+      what: 'Dashboard',
+      why: 'SSR, a same-origin /api proxy so cookies "just work", and image optimization.',
+    },
+    { name: 'TypeScript (strict)', what: 'Everything', why: 'Non-negotiable type safety.' },
+    {
+      name: 'Effect',
+      what: 'Async runtime',
+      why: 'Typed errors and retries — every service returns Effect<T, TypedError> instead of throwing.',
+    },
+    {
+      name: 'Tailwind + shadcn/ui + Radix',
+      what: 'UI',
+      why: 'Utility-first styling on top of accessible, unstyled primitives.',
+    },
+    {
+      name: 'Server-Sent Events',
+      what: 'Real-time',
+      why: 'One-way live updates without the operational weight of WebSockets.',
+    },
+  ]}
+/>
 
-### Frontend
-
-| Choice | What it does | Why |
-| --- | --- | --- |
-| **Next.js + React** | Dashboard | SSR, same-origin `/api` proxy so cookies "just work", image optimization |
-| **TypeScript (strict)** | Everything | Non-negotiable type safety |
-| **Effect** | Async runtime | Typed errors and retries — every service returns `Effect<T, TypedError>` instead of throwing |
-| **Tailwind + shadcn/ui + Radix** | UI | Utility-first styling on top of accessible, unstyled primitives |
-| **Server-Sent Events** | Real-time | One-way live updates without the operational weight of WebSockets |
-
-### Infrastructure
-
-| Choice | Why |
-| --- | --- |
-| **Railway** | Git-based deploys, secrets, and automatic preview environments per PR |
-| **Neon branching** | A throwaway database branch per pull request — previews get real, isolated data |
-| **GitHub Actions** | Lint, import-linter, and tests on every PR before it can merge |
+<StackList
+  title="Infrastructure"
+  items={[
+    {
+      name: 'Railway',
+      why: 'Git-based deploys, secrets, and automatic preview environments per PR.',
+    },
+    {
+      name: 'Neon branching',
+      why: 'A throwaway database branch per pull request — previews get real, isolated data.',
+    },
+    {
+      name: 'GitHub Actions',
+      why: 'Lint, import-linter, and tests on every PR before it can merge.',
+    },
+  ]}
+/>
 
 A small but telling detail: the LLM layer defaults to **Groq** (fast and free) and **falls back to
 OpenAI** only when Groq fails. LiteLLM makes that a configuration line rather than a code branch —
@@ -83,10 +139,15 @@ bounded contexts (identity, messaging, conversation, escalation, agent config, a
 context exposes a small public API and can't reach into another's internals — a rule enforced in
 CI by `import-linter`, not by good intentions.
 
-<ImageBox src="/images/plixiq/architecture.png" alt="Plixiq high-level architecture: customer on WhatsApp, Meta Cloud API, FastAPI backend with a message pipeline and LiteLLM gateway, PostgreSQL on Neon, Redis on Upstash, and a Next.js dashboard for human agents" width={920} height={560}>
-High-level architecture. A WhatsApp message enters through Meta's Cloud API, the FastAPI backend
-runs it through the message pipeline and the LiteLLM gateway, and human agents watch everything
-live from the Next.js dashboard over SSE.
+<ImageBox
+  src="/images/plixiq/architecture.png"
+  alt="Plixiq high-level architecture: customer on WhatsApp, Meta Cloud API, FastAPI backend with a message pipeline and LiteLLM gateway, PostgreSQL on Neon, Redis on Upstash, and a Next.js dashboard for human agents"
+  width={920}
+  height={560}
+>
+  High-level architecture. A WhatsApp message enters through Meta's Cloud API, the FastAPI backend
+  runs it through the message pipeline and the LiteLLM gateway, and human agents watch everything
+  live from the Next.js dashboard over SSE.
 </ImageBox>
 
 Why a monolith and not microservices? With a small team, the operational tax of microservices
@@ -99,9 +160,14 @@ later — while keeping the **operational simplicity** of a single deploy today.
 The heart of Plixiq is the pipeline that turns an inbound WhatsApp message into a reply. It's a
 linear flow with one branch: the human handoff.
 
-<ImageBox src="/images/plixiq/message-flow.png" alt="Step-by-step message pipeline: webhook in, input guard, build prompt, LLM call, escalation check, output guard, send reply, customer receives — plus a human handoff branch" width={920} height={470}>
-The message pipeline, step by step. Most messages flow straight through to an AI reply; the dashed
-branch is where a conversation is handed to a human.
+<ImageBox
+  src="/images/plixiq/message-flow.png"
+  alt="Step-by-step message pipeline: webhook in, input guard, build prompt, LLM call, escalation check, output guard, send reply, customer receives — plus a human handoff branch"
+  width={920}
+  height={470}
+>
+  The message pipeline, step by step. Most messages flow straight through to an AI reply; the dashed
+  branch is where a conversation is handed to a human.
 </ImageBox>
 
 Walking through it:
@@ -130,8 +196,13 @@ Multi-tenancy is the backbone: every agent, conversation, and message belongs to
 **Organization**. That single scoping rule is what lets one deployment safely serve many isolated
 clients.
 
-<ImageBox src="/images/plixiq/data-model.png" alt="Core data model: Organization owns AgentConfig and HumanAgents; AgentConfig has Conversations; Conversations have Messages; Users have roles and become HumanAgents" width={920} height={470}>
-The core entities. Everything inside the dashed boundary is scoped to one tenant.
+<ImageBox
+  src="/images/plixiq/data-model.png"
+  alt="Core data model: Organization owns AgentConfig and HumanAgents; AgentConfig has Conversations; Conversations have Messages; Users have roles and become HumanAgents"
+  width={920}
+  height={470}
+>
+  The core entities. Everything inside the dashed boundary is scoped to one tenant.
 </ImageBox>
 
 A few decisions worth calling out:
@@ -171,11 +242,11 @@ Structure is what makes AI-assisted development safe to do at speed.
 Costs scale almost entirely with **LLM usage and message volume** — the infrastructure itself is
 cheap. These are rough, order-of-magnitude estimates for a production deployment, not invoices:
 
-| Scenario | Monthly estimate | Notes |
-| --- | --- | --- |
-| **Early / low volume** | ~$60–80 | Free Groq tier, Neon + Upstash free tiers, one small Railway service each |
-| **Mid (~10k conversations)** | ~$150–250 | Paid database, OpenAI fallback usage, WhatsApp message fees start to matter |
-| **High (100k+ conversations)** | $500+ | LLM and WhatsApp per-message costs dominate; infra is still a rounding error |
+| Scenario                       | Monthly estimate | Notes                                                                        |
+| ------------------------------ | ---------------- | ---------------------------------------------------------------------------- |
+| **Early / low volume**         | ~$60–80          | Free Groq tier, Neon + Upstash free tiers, one small Railway service each    |
+| **Mid (~10k conversations)**   | ~$150–250        | Paid database, OpenAI fallback usage, WhatsApp message fees start to matter  |
+| **High (100k+ conversations)** | $500+            | LLM and WhatsApp per-message costs dominate; infra is still a rounding error |
 
 The headline: a startup can run this for the price of a couple of lunches a month, and the cost
 curve is dominated by usage you only pay for once you have customers.
