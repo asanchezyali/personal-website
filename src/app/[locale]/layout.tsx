@@ -19,23 +19,58 @@ export async function generateStaticParams() {
 
 type LayoutProps = { children: React.ReactNode; params: Promise<{ locale: LocaleTypes }> }
 
-export async function generateMetadata(props: { params: Promise<{ locale: LocaleTypes }> }): Promise<Metadata> {
+export async function generateMetadata(props: {
+  params: Promise<{ locale: LocaleTypes }>
+}): Promise<Metadata> {
   const { locale } = await props.params
   return {
     metadataBase: new URL(siteMetadata.siteUrl),
     title: { default: maintitle[locale], template: `%s | ${maintitle[locale]}` },
     description: maindescription[locale],
-    openGraph: { title: maintitle[locale], description: maindescription[locale], url: './', siteName: maintitle[locale], images: [siteMetadata.socialBanner], locale, type: 'website' },
-    alternates: { canonical: './', types: { 'application/rss+xml': `${siteMetadata.siteUrl}/feed.xml` } },
-    robots: { index: true, follow: true, googleBot: { index: true, follow: true, 'max-video-preview': -1, 'max-image-preview': 'large', 'max-snippet': -1 } },
-    twitter: { title: maintitle[locale], description: maindescription[locale], site: siteMetadata.siteUrl, creator: siteMetadata.author, card: 'summary_large_image', images: [siteMetadata.socialBanner] },
+    openGraph: {
+      title: maintitle[locale],
+      description: maindescription[locale],
+      url: './',
+      siteName: maintitle[locale],
+      images: [siteMetadata.socialBanner],
+      locale,
+      type: 'website',
+    },
+    alternates: {
+      canonical: './',
+      types: { 'application/rss+xml': `${siteMetadata.siteUrl}/feed.xml` },
+    },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        'max-video-preview': -1,
+        'max-image-preview': 'large',
+        'max-snippet': -1,
+      },
+    },
+    twitter: {
+      title: maintitle[locale],
+      description: maindescription[locale],
+      site: siteMetadata.siteUrl,
+      creator: siteMetadata.author,
+      card: 'summary_large_image',
+      images: [siteMetadata.socialBanner],
+    },
   }
 }
 
 export default async function RootLayout(props: LayoutProps) {
   const { locale } = await props.params
   return (
-    <html lang={locale} dir={dir(locale)} className={`${ubuntu.variable} ${lato.variable} scroll-smooth`} suppressHydrationWarning>
+    <html
+      lang={locale}
+      dir={dir(locale)}
+      className={`${ubuntu.variable} ${lato.variable} scroll-smooth`}
+      suppressHydrationWarning
+    >
       <head>
         <link rel="apple-touch-icon" sizes="76x76" href="/static/favicons/apple-touch-icon.png" />
         <link rel="icon" type="image/png" sizes="32x32" href="/static/favicons/favicon-32x32.png" />

@@ -25,7 +25,9 @@ export default function TagsPageClient({ locale, tags }: TagsPageClientProps) {
         <h1 style={{ fontSize: 'clamp(36px,5vw,56px)', lineHeight: 1.05, marginBottom: 12 }}>
           <span className="accent">{t('tags')}</span>
         </h1>
-        <p className="muted" style={{ fontSize: 18 }}>Browse all topics covered in the blog</p>
+        <p className="muted" style={{ fontSize: 18 }}>
+          Browse all topics covered in the blog
+        </p>
       </div>
 
       <div
@@ -84,9 +86,7 @@ export default function TagsPageClient({ locale, tags }: TagsPageClientProps) {
           </Link>
         ))}
 
-        {sortedTags.length === 0 && (
-          <p className="muted">No tags found.</p>
-        )}
+        {sortedTags.length === 0 && <p className="muted">No tags found.</p>}
       </div>
     </div>
   )

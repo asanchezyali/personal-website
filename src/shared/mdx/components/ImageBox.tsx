@@ -8,9 +8,9 @@ interface ImageBoxProps {
   children: React.ReactNode
 }
 
-const ImageBox = ({ src, alt, width, height, children }) => {
+const ImageBox = ({ src, alt, width, height, children }: ImageBoxProps) => {
   return (
-    <div className="mt-8 mb-[50px] flex w-full flex-col items-center">
+    <div className="mb-[50px] mt-8 flex w-full flex-col items-center">
       <Image src={src} alt={alt} width={width} height={height} className="rounded-lg" />
       <div
         className="mt-4 text-[14px] text-gray-800 dark:text-gray-200"

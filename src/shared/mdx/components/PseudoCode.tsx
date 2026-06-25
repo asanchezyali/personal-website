@@ -17,7 +17,7 @@ const PseudoCode = ({ title, children }) => {
         {title}
       </div>
       <div className="w-full flex-col space-y-[-35px] border-b-[1px]">
-        {React.Children.map(children, (child, index) => {
+        {React.Children.map(children, (child) => {
           if (React.isValidElement(child) && child.type === PseudoCodeLine) {
             return React.cloneElement(child)
           }

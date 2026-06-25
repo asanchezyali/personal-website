@@ -2,7 +2,8 @@ const siteMetadata = {
   title: 'Yali Dev',
   author: 'Alejandro Sánchez Yalí',
   headerTitle: 'Yali Dev',
-  description: 'A space dedicated to exploring the intersections of mathematics, computer science, software development, artificial intelligence, and deep learning.',
+  description:
+    'A space dedicated to exploring the intersections of mathematics, computer science, software development, artificial intelligence, and deep learning.',
   language: 'en',
   theme: 'system',
   siteUrl: 'https://asanchezyali.com',

@@ -3,7 +3,10 @@ import React from 'react'
 import { Fragment, jsx, jsxs } from 'react/jsx-runtime'
 import { components } from './components'
 
-interface MDXContentProps { code: string; toc?: any[] }
+interface MDXContentProps {
+  code: string
+  toc?: unknown[]
+}
 
 export function MDXContent({ code, toc }: MDXContentProps) {
   if (!code) return <div>No content available</div>

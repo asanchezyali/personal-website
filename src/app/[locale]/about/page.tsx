@@ -23,9 +23,10 @@ export async function generateMetadata(props: AboutPageProps): Promise<Metadata>
 export default async function About(props: AboutPageProps) {
   const { locale } = await props.params
 
-  const author = authors.find((a) => a.language === locale && a.default !== false)
-    || authors.find((a) => a.language === locale)
-    || authors[0]
+  const author =
+    authors.find((a) => a.language === locale && a.default !== false) ||
+    authors.find((a) => a.language === locale) ||
+    authors[0]
 
   if (!author) notFound()
 

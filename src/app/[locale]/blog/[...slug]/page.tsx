@@ -14,9 +14,7 @@ type SlugPageProps = {
 
 function findPost(locale: LocaleTypes, slugParts: string[]) {
   const slugSuffix = slugParts.join('/')
-  return posts.find(
-    (p) => p.language === locale && p.slug.endsWith(slugSuffix)
-  )
+  return posts.find((p) => p.language === locale && p.slug.endsWith(slugSuffix))
 }
 
 export async function generateStaticParams() {
@@ -55,9 +53,10 @@ export default async function PostPage(props: SlugPageProps) {
 
   // Find author
   const authorSlug = post.authors?.[0] || 'yali'
-  const author = authors.find(
-    (a) => a.language === locale && a.slug.endsWith(authorSlug)
-  ) || authors.find((a) => a.slug.endsWith(authorSlug)) || authors[0]
+  const author =
+    authors.find((a) => a.language === locale && a.slug.endsWith(authorSlug)) ||
+    authors.find((a) => a.slug.endsWith(authorSlug)) ||
+    authors[0]
 
   if (!author) notFound()
 

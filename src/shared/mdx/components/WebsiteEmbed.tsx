@@ -7,7 +7,8 @@ const WebsiteEmbed = ({ website }: EmbedPageProps) => {
     <>
       <div style={{ height: '100vh', overflow: 'hidden' }}>
         <iframe
-          src={`${website}`} // Replace with the URL you want to embed
+          src={`${website}`}
+          title={website}
           style={{ border: 'none', width: '100%', height: '100%' }}
           allowFullScreen
         />

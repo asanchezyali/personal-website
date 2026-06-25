@@ -50,11 +50,21 @@ export default function MobileNav({ locale }: MobileNavProps) {
       >
         {isOpen ? (
           <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-            <path d="M2 2l14 14M16 2L2 16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+            <path
+              d="M2 2l14 14M16 2L2 16"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+            />
           </svg>
         ) : (
           <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-            <path d="M2 4h14M2 9h14M2 14h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+            <path
+              d="M2 4h14M2 9h14M2 14h14"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+            />
           </svg>
         )}
       </button>
@@ -62,6 +72,9 @@ export default function MobileNav({ locale }: MobileNavProps) {
       {isOpen && (
         <>
           <div
+            role="button"
+            tabIndex={0}
+            aria-label="Close menu"
             style={{
               position: 'fixed',
               inset: 0,
@@ -70,6 +83,12 @@ export default function MobileNav({ locale }: MobileNavProps) {
               backdropFilter: 'blur(4px)',
             }}
             onClick={() => setIsOpen(false)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault()
+                setIsOpen(false)
+              }
+            }}
           />
           <nav
             style={{
@@ -94,7 +113,12 @@ export default function MobileNav({ locale }: MobileNavProps) {
               style={{ position: 'absolute', top: 16, right: 16 }}
             >
               <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                <path d="M2 2l14 14M16 2L2 16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                <path
+                  d="M2 2l14 14M16 2L2 16"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                />
               </svg>
             </button>
 

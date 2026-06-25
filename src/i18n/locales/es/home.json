@@ -9,10 +9,10 @@
     "blog_description": "Exploramos la tecnología, el desarrollo y la innovación a través de análisis detallados y guías prácticas"
   },
 
-"stack": {
+  "stack": {
     "title": "Construyendo bit a bit",
     "description": "Me encanta experimentar con tecnologías modernas para crear soluciones únicas que resuelvan problemas reales. Cada línea de código es una oportunidad para aprender algo nuevo."
-},
+  },
 
   "blog": "Blog",
   "collaborate": "Colaborar",

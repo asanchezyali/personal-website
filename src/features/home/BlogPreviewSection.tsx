@@ -27,8 +27,12 @@ export default function BlogPreviewSection({ locale, posts }: BlogPreviewSection
 
   return (
     <section className="blog-preview wrap">
-      <h2 className="section-h" style={{ textAlign: 'center' }}>{t('hero.blog_section')}</h2>
-      <p className="section-sub" style={{ textAlign: 'center' }}>{t('hero.blog_description')}</p>
+      <h2 className="section-h" style={{ textAlign: 'center' }}>
+        {t('hero.blog_section')}
+      </h2>
+      <p className="section-sub" style={{ textAlign: 'center' }}>
+        {t('hero.blog_description')}
+      </p>
 
       <div className="posts-grid">
         {latest.map((post) => {
@@ -36,7 +40,12 @@ export default function BlogPreviewSection({ locale, posts }: BlogPreviewSection
           const postHref = localHref(`/blog/${slugParts}`)
 
           return (
-            <Link key={post.slug} href={postHref} className="post-card" style={{ textDecoration: 'none' }}>
+            <Link
+              key={post.slug}
+              href={postHref}
+              className="post-card"
+              style={{ textDecoration: 'none' }}
+            >
               <div className="cover">
                 {post.headerImage ? (
                   <Image
@@ -55,7 +64,9 @@ export default function BlogPreviewSection({ locale, posts }: BlogPreviewSection
               <div className="body">
                 <div className="tag-row">
                   {post.tags.slice(0, 2).map((tag) => (
-                    <span key={tag} className="chip">{tag}</span>
+                    <span key={tag} className="chip">
+                      {tag}
+                    </span>
                   ))}
                 </div>
                 <h3>{post.title}</h3>

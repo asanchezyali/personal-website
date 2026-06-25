@@ -83,7 +83,9 @@ export default function TechStackSection({ locale }: TechStackSectionProps) {
           {DOUBLED.map((tech, i) => (
             <div key={i} className="tech">
               <div className={`icon${NEEDS_BG.includes(tech.name) ? ' needs-bg' : ''}`}>
-                <tech.icon className={NEEDS_BG.includes(tech.name) ? 'h-8 w-8' : 'h-12 w-12 md:h-14 md:w-14'} />
+                <tech.icon
+                  className={NEEDS_BG.includes(tech.name) ? 'h-8 w-8' : 'h-12 w-12 md:h-14 md:w-14'}
+                />
               </div>
               <span className="label">{tech.name}</span>
             </div>

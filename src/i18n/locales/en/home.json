@@ -5,13 +5,13 @@
     "title_2": "Specialized in developing smart applications that integrate modern web technologies with artificial intelligence and blockchain.",
     "button_1": "Contact Me",
     "button_2": "Let's Collaborate",
-    "blog_section":"Notes on AI, Blockchain, and Cutting-Edge Tech",
-    "blog_description":"Exploring technology, development, and innovation through detailed analyses and practical guides"
+    "blog_section": "Notes on AI, Blockchain, and Cutting-Edge Tech",
+    "blog_description": "Exploring technology, development, and innovation through detailed analyses and practical guides"
   },
 
   "stack": {
-      "title": "Building bit by bit",
-      "description": "I love experimenting with modern technologies to create unique solutions that solve real problems. Every line of code is an opportunity to learn something new."
+    "title": "Building bit by bit",
+    "description": "I love experimenting with modern technologies to create unique solutions that solve real problems. Every line of code is an opportunity to learn something new."
   },
 
   "blog": "Blog",

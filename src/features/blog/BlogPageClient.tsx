@@ -30,13 +30,19 @@ export default function BlogPageClient({ locale, posts, tags }: BlogPageClientPr
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
 
   const afterTag = activeTag
-    ? published.filter((p) => p.tags.some((tag) => tag.toLowerCase().replace(/\s+/g, '-') === activeTag))
+    ? published.filter((p) =>
+        p.tags.some((tag) => tag.toLowerCase().replace(/\s+/g, '-') === activeTag)
+      )
     : published
 
   const filtered = search.trim()
     ? afterTag.filter((p) => {
         const q = search.toLowerCase()
-        return p.title.toLowerCase().includes(q) || (p.summary || '').toLowerCase().includes(q) || p.tags.some((t) => t.toLowerCase().includes(q))
+        return (
+          p.title.toLowerCase().includes(q) ||
+          (p.summary || '').toLowerCase().includes(q) ||
+          p.tags.some((t) => t.toLowerCase().includes(q))
+        )
       })
     : afterTag
 
@@ -75,8 +81,25 @@ export default function BlogPageClient({ locale, posts, tags }: BlogPageClientPr
       {/* Toolbar: search + tag dropdown */}
       <div className="toolbar">
         <div className="search-wrap">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3-3"/></svg>
-          <input type="search" placeholder="Search posts, topics, tags…" value={search} onChange={(e) => setSearch(e.target.value)} />
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <circle cx="11" cy="11" r="7" />
+            <path d="m20 20-3-3" />
+          </svg>
+          <input
+            type="search"
+            placeholder="Search posts, topics, tags…"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
         </div>
         <div className="tag-dropdown">
           <button
@@ -84,15 +107,48 @@ export default function BlogPageClient({ locale, posts, tags }: BlogPageClientPr
             onClick={() => setTagOpen(!tagOpen)}
           >
             {activeTag || 'All topics'}
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="m6 9 6 6 6-6" />
+            </svg>
           </button>
           {tagOpen && (
             <>
-              <div style={{ position: 'fixed', inset: 0, zIndex: 40 }} onClick={() => setTagOpen(false)} />
-              <div className="tag-menu">
+              <div
+                role="button"
+                tabIndex={0}
+                aria-label="Close topics menu"
+                style={{ position: 'fixed', inset: 0, zIndex: 40 }}
+                onClick={() => setTagOpen(false)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault()
+                    setTagOpen(false)
+                  }
+                }}
+              />
+              <div className="tag-menu" role="menu">
                 <div
+                  role="menuitem"
+                  tabIndex={0}
                   className={`tag-menu-item${activeTag === null ? ' active' : ''}`}
-                  onClick={() => { setActiveTag(null); setTagOpen(false) }}
+                  onClick={() => {
+                    setActiveTag(null)
+                    setTagOpen(false)
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault()
+                      setActiveTag(null)
+                      setTagOpen(false)
+                    }
+                  }}
                 >
                   All topics
                 </div>
@@ -101,8 +157,20 @@ export default function BlogPageClient({ locale, posts, tags }: BlogPageClientPr
                   .map(([tag, count]) => (
                     <div
                       key={tag}
+                      role="menuitem"
+                      tabIndex={0}
                       className={`tag-menu-item${activeTag === tag ? ' active' : ''}`}
-                      onClick={() => { setActiveTag(activeTag === tag ? null : tag); setTagOpen(false) }}
+                      onClick={() => {
+                        setActiveTag(activeTag === tag ? null : tag)
+                        setTagOpen(false)
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault()
+                          setActiveTag(activeTag === tag ? null : tag)
+                          setTagOpen(false)
+                        }
+                      }}
                     >
                       <span>{tag}</span>
                       <span className="count">{count}</span>
@@ -128,7 +196,10 @@ export default function BlogPageClient({ locale, posts, tags }: BlogPageClientPr
                   style={{ objectFit: 'cover', width: '100%', height: '100%', borderRadius: 20 }}
                 />
               ) : (
-                <div className="ph" style={{ width: '100%', height: '100%', borderRadius: 20, minHeight: 280 }}>
+                <div
+                  className="ph"
+                  style={{ width: '100%', height: '100%', borderRadius: 20, minHeight: 280 }}
+                >
                   {featured.title.slice(0, 2)}
                 </div>
               )}
@@ -142,7 +213,12 @@ export default function BlogPageClient({ locale, posts, tags }: BlogPageClientPr
               <h2>{featured.title}</h2>
               <p className="excerpt">{featured.summary}</p>
               <div className="author">
-                <div className="avatar ph" style={{ width: 36, height: 36, borderRadius: '50%', fontSize: 10 }}>A</div>
+                <div
+                  className="avatar ph"
+                  style={{ width: 36, height: 36, borderRadius: '50%', fontSize: 10 }}
+                >
+                  A
+                </div>
                 <span>Alejandro Sánchez Yalí</span>
               </div>
             </div>
@@ -158,18 +234,22 @@ export default function BlogPageClient({ locale, posts, tags }: BlogPageClientPr
             <span className="count">{byYear[year].length} posts</span>
           </div>
           {byYear[year].map((post) => (
-            <Link key={post.slug} href={postSlug(post)} style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}>
+            <Link
+              key={post.slug}
+              href={postSlug(post)}
+              style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}
+            >
               <article className="post-row">
-                <span className="date">
-                  {formatDate(post.date, locale).slice(0, 6)}
-                </span>
+                <span className="date">{formatDate(post.date, locale).slice(0, 6)}</span>
                 <div>
                   <h3>{post.title}</h3>
                   {post.summary && <p className="snip">{post.summary.slice(0, 100)}…</p>}
                 </div>
                 <div className="tags-inline">
                   {post.tags.slice(0, 2).map((tag) => (
-                    <span key={tag} className="chip">{tag}</span>
+                    <span key={tag} className="chip">
+                      {tag}
+                    </span>
                   ))}
                 </div>
                 <span className="arrow">→</span>
@@ -180,7 +260,9 @@ export default function BlogPageClient({ locale, posts, tags }: BlogPageClientPr
       ))}
 
       {filtered.length === 0 && (
-        <p className="muted" style={{ textAlign: 'center', padding: '48px 0' }}>{t('noposts')}</p>
+        <p className="muted" style={{ textAlign: 'center', padding: '48px 0' }}>
+          {t('noposts')}
+        </p>
       )}
     </div>
   )

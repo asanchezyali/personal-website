@@ -28,11 +28,18 @@ export default function CodeBlock({ children }: { children: React.ReactNode }) {
         aria-label="Copy code"
         onClick={onCopy}
         style={{
-          position: 'absolute', top: 10, right: 10,
-          background: 'rgba(255,255,255,0.08)', border: 'none',
-          borderRadius: 6, padding: '4px 8px', cursor: 'pointer',
-          color: copied ? '#86efac' : '#94a3b8', fontSize: 11,
-          fontFamily: 'inherit', transition: 'color .2s',
+          position: 'absolute',
+          top: 10,
+          right: 10,
+          background: 'rgba(255,255,255,0.08)',
+          border: 'none',
+          borderRadius: 6,
+          padding: '4px 8px',
+          cursor: 'pointer',
+          color: copied ? '#86efac' : '#94a3b8',
+          fontSize: 11,
+          fontFamily: 'inherit',
+          transition: 'color .2s',
         }}
       >
         {copied ? 'Copied!' : 'Copy'}

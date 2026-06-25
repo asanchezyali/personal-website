@@ -5,7 +5,7 @@ import { useParams, usePathname } from 'next/navigation'
 import headerNavLinks from '@/lib/headerNavLinks'
 import { useTranslation } from '@/i18n/client'
 import { useTheme } from '@/shared/hooks/useTheme'
-import { LocaleTypes, locales } from '@/i18n/settings'
+import { LocaleTypes } from '@/i18n/settings'
 import MobileNav from './MobileNav'
 
 export default function Header() {
@@ -26,8 +26,6 @@ export default function Header() {
     return pathname.startsWith(localized)
   }
 
-  const otherLocale = locales.find((l) => l !== locale) as LocaleTypes
-
   function otherLocaleHref() {
     if (locale === 'en') {
       // Going to /es/...
@@ -43,7 +41,12 @@ export default function Header() {
     setTheme(next)
   }
 
-  const isDark = mounted && (theme === 'dark' || (theme === 'system' && typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches))
+  const isDark =
+    mounted &&
+    (theme === 'dark' ||
+      (theme === 'system' &&
+        typeof window !== 'undefined' &&
+        window.matchMedia('(prefers-color-scheme: dark)').matches))
 
   return (
     <header className="site-header">
@@ -74,7 +77,12 @@ export default function Header() {
             <Link href={localHref('/blog')} className="icon-btn" aria-label={t('search')}>
               <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
                 <circle cx="9" cy="9" r="6" stroke="currentColor" strokeWidth="1.8" />
-                <path d="M15 15l3 3" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+                <path
+                  d="M15 15l3 3"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                />
               </svg>
             </Link>
 
@@ -92,12 +100,20 @@ export default function Header() {
             <button className="icon-btn" onClick={toggleTheme} aria-label={t('darkmode')}>
               {isDark ? (
                 <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
-                  <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" fill="currentColor" />
+                  <path
+                    d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"
+                    fill="currentColor"
+                  />
                 </svg>
               ) : (
                 <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
                   <circle cx="10" cy="10" r="4" stroke="currentColor" strokeWidth="1.8" />
-                  <path d="M10 2v1M10 17v1M2 10h1M17 10h1M4.22 4.22l.7.7M15.08 15.08l.7.7M15.08 4.22l-.7.7M4.22 15.08l-.7.7" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+                  <path
+                    d="M10 2v1M10 17v1M2 10h1M17 10h1M4.22 4.22l.7.7M15.08 15.08l.7.7M15.08 4.22l-.7.7M4.22 15.08l-.7.7"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                    strokeLinecap="round"
+                  />
                 </svg>
               )}
             </button>

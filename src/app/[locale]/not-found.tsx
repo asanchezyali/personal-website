@@ -31,11 +31,10 @@ export default function NotFound() {
       >
         404
       </div>
-      <h1 style={{ fontSize: 'clamp(24px, 3vw, 36px)', marginBottom: 16 }}>
-        Page not found
-      </h1>
+      <h1 style={{ fontSize: 'clamp(24px, 3vw, 36px)', marginBottom: 16 }}>Page not found</h1>
       <p className="muted" style={{ fontSize: 17, maxWidth: '48ch', marginBottom: 32 }}>
-        Sorry, we couldn&apos;t find what you were looking for. But don&apos;t worry — there&apos;s plenty more to explore.
+        Sorry, we couldn&apos;t find what you were looking for. But don&apos;t worry — there&apos;s
+        plenty more to explore.
       </p>
       <Link href="/" className="btn primary">
         Back to homepage <span className="a">→</span>

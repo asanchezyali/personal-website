@@ -7,7 +7,10 @@ export function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname
   if (pathname.startsWith(`/${fallbackLng}/`) || pathname === `/${fallbackLng}`) {
     return NextResponse.redirect(
-      new URL(pathname.replace(`/${fallbackLng}`, pathname === `/${fallbackLng}` ? '/' : ''), request.url)
+      new URL(
+        pathname.replace(`/${fallbackLng}`, pathname === `/${fallbackLng}` ? '/' : ''),
+        request.url
+      )
     )
   }
   const missing = locales.every((l) => !pathname.startsWith(`/${l}/`) && pathname !== `/${l}`)
