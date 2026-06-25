@@ -8,12 +8,14 @@ import WebsiteEmbed from './WebsiteEmbed'
 import MathBox from './MathBox'
 import ImageBox from './ImageBox'
 import Reference from './Reference'
+import StackList from './StackList'
 import { PseudoCodeLine, PseudoCode } from './PseudoCode'
 
 export const components: MDXComponents = {
   PseudoCode,
   PseudoCodeLine,
   ImageBox,
+  StackList,
   TOCInline,
   a: CustomLink,
   pre: CodeBlock,

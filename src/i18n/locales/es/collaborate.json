@@ -50,7 +50,7 @@
       "context": "Las empresas necesitan experimentar con múltiples proveedores de LLM sin gestionar claves API, facturación y controles de acceso separados para cada miembro del equipo.",
       "problem": "La adopción de LLMs en equipos está fragmentada — cada desarrollador tiene sus propias cuentas, los costos son invisibles, y no hay forma unificada de gestionar modelos, límites de uso o enrutamiento de prompts.",
       "solution": "Construí una plataforma multi-tenant con LiteLLM como gateway unificado de modelos, frontend en Next.js y backend en Python. Los equipos tienen un dashboard para gestionar modelos, rastrear costos, establecer límites por usuario y enrutar prompts automáticamente.",
-      "link": "https://plixiq.com/en",
+      "link": "/es/blog/case-studies/plixiq",
       "technologies": ["Python", "LiteLLM", "Next.js", "Multi-tenant", "PostgreSQL"]
     },
     "project_2": {
