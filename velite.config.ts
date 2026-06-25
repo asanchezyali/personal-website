@@ -111,7 +111,7 @@ const authors = defineCollection({
 })
 
 export default defineConfig({
-  root: 'data',
+  root: 'content',
   output: {
     data: '.velite',
     assets: 'public/static',
@@ -134,7 +134,7 @@ export default defineConfig({
         },
       ],
       rehypeKatex,
-      [rehypeCitation, { path: path.join(root, 'data') }],
+      [rehypeCitation, { path: path.join(root, 'content') }],
       [rehypePrismPlus, { defaultLanguage: 'js', ignoreMissing: true }],
       rehypePresetMinify,
     ],
@@ -163,7 +163,7 @@ export default defineConfig({
     })
 
     // Write tag count to JSON file (similar to contentlayer's createTagCount)
-    writeFileSync('./app/[locale]/tag-data.json', JSON.stringify(tagCount))
+    writeFileSync('./src/app/[locale]/tag-data.json', JSON.stringify(tagCount))
 
     console.log('Tag count generated...')
   },
