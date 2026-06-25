@@ -1,6 +1,7 @@
 'use client'
 import React from 'react'
 import Image from 'next/image'
+import Link from 'next/link'
 import { useTranslation } from '@/i18n/client'
 import { LocaleTypes } from '@/i18n/settings'
 import siteMetadata from '@/lib/siteMetadata'
@@ -14,7 +15,7 @@ export default function CollaboratePage({ locale }: CollaboratePageProps) {
   const isEs = locale === 'es'
 
   const projectImages = [
-    '', // Plixiq — no image yet
+    '/images/plixiq/plixiq-cover.png', // Plixiq
     '/images/ai-avatars/header-post2.png', // Morpheus
     '/images/ai-avatars/header-post1.png', // Digital Human
     '', // CREARIA
@@ -216,47 +217,68 @@ export default function CollaboratePage({ locale }: CollaboratePageProps) {
             alignItems: 'start',
           }}
         >
-          {projects.map((project, i) => (
-            <article key={i} className="pr-card" style={{ overflow: 'hidden' }}>
-              <div style={{ height: 340, overflow: 'hidden', position: 'relative' }}>
-                {projectImages[i] ? (
-                  <Image
-                    src={projectImages[i]}
-                    alt={project.title}
-                    fill
-                    sizes="(max-width: 760px) 100vw, 50vw"
-                    style={{ objectFit: 'cover', display: 'block' }}
-                  />
-                ) : (
-                  <div className="ph" style={{ width: '100%', height: '100%' }}>
-                    {project.title}
-                  </div>
-                )}
-              </div>
-              <div style={{ padding: 20 }}>
-                {project.role && <span className="role">{project.role}</span>}
-                <h3 style={{ marginBottom: 6 }}>{project.title}</h3>
-                <p
-                  style={{
-                    fontSize: 14,
-                    color: 'var(--g-600)',
-                    lineHeight: 1.55,
-                    margin: '0 0 10px',
-                  }}
-                >
-                  {project.description}
-                </p>
-                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                  {Array.isArray(project.technologies) &&
-                    project.technologies.map((tech, j) => (
-                      <span key={j} className="chip">
-                        {tech}
-                      </span>
-                    ))}
+          {projects.map((project, i) => {
+            const card = (
+              <article className="pr-card" style={{ overflow: 'hidden', height: '100%' }}>
+                <div style={{ height: 340, overflow: 'hidden', position: 'relative' }}>
+                  {projectImages[i] ? (
+                    <Image
+                      src={projectImages[i]}
+                      alt={project.title}
+                      fill
+                      sizes="(max-width: 760px) 100vw, 50vw"
+                      style={{ objectFit: 'cover', display: 'block' }}
+                    />
+                  ) : (
+                    <div className="ph" style={{ width: '100%', height: '100%' }}>
+                      {project.title}
+                    </div>
+                  )}
                 </div>
-              </div>
-            </article>
-          ))}
+                <div style={{ padding: 20 }}>
+                  {project.role && <span className="role">{project.role}</span>}
+                  <h3 style={{ marginBottom: 6 }}>{project.title}</h3>
+                  <p
+                    style={{
+                      fontSize: 14,
+                      color: 'var(--g-600)',
+                      lineHeight: 1.55,
+                      margin: '0 0 10px',
+                    }}
+                  >
+                    {project.description}
+                  </p>
+                  <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                    {Array.isArray(project.technologies) &&
+                      project.technologies.map((tech, j) => (
+                        <span key={j} className="chip">
+                          {tech}
+                        </span>
+                      ))}
+                  </div>
+                </div>
+              </article>
+            )
+
+            if (!project.link) return <React.Fragment key={i}>{card}</React.Fragment>
+
+            const wrapStyle = { textDecoration: 'none', color: 'inherit', display: 'block' }
+            return project.link.startsWith('/') ? (
+              <Link key={i} href={project.link} style={wrapStyle}>
+                {card}
+              </Link>
+            ) : (
+              <a
+                key={i}
+                href={project.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={wrapStyle}
+              >
+                {card}
+              </a>
+            )
+          })}
         </div>
       </section>
 

@@ -1,0 +1,277 @@
+---
+title: 'Building Plixiq: a multi-tenant WhatsApp AI support platform'
+date: '2026/06/25'
+lastmod: '2026-06-25'
+tags: ['case-study', 'plixiq', 'ai-agents', 'whatsapp', 'system-design']
+draft: false
+featured: true
+summary: 'A behind-the-scenes case study of Plixiq — why we picked FastAPI, Next.js, LiteLLM and a modular monolith to run AI customer-support agents on WhatsApp, with the architecture diagrams, data model, costs, and timeline.'
+layout: PostLayout
+headerImage: '/images/plixiq/plixiq-cover.png'
+images: ['/images/plixiq/plixiq-cover.png']
+language: 'en'
+authors: ['yali']
+---
+
+This is the first entry in a series of **engineering case studies** about the products I build. The
+goal isn't marketing — it's to open the hood and show the _why_ behind the technical decisions:
+the context, the stack, the trade-offs, the architecture, and even a rough idea of cost and time.
+
+We start with [**Plixiq**](https://plixiq.com/en), a product I co-founded.
+
+## What is Plixiq?
+
+Plixiq is a **multi-tenant platform for running AI customer-support agents on WhatsApp**, with
+seamless escalation to human agents. A business configures an AI agent — its personality, its
+brand voice, its escalation rules — connects a WhatsApp number, and from that point on the agent
+answers customers 24/7. When a conversation needs a human (an angry customer, a refund, anything
+the rules flag), Plixiq hands it off to an available agent and keeps the whole exchange in one
+place.
+
+The problem it solves is mundane but expensive: **customer support on WhatsApp doesn't scale with
+headcount**. Teams either pay people to watch a chat inbox around the clock, or customers wait.
+Plixiq absorbs the repetitive 80% with AI and routes the hard 20% to humans — without losing
+context in the handoff.
+
+It's built for agencies and businesses that need a hybrid **AI + human** support desk, with each
+client isolated as its own tenant.
+
+## The stack, and why
+
+Every choice below was made to optimize for the same two things: **developer velocity for a small
+team**, and **type safety end to end**. Here is the short version, with the reasoning.
+
+<StackList
+  title="Backend"
+  items={[
+    {
+      name: 'Python 3.12 + FastAPI',
+      what: 'HTTP & webhook API',
+      why: 'Async-first, Pydantic-typed, ideal for real-time message handling.',
+    },
+    {
+      name: 'SQLModel',
+      what: 'ORM',
+      why: 'SQLAlchemy + Pydantic in one — a single model instead of an ORM model and a separate schema.',
+    },
+    {
+      name: 'PostgreSQL (Neon)',
+      what: 'Primary database',
+      why: 'Scales well; Neon adds database branching for per-PR preview environments.',
+    },
+    { name: 'Alembic', what: 'Migrations', why: 'Versioned schema, async-friendly.' },
+    {
+      name: 'LiteLLM',
+      what: 'LLM gateway',
+      why: 'One interface for many providers, with built-in fallback and retries.',
+    },
+    {
+      name: 'ARQ',
+      what: 'Background jobs',
+      why: 'Lightweight, async-native Redis queue — a modern, smaller Celery.',
+    },
+    {
+      name: 'Redis (Upstash)',
+      what: 'Cache + pub/sub + queue',
+      why: 'Caches agent config, backs the job queue, and fans out real-time events.',
+    },
+    {
+      name: 'FastAPI Users',
+      what: 'Auth',
+      why: 'JWT in an HttpOnly cookie, with RBAC roles out of the box.',
+    },
+  ]}
+/>
+
+<StackList
+  title="Frontend"
+  items={[
+    {
+      name: 'Next.js + React',
+      what: 'Dashboard',
+      why: 'SSR, a same-origin /api proxy so cookies "just work", and image optimization.',
+    },
+    { name: 'TypeScript (strict)', what: 'Everything', why: 'Non-negotiable type safety.' },
+    {
+      name: 'Effect',
+      what: 'Async runtime',
+      why: 'Typed errors and retries — every service returns Effect<T, TypedError> instead of throwing.',
+    },
+    {
+      name: 'Tailwind + shadcn/ui + Radix',
+      what: 'UI',
+      why: 'Utility-first styling on top of accessible, unstyled primitives.',
+    },
+    {
+      name: 'Server-Sent Events',
+      what: 'Real-time',
+      why: 'One-way live updates without the operational weight of WebSockets.',
+    },
+  ]}
+/>
+
+<StackList
+  title="Infrastructure"
+  items={[
+    {
+      name: 'Railway',
+      why: 'Git-based deploys, secrets, and automatic preview environments per PR.',
+    },
+    {
+      name: 'Neon branching',
+      why: 'A throwaway database branch per pull request — previews get real, isolated data.',
+    },
+    {
+      name: 'GitHub Actions',
+      why: 'Lint, import-linter, and tests on every PR before it can merge.',
+    },
+  ]}
+/>
+
+A small but telling detail: the LLM layer defaults to **Groq** (fast and free) and **falls back to
+OpenAI** only when Groq fails. LiteLLM makes that a configuration line rather than a code branch —
+which is exactly why it's there.
+
+## Architecture
+
+Plixiq is a **modular monolith**: one deployable backend, internally split into ten independent
+bounded contexts (identity, messaging, conversation, escalation, agent config, and so on). Each
+context exposes a small public API and can't reach into another's internals — a rule enforced in
+CI by `import-linter`, not by good intentions.
+
+<ImageBox
+  src="/images/plixiq/architecture.png"
+  alt="Plixiq high-level architecture: customer on WhatsApp, Meta Cloud API, FastAPI backend with a message pipeline and LiteLLM gateway, PostgreSQL on Neon, Redis on Upstash, and a Next.js dashboard for human agents"
+  width={920}
+  height={560}
+>
+  High-level architecture. A WhatsApp message enters through Meta's Cloud API, the FastAPI backend
+  runs it through the message pipeline and the LiteLLM gateway, and human agents watch everything
+  live from the Next.js dashboard over SSE.
+</ImageBox>
+
+Why a monolith and not microservices? With a small team, the operational tax of microservices
+(networking, deployment, distributed tracing, data consistency) buys you very little early on. The
+modular monolith keeps the **clean boundaries** of microservices — so the system _could_ be split
+later — while keeping the **operational simplicity** of a single deploy today.
+
+## How a message is handled
+
+The heart of Plixiq is the pipeline that turns an inbound WhatsApp message into a reply. It's a
+linear flow with one branch: the human handoff.
+
+<ImageBox
+  src="/images/plixiq/message-flow.png"
+  alt="Step-by-step message pipeline: webhook in, input guard, build prompt, LLM call, escalation check, output guard, send reply, customer receives — plus a human handoff branch"
+  width={920}
+  height={470}
+>
+  The message pipeline, step by step. Most messages flow straight through to an AI reply; the dashed
+  branch is where a conversation is handed to a human.
+</ImageBox>
+
+Walking through it:
+
+1. **Webhook in** — Meta posts the message. We verify the HMAC signature, rate-limit, and resolve
+   which tenant the WhatsApp number belongs to.
+2. **Input guard** — an AI classifier filters abuse and spam before we spend a token on it, and we
+   fetch-or-create the conversation.
+3. **Build prompt** — the agent's configuration is pulled from a Redis cache (so we don't hit the
+   database on every message) and composed with conversation history and brand context.
+4. **LLM call** — through LiteLLM: Groq first, OpenAI as a fallback.
+5. **Escalation check** — keywords plus sentiment decide whether a human is needed _and_ available
+   within their concurrency limit.
+6. **Output guard** — the response is validated (language, format, length) and persisted along
+   with its token counts.
+7. **Send reply** — back out through the WhatsApp Cloud API, an SSE event is published to the
+   dashboard, and follow-up/auto-close timers are scheduled.
+
+When escalation fires, the conversation flips to `WITH_HUMAN`, gets assigned round-robin to an
+available agent, and — if enabled — a **WhatsApp proxy** bridges the human and the customer
+directly until the agent closes it.
+
+## Data model and multi-tenancy
+
+Multi-tenancy is the backbone: every agent, conversation, and message belongs to an
+**Organization**. That single scoping rule is what lets one deployment safely serve many isolated
+clients.
+
+<ImageBox
+  src="/images/plixiq/data-model.png"
+  alt="Core data model: Organization owns AgentConfig and HumanAgents; AgentConfig has Conversations; Conversations have Messages; Users have roles and become HumanAgents"
+  width={920}
+  height={470}
+>
+  The core entities. Everything inside the dashed boundary is scoped to one tenant.
+</ImageBox>
+
+A few decisions worth calling out:
+
+- **Roles are explicit** — `SUPER_ADMIN`, `ADMIN`, `HUMAN_AGENT` — and auth rides in an HttpOnly
+  cookie so the token is never exposed to JavaScript.
+- **Conversation status is a small state machine** — `ACTIVE → WITH_HUMAN → CLOSED` — which keeps
+  escalation and auto-close logic honest.
+- **Token usage is stored per message**, which is what makes per-tenant cost reporting possible
+  later on.
+
+## Real-time without WebSockets
+
+The dashboard has to feel live: a new customer message should appear instantly for the human
+agent. The instinct is to reach for WebSockets, but Plixiq uses **Server-Sent Events** instead.
+The traffic is almost entirely one-directional (server → dashboard), and SSE gives you that over
+plain HTTP, with automatic reconnection and no extra infrastructure. The backend fans events out
+through Redis pub/sub; the frontend just holds an `EventSource` open. Less to operate, fewer
+failure modes.
+
+## Building with AI
+
+AI shows up twice in this project — in the **product** and in the **process**.
+
+In the product, LLMs do more than answer: a Groq-hosted model powers the agent replies, a
+classifier acts as the safety **input guard**, and sentiment analysis feeds the **escalation
+detector**. Even local models (Ollama) are used to simulate customer conversations during testing.
+
+In the process, the codebase was built with heavy use of **AI pair-programming**. The interesting
+lesson wasn't that AI writes code fast — it's that AI accelerates you most when the project has
+**strong guardrails**. The architecture rules enforced in CI (`import-linter`, architecture tests)
+meant an AI assistant could move quickly _without_ quietly eroding the boundaries between modules.
+Structure is what makes AI-assisted development safe to do at speed.
+
+## What it costs to run
+
+Costs scale almost entirely with **LLM usage and message volume** — the infrastructure itself is
+cheap. These are rough, order-of-magnitude estimates for a production deployment, not invoices:
+
+| Scenario                       | Monthly estimate | Notes                                                                        |
+| ------------------------------ | ---------------- | ---------------------------------------------------------------------------- |
+| **Early / low volume**         | ~$60–80          | Free Groq tier, Neon + Upstash free tiers, one small Railway service each    |
+| **Mid (~10k conversations)**   | ~$150–250        | Paid database, OpenAI fallback usage, WhatsApp message fees start to matter  |
+| **High (100k+ conversations)** | $500+            | LLM and WhatsApp per-message costs dominate; infra is still a rounding error |
+
+The headline: a startup can run this for the price of a couple of lunches a month, and the cost
+curve is dominated by usage you only pay for once you have customers.
+
+## Timeline
+
+Plixiq went from zero to a near-complete MVP in roughly **four months** of part-time work, reaching
+~40k lines across backend and frontend, ten bounded contexts, and a test suite that gates
+architecture in CI. The architecture deliberately evolved _in place_ — starting as a straightforward
+monolith and being refactored into a modular one as the boundaries became clear — rather than being
+over-designed up front.
+
+## Takeaways
+
+If I had to compress this into a few transferable lessons:
+
+- **Pick a gateway, not a provider.** LiteLLM turned "which LLM?" from an architectural commitment
+  into a config value with a free fallback.
+- **A modular monolith is the sweet spot** for a small team: microservice boundaries, monolith
+  operations.
+- **Enforce your architecture in CI.** Rules that aren't checked are suggestions — and they're what
+  let you (and your AI assistant) move fast without making a mess.
+- **Reach for the simplest real-time tool that works.** SSE beat WebSockets here because the
+  problem was one-directional.
+
+Next in this series, I'll do the same teardown for another project from the
+[work I've shipped](/collaborate). If there's a specific decision here you'd want me to go deeper
+on, [let's talk](/collaborate).

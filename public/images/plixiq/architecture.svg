@@ -1,0 +1,116 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 560" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif">
+  <defs>
+    <style>
+      .bg { fill: #f6faf7; }
+      .card { fill: #ffffff; stroke: #d9e6dd; stroke-width: 1.5; }
+      .card-green { fill: #e9f6ee; stroke: #bfe3cc; stroke-width: 1.5; }
+      .card-dark { fill: #0f3d2e; stroke: #15543f; stroke-width: 1.5; }
+      .title { fill: #0f3d2e; font-size: 15px; font-weight: 700; }
+      .label { fill: #1f4a39; font-size: 12px; font-weight: 600; }
+      .sub { fill: #5a6b62; font-size: 11px; }
+      .white { fill: #ffffff; font-size: 13px; font-weight: 700; }
+      .whitesub { fill: #b9e6cc; font-size: 10.5px; }
+      .group { fill: #0f3d2e; font-size: 11px; font-weight: 700; letter-spacing: .06em; }
+      .edge { stroke: #6b9e83; stroke-width: 1.6; fill: none; }
+      .edge-strong { stroke: #19a567; stroke-width: 2.2; fill: none; }
+      .elab { fill: #3c6b53; font-size: 10px; font-weight: 600; }
+    </style>
+    <marker id="arr" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+      <path d="M0,0 L9,4.5 L0,9 z" fill="#6b9e83"/>
+    </marker>
+    <marker id="arrs" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+      <path d="M0,0 L9,4.5 L0,9 z" fill="#19a567"/>
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="560" rx="14"/>
+  <text x="32" y="40" class="title" font-size="18">Plixiq — high-level architecture</text>
+  <text x="32" y="60" class="sub">Multi-tenant WhatsApp AI support, with human escalation</text>
+
+  <!-- Customer -->
+  <rect class="card-green" x="32" y="92" width="150" height="74" rx="12"/>
+  <text x="107" y="124" text-anchor="middle" class="label">Customer</text>
+  <text x="107" y="143" text-anchor="middle" class="sub">WhatsApp chat</text>
+
+  <!-- Meta WhatsApp Cloud API -->
+  <rect class="card" x="32" y="206" width="150" height="84" rx="12"/>
+  <text x="107" y="236" text-anchor="middle" class="label">WhatsApp</text>
+  <text x="107" y="253" text-anchor="middle" class="label">Cloud API</text>
+  <text x="107" y="272" text-anchor="middle" class="sub">Meta · webhooks</text>
+
+  <!-- Backend big box -->
+  <rect class="card" x="244" y="84" width="372" height="300" rx="14"/>
+  <text x="264" y="110" class="group">BACKEND · FastAPI (modular monolith)</text>
+
+  <!-- Webhook / API -->
+  <rect class="card-green" x="264" y="124" width="150" height="58" rx="10"/>
+  <text x="339" y="148" text-anchor="middle" class="label">Webhook + REST</text>
+  <text x="339" y="166" text-anchor="middle" class="sub">HMAC · rate limit</text>
+
+  <!-- Message pipeline -->
+  <rect class="card-dark" x="264" y="198" width="332" height="86" rx="10"/>
+  <text x="280" y="222" class="white">Message pipeline</text>
+  <text x="280" y="242" class="whitesub">input guard → prompt → LLM → escalation</text>
+  <text x="280" y="258" class="whitesub">→ output guard → reply · SSE events</text>
+  <text x="280" y="274" class="whitesub">10 bounded contexts (identity, messaging…)</text>
+
+  <!-- LLM gateway -->
+  <rect class="card-green" x="436" y="124" width="160" height="58" rx="10"/>
+  <text x="516" y="148" text-anchor="middle" class="label">LiteLLM gateway</text>
+  <text x="516" y="166" text-anchor="middle" class="sub">Groq → OpenAI fallback</text>
+
+  <!-- Workers -->
+  <rect class="card" x="264" y="300" width="150" height="68" rx="10"/>
+  <text x="339" y="326" text-anchor="middle" class="label">ARQ workers</text>
+  <text x="339" y="344" text-anchor="middle" class="sub">follow-ups, timeouts</text>
+
+  <!-- Event hub -->
+  <rect class="card" x="436" y="300" width="160" height="68" rx="10"/>
+  <text x="516" y="326" text-anchor="middle" class="label">Event hub (SSE)</text>
+  <text x="516" y="344" text-anchor="middle" class="sub">Redis pub/sub</text>
+
+  <!-- LLM providers -->
+  <rect class="card-green" x="680" y="100" width="208" height="74" rx="12"/>
+  <text x="784" y="128" text-anchor="middle" class="label">LLM providers</text>
+  <text x="784" y="147" text-anchor="middle" class="sub">Groq · OpenAI · Anthropic</text>
+  <text x="784" y="163" text-anchor="middle" class="sub">Ollama (local)</text>
+
+  <!-- Postgres -->
+  <rect class="card" x="680" y="194" width="208" height="70" rx="12"/>
+  <text x="784" y="222" text-anchor="middle" class="label">PostgreSQL · Neon</text>
+  <text x="784" y="240" text-anchor="middle" class="sub">tenants, agents, conversations</text>
+  <text x="784" y="255" text-anchor="middle" class="sub">DB branching for previews</text>
+
+  <!-- Redis -->
+  <rect class="card" x="680" y="284" width="208" height="64" rx="12"/>
+  <text x="784" y="310" text-anchor="middle" class="label">Redis · Upstash</text>
+  <text x="784" y="328" text-anchor="middle" class="sub">config cache · queue · pub/sub</text>
+
+  <!-- Frontend + Human agents -->
+  <rect class="card-dark" x="244" y="406" width="372" height="118" rx="14"/>
+  <text x="264" y="432" class="white">Dashboard — Next.js + Effect</text>
+  <text x="264" y="453" class="whitesub">Human agents monitor &amp; reply in real time</text>
+  <text x="264" y="471" class="whitesub">Live updates over SSE · same-origin /api proxy</text>
+  <text x="264" y="495" class="whitesub">Features: conversations · agents · escalation · audit</text>
+
+  <rect class="card-green" x="680" y="406" width="208" height="118" rx="14"/>
+  <text x="784" y="436" text-anchor="middle" class="label">Human agent</text>
+  <text x="784" y="455" text-anchor="middle" class="sub">Takes over on escalation</text>
+  <text x="784" y="473" text-anchor="middle" class="sub">Optional WhatsApp proxy</text>
+  <text x="784" y="498" text-anchor="middle" class="sub">Round-robin assignment</text>
+
+  <!-- Edges -->
+  <path class="edge" d="M107,166 L107,206" marker-end="url(#arr)"/>
+  <text x="114" y="190" class="elab">message</text>
+  <path class="edge-strong" d="M182,248 L244,200" marker-end="url(#arrs)"/>
+  <text x="186" y="232" class="elab">webhook</text>
+  <path class="edge" d="M414,153 L436,153" marker-end="url(#arr)"/>
+  <path class="edge" d="M516,182 L516,198" marker-end="url(#arr)"/>
+  <path class="edge-strong" d="M596,153 L680,140" marker-end="url(#arrs)"/>
+  <path class="edge" d="M596,232 L680,229" marker-end="url(#arr)"/>
+  <text x="612" y="222" class="elab">read/write</text>
+  <path class="edge" d="M596,330 L680,322" marker-end="url(#arr)"/>
+  <path class="edge" d="M430,406 L430,384" marker-end="url(#arr)"/>
+  <text x="436" y="400" class="elab">SSE</text>
+  <path class="edge" d="M616,465 L680,465" marker-end="url(#arr)"/>
+</svg>
