@@ -69,3 +69,4 @@ Tailwind CSS 3 with class-based dark mode. Custom theme colors defined in `tailw
 - Server components by default; mark client components with `'use client'`
 - SVGs imported as React components via `@svgr/webpack`
 - Pre-commit hooks (Husky + lint-staged) run ESLint and Prettier on staged files
+- Commit messages: do not include a `Co-Authored-By` trailer
