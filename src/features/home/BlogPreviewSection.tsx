@@ -14,6 +14,7 @@ interface BlogPreviewSectionProps {
 
 export default function BlogPreviewSection({ locale, posts }: BlogPreviewSectionProps) {
   const { t } = useTranslation(locale, 'home')
+  const { t: tb } = useTranslation(locale, 'blog')
 
   function localHref(href: string) {
     if (locale === 'en') return href
@@ -73,7 +74,9 @@ export default function BlogPreviewSection({ locale, posts }: BlogPreviewSection
                 {post.summary && <p className="excerpt">{post.summary.slice(0, 120)}…</p>}
                 <div className="meta">
                   <span>{formatDate(post.date, locale)}</span>
-                  <span>{post.metadata?.readingTime ?? '—'} min read</span>
+                  <span>
+                    {post.metadata?.readingTime ?? '—'} {tb('minRead')}
+                  </span>
                 </div>
               </div>
             </Link>

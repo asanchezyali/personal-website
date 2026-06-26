@@ -1,7 +1,63 @@
 {
   "hero": {
     "title": "Colaborar",
-    "description": "Soy un desarrollador de software con formación matemática, apasionado por la IA, el código abierto y el intercambio de conocimiento. Construyamos algo juntos."
+    "description": "Soy un desarrollador de software con formación matemática, apasionado por la IA, el código abierto y el intercambio de conocimiento. Construyamos algo juntos.",
+    "status_pill": "Abierto a proyectos · Q2 2026",
+    "title_1": "Construyamos algo",
+    "title_2": "que valga la pena.",
+    "cta_call": "Agendar llamada",
+    "cta_email": "Escríbeme"
+  },
+  "offers": {
+    "offer_1": {
+      "title": "Web & desarrollo de producto",
+      "description": "De \"tenemos una idea\" a un producto funcional. Diseño la arquitectura, construyo las primeras iteraciones y entrego un código que tu equipo puede mantener.",
+      "bullets": [
+        "Next.js · TypeScript · Postgres",
+        "Design systems & UI desde cero",
+        "Deploy en AWS o Vercel"
+      ]
+    },
+    "offer_2": {
+      "title": "Funcionalidades & sistemas de IA",
+      "description": "Integraciones prácticas: RAG, agentes, visión, voz. Te ayudo a elegir el modelo correcto y medir qué funciona.",
+      "bullets": [
+        "RAG pipelines, embeddings, evals",
+        "Modelos self-hosted & API",
+        "Python · PyTorch · Ollama · OpenAI"
+      ]
+    },
+    "offer_3": {
+      "title": "Blockchain & contratos inteligentes",
+      "description": "Marketplaces NFT, tokens, lógica on-chain. Código auditable y mantenible.",
+      "bullets": [
+        "Solidity · Hardhat · Foundry",
+        "Ethereum · Polygon · Solana",
+        "Wallet + dApp integrations"
+      ]
+    }
+  },
+  "process": {
+    "title": "Cómo trabajaremos",
+    "subtitle": "Los mismos cuatro pasos, siempre.",
+    "steps": [
+      {
+        "title": "Conversación",
+        "desc": "Una llamada de 30 min para entender qué quieres construir."
+      },
+      {
+        "title": "Propuesta",
+        "desc": "Alcance con hitos y trade-offs honestos."
+      },
+      {
+        "title": "Construcción",
+        "desc": "Demos semanales, repo compartido desde el día uno."
+      },
+      {
+        "title": "Entrega",
+        "desc": "Documentación y plan de transición."
+      }
+    ]
   },
   "journey": {
     "title": "Trayectoria Profesional",
@@ -42,6 +98,7 @@
   },
   "projects": {
     "title": "Proyectos Destacados",
+    "selected_work": "Trabajo seleccionado",
     "description": "Una selección de proyectos que he construido o liderado — abarcando IA, desarrollo full-stack y automatización de flujos de trabajo.",
     "project_1": {
       "title": "Plixiq",
@@ -102,7 +159,15 @@
   },
   "connect": {
     "title": "Conectemos",
+    "title_1": "Cuando estés",
+    "title_2": "listo",
     "description": "Ya sea que quieras colaborar en un proyecto, unirte a la comunidad de estudio o simplemente saludar — aquí puedes encontrarme.",
+    "channels": {
+      "meetings": "Reuniones",
+      "email": "Correo",
+      "community": "Comunidad",
+      "community_value": "Yali Dev · Discord"
+    },
     "channel_1": {
       "name": "Discord",
       "description": "Únete a la comunidad de estudio y las sesiones semanales.",

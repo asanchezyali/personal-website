@@ -45,5 +45,21 @@
   "language": "Language",
   "french": "French",
   "english": "English",
-  "sidetoc": "On this page:"
+  "sidetoc": "On this page:",
+  "search": "Search",
+  "copy": "Copy",
+  "copylink": "Copy link",
+  "copied": "Copied!",
+  "copycode": "Copy code",
+  "shareon": "Share on",
+  "contents": "Contents",
+  "tableofcontents": "Table of contents",
+  "closecontents": "Close table of contents",
+  "onthispage": "On this page",
+  "togglemenu": "Toggle menu",
+  "closemenu": "Close menu",
+  "nocontent": "No content available",
+  "rendererror": "Unable to render content",
+  "browsetopics": "Browse all topics covered in the blog",
+  "notags": "No tags found."
 }

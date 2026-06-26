@@ -1,6 +1,14 @@
+'use client'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+import { useTranslation } from '@/i18n/client'
+import { LocaleTypes } from '@/i18n/settings'
 
 export default function NotFound() {
+  const pathname = usePathname()
+  const locale: LocaleTypes = pathname?.startsWith('/es') ? 'es' : 'en'
+  const { t } = useTranslation(locale, 'notfound')
+
   return (
     <div
       className="wrap"
@@ -31,13 +39,12 @@ export default function NotFound() {
       >
         404
       </div>
-      <h1 style={{ fontSize: 'clamp(24px, 3vw, 36px)', marginBottom: 16 }}>Page not found</h1>
+      <h1 style={{ fontSize: 'clamp(24px, 3vw, 36px)', marginBottom: 16 }}>{t('title')}</h1>
       <p className="muted" style={{ fontSize: 17, maxWidth: '48ch', marginBottom: 32 }}>
-        Sorry, we couldn&apos;t find what you were looking for. But don&apos;t worry — there&apos;s
-        plenty more to explore.
+        {t('description')}
       </p>
-      <Link href="/" className="btn primary">
-        Back to homepage <span className="a">→</span>
+      <Link href={locale === 'en' ? '/' : `/${locale}`} className="btn primary">
+        {t('back')} <span className="a">→</span>
       </Link>
     </div>
   )

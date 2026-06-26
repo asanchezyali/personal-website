@@ -5,100 +5,13 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { Authors } from '#site/content'
 import { LocaleTypes } from '@/i18n/settings'
+import { useTranslation } from '@/i18n/client'
 import siteMetadata from '@/lib/siteMetadata'
 
 interface AboutPageProps {
   author: Authors
   locale: LocaleTypes
 }
-
-const timeline = [
-  {
-    when: '2025 — Present',
-    title: 'AI Specialist',
-    where: 'Lapzo',
-    desc: 'Building intelligent learning systems powered by LLMs, RAG pipelines, and agentic workflows.',
-    lead: true,
-  },
-  {
-    when: '2024 — Present',
-    title: 'Freelance Consultant',
-    where: 'Independent',
-    desc: 'AI consulting and full-stack development for startups — from conversational agents to image generation platforms.',
-  },
-  {
-    when: '2021 — 2024',
-    title: 'Full Stack Developer',
-    where: 'Monadical',
-    desc: 'Developed AI avatar systems, real-time video pipelines, and open-source tooling with Python, React, and Three.js.',
-  },
-  {
-    when: '2018 — 2020',
-    title: 'Full Stack Developer',
-    where: 'BCFort',
-    desc: 'Built blockchain-based platforms and scalable web applications using React, NestJS, and cloud infrastructure.',
-  },
-  {
-    when: '2010 — 2021',
-    title: 'Professor',
-    where: 'Universidad de Antioquia',
-    desc: 'Taught mathematics, linear algebra, and calculus. Mentored students in mathematical modeling and computational thinking.',
-  },
-]
-
-const principles = [
-  {
-    num: '01',
-    title: 'Understand before you build',
-    desc: "Every hour spent sharpening the problem statement saves a week of code. I'd rather ship the second draft of the right thing than the first draft of the wrong one.",
-  },
-  {
-    num: '02',
-    title: 'Small surfaces, clear edges',
-    desc: "Complex systems are made of simple parts with well-chosen boundaries. If a component is hard to name, it's usually doing too much.",
-  },
-  {
-    num: '03',
-    title: "Write like you're explaining to yourself",
-    desc: 'Code, essays, and docs all reward the same instinct: assume a reader who is smart, distracted, and a little tired.',
-  },
-]
-
-const buildTools = [
-  { nm: 'Python', cm: 'data, ML, glue' },
-  { nm: 'TypeScript', cm: 'everywhere else' },
-  { nm: 'Next.js · React', cm: 'front of house' },
-  { nm: 'PostgreSQL', cm: 'default choice' },
-  { nm: 'Solidity · EVM', cm: 'when Web3 fits' },
-  { nm: 'Rust', cm: 'when it matters' },
-]
-const thinkTools = [
-  { nm: 'LaTeX · Typst', cm: 'for the math' },
-  { nm: 'Obsidian', cm: 'second brain' },
-  { nm: 'Figma', cm: 'for early sketches' },
-  { nm: 'Linear', cm: 'to stay honest' },
-  { nm: 'tmux · Neovim', cm: 'daily drivers' },
-  { nm: 'Whiteboards', cm: 'still unbeaten' },
-]
-
-const nowItems = [
-  {
-    ic: '✍︎',
-    title: 'Writing',
-    desc: 'A slow series on RAG systems, aimed at engineers who want the real story.',
-  },
-  { ic: '⌁', title: 'Building', desc: 'A small product with a friend. Details later.' },
-  {
-    ic: '◉',
-    title: 'Teaching',
-    desc: 'Topofilosofía — a 10-week cohort on topology from the ground up.',
-  },
-  {
-    ic: '❋',
-    title: 'Reading',
-    desc: "Cal Newport's Slow Productivity, papers on attention mechanisms, and Borges.",
-  },
-]
 
 const ghIcon = (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
@@ -121,57 +34,108 @@ const dcIcon = (
   </svg>
 )
 
-const elsewhere = [
-  {
-    icon: ghIcon,
-    href: siteMetadata.github,
-    title: 'GitHub',
-    desc: "Open source, experiments, and a few things I wish I'd pushed sooner.",
-    hl: '@asanchezyali →',
-  },
-  {
-    icon: liIcon,
-    href: siteMetadata.linkedin,
-    title: 'LinkedIn',
-    desc: 'The long-form résumé version. Light on buzzwords, I promise.',
-    hl: '@asanchezyali →',
-  },
-  {
-    icon: xiIcon,
-    href: siteMetadata.x,
-    title: 'X / Twitter',
-    desc: 'Half-formed thoughts, notes from the field, the occasional hot take.',
-    hl: '@asanchezyali →',
-  },
-  {
-    icon: dcIcon,
-    href: siteMetadata.discord,
-    title: 'Topofilosofía',
-    desc: 'The study community. Topology, CS, slow conversation.',
-    hl: 'Join the Discord →',
-  },
-]
-
 export default function AboutPage({ author, locale }: AboutPageProps) {
+  const { t } = useTranslation(locale, 'about')
+
+  const timelineMeta = [
+    { when: '2025 — Present', where: 'Lapzo', lead: true },
+    { when: '2024 — Present', where: 'Independent' },
+    { when: '2021 — 2024', where: 'Monadical' },
+    { when: '2018 — 2020', where: 'BCFort' },
+    { when: '2010 — 2021', where: 'Universidad de Antioquia' },
+  ]
+  const timeline = timelineMeta.map((m, i) => ({
+    ...m,
+    title: t(`journey.timeline.${i}.title`),
+    desc: t(`journey.timeline.${i}.desc`),
+  }))
+
+  const principles = ['01', '02', '03'].map((num, i) => ({
+    num,
+    title: t(`principles.items.${i}.title`),
+    desc: t(`principles.items.${i}.desc`),
+  }))
+
+  const buildToolNames = [
+    'Python',
+    'TypeScript',
+    'Next.js · React',
+    'PostgreSQL',
+    'Solidity · EVM',
+    'Rust',
+  ]
+  const buildTools = buildToolNames.map((nm, i) => ({
+    nm,
+    cm: t(`toolkit.buildTools.${i}.cm`),
+  }))
+
+  const thinkToolNames = [
+    'LaTeX · Typst',
+    'Obsidian',
+    'Figma',
+    'Linear',
+    'tmux · Neovim',
+    'Whiteboards',
+  ]
+  const thinkTools = thinkToolNames.map((nm, i) => ({
+    nm,
+    cm: t(`toolkit.thinkTools.${i}.cm`),
+  }))
+
+  const nowIcons = ['✍︎', '⌁', '◉', '❋']
+  const nowItems = nowIcons.map((ic, i) => ({
+    ic,
+    title: t(`now.items.${i}.title`),
+    desc: t(`now.items.${i}.desc`),
+  }))
+
+  const elsewhere = [
+    {
+      icon: ghIcon,
+      href: siteMetadata.github,
+      title: 'GitHub',
+      desc: t('elsewhere.items.0.desc'),
+      hl: '@asanchezyali →',
+    },
+    {
+      icon: liIcon,
+      href: siteMetadata.linkedin,
+      title: 'LinkedIn',
+      desc: t('elsewhere.items.1.desc'),
+      hl: '@asanchezyali →',
+    },
+    {
+      icon: xiIcon,
+      href: siteMetadata.x,
+      title: 'X / Twitter',
+      desc: t('elsewhere.items.2.desc'),
+      hl: '@asanchezyali →',
+    },
+    {
+      icon: dcIcon,
+      href: siteMetadata.discord,
+      title: 'Topofilosofía',
+      desc: t('elsewhere.items.3.desc'),
+      hl: t('elsewhere.discord_cta'),
+    },
+  ]
+
   return (
     <>
       {/* Hero */}
       <section className="about-hero wrap">
         <div className="inner">
           <div>
-            <span className="eyebrow">About</span>
+            <span className="eyebrow">{t('hero.eyebrow')}</span>
             <h1>
-              I build software for <span className="accent">ideas worth thinking hard about</span>.
+              {t('hero.title_pre')}
+              <span className="accent">{t('hero.title_accent')}</span>.
             </h1>
-            <p className="lead">
-              I&apos;m Alejandro — a software developer, mathematician, and AI specialist based in
-              Medellín, Colombia. I work on the intersection of machine learning, Web3, and everyday
-              web software.
-            </p>
+            <p className="lead">{t('hero.lead')}</p>
             <div className="quick">
-              <span>◉ Medellín, Colombia</span>
-              <span>◎ Available for projects</span>
-              <span>✦ 8+ years shipping</span>
+              <span>◉ {t('hero.quick.location')}</span>
+              <span>◎ {t('hero.quick.available')}</span>
+              <span>✦ {t('hero.quick.experience')}</span>
             </div>
             <div className="ctas">
               <a
@@ -180,10 +144,10 @@ export default function AboutPage({ author, locale }: AboutPageProps) {
                 rel="noopener noreferrer"
                 className="btn primary"
               >
-                Work with me →
+                {t('hero.cta_primary')}
               </a>
               <a href={siteMetadata.github} target="_blank" rel="noreferrer" className="btn ghost">
-                GitHub
+                {t('hero.cta_github')}
               </a>
             </div>
           </div>
@@ -197,7 +161,7 @@ export default function AboutPage({ author, locale }: AboutPageProps) {
                 </div>
               )}
             </div>
-            <span className="tag">Medellín · 2026</span>
+            <span className="tag">{t('hero.tag')}</span>
           </div>
         </div>
       </section>
@@ -206,19 +170,16 @@ export default function AboutPage({ author, locale }: AboutPageProps) {
       <section className="stmt">
         <div className="wrap-narrow">
           <span className="mark">&ldquo;</span>
-          <blockquote>
-            Most of what&apos;s worth building requires both the mathematician&apos;s patience and
-            the engineer&apos;s restlessness. I try to keep both in the room.
-          </blockquote>
+          <blockquote>{t('quote')}</blockquote>
         </div>
       </section>
 
       {/* Journey */}
       <section className="journey">
         <div className="sec-head">
-          <span className="eyebrow">The long path</span>
-          <h2>How I got here</h2>
-          <p>A non-linear walk through mathematics, teaching, and software.</p>
+          <span className="eyebrow">{t('journey.eyebrow')}</span>
+          <h2>{t('journey.h2')}</h2>
+          <p>{t('journey.p')}</p>
         </div>
         <div className="tline">
           {timeline.map((m, i) => (
@@ -238,8 +199,8 @@ export default function AboutPage({ author, locale }: AboutPageProps) {
       {/* Principles */}
       <section className="principles wrap">
         <div className="sec-head">
-          <span className="eyebrow">How I work</span>
-          <h2>Principles I keep returning to</h2>
+          <span className="eyebrow">{t('principles.eyebrow')}</span>
+          <h2>{t('principles.h2')}</h2>
         </div>
         <div className="p-grid">
           {principles.map((p) => (
@@ -255,30 +216,30 @@ export default function AboutPage({ author, locale }: AboutPageProps) {
       {/* Toolkit */}
       <section className="toolkit wrap">
         <div className="sec-head">
-          <span className="eyebrow">What I reach for</span>
-          <h2>Tools &amp; terrain</h2>
+          <span className="eyebrow">{t('toolkit.eyebrow')}</span>
+          <h2>{t('toolkit.h2')}</h2>
         </div>
         <div className="tk-grid">
           <div className="tk-group">
-            <h3>Building</h3>
+            <h3>{t('toolkit.building')}</h3>
             <ul>
-              {buildTools.map((t) => (
-                <li key={t.nm}>
-                  <span className="nm">{t.nm}</span>
+              {buildTools.map((tool) => (
+                <li key={tool.nm}>
+                  <span className="nm">{tool.nm}</span>
                   <span className="dt" />
-                  <span className="cm">{t.cm}</span>
+                  <span className="cm">{tool.cm}</span>
                 </li>
               ))}
             </ul>
           </div>
           <div className="tk-group">
-            <h3>Thinking &amp; shipping</h3>
+            <h3>{t('toolkit.thinking')}</h3>
             <ul>
-              {thinkTools.map((t) => (
-                <li key={t.nm}>
-                  <span className="nm">{t.nm}</span>
+              {thinkTools.map((tool) => (
+                <li key={tool.nm}>
+                  <span className="nm">{tool.nm}</span>
                   <span className="dt" />
-                  <span className="cm">{t.cm}</span>
+                  <span className="cm">{tool.cm}</span>
                 </li>
               ))}
             </ul>
@@ -292,9 +253,9 @@ export default function AboutPage({ author, locale }: AboutPageProps) {
           <div>
             <span className="lbl">
               <span className="live" />
-              Now — 2026
+              {t('now.label')}
             </span>
-            <h2>What I&apos;m working on</h2>
+            <h2>{t('now.h2')}</h2>
           </div>
           <ul>
             {nowItems.map((item) => (
@@ -313,8 +274,8 @@ export default function AboutPage({ author, locale }: AboutPageProps) {
       {/* Elsewhere */}
       <section className="elsewhere wrap">
         <div className="sec-head">
-          <span className="eyebrow">Elsewhere on the internet</span>
-          <h2>Where to find me</h2>
+          <span className="eyebrow">{t('elsewhere.eyebrow')}</span>
+          <h2>{t('elsewhere.h2')}</h2>
         </div>
         <div className="el-grid">
           {elsewhere.map((el) => (
@@ -331,13 +292,10 @@ export default function AboutPage({ author, locale }: AboutPageProps) {
       {/* CTA */}
       <section className="about-cta wrap">
         <h2>
-          If you&apos;ve read this far, we might{' '}
-          <span className="accent">enjoy working together</span>.
+          {t('cta.h2_pre')}
+          <span className="accent">{t('cta.h2_accent')}</span>.
         </h2>
-        <p>
-          I take on a few projects a year. If you&apos;re building something that needs care,
-          let&apos;s talk.
-        </p>
+        <p>{t('cta.p')}</p>
         <div className="buttons">
           <a
             href="https://cal.com/asanchezyali/30min"
@@ -345,10 +303,10 @@ export default function AboutPage({ author, locale }: AboutPageProps) {
             rel="noopener noreferrer"
             className="btn primary"
           >
-            Start a conversation →
+            {t('cta.button')}
           </a>
           <Link href={locale === 'en' ? '/blog' : `/${locale}/blog`} className="btn ghost">
-            Read the blog first
+            {t('cta.link')}
           </Link>
         </div>
       </section>

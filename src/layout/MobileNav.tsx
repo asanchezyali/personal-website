@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import headerNavLinks from '@/lib/headerNavLinks'
+import { useTranslation } from '@/i18n/client'
 import { LocaleTypes } from '@/i18n/settings'
 
 interface MobileNavProps {
@@ -10,6 +11,7 @@ interface MobileNavProps {
 }
 
 export default function MobileNav({ locale }: MobileNavProps) {
+  const { t } = useTranslation(locale, 'common')
   const [isOpen, setIsOpen] = useState(false)
   const [showBtn, setShowBtn] = useState(false)
   const pathname = usePathname()
@@ -44,7 +46,7 @@ export default function MobileNav({ locale }: MobileNavProps) {
       <button
         ref={btnRef}
         className="icon-btn"
-        aria-label="Toggle menu"
+        aria-label={t('togglemenu')}
         aria-expanded={isOpen}
         onClick={() => setIsOpen((v) => !v)}
       >
@@ -74,7 +76,7 @@ export default function MobileNav({ locale }: MobileNavProps) {
           <div
             role="button"
             tabIndex={0}
-            aria-label="Close menu"
+            aria-label={t('closemenu')}
             style={{
               position: 'fixed',
               inset: 0,
@@ -109,7 +111,7 @@ export default function MobileNav({ locale }: MobileNavProps) {
             <button
               onClick={() => setIsOpen(false)}
               className="icon-btn"
-              aria-label="Close menu"
+              aria-label={t('closemenu')}
               style={{ position: 'absolute', top: 16, right: 16 }}
             >
               <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
@@ -138,7 +140,7 @@ export default function MobileNav({ locale }: MobileNavProps) {
                   transition: 'all .2s var(--ease)',
                 }}
               >
-                {link.title}
+                {t(link.tkey)}
               </Link>
             ))}
           </nav>

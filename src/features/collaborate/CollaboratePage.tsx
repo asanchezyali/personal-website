@@ -12,7 +12,6 @@ interface CollaboratePageProps {
 
 export default function CollaboratePage({ locale }: CollaboratePageProps) {
   const { t } = useTranslation(locale, 'collaborate')
-  const isEs = locale === 'es'
 
   const projectImages = [
     '/images/plixiq/plixiq-cover.png', // Plixiq
@@ -35,23 +34,12 @@ export default function CollaboratePage({ locale }: CollaboratePageProps) {
       {/* Hero */}
       <section className="col-hero">
         <span className="status-pill">
-          <span className="dot" />{' '}
-          {isEs ? 'Abierto a proyectos · Q2 2026' : 'Currently open for projects · Q2 2026'}
+          <span className="dot" /> {t('hero.status_pill')}
         </span>
         <h1>
-          {isEs ? (
-            <>
-              Construyamos algo
-              <br />
-              <span className="accent">que valga la pena.</span>
-            </>
-          ) : (
-            <>
-              Let&apos;s build something
-              <br />
-              <span className="accent">worth shipping.</span>
-            </>
-          )}
+          {t('hero.title_1')}
+          <br />
+          <span className="accent">{t('hero.title_2')}</span>
         </h1>
         <p>{t('hero.description')}</p>
         <div className="ctas">
@@ -61,10 +49,10 @@ export default function CollaboratePage({ locale }: CollaboratePageProps) {
             rel="noopener noreferrer"
             className="btn primary"
           >
-            {isEs ? 'Agendar llamada' : 'Book an intro call'} <span className="a">→</span>
+            {t('hero.cta_call')} <span className="a">→</span>
           </a>
           <a href={`mailto:${siteMetadata.email}`} className="btn ghost">
-            {isEs ? 'Escríbeme' : 'Email me'}
+            {t('hero.cta_email')}
           </a>
         </div>
       </section>
@@ -89,16 +77,12 @@ export default function CollaboratePage({ locale }: CollaboratePageProps) {
             </svg>
           </div>
           <span className="tag">01 · Product dev</span>
-          <h3>{isEs ? 'Web & desarrollo de producto' : 'Web & product builds'}</h3>
-          <p>
-            {isEs
-              ? 'De "tenemos una idea" a un producto funcional. Diseño la arquitectura, construyo las primeras iteraciones y entrego un código que tu equipo puede mantener.'
-              : 'From "we have an idea" to a product customers can log into. I design the architecture, build the first few iterations, and hand you a codebase your team can own.'}
-          </p>
+          <h3>{t('offers.offer_1.title')}</h3>
+          <p>{t('offers.offer_1.description')}</p>
           <ul>
-            <li>Next.js · TypeScript · Postgres</li>
-            <li>{isEs ? 'Design systems & UI desde cero' : 'Design systems & UI from scratch'}</li>
-            <li>{isEs ? 'Deploy en AWS o Vercel' : 'Deployed to AWS or Vercel'}</li>
+            {(t('offers.offer_1.bullets', { returnObjects: true }) as string[]).map((b, i) => (
+              <li key={i}>{b}</li>
+            ))}
           </ul>
         </div>
         <div className="offer">
@@ -118,16 +102,12 @@ export default function CollaboratePage({ locale }: CollaboratePageProps) {
             </svg>
           </div>
           <span className="tag">02 · AI integration</span>
-          <h3>{isEs ? 'Funcionalidades & sistemas de IA' : 'AI features & systems'}</h3>
-          <p>
-            {isEs
-              ? 'Integraciones prácticas: RAG, agentes, visión, voz. Te ayudo a elegir el modelo correcto y medir qué funciona.'
-              : "Practical, production-grade integrations: retrieval, agents, vision, speech. I'll help you pick the right model and measure what's actually working."}
-          </p>
+          <h3>{t('offers.offer_2.title')}</h3>
+          <p>{t('offers.offer_2.description')}</p>
           <ul>
-            <li>RAG pipelines, embeddings, evals</li>
-            <li>{isEs ? 'Modelos self-hosted & API' : 'Self-hosted & API-based models'}</li>
-            <li>Python · PyTorch · Ollama · OpenAI</li>
+            {(t('offers.offer_2.bullets', { returnObjects: true }) as string[]).map((b, i) => (
+              <li key={i}>{b}</li>
+            ))}
           </ul>
         </div>
         <div className="offer">
@@ -148,67 +128,36 @@ export default function CollaboratePage({ locale }: CollaboratePageProps) {
             </svg>
           </div>
           <span className="tag">03 · Blockchain</span>
-          <h3>{isEs ? 'Blockchain & contratos inteligentes' : 'Blockchain & smart contracts'}</h3>
-          <p>
-            {isEs
-              ? 'Marketplaces NFT, tokens, lógica on-chain. Código auditable y mantenible.'
-              : "NFT marketplaces, token systems, on-chain logic. I focus on boring, auditable, maintainable code — the kind that doesn't make the news."}
-          </p>
+          <h3>{t('offers.offer_3.title')}</h3>
+          <p>{t('offers.offer_3.description')}</p>
           <ul>
-            <li>Solidity · Hardhat · Foundry</li>
-            <li>Ethereum · Polygon · Solana</li>
-            <li>Wallet + dApp integrations</li>
+            {(t('offers.offer_3.bullets', { returnObjects: true }) as string[]).map((b, i) => (
+              <li key={i}>{b}</li>
+            ))}
           </ul>
         </div>
       </section>
 
       {/* Process */}
       <section className="process">
-        <h2>{isEs ? 'Cómo trabajaremos' : "How we'll work"}</h2>
-        <p className="sub">
-          {isEs
-            ? 'Los mismos cuatro pasos, siempre.'
-            : "Same four steps whether it's a weekend spike or a six-month engagement."}
-        </p>
+        <h2>{t('process.title')}</h2>
+        <p className="sub">{t('process.subtitle')}</p>
         <div className="steps">
-          {[
-            {
-              title: isEs ? 'Conversación' : 'Conversation',
-              desc: isEs
-                ? 'Una llamada de 30 min para entender qué quieres construir.'
-                : "A 30-minute call to understand what you're trying to build and what success looks like.",
-            },
-            {
-              title: isEs ? 'Propuesta' : 'Proposal',
-              desc: isEs
-                ? 'Alcance con hitos y trade-offs honestos.'
-                : 'A short written scope with milestones, assumptions, and honest trade-offs. No fluff.',
-            },
-            {
-              title: isEs ? 'Construcción' : 'Build',
-              desc: isEs
-                ? 'Demos semanales, repo compartido desde el día uno.'
-                : "Weekly demos, shared repo from day one, and a communication style that matches your team's.",
-            },
-            {
-              title: isEs ? 'Entrega' : 'Handoff',
-              desc: isEs
-                ? 'Documentación y plan de transición.'
-                : 'Documentation, runbooks, and a transition plan so your team can confidently own what we built.',
-            },
-          ].map((step, i) => (
-            <div key={i} className="step">
-              <div className="num">{String(i + 1).padStart(2, '0')}</div>
-              <h4>{step.title}</h4>
-              <p>{step.desc}</p>
-            </div>
-          ))}
+          {(t('process.steps', { returnObjects: true }) as { title: string; desc: string }[]).map(
+            (step, i) => (
+              <div key={i} className="step">
+                <div className="num">{String(i + 1).padStart(2, '0')}</div>
+                <h4>{step.title}</h4>
+                <p>{step.desc}</p>
+              </div>
+            )
+          )}
         </div>
       </section>
 
       {/* Projects */}
       <section className="projects">
-        <h2>{isEs ? 'Trabajo seleccionado' : 'Selected work'}</h2>
+        <h2>{t('projects.selected_work')}</h2>
         <div
           style={{
             display: 'grid',
@@ -325,19 +274,10 @@ export default function CollaboratePage({ locale }: CollaboratePageProps) {
       <section className="contact">
         <div>
           <h2 className="big">
-            {isEs ? (
-              <>
-                Cuando estés
-                <br />
-                listo<span className="accent">.</span>
-              </>
-            ) : (
-              <>
-                Ready when
-                <br />
-                you are<span className="accent">.</span>
-              </>
-            )}
+            {t('connect.title_1')}
+            <br />
+            {t('connect.title_2')}
+            <span className="accent">.</span>
           </h2>
           <p>{t('connect.description')}</p>
         </div>
@@ -366,7 +306,7 @@ export default function CollaboratePage({ locale }: CollaboratePageProps) {
               </svg>
             </span>
             <div>
-              <div className="lbl">Meetings</div>
+              <div className="lbl">{t('connect.channels.meetings')}</div>
               <div className="val">cal.com/asanchezyali/30min</div>
             </div>
             <span className="arr">↗</span>
@@ -388,7 +328,7 @@ export default function CollaboratePage({ locale }: CollaboratePageProps) {
               </svg>
             </span>
             <div>
-              <div className="lbl">Email</div>
+              <div className="lbl">{t('connect.channels.email')}</div>
               <div className="val">{siteMetadata.email}</div>
             </div>
             <span className="arr">↗</span>
@@ -412,8 +352,8 @@ export default function CollaboratePage({ locale }: CollaboratePageProps) {
               </svg>
             </span>
             <div>
-              <div className="lbl">Community</div>
-              <div className="val">Yali Dev · Discord</div>
+              <div className="lbl">{t('connect.channels.community')}</div>
+              <div className="val">{t('connect.channels.community_value')}</div>
             </div>
             <span className="arr">↗</span>
           </a>

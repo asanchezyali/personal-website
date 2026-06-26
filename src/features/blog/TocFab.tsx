@@ -1,5 +1,7 @@
 'use client'
 import React, { useState, useEffect, useRef } from 'react'
+import { useTranslation } from '@/i18n/client'
+import { LocaleTypes } from '@/i18n/settings'
 
 interface TocItem {
   title: string
@@ -14,7 +16,8 @@ function flattenToc(items: TocItem[], depth = 2): { title: string; url: string; 
   ])
 }
 
-export default function TocFab({ toc }: { toc: TocItem[] }) {
+export default function TocFab({ toc, locale }: { toc: TocItem[]; locale: LocaleTypes }) {
+  const { t } = useTranslation(locale, 'common')
   const [open, setOpen] = useState(false)
   const [activeId, setActiveId] = useState('')
   const ref = useRef<HTMLDivElement>(null)
@@ -50,7 +53,11 @@ export default function TocFab({ toc }: { toc: TocItem[] }) {
 
   return (
     <div ref={ref}>
-      <button className="toc-fab" onClick={() => setOpen((o) => !o)} aria-label="Table of contents">
+      <button
+        className="toc-fab"
+        onClick={() => setOpen((o) => !o)}
+        aria-label={t('tableofcontents')}
+      >
         <span className="ic">
           <svg
             width="13"
@@ -67,7 +74,7 @@ export default function TocFab({ toc }: { toc: TocItem[] }) {
             <line x1="3" y1="18" x2="21" y2="18" />
           </svg>
         </span>
-        Contents
+        {t('contents')}
       </button>
 
       <div className="toc-sheet" data-open={open ? 'true' : 'false'}>
@@ -75,7 +82,7 @@ export default function TocFab({ toc }: { toc: TocItem[] }) {
           className="backdrop"
           role="button"
           tabIndex={0}
-          aria-label="Close table of contents"
+          aria-label={t('closecontents')}
           onClick={() => setOpen(false)}
           onKeyDown={(e) => {
             if (e.key === 'Enter' || e.key === ' ') {
@@ -85,7 +92,7 @@ export default function TocFab({ toc }: { toc: TocItem[] }) {
           }}
         />
         <nav className="panel">
-          <span className="lbl">On this page</span>
+          <span className="lbl">{t('onthispage')}</span>
           {flat.map((item) => (
             <a
               key={item.url}
