@@ -1,1 +1,129 @@
-{ "about": "Nosotros" }
+{
+  "about": "Nosotros",
+  "hero": {
+    "eyebrow": "Sobre mí",
+    "title_pre": "Construyo software para ",
+    "title_accent": "ideas que vale la pena pensar a fondo",
+    "lead": "Soy Alejandro — desarrollador de software, matemático y especialista en IA radicado en Medellín, Colombia. Trabajo en la intersección entre el aprendizaje automático, la Web3 y el software web de todos los días.",
+    "quick": {
+      "location": "Medellín, Colombia",
+      "available": "Disponible para proyectos",
+      "experience": "8+ años construyendo"
+    },
+    "cta_primary": "Trabaja conmigo →",
+    "cta_github": "GitHub",
+    "tag": "Medellín · 2026"
+  },
+  "quote": "La mayoría de lo que vale la pena construir requiere tanto la paciencia del matemático como la inquietud del ingeniero. Intento mantener a ambos en la sala.",
+  "journey": {
+    "eyebrow": "El camino largo",
+    "h2": "Cómo llegué aquí",
+    "p": "Un recorrido no lineal por las matemáticas, la enseñanza y el software.",
+    "timeline": [
+      {
+        "title": "Especialista en IA",
+        "desc": "Construyo sistemas de aprendizaje inteligentes impulsados por LLMs, pipelines de RAG y flujos de trabajo con agentes."
+      },
+      {
+        "title": "Consultor independiente",
+        "desc": "Consultoría en IA y desarrollo full-stack para startups — desde agentes conversacionales hasta plataformas de generación de imágenes."
+      },
+      {
+        "title": "Desarrollador Full Stack",
+        "desc": "Desarrollé sistemas de avatares con IA, pipelines de video en tiempo real y herramientas de código abierto con Python, React y Three.js."
+      },
+      {
+        "title": "Desarrollador Full Stack",
+        "desc": "Construí plataformas basadas en blockchain y aplicaciones web escalables usando React, NestJS e infraestructura en la nube."
+      },
+      {
+        "title": "Profesor",
+        "desc": "Enseñé matemáticas, álgebra lineal y cálculo. Acompañé a estudiantes en modelado matemático y pensamiento computacional."
+      }
+    ]
+  },
+  "principles": {
+    "eyebrow": "Cómo trabajo",
+    "h2": "Principios a los que vuelvo",
+    "items": [
+      {
+        "title": "Entender antes de construir",
+        "desc": "Cada hora dedicada a afinar el planteamiento del problema ahorra una semana de código. Prefiero entregar el segundo borrador de lo correcto que el primer borrador de lo equivocado."
+      },
+      {
+        "title": "Superficies pequeñas, bordes claros",
+        "desc": "Los sistemas complejos están hechos de partes simples con límites bien elegidos. Si un componente es difícil de nombrar, casi siempre está haciendo demasiado."
+      },
+      {
+        "title": "Escribe como si te lo explicaras a ti mismo",
+        "desc": "El código, los ensayos y la documentación premian el mismo instinto: imagina a un lector inteligente, distraído y un poco cansado."
+      }
+    ]
+  },
+  "toolkit": {
+    "eyebrow": "A lo que recurro",
+    "h2": "Herramientas y terreno",
+    "building": "Construir",
+    "thinking": "Pensar y entregar",
+    "buildTools": [
+      { "cm": "datos, ML, pegamento" },
+      { "cm": "todo lo demás" },
+      { "cm": "la cara visible" },
+      { "cm": "opción por defecto" },
+      { "cm": "cuando encaja la Web3" },
+      { "cm": "cuando importa" }
+    ],
+    "thinkTools": [
+      { "cm": "para las matemáticas" },
+      { "cm": "segundo cerebro" },
+      { "cm": "para bocetos tempranos" },
+      { "cm": "para no engañarme" },
+      { "cm": "el día a día" },
+      { "cm": "aún imbatibles" }
+    ]
+  },
+  "now": {
+    "label": "Ahora — 2026",
+    "h2": "En qué estoy trabajando",
+    "items": [
+      {
+        "title": "Escribiendo",
+        "desc": "Una serie pausada sobre sistemas RAG, pensada para ingenieros que quieren la historia real."
+      },
+      {
+        "title": "Construyendo",
+        "desc": "Un pequeño producto con un amigo. Detalles más adelante."
+      },
+      {
+        "title": "Enseñando",
+        "desc": "Topofilosofía — una cohorte de 10 semanas sobre topología desde cero."
+      },
+      {
+        "title": "Leyendo",
+        "desc": "Slow Productivity de Cal Newport, papers sobre mecanismos de atención y Borges."
+      }
+    ]
+  },
+  "elsewhere": {
+    "eyebrow": "En otros rincones de internet",
+    "h2": "Dónde encontrarme",
+    "items": [
+      { "desc": "Código abierto, experimentos y algunas cosas que ojalá hubiera publicado antes." },
+      { "desc": "La versión extendida del currículum. Con pocas palabras de moda, lo prometo." },
+      {
+        "desc": "Ideas a medio formar, notas de campo y alguna opinión arriesgada de vez en cuando."
+      },
+      {
+        "desc": "La comunidad de estudio. Topología, ciencias de la computación y conversación pausada."
+      }
+    ],
+    "discord_cta": "Únete al Discord →"
+  },
+  "cta": {
+    "h2_pre": "Si has leído hasta aquí, quizás ",
+    "h2_accent": "disfrutemos trabajar juntos",
+    "p": "Tomo solo algunos proyectos al año. Si estás construyendo algo que necesita cuidado, hablemos.",
+    "button": "Empecemos una conversación →",
+    "link": "Lee el blog primero"
+  }
+}

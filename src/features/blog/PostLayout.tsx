@@ -3,6 +3,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Blog, Authors } from '#site/content'
 import { LocaleTypes } from '@/i18n/settings'
+import { createTranslation } from '@/i18n/server'
 import { formatDate } from 'pliny/utils/formatDate'
 import ReadingProgress from './ReadingProgress'
 import TocFab from './TocFab'
@@ -17,7 +18,7 @@ interface PostLayoutProps {
   next?: { slug: string; title: string } | null
 }
 
-export default function PostLayout({
+export default async function PostLayout({
   content,
   author,
   locale,
@@ -25,6 +26,8 @@ export default function PostLayout({
   prev,
   next,
 }: PostLayoutProps) {
+  const { t } = await createTranslation(locale, 'blog')
+
   function localHref(href: string) {
     if (locale === 'en') return href
     return `/${locale}${href}`
@@ -38,8 +41,8 @@ export default function PostLayout({
   return (
     <>
       <ReadingProgress />
-      <TocFab toc={content.toc ?? []} />
-      <ShareFab title={content.title} slug={content.slug} />
+      <TocFab toc={content.toc ?? []} locale={locale} />
+      <ShareFab title={content.title} slug={content.slug} locale={locale} />
 
       {/* Hero */}
       <div className="post-hero">
@@ -89,7 +92,9 @@ export default function PostLayout({
           {content.metadata?.readingTime && (
             <>
               <span className="sep">·</span>
-              <span>{content.metadata.readingTime} min read</span>
+              <span>
+                {content.metadata.readingTime} {t('minRead')}
+              </span>
             </>
           )}
         </div>
@@ -130,10 +135,7 @@ export default function PostLayout({
                 {author.occupation}
               </p>
             )}
-            <p>
-              Mathematics × Code × AI — exploring the intersections of programming and mathematical
-              thinking.
-            </p>
+            <p>{t('authorBio')}</p>
           </div>
         </div>
 
@@ -154,7 +156,7 @@ export default function PostLayout({
                 <span
                   style={{ fontSize: 12, color: 'var(--g-500)', display: 'block', marginBottom: 4 }}
                 >
-                  ← Previous
+                  ← {t('previous')}
                 </span>
                 <span style={{ fontWeight: 600 }}>{prev.title}</span>
               </Link>
@@ -166,7 +168,7 @@ export default function PostLayout({
                 <span
                   style={{ fontSize: 12, color: 'var(--g-500)', display: 'block', marginBottom: 4 }}
                 >
-                  Next →
+                  {t('next')} →
                 </span>
                 <span style={{ fontWeight: 600 }}>{next.title}</span>
               </Link>

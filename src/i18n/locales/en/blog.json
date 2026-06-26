@@ -1,4 +1,13 @@
 {
   "title": "Bits, maths & coffee",
-  "description": "Exploring and sharing what I learn about mathematics, algorithms and the digital future"
+  "description": "Exploring and sharing what I learn about mathematics, algorithms and the digital future",
+  "writingNotebook": "Writing Notebook",
+  "searchPlaceholder": "Search posts, topics, tags…",
+  "allTopics": "All topics",
+  "featured": "Featured",
+  "posts": "posts",
+  "minRead": "min read",
+  "previous": "Previous",
+  "next": "Next",
+  "authorBio": "Mathematics × Code × AI — exploring the intersections of programming and mathematical thinking."
 }

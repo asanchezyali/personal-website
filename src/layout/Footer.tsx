@@ -34,14 +34,11 @@ export default function Footer() {
         {/* CTA block */}
         <div className="f-cta">
           <div>
-            <span className="eyebrow">Let&apos;s work together</span>
+            <span className="eyebrow">{t('cta_eyebrow')}</span>
             <h2>
-              Ready to build something <span className="accent">remarkable?</span>
+              {t('cta_title')} <span className="accent">{t('cta_title_accent')}</span>
             </h2>
-            <p>
-              Whether you have a project in mind or just want to connect — I&apos;m always open to a
-              conversation.
-            </p>
+            <p>{t('cta_text')}</p>
           </div>
           <div className="f-cta-actions">
             <a
@@ -50,7 +47,7 @@ export default function Footer() {
               rel="noopener noreferrer"
               className="btn primary"
             >
-              Start a conversation
+              {t('cta_button')}
               <span className="a">→</span>
             </a>
             <Link href={localHref('/collaborate')} className="btn ghost">
@@ -67,9 +64,7 @@ export default function Footer() {
               <span className="logo">Y</span>
               <span className="name">yali dev</span>
             </Link>
-            <p className="f-tag">
-              Mathematics × Code × AI — exploring the edges of what&apos;s computable.
-            </p>
+            <p className="f-tag">{t('tagline')}</p>
             {/* Socials */}
             <div style={{ display: 'flex', gap: 6, marginBottom: 28 }}>
               <a
@@ -155,7 +150,7 @@ export default function Footer() {
                   <line x1="10" y1="1" x2="10" y2="4" />
                   <line x1="14" y1="1" x2="14" y2="4" />
                 </svg>
-                Buy coffee
+                {t('donate_coffee')}
               </a>
               <a
                 href="https://www.paypal.com/paypalme/asanchezyali"
@@ -188,7 +183,7 @@ export default function Footer() {
                 >
                   <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
                 </svg>
-                Tip me
+                {t('donate_tip')}
               </a>
             </div>
 
@@ -205,7 +200,7 @@ export default function Footer() {
                   marginBottom: 12,
                 }}
               >
-                Newsletter
+                {t('newsletter')}
               </h4>
               <form className="news-form" onSubmit={handleNewsletter}>
                 <span className="news-ic">
@@ -226,13 +221,13 @@ export default function Footer() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="your@email.com"
+                  placeholder={t('newsletter_placeholder')}
                   required
                 />
-                <button type="submit">Subscribe</button>
-                {sent && <span className="news-ok show">Thanks!</span>}
+                <button type="submit">{t('newsletter_subscribe')}</button>
+                {sent && <span className="news-ok show">{t('newsletter_thanks')}</span>}
               </form>
-              <span className="news-hint">No spam, ever. Unsubscribe any time.</span>
+              <span className="news-hint">{t('newsletter_hint')}</span>
             </div>
           </div>
 
@@ -242,7 +237,7 @@ export default function Footer() {
             <ul>
               {headerNavLinks.map((link) => (
                 <li key={link.href}>
-                  <Link href={localHref(link.href)}>{link.title}</Link>
+                  <Link href={localHref(link.href)}>{tc(link.tkey)}</Link>
                 </li>
               ))}
               <li>
@@ -253,17 +248,17 @@ export default function Footer() {
 
           {/* Writing */}
           <div className="f-col">
-            <h4>Writing</h4>
+            <h4>{t('writing')}</h4>
             <ul>
               <li>
-                <Link href={localHref('/blog')}>All posts</Link>
+                <Link href={localHref('/blog')}>{t('all_posts')}</Link>
               </li>
               <li>
-                <Link href={localHref('/tags')}>Tags</Link>
+                <Link href={localHref('/tags')}>{tc('tags')}</Link>
               </li>
               <li>
                 <a href={`${siteMetadata.siteUrl}/feed.xml`} target="_blank" rel="noreferrer">
-                  RSS Feed
+                  {t('rss_feed')}
                 </a>
               </li>
             </ul>
@@ -302,7 +297,7 @@ export default function Footer() {
           <p className="f-copy">
             &copy; {year} <strong>{siteMetadata.author}</strong>
             <span className="pin"> ⊕ </span>
-            Made with care. {t('rights')}
+            {t('made_with_care')} {t('rights')}
           </p>
           <div className="socials">
             <a

@@ -53,7 +53,7 @@ export default function HeroSection({ locale }: HeroSectionProps) {
           {t('hero.roll')}
         </span>
         <span className="eyebrow" style={{ marginTop: 16, display: 'block' }}>
-          Software Developer &amp; Mathematician
+          {t('hero.subtitle')}
         </span>
         <h1>
           {t('hero.title_1').split('Alejandro Sánchez Yalí').length > 1 ? (

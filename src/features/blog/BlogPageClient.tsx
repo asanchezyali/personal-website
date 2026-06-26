@@ -70,7 +70,7 @@ export default function BlogPageClient({ locale, posts, tags }: BlogPageClientPr
       <div className="blog-hero" style={{ textAlign: 'left' }}>
         <span className="status-pill">
           <span className="dot" />
-          Writing Notebook
+          {tb('writingNotebook')}
         </span>
         <h1>
           <span className="accent">{tb('title')}</span>
@@ -96,7 +96,7 @@ export default function BlogPageClient({ locale, posts, tags }: BlogPageClientPr
           </svg>
           <input
             type="search"
-            placeholder="Search posts, topics, tags…"
+            placeholder={tb('searchPlaceholder')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -106,7 +106,7 @@ export default function BlogPageClient({ locale, posts, tags }: BlogPageClientPr
             className={`tag-dropdown-btn${activeTag ? ' has-filter' : ''}${tagOpen ? ' open' : ''}`}
             onClick={() => setTagOpen(!tagOpen)}
           >
-            {activeTag || 'All topics'}
+            {activeTag || tb('allTopics')}
             <svg
               viewBox="0 0 24 24"
               fill="none"
@@ -150,7 +150,7 @@ export default function BlogPageClient({ locale, posts, tags }: BlogPageClientPr
                     }
                   }}
                 >
-                  All topics
+                  {tb('allTopics')}
                 </div>
                 {Object.entries(tags)
                   .sort(([, a], [, b]) => b - a)
@@ -206,7 +206,7 @@ export default function BlogPageClient({ locale, posts, tags }: BlogPageClientPr
             </div>
             <div>
               <div className="meta-row">
-                <span>Featured</span>
+                <span>{tb('featured')}</span>
                 <span>·</span>
                 <span>{formatDate(featured.date, locale)}</span>
               </div>
@@ -231,7 +231,9 @@ export default function BlogPageClient({ locale, posts, tags }: BlogPageClientPr
         <div key={year}>
           <div className="year-head">
             <span className="year">{year}</span>
-            <span className="count">{byYear[year].length} posts</span>
+            <span className="count">
+              {byYear[year].length} {tb('posts')}
+            </span>
           </div>
           {byYear[year].map((post) => (
             <Link

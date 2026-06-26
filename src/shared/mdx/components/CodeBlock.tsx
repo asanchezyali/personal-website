@@ -1,7 +1,13 @@
 'use client'
 import React, { useRef, useState } from 'react'
+import { usePathname } from 'next/navigation'
+import { useTranslation } from '@/i18n/client'
+import { LocaleTypes } from '@/i18n/settings'
 
 export default function CodeBlock({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname()
+  const locale: LocaleTypes = pathname?.startsWith('/es') ? 'es' : 'en'
+  const { t } = useTranslation(locale, 'common')
   const ref = useRef<HTMLDivElement>(null)
   const [copied, setCopied] = useState(false)
 
@@ -25,7 +31,7 @@ export default function CodeBlock({ children }: { children: React.ReactNode }) {
       }}
     >
       <button
-        aria-label="Copy code"
+        aria-label={t('copycode')}
         onClick={onCopy}
         style={{
           position: 'absolute',
@@ -42,7 +48,7 @@ export default function CodeBlock({ children }: { children: React.ReactNode }) {
           transition: 'color .2s',
         }}
       >
-        {copied ? 'Copied!' : 'Copy'}
+        {copied ? t('copied') : t('copy')}
       </button>
       {children}
     </div>

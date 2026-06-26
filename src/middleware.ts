@@ -13,10 +13,19 @@ export function middleware(request: NextRequest) {
       )
     )
   }
+
+  // Expose the original pathname so server components without route params
+  // (e.g. not-found.tsx) can detect the active locale.
+  const requestHeaders = new Headers(request.headers)
+  requestHeaders.set('x-pathname', pathname)
+
   const missing = locales.every((l) => !pathname.startsWith(`/${l}/`) && pathname !== `/${l}`)
   if (missing) {
-    return NextResponse.rewrite(new URL(`/${fallbackLng}${pathname}`, request.url))
+    return NextResponse.rewrite(new URL(`/${fallbackLng}${pathname}`, request.url), {
+      request: { headers: requestHeaders },
+    })
   }
+  return NextResponse.next({ request: { headers: requestHeaders } })
 }
 
 export const config = {

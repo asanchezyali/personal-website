@@ -66,7 +66,7 @@ export default function Header() {
                 href={localHref(link.href)}
                 aria-current={isActive(link.href) ? 'page' : undefined}
               >
-                {link.title}
+                {t(link.tkey)}
               </Link>
             ))}
           </nav>

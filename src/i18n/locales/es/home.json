@@ -1,6 +1,7 @@
 {
   "hero": {
     "roll": "Desarrollador de Software & Especialista en IA",
+    "subtitle": "Desarrollador de Software & Matemático",
     "title_1": "Soy Alejandro Sánchez Yalí",
     "title_2": "Desarrollador de software y consultor de TI especializado en la creación de aplicaciones inteligentes que combinan tecnologías web modernas con inteligencia artificial y blockchain.",
     "button_1": "Contáctame",
@@ -15,7 +16,6 @@
   },
 
   "blog": "Blog",
-  "collaborate": "Colaborar",
   "greeting": "Lo más reciente",
   "description": "Un espacio dedicado a explorar las intersecciones entre matemáticas, ciencias de la computación, desarrollo de software, inteligencia artificial y deep learning. Compartiendo ideas, experiencias y descubrimientos en el fascinante mundo de la tecnología.",
   "more": "Leer más",
