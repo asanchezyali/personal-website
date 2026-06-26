@@ -413,6 +413,18 @@
   .post-body code { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: .9em; padding: 2px 6px; border-radius: 4px; background: var(--g-100); }
   html.dark .post-body code { background: var(--g-200); }
 
+  /* ---- Tables (MDX <TableWrapper />) ---- */
+  .post-body .table-wrap { margin: 28px 0; border: 1px solid var(--g-200); border-radius: 14px; overflow-x: auto; background: color-mix(in oklab, var(--g-50) 60%, transparent); }
+  html.dark .post-body .table-wrap { border-color: var(--g-300); background: color-mix(in oklab, var(--g-100) 50%, transparent); }
+  .post-body .table-wrap table { width: 100%; border-collapse: collapse; margin: 0; font-size: 15px; line-height: 1.55; }
+  .post-body .table-wrap th { text-align: left; font-family: var(--f-ubuntu); font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.07em; color: var(--g-500); font-weight: 700; padding: 13px 18px; border-bottom: 1px solid var(--g-200); white-space: nowrap; }
+  html.dark .post-body .table-wrap th { border-bottom-color: var(--g-300); }
+  .post-body .table-wrap td { padding: 13px 18px; border-bottom: 1px solid var(--g-200); color: var(--g-600); vertical-align: top; }
+  html.dark .post-body .table-wrap td { border-bottom-color: var(--g-200); }
+  .post-body .table-wrap tbody tr:last-child td { border-bottom: none; }
+  .post-body .table-wrap tbody td:first-child { color: var(--fg); font-weight: 600; }
+  .post-body .table-wrap tbody tr:hover td { background: color-mix(in oklab, var(--g-100) 55%, transparent); }
+
   /* ---- StackList: tech / decision rows (MDX <StackList />) ---- */
   .stack-group { margin: 28px 0 32px; }
   .stack-group-label { font-family: var(--f-ubuntu); text-transform: uppercase; letter-spacing: 0.12em; font-size: 11px; font-weight: 700; color: var(--s-500); margin-bottom: 10px; }
