@@ -1,13 +1,12 @@
-'use client'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import { useTranslation } from '@/i18n/client'
+import { headers } from 'next/headers'
+import { createTranslation } from '@/i18n/server'
 import { LocaleTypes } from '@/i18n/settings'
 
-export default function NotFound() {
-  const pathname = usePathname()
-  const locale: LocaleTypes = pathname?.startsWith('/es') ? 'es' : 'en'
-  const { t } = useTranslation(locale, 'notfound')
+export default async function NotFound() {
+  const pathname = (await headers()).get('x-pathname') ?? ''
+  const locale: LocaleTypes = pathname.startsWith('/es') ? 'es' : 'en'
+  const { t } = await createTranslation(locale, 'notfound')
 
   return (
     <div
