@@ -6,7 +6,7 @@ interface TableWrapperProps {
 
 const TableWrapper = ({ children }: TableWrapperProps) => {
   return (
-    <div className="w-full overflow-x-auto">
+    <div className="table-wrap w-full overflow-x-auto">
       <table>{children}</table>
     </div>
   )
