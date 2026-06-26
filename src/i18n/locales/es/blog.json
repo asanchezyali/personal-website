@@ -1,4 +1,13 @@
 {
   "title": "Bits, matemáticas y café",
-  "description": "Explorando y compartiendo lo que aprendo sobre matemáticas, algoritmos y el futuro digital"
+  "description": "Explorando y compartiendo lo que aprendo sobre matemáticas, algoritmos y el futuro digital",
+  "writingNotebook": "Cuaderno de notas",
+  "searchPlaceholder": "Busca artículos, temas, etiquetas…",
+  "allTopics": "Todos los temas",
+  "featured": "Destacado",
+  "posts": "publicaciones",
+  "minRead": "min de lectura",
+  "previous": "Anterior",
+  "next": "Siguiente",
+  "authorBio": "Matemáticas × Código × IA — explorando las intersecciones entre la programación y el pensamiento matemático."
 }

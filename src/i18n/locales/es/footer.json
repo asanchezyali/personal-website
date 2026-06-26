@@ -2,5 +2,22 @@
   "navigation": "Navegacion",
   "connect": "Conectar",
   "built_with": "Hecho con Next.js y Tailwind CSS",
-  "rights": "Todos los derechos reservados."
+  "rights": "Todos los derechos reservados.",
+  "cta_eyebrow": "Trabajemos juntos",
+  "cta_title": "¿Listo para construir algo",
+  "cta_title_accent": "extraordinario?",
+  "cta_text": "Ya sea que tengas un proyecto en mente o solo quieras conectar — siempre estoy abierto a una conversación.",
+  "cta_button": "Empecemos una conversación",
+  "tagline": "Matemáticas × Código × IA — explorando los límites de lo computable.",
+  "donate_coffee": "Invítame un café",
+  "donate_tip": "Apóyame",
+  "newsletter": "Boletín",
+  "newsletter_placeholder": "tu@correo.com",
+  "newsletter_subscribe": "Suscribirse",
+  "newsletter_thanks": "¡Gracias!",
+  "newsletter_hint": "Sin spam. Cancela cuando quieras.",
+  "writing": "Escritos",
+  "all_posts": "Todas las publicaciones",
+  "rss_feed": "Feed RSS",
+  "made_with_care": "Hecho con cariño."
 }

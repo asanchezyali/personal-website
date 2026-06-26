@@ -1,7 +1,63 @@
 {
   "hero": {
     "title": "Collaborate",
-    "description": "I'm a software developer with a mathematical background, passionate about AI, open source, and knowledge sharing. Let's build something together."
+    "description": "I'm a software developer with a mathematical background, passionate about AI, open source, and knowledge sharing. Let's build something together.",
+    "status_pill": "Currently open for projects · Q2 2026",
+    "title_1": "Let's build something",
+    "title_2": "worth shipping.",
+    "cta_call": "Book an intro call",
+    "cta_email": "Email me"
+  },
+  "offers": {
+    "offer_1": {
+      "title": "Web & product builds",
+      "description": "From \"we have an idea\" to a product customers can log into. I design the architecture, build the first few iterations, and hand you a codebase your team can own.",
+      "bullets": [
+        "Next.js · TypeScript · Postgres",
+        "Design systems & UI from scratch",
+        "Deployed to AWS or Vercel"
+      ]
+    },
+    "offer_2": {
+      "title": "AI features & systems",
+      "description": "Practical, production-grade integrations: retrieval, agents, vision, speech. I'll help you pick the right model and measure what's actually working.",
+      "bullets": [
+        "RAG pipelines, embeddings, evals",
+        "Self-hosted & API-based models",
+        "Python · PyTorch · Ollama · OpenAI"
+      ]
+    },
+    "offer_3": {
+      "title": "Blockchain & smart contracts",
+      "description": "NFT marketplaces, token systems, on-chain logic. I focus on boring, auditable, maintainable code — the kind that doesn't make the news.",
+      "bullets": [
+        "Solidity · Hardhat · Foundry",
+        "Ethereum · Polygon · Solana",
+        "Wallet + dApp integrations"
+      ]
+    }
+  },
+  "process": {
+    "title": "How we'll work",
+    "subtitle": "Same four steps whether it's a weekend spike or a six-month engagement.",
+    "steps": [
+      {
+        "title": "Conversation",
+        "desc": "A 30-minute call to understand what you're trying to build and what success looks like."
+      },
+      {
+        "title": "Proposal",
+        "desc": "A short written scope with milestones, assumptions, and honest trade-offs. No fluff."
+      },
+      {
+        "title": "Build",
+        "desc": "Weekly demos, shared repo from day one, and a communication style that matches your team's."
+      },
+      {
+        "title": "Handoff",
+        "desc": "Documentation, runbooks, and a transition plan so your team can confidently own what we built."
+      }
+    ]
   },
   "journey": {
     "title": "Professional Journey",
@@ -42,6 +98,7 @@
   },
   "projects": {
     "title": "Featured Projects",
+    "selected_work": "Selected work",
     "description": "A selection of projects I've built or led — spanning AI, full-stack development, and workflow automation.",
     "project_1": {
       "title": "Plixiq",
@@ -102,7 +159,15 @@
   },
   "connect": {
     "title": "Let's Connect",
+    "title_1": "Ready when",
+    "title_2": "you are",
     "description": "Whether you want to collaborate on a project, join the study community, or just say hi — here's how to reach me.",
+    "channels": {
+      "meetings": "Meetings",
+      "email": "Email",
+      "community": "Community",
+      "community_value": "Yali Dev · Discord"
+    },
     "channel_1": {
       "name": "Discord",
       "description": "Join the study community and weekly sessions.",

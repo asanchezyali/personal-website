@@ -1,3 +1,125 @@
 {
-  "about": "About"
+  "about": "About",
+  "hero": {
+    "eyebrow": "About",
+    "title_pre": "I build software for ",
+    "title_accent": "ideas worth thinking hard about",
+    "lead": "I'm Alejandro — a software developer, mathematician, and AI specialist based in Medellín, Colombia. I work on the intersection of machine learning, Web3, and everyday web software.",
+    "quick": {
+      "location": "Medellín, Colombia",
+      "available": "Available for projects",
+      "experience": "8+ years shipping"
+    },
+    "cta_primary": "Work with me →",
+    "cta_github": "GitHub",
+    "tag": "Medellín · 2026"
+  },
+  "quote": "Most of what's worth building requires both the mathematician's patience and the engineer's restlessness. I try to keep both in the room.",
+  "journey": {
+    "eyebrow": "The long path",
+    "h2": "How I got here",
+    "p": "A non-linear walk through mathematics, teaching, and software.",
+    "timeline": [
+      {
+        "title": "AI Specialist",
+        "desc": "Building intelligent learning systems powered by LLMs, RAG pipelines, and agentic workflows."
+      },
+      {
+        "title": "Freelance Consultant",
+        "desc": "AI consulting and full-stack development for startups — from conversational agents to image generation platforms."
+      },
+      {
+        "title": "Full Stack Developer",
+        "desc": "Developed AI avatar systems, real-time video pipelines, and open-source tooling with Python, React, and Three.js."
+      },
+      {
+        "title": "Full Stack Developer",
+        "desc": "Built blockchain-based platforms and scalable web applications using React, NestJS, and cloud infrastructure."
+      },
+      {
+        "title": "Professor",
+        "desc": "Taught mathematics, linear algebra, and calculus. Mentored students in mathematical modeling and computational thinking."
+      }
+    ]
+  },
+  "principles": {
+    "eyebrow": "How I work",
+    "h2": "Principles I keep returning to",
+    "items": [
+      {
+        "title": "Understand before you build",
+        "desc": "Every hour spent sharpening the problem statement saves a week of code. I'd rather ship the second draft of the right thing than the first draft of the wrong one."
+      },
+      {
+        "title": "Small surfaces, clear edges",
+        "desc": "Complex systems are made of simple parts with well-chosen boundaries. If a component is hard to name, it's usually doing too much."
+      },
+      {
+        "title": "Write like you're explaining to yourself",
+        "desc": "Code, essays, and docs all reward the same instinct: assume a reader who is smart, distracted, and a little tired."
+      }
+    ]
+  },
+  "toolkit": {
+    "eyebrow": "What I reach for",
+    "h2": "Tools & terrain",
+    "building": "Building",
+    "thinking": "Thinking & shipping",
+    "buildTools": [
+      { "cm": "data, ML, glue" },
+      { "cm": "everywhere else" },
+      { "cm": "front of house" },
+      { "cm": "default choice" },
+      { "cm": "when Web3 fits" },
+      { "cm": "when it matters" }
+    ],
+    "thinkTools": [
+      { "cm": "for the math" },
+      { "cm": "second brain" },
+      { "cm": "for early sketches" },
+      { "cm": "to stay honest" },
+      { "cm": "daily drivers" },
+      { "cm": "still unbeaten" }
+    ]
+  },
+  "now": {
+    "label": "Now — 2026",
+    "h2": "What I'm working on",
+    "items": [
+      {
+        "title": "Writing",
+        "desc": "A slow series on RAG systems, aimed at engineers who want the real story."
+      },
+      {
+        "title": "Building",
+        "desc": "A small product with a friend. Details later."
+      },
+      {
+        "title": "Teaching",
+        "desc": "Topofilosofía — a 10-week cohort on topology from the ground up."
+      },
+      {
+        "title": "Reading",
+        "desc": "Cal Newport's Slow Productivity, papers on attention mechanisms, and Borges."
+      }
+    ]
+  },
+  "elsewhere": {
+    "eyebrow": "Elsewhere on the internet",
+    "h2": "Where to find me",
+    "items": [
+      { "desc": "Open source, experiments, and a few things I wish I'd pushed sooner." },
+      { "desc": "The long-form résumé version. Light on buzzwords, I promise." },
+      { "desc": "Half-formed thoughts, notes from the field, the occasional hot take." },
+      { "desc": "The study community. Topology, CS, slow conversation." }
+    ],
+    "discord_cta": "Join the Discord →"
+  },
+  "cta": {
+    "h2_pre": "If you've read this far, we might ",
+    "h2_accent": "enjoy working together",
+    "p": "I take on a few projects a year. If you're building something that needs care, let's talk.",
+    "button": "Start a conversation →",
+    "link": "Read the blog first"
+  }
 }
