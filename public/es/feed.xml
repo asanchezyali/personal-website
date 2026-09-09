@@ -11,6 +11,16 @@
       <atom:link href="https://asanchezyali.com/es/feed.xml" rel="self" type="application/rss+xml"/>
       
   <item>
+    <guid>https://asanchezyali.com/es/blog/case-studies/aluna</guid>
+    <title>Construyendo Aluna: seis agentes, salida estructurada y un recibo que sobrevive a los datos</title>
+    <link>https://asanchezyali.com/es/blog/case-studies/aluna</link>
+    <description>El tercer caso de estudio de ingeniería: cómo Aluna preselecciona candidatos con seis agentes especializados en vez de un chatbot, por qué cada respuesta está atada a un esquema, y qué implica construir el borrado dentro de un producto de contratación en lugar de pegárselo encima.</description>
+    <pubDate>Wed, 09 Sep 2026 05:00:00 GMT</pubDate>
+    <author>alejandro@piagents.dev (Yali Dev)</author>
+    <category>case-study</category><category>aluna</category><category>ai-agents</category><category>recruitment</category><category>compliance</category><category>system-design</category>
+  </item>
+
+  <item>
     <guid>https://asanchezyali.com/es/blog/case-studies/crearia-agent</guid>
     <title>Construyendo CREARIA Agent: RAG, herramientas MCP y una cola que cambió el diseño</title>
     <link>https://asanchezyali.com/es/blog/case-studies/crearia-agent</link>

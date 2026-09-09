@@ -1,0 +1,323 @@
+---
+title: 'Construyendo Aluna: seis agentes, salida estructurada y un recibo que sobrevive a los datos'
+date: '2026/09/09'
+lastmod: '2026-09-09'
+tags: ['case-study', 'aluna', 'ai-agents', 'recruitment', 'compliance', 'system-design']
+draft: false
+featured: true
+summary: 'El tercer caso de estudio de ingeniería: cómo Aluna preselecciona candidatos con seis agentes especializados en vez de un chatbot, por qué cada respuesta está atada a un esquema, y qué implica construir el borrado dentro de un producto de contratación en lugar de pegárselo encima.'
+layout: PostLayout
+headerImage: '/images/aluna/aluna-cover.png'
+images: ['/images/aluna/aluna-cover.png']
+language: 'es'
+authors: ['yali']
+---
+
+Tercero de mi serie de **casos de estudio de ingeniería**, después de
+[Plixiq](/es/blog/case-studies/plixiq) y [CREARIA Agent](/es/blog/case-studies/crearia-agent).
+Los dos anteriores eran agentes que hablan con clientes. Este es un producto que lee hojas de vida,
+entrevista personas por WhatsApp y las ordena — desarrollado para
+[Aluna](https://www.aluna.works/en).
+
+Es el primero de los tres donde la ingeniería interesante no es la conversación. Es todo lo que la
+rodea: cómo mantienes a un modelo de lenguaje dentro de un contrato, cómo detienes un pipeline
+antes de que cueste dinero, y qué le debe un producto de contratación a las personas cuyos datos
+guarda.
+
+<CaseSummary
+  stats={[
+    { value: '6', label: 'agentes especializados' },
+    { value: '26', label: 'tablas en la base' },
+    { value: '11', label: 'modelos seleccionables' },
+    { value: '~29k', label: 'líneas de código' },
+  ]}
+  rows={[
+    {
+      k: 'Problema',
+      v: 'Un reclutador con 200 hojas de vida para una vacante lee bien unas 30. Las otras 170 quedan filtradas por quién aplicó primero, o por nada en absoluto.',
+    },
+    {
+      k: 'Enfoque',
+      v: 'Seis agentes estrechos en vez de un chatbot — cada uno con su prompt, su esquema y su modelo — más un pipeline durable que puntúa hojas de vida y entrevista candidatos por WhatsApp.',
+    },
+    {
+      k: 'Resultado',
+      v: 'Listas cortas ordenadas con el razonamiento adjunto, consentimiento y borrado dentro del modelo de datos, y costo por llamada registrado contra un catálogo de modelos con precios.',
+    },
+  ]}
+/>
+
+## ¿Qué es Aluna?
+
+Aluna es una plataforma de contratación para reclutadores. Una vacante se construye hablando con
+ella en vez de llenando un formulario, las hojas de vida se puntúan contra esa vacante, y los
+candidatos que pasan el umbral son entrevistados por un agente en WhatsApp antes de que una persona
+abra el archivo. Su propia frase lo resume: _"La IA preselecciona. Tú decides."_
+
+La forma de la ingeniería se deriva de una decisión temprana: **el servicio de IA no es el
+producto.** Es una app FastAPI sin estado que responde preguntas y no escribe nada. Cada fila, cada
+regla y cada pedazo de estado viven en la app de Next.js que tiene al lado.
+
+## El stack, y por qué
+
+<StackList
+  title="Dos apps en un Turborepo"
+  items={[
+    {
+      name: 'Next.js + Server Actions',
+      what: 'El producto',
+      why: 'Dueño del dominio, de la base de datos y de cada decisión. Módulos por bounded context, no por página.',
+    },
+    {
+      name: 'FastAPI (Python)',
+      what: 'Los agentes',
+      why: 'Sin estado, sin acceso a la base. Recibe texto, devuelve JSON estructurado. Fácil de razonar porque no puede mutar nada.',
+    },
+    {
+      name: 'Drizzle + PostgreSQL',
+      what: 'Esquema y datos',
+      why: 'El esquema como TypeScript, compartido con la app por un paquete del workspace — una definición, sin deriva.',
+    },
+    {
+      name: 'pgvector',
+      what: 'Embeddings',
+      why: 'Las vacantes y las hojas de vida llevan uno cada una, en la misma base que todo lo demás.',
+    },
+    {
+      name: 'Inngest',
+      what: 'Trabajos durables',
+      why: 'El pipeline de hojas de vida son nueve pasos; cada uno reintenta por su cuenta y una caída reanuda en vez de reiniciar.',
+    },
+    {
+      name: 'LiteLLM',
+      what: 'Acceso a modelos',
+      why: 'Una interfaz para Anthropic, OpenAI, Gemini y NVIDIA NIM — el modelo pasa a ser un ajuste, no una integración.',
+    },
+    {
+      name: 'better-auth + Polar',
+      what: 'Cuentas y planes',
+      why: 'Organizaciones, asientos y cuatro planes cuyos límites se aplican en código, no en la página de precios.',
+    },
+  ]}
+/>
+
+## Arquitectura
+
+<ImageBox
+  src="/images/aluna/architecture.png"
+  alt="Arquitectura de Aluna: reclutador y app web Next.js a la izquierda, un servicio de agentes FastAPI sin estado en el medio, la Cloud API de WhatsApp y el candidato a la derecha, con PostgreSQL, Inngest, S3, Redis y Polar abajo"
+  width={920}
+  height={600}
+>
+  Dos apps, un repo. La app web es dueña del dominio; el servicio de IA solo responde.
+</ImageBox>
+
+La división vale la pena defenderla, porque la alternativa obvia — un servicio que piensa y escribe
+— es en lo que se convierten la mayoría de estos productos.
+
+Mantener los agentes sin estado significa que una mala respuesta es **solo** una mala respuesta. No
+puede dejar una fila a medio escribir, ni un proceso en un estado incorrecto, ni cobrar dos veces.
+Toda consecuencia de una llamada al LLM la decide TypeScript que se puede leer, testear y acotar.
+Cuando un modelo devuelve un disparate, el daño está limitado por construcción y no por cuidado.
+
+## Seis agentes, no un chatbot
+
+El producto tiene seis agentes, y ninguno es un asistente general:
+
+| Agente                | Qué hace                                                                                                                                                 |
+| --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `vacancy_chat`        | Construye la vacante con el reclutador, un micropaso a la vez — _"cuéntame la vacante, yo la armo"_                                                      |
+| `vacancy_post`        | Convierte la vacante terminada en un anuncio, con una pasada interna de SEO por los términos que los candidatos de verdad buscan                         |
+| `cv_analysis`         | Puntúa una hoja de vida contra la vacante y sus deal-breakers, y extrae campos estructurados                                                             |
+| `screening_questions` | Escribe preguntas de entrevista sobre una habilidad **que el reclutador no domina** — para que un no experto distinga a un candidato fuerte de uno débil |
+| `conversation`        | Corre la entrevista por WhatsApp, decidiendo turno a turno si ya tiene suficiente para parar                                                             |
+| `report_readings`     | Narra un informe a partir de agregados ya calculados — con la instrucción explícita de no recalcular ni inventar números                                 |
+
+Cada uno tiene su módulo de prompt, su esquema de salida y **su propio modelo**, elegido por agente
+por un super admin desde un catálogo curado. Esto último importa más de lo que suena: el análisis
+de una hoja de vida y el chat que ayuda a redactar una vacante no tienen nada en común en costo,
+latencia ni exigencia de razonamiento. Forzarlos al mismo modelo significa pagar de más por uno o
+quedarse corto con el otro.
+
+El catálogo en sí es una pieza bonita de diseño defensivo. Lista 11 modelos y se filtra en el
+momento de la llamada según qué llaves de proveedor tiene realmente el despliegue:
+
+```python
+def available_models() -> tuple[ModelOption, ...]:
+    """Catalog entries this deployment can actually reach.
+
+    Offering a provider whose key is missing turns a configuration gap into a
+    runtime failure the recruiter meets mid-task, with no hint of the cause.
+    """
+    return tuple(m for m in CATALOG if has_provider_key(m.provider))
+```
+
+Un modelo está ausente a propósito, con la razón anotada junto al hueco: una versión de Gemini
+Flash que respondía `503` con cargas del tamaño de una hoja de vida — _"0 de 4 contra una real"_ —
+así que no se ofrece en vez de ofrecerse y fallar después.
+
+## Mantener al modelo dentro de un contrato
+
+Cada agente devuelve JSON que la app parsea y guarda. Eso convierte "hoy el modelo escribió prosa"
+en una caída, no en un bandazo — así que la restricción se aplica a nivel de API en lugar de
+pedirse amablemente en un prompt:
+
+```python
+_RESPONSE_FORMAT = {
+    "type": "json_schema",
+    "json_schema": {
+        "name": "conversation_output",
+        "schema": {
+            "type": "object",
+            "properties": {
+                "reply": {"type": "string"},
+                "done": {"type": "boolean"},
+                "match_score": {"type": ["integer", "null"]},
+                "summary": {"type": ["string", "null"]},
+                "salary_expectation": {"type": ["integer", "null"]},
+            },
+            "required": ["reply", "done"],
+        },
+    },
+}
+```
+
+El comentario encima se gana su lugar: `json_object` por sí solo no ata la forma, y en una
+entrevista larga el modelo deriva hacia prosa.
+
+Y cuando deriva de todos modos, el fallback es la parte que yo me llevaría:
+
+```python
+if data is None:
+    # The model answered in prose instead of JSON. What it wrote is usually
+    # the right thing to say, so it becomes the reply rather than a 502 that
+    # leaves the candidate staring at silence. `done` stays false: a screening
+    # that runs one turn long beats one that dies mid-sentence.
+    data = {"reply": content.strip(), "done": False}
+```
+
+Un candidato está a mitad de entrevista. La respuesta estrictamente correcta a una carga malformada
+es un 502. La respuesta acertada es usar la frase que el modelo escribió y seguir. **Degrada hacia
+la persona que está en la conversación, no hacia el esquema.**
+
+## El pipeline que decide qué gastar
+
+<ImageBox
+  src="/images/aluna/cv-pipeline.png"
+  alt="El pipeline de hojas de vida en nueve pasos durables: carga, compuerta de consentimiento, extracción de texto, deduplicación por hash, compuerta de plan, análisis, registro de costo, persistencia y notificación, más la rama de auto-screening"
+  width={920}
+  height={530}
+>
+  Tres de estos pasos existen para detener la corrida antes de que cueste algo.
+</ImageBox>
+
+Una hoja de vida cargada se convierte en un puntaje a través de un trabajo durable de Inngest. Lo
+interesante no es el camino feliz — es el orden:
+
+1. **Compuerta de consentimiento.** Un candidato que revocó su consentimiento nunca se analiza, ni
+   siquiera en una re-corrida. El cumplimiento es el paso dos, no una casilla en otra parte.
+2. **Extracción de texto, cacheada.** PDF y DOCX se parsean una sola vez a `cvs.raw_text`, así que
+   un reintento nunca vuelve a parsear.
+3. **Deduplicación por hash.** Un hash sobre hoja de vida más vacante más deal-breakers. Una
+   entrada sin cambios reutiliza el resultado anterior en vez de pagar dos veces por la misma
+   respuesta.
+4. **Compuerta de plan.** La cuota mensual se revisa _antes_ de la llamada, no después — así que
+   topar el límite no cuesta nada en vez de costar un análisis que después no puedes mostrar.
+
+Solo entonces corre el modelo. Tres de los primeros cuatro pasos existen para evitar gastar dinero,
+y están ordenados de verificación más barata a más cara. Ese orden es todo el diseño.
+
+## Saber cuánto cuesta
+
+Cada llamada registra sus propios tokens, y el costo se deriva de un catálogo con precios que
+espeja exactamente al catálogo de modelos:
+
+```ts
+export function estimateCostUsd(
+  modelId: string,
+  inputTokens: number,
+  outputTokens: number
+): number | null {
+  const price = MODEL_PRICING[modelId]
+  if (!price) return null // "sin precio", nunca un cero silencioso
+  return (inputTokens * price.input + outputTokens * price.output) / 1_000_000
+}
+```
+
+Dos decisiones que vale la pena copiar. **Un modelo desconocido devuelve `null`, no cero** — quien
+llama dice "sin precio" en vez de reportar gratis calladamente. Y **el costo se deriva al leer, no
+se guarda**, así que cambiar un precio re-precia el histórico; el trade-off aceptado es que un
+número viejo nunca sobreviva al precio que lo produjo.
+
+El lado de WhatsApp recibe el mismo trato, y es la mitad más sucia. El objeto `pricing` de Meta ha
+ido perdiendo campos conforme la plataforma pasó a cobro por mensaje, y el parser de la librería
+cliente leía uno de ellos sin default — así que un estado que ya no lo traía reventaba dentro de la
+librería, el handler nunca corría, y dos mensajes cobrados no dejaron rastro alguno. El arreglo lee
+la forma cruda del webhook, con el razonamiento de que `entry[].changes[].value.statuses[]` ha sido
+estable entre versiones mientras los campos de precio adentro no.
+
+Esa es la diferencia entre un producto que conoce su margen y uno que se entera a fin de mes.
+
+## El borrado como restricción de diseño
+
+La **Ley 1581 de 2012** rige los datos personales aquí, y las hojas de vida de los candidatos son
+sobre lo más personal que hay. La mayoría de los productos tratan esto como una página de política
+y un botón de borrar. En Aluna le dio forma al esquema.
+
+`consent_records` escribe una fila por propósito — tratamiento de datos, análisis de hoja de vida,
+comunicación por IA — cada una con la versión de la política, la IP y el user agent. `audit_logs`
+es append-only: la aplicación nunca actualiza ni borra una fila.
+
+Pero la decisión de diseño en la que sigo pensando es `deletion_receipts`, y específicamente a qué
+**no** está atada:
+
+> Deliberadamente SIN llave foránea a organization: todas las demás tablas cascadean desde ella,
+> `audit_logs` incluida, así que cerrar una cuenta borra también el registro de que algo se hizo —
+> y el registro de que se borró. Un recibo que muere con su sujeto no prueba nada.
+
+Cada tabla cascadea desde la organización. Así que un recibo que la referenciara sería destruido
+por el mismo acto que existe para documentar. Guarda conteos, nunca contenido — porque bajo la Ley
+1581 los candidatos cuyos datos se borraron conservan sus derechos sobre ellos, así que quedarse
+una copia "como evidencia" recrearía exactamente aquello para lo que era el borrado.
+
+<ImageBox
+  src="/images/aluna/data-model.png"
+  alt="Modelo de datos de Aluna: identidad y facturación fuera de la frontera del tenant; reclutamiento, IA y uso, conversación, onboarding de WhatsApp y cumplimiento dentro; los recibos de borrado deliberadamente fuera"
+  width={920}
+  height={620}
+>
+  26 tablas en seis contextos. La caja punteada de abajo es la que sobrevive a su propio tenant.
+</ImageBox>
+
+Lo que conserva alcanza para responder una sola pregunta — _¿se cerró esta cuenta, cuándo, y a
+petición de quién?_ — y nada más. Es una forma poco común: un registro diseñado alrededor de lo que
+**no** debe retener.
+
+## El código se explica solo
+
+Una última observación, menos sobre arquitectura y más sobre cómo está escrito el código. Casi cada
+decisión no obvia lleva el razonamiento y el número de issue que la produjo — el modelo de Gemini
+ausente, el fallback a prosa, el recibo sin llave foránea, el parseo del cobro de WhatsApp.
+
+Esto es lo opuesto a la regla de "código autodocumentado, sin comentarios" que he defendido en
+otros proyectos, y leerlo me hizo cambiar de opinión sobre dónde aplica esa regla. El código
+explica _qué_. No puede explicar **"probamos este modelo y falló 4 de 4 veces con una hoja de vida
+real"** — eso es un hallazgo empírico, y el único lugar donde sobrevive es un comentario junto a lo
+que justifica. Bórralo y alguien vuelve a agregar el modelo en seis meses.
+
+## Conclusiones
+
+- **Dale a cada trabajo su propio agente, prompt, esquema y modelo.** El análisis de una hoja de
+  vida y un chat que redacta un anuncio no comparten más que la palabra "IA".
+- **Ata la forma en la API, no en el prompt.** `json_schema` es una restricción; "por favor
+  devuelve JSON" es una petición.
+- **Cuando la salida se rompe, degrada hacia la persona que espera.** Una entrevista que se alarga
+  un turno le gana a una que muere a media frase.
+- **Pon primero las verificaciones baratas.** Consentimiento, caché, deduplicación, cuota — y
+  después el modelo. El orden es el control de costo.
+- **Un modelo sin precio devuelve `null`, nunca cero.** Un cero silencioso es un margen del que te
+  enteras tarde.
+- **Si el borrado importa, diséñalo en el esquema.** Un recibo con llave foránea a lo que documenta
+  no es un recibo.
+
+Si hay alguna decisión aquí sobre la que quieras que profundice, [hablemos](/es/collaborate).

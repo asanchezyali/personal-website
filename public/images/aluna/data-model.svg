@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 620" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif">
+  <defs>
+    <style>
+      .bg { fill: #f4f9f9; }
+      .ent { fill: #ffffff; stroke: #dde4ea; stroke-width: 1.5; }
+      .ent-accent { fill: #d7f4f0; stroke: #9fddd6; stroke-width: 1.5; }
+      .ent-dark { fill: #101a2b; stroke: #1e2c45; stroke-width: 1.5; }
+      .title { fill: #101a2b; font-size: 18px; font-weight: 700; }
+      .sub { fill: #4a5a72; font-size: 11px; }
+      .name { fill: #101a2b; font-size: 13px; font-weight: 700; }
+      .field { fill: #4a5a72; font-size: 10.5px; }
+      .wname { fill: #ffffff; font-size: 13px; font-weight: 700; }
+      .wfield { fill: #8ee0d6; font-size: 10.5px; }
+      .rel { stroke: #8b9bbf; stroke-width: 1.6; fill: none; }
+      .card-lbl { fill: #4a5a72; font-size: 10px; font-weight: 700; }
+      .box { fill: none; stroke: #0f766e; stroke-width: 1.6; stroke-dasharray: 6 5; }
+      .box-lbl { fill: #0f766e; font-size: 11px; font-weight: 700; letter-spacing: .04em; }
+      .note { fill: #63718c; font-size: 10.5px; font-style: italic; }
+    </style>
+    <marker id="one" markerWidth="12" markerHeight="12" refX="6" refY="6" orient="auto">
+      <path d="M6,1 L6,11" stroke="#8b9bbf" stroke-width="1.6"/>
+    </marker>
+    <marker id="many" markerWidth="14" markerHeight="14" refX="11" refY="7" orient="auto">
+      <path d="M11,2 L2,7 L11,12 M11,7 L2,7" stroke="#8b9bbf" stroke-width="1.5" fill="none"/>
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="620" rx="14"/>
+  <text x="32" y="42" class="title">26 tables, six bounded contexts</text>
+  <text x="32" y="62" class="sub">Everything hangs off an Organization — and one table is deliberately not attached to it</text>
+
+  <rect class="box" x="270" y="86" width="618" height="404" rx="14"/>
+  <text x="288" y="106" class="box-lbl">ORGANIZATION (TENANT)</text>
+
+  <rect class="ent-dark" x="32" y="124" width="204" height="106" rx="11"/>
+  <text x="48" y="150" class="wname">Identity</text>
+  <text x="48" y="171" class="wfield">user · session · account</text>
+  <text x="48" y="187" class="wfield">organization · member</text>
+  <text x="48" y="203" class="wfield">invitation · verification</text>
+  <text x="48" y="221" class="wfield">better-auth, 7 tables</text>
+
+  <rect class="ent" x="32" y="264" width="204" height="96" rx="11"/>
+  <text x="48" y="290" class="name">Billing</text>
+  <text x="48" y="311" class="field">subscriptions · usage_tracking</text>
+  <text x="48" y="327" class="field">four plan tiers; quotas are</text>
+  <text x="48" y="343" class="field">checked before the spend</text>
+
+  <rect class="ent-accent" x="288" y="124" width="278" height="118" rx="11"/>
+  <text x="304" y="150" class="name">Recruitment</text>
+  <text x="304" y="171" class="field">companies · job_offers · candidates</text>
+  <text x="304" y="187" class="field">cvs · processes · ai_analysis_results</text>
+  <text x="304" y="207" class="field">job_offers and cvs each carry a</text>
+  <text x="304" y="223" class="field">pgvector embedding</text>
+
+  <rect class="ent" x="590" y="124" width="278" height="118" rx="11"/>
+  <text x="606" y="150" class="name">AI &amp; usage</text>
+  <text x="606" y="171" class="field">ai_model_settings — which model</text>
+  <text x="606" y="187" class="field">each of the six agents uses</text>
+  <text x="606" y="207" class="field">ai_usage_events · whatsapp_usage_events</text>
+  <text x="606" y="223" class="field">tokens and billable messages, per call</text>
+
+  <rect class="ent" x="288" y="272" width="278" height="96" rx="11"/>
+  <text x="304" y="298" class="name">Conversation</text>
+  <text x="304" y="319" class="field">conversations · messages</text>
+  <text x="304" y="335" class="field">the WhatsApp screening, turn by turn,</text>
+  <text x="304" y="351" class="field">with the score it ended on</text>
+
+  <rect class="ent" x="590" y="272" width="278" height="96" rx="11"/>
+  <text x="606" y="298" class="name">WhatsApp onboarding</text>
+  <text x="606" y="319" class="field">whatsapp_recruiters</text>
+  <text x="606" y="335" class="field">whatsapp_wizard_sessions</text>
+  <text x="606" y="351" class="field">notification_preferences</text>
+
+  <rect class="ent-accent" x="288" y="398" width="580" height="72" rx="11"/>
+  <text x="304" y="424" class="name">Compliance — Ley 1581/2012</text>
+  <text x="304" y="445" class="field">consent_records — one row per purpose, with policy version, IP and user agent</text>
+  <text x="304" y="461" class="field">audit_logs — append-only; the app never updates or deletes a row</text>
+
+  <rect class="ent" x="288" y="512" width="580" height="76" rx="11" stroke="#0f766e" stroke-dasharray="5 4"/>
+  <text x="304" y="538" class="name">deletion_receipts — outside the tenant, on purpose</text>
+  <text x="304" y="559" class="field">No foreign key to organization: everything else cascades from it, audit_logs included, so closing an account</text>
+  <text x="304" y="575" class="field">would erase the record that it was ever closed. Holds counts, never content — the erased data stays erased.</text>
+
+  <path class="rel" d="M236,170 L288,176" marker-start="url(#one)" marker-end="url(#many)"/>
+  <text x="242" y="164" class="card-lbl">1 · N</text>
+  <path class="rel" d="M236,300 L288,300" marker-start="url(#one)" marker-end="url(#many)"/>
+  <path class="rel" d="M566,180 L590,180" marker-start="url(#one)" marker-end="url(#many)"/>
+  <path class="rel" d="M427,242 L427,272" marker-start="url(#one)" marker-end="url(#many)"/>
+  <text x="435" y="264" class="card-lbl">1 · N</text>
+  <path class="rel" d="M427,368 L427,398" marker-end="url(#many)"/>
+  <path class="rel" d="M578,470 L578,512" marker-end="url(#many)"/>
+  <text x="596" y="507" class="card-lbl">survives it</text>
+
+  <text x="32" y="606" class="note">Six contexts: identity · recruitment · conversation · AI &amp; usage · billing · compliance.</text>
+</svg>
