@@ -7,9 +7,19 @@
       <language>es</language>
       <managingEditor>alejandro@piagents.dev (Yali Dev)</managingEditor>
       <webMaster>alejandro@piagents.dev (Yali Dev)</webMaster>
-      <lastBuildDate>Mon, 23 Feb 2026 05:00:00 GMT</lastBuildDate>
+      <lastBuildDate>Thu, 25 Jun 2026 05:00:00 GMT</lastBuildDate>
       <atom:link href="https://asanchezyali.com/es/feed.xml" rel="self" type="application/rss+xml"/>
       
+  <item>
+    <guid>https://asanchezyali.com/es/blog/case-studies/plixiq</guid>
+    <title>Construyendo Plixiq: una plataforma multi-tenant de agentes de IA en WhatsApp</title>
+    <link>https://asanchezyali.com/es/blog/case-studies/plixiq</link>
+    <description>Un caso de estudio del detrás de cámaras de Plixiq: por qué elegimos FastAPI, Next.js, LiteLLM y un monolito modular para correr agentes de IA en WhatsApp, más los tipos de agente como plugins, el motor de flujos de grafo, los guards, el ciclo de facturación y los diagramas de arquitectura.</description>
+    <pubDate>Thu, 25 Jun 2026 05:00:00 GMT</pubDate>
+    <author>alejandro@piagents.dev (Yali Dev)</author>
+    <category>case-study</category><category>plixiq</category><category>ai-agents</category><category>whatsapp</category><category>system-design</category>
+  </item>
+
   <item>
     <guid>https://asanchezyali.com/es/blog/distributed-systems/20260223DistributedCache</guid>
     <title>Cache distribuido con Python: arquitecturas, estrategias y patrones modernos</title>
