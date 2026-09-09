@@ -1,0 +1,321 @@
+---
+title: 'Building Aluna: six agents, structured output, and a receipt that outlives the data'
+date: '2026/09/09'
+lastmod: '2026-09-09'
+tags: ['case-study', 'aluna', 'ai-agents', 'recruitment', 'compliance', 'system-design']
+draft: false
+featured: true
+summary: 'The third engineering case study: how Aluna screens candidates with six specialised agents instead of one chatbot, why every answer is schema-bound, and what it takes to build erasure into a hiring product rather than bolt it on.'
+layout: PostLayout
+headerImage: '/images/aluna/aluna-cover.png'
+images: ['/images/aluna/aluna-cover.png']
+language: 'en'
+authors: ['yali']
+---
+
+Third in my series of **engineering case studies**, after
+[Plixiq](/blog/case-studies/plixiq) and [CREARIA Agent](/blog/case-studies/crearia-agent).
+Both of those were agents that talk to customers. This one is a product that reads CVs,
+interviews people over WhatsApp, and ranks them — built for [Aluna](https://www.aluna.works/en).
+
+It's the first of the three where the interesting engineering isn't the conversation. It's
+everything around it: how you keep a language model to a contract, how you stop a pipeline before
+it costs money, and what a hiring product owes the people whose data it holds.
+
+<CaseSummary
+  stats={[
+    { value: '6', label: 'specialised agents' },
+    { value: '26', label: 'database tables' },
+    { value: '11', label: 'selectable models' },
+    { value: '~29k', label: 'lines of code' },
+  ]}
+  rows={[
+    {
+      k: 'Problem',
+      v: 'A recruiter with 200 CVs for one vacancy reads maybe 30 of them properly. The other 170 are filtered by whoever applied first, or by nothing at all.',
+    },
+    {
+      k: 'Approach',
+      v: 'Six narrow agents rather than one chatbot — each with its own prompt, its own schema and its own model — plus a durable pipeline that scores CVs and screens candidates over WhatsApp.',
+    },
+    {
+      k: 'Outcome',
+      v: 'Ranked shortlists with the reasoning attached, consent and erasure built into the data model, and per-call cost recorded against a priced model catalog.',
+    },
+  ]}
+/>
+
+## What is Aluna?
+
+Aluna is a hiring platform for recruiters. A vacancy is built by talking to it rather than filling
+a form, CVs are scored against that vacancy, and the candidates who clear the bar get interviewed
+by an agent over WhatsApp before a human ever opens the file. The product's own line is _"AI
+pre-screens. You decide."_
+
+The engineering shape follows from a decision made early: **the AI service is not the product.**
+It's a stateless FastAPI app that answers questions and writes nothing. Every row, every rule and
+every piece of state lives in the Next.js app beside it.
+
+## The stack, and why
+
+<StackList
+  title="Two apps in one Turborepo"
+  items={[
+    {
+      name: 'Next.js + Server Actions',
+      what: 'The product',
+      why: 'Owns the domain, the database and every decision. Modules per bounded context, not per page.',
+    },
+    {
+      name: 'FastAPI (Python)',
+      what: 'The agents',
+      why: 'Stateless, no DB access. Given text, returns structured JSON. Easy to reason about because it cannot mutate anything.',
+    },
+    {
+      name: 'Drizzle + PostgreSQL',
+      what: 'Schema and data',
+      why: 'Schema as TypeScript, shared with the app through a workspace package — one definition, no drift.',
+    },
+    {
+      name: 'pgvector',
+      what: 'Embeddings',
+      why: 'Job offers and CVs each carry one, in the same database as everything else.',
+    },
+    {
+      name: 'Inngest',
+      what: 'Durable jobs',
+      why: 'The CV pipeline is nine steps; each retries independently, and a crash resumes rather than restarts.',
+    },
+    {
+      name: 'LiteLLM',
+      what: 'Model access',
+      why: 'One interface across Anthropic, OpenAI, Gemini and NVIDIA NIM — so the model becomes a setting, not an integration.',
+    },
+    {
+      name: 'better-auth + Polar',
+      what: 'Accounts and plans',
+      why: 'Organisations, seats and four plan tiers whose limits are enforced in code, not in the pricing page.',
+    },
+  ]}
+/>
+
+## Architecture
+
+<ImageBox
+  src="/images/aluna/architecture.png"
+  alt="Aluna architecture: recruiter and Next.js web app on the left, a stateless FastAPI agent service in the middle, WhatsApp Cloud API and candidate on the right, with PostgreSQL, Inngest, S3, Redis and Polar along the bottom"
+  width={920}
+  height={600}
+>
+  Two apps, one repo. The web app owns the domain; the AI service only ever answers.
+</ImageBox>
+
+The split is worth defending, because the obvious alternative — one service that both thinks and
+writes — is what most of these products become.
+
+Keeping the agents stateless means a bad answer is **only** a bad answer. It can't half-write a
+row, leave a process in a wrong state, or bill something twice. Every consequence of an LLM call is
+decided by TypeScript that can be read, tested and gated. When a model returns nonsense, the damage
+is bounded by construction rather than by care.
+
+## Six agents, not one chatbot
+
+The product ships six agents, and none of them is a general assistant:
+
+| Agent                 | What it does                                                                                                      |
+| --------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| `vacancy_chat`        | Builds a vacancy with the recruiter, one micro-step at a time — _"tell me the vacancy, I'll assemble it"_         |
+| `vacancy_post`        | Turns the finished vacancy into a job post, with an internal SEO pass for the terms candidates actually search    |
+| `cv_analysis`         | Scores a CV against a vacancy and its deal-breakers, and extracts structured fields                               |
+| `screening_questions` | Writes interview questions for a skill **the recruiter doesn't have** — so a non-expert can tell strong from weak |
+| `conversation`        | Runs the WhatsApp screening, deciding turn by turn whether it has enough to stop                                  |
+| `report_readings`     | Narrates a report from pre-computed aggregates — explicitly told not to recompute or invent numbers               |
+
+Each has its own prompt module, its own output schema, and **its own model**, chosen per agent by a
+super admin from a curated catalog. That last part matters more than it sounds: the CV analysis and
+the chat that helps write a vacancy have nothing in common in cost, latency or reasoning demand.
+Forcing them onto one model means overpaying for one or underserving the other.
+
+The catalog itself is a nice piece of defensive design. It lists 11 models, and it's filtered at
+call time by which provider keys the deployment actually holds:
+
+```python
+def available_models() -> tuple[ModelOption, ...]:
+    """Catalog entries this deployment can actually reach.
+
+    Offering a provider whose key is missing turns a configuration gap into a
+    runtime failure the recruiter meets mid-task, with no hint of the cause.
+    """
+    return tuple(m for m in CATALOG if has_provider_key(m.provider))
+```
+
+One model is absent on purpose, with the reason recorded next to the gap: a Gemini Flash version
+that answered `503` on payloads the size of a CV — _"0 of 4 against a real one"_ — so it isn't
+offered at all rather than being offered and failing later.
+
+## Keeping the model to a contract
+
+Every agent returns JSON that the app parses and stores. That makes "the model wrote prose today"
+an outage, not a wobble — so the constraint is applied at the API level rather than asked for
+politely in a prompt:
+
+```python
+_RESPONSE_FORMAT = {
+    "type": "json_schema",
+    "json_schema": {
+        "name": "conversation_output",
+        "schema": {
+            "type": "object",
+            "properties": {
+                "reply": {"type": "string"},
+                "done": {"type": "boolean"},
+                "match_score": {"type": ["integer", "null"]},
+                "summary": {"type": ["string", "null"]},
+                "salary_expectation": {"type": ["integer", "null"]},
+            },
+            "required": ["reply", "done"],
+        },
+    },
+}
+```
+
+The comment above it earns its place: `json_object` alone doesn't bind the shape, and in a long
+screening the model drifts into plain prose.
+
+And when it drifts anyway, the fallback is the part I'd steal:
+
+```python
+if data is None:
+    # The model answered in prose instead of JSON. What it wrote is usually
+    # the right thing to say, so it becomes the reply rather than a 502 that
+    # leaves the candidate staring at silence. `done` stays false: a screening
+    # that runs one turn long beats one that dies mid-sentence.
+    data = {"reply": content.strip(), "done": False}
+```
+
+A candidate is mid-interview. The strictly correct response to a malformed payload is a 502. The
+right one is to use the sentence the model wrote and keep going. **Degrade toward the human in the
+conversation, not toward the schema.**
+
+## The pipeline that decides what to spend
+
+<ImageBox
+  src="/images/aluna/cv-pipeline.png"
+  alt="The CV pipeline as nine durable steps: upload, consent gate, extract text, dedup by input hash, plan gate, analyse, record cost, persist and notify, then the auto-screening branch"
+  width={920}
+  height={530}
+>
+  Three of these steps exist to stop the run before it costs anything.
+</ImageBox>
+
+An uploaded CV becomes a score through a durable Inngest job. What's interesting isn't the happy
+path — it's the order:
+
+1. **Consent gate.** A candidate who revoked consent is never analysed, not even on a re-run.
+   Compliance is step two, not a checkbox somewhere else.
+2. **Text extraction, cached.** PDF and DOCX are parsed once into `cvs.raw_text`, so a retry never
+   re-parses.
+3. **Dedup by input hash.** A hash over CV plus vacancy plus deal-breakers. Unchanged input reuses
+   the previous result instead of paying for the same answer twice.
+4. **Plan gate.** The monthly quota is checked _before_ the call, not after — so hitting a limit
+   costs nothing rather than costing one analysis you then can't show.
+
+Only then does the model run. Three of the first four steps exist to avoid spending money, and
+they're ordered cheapest-check-first. That ordering is the whole design.
+
+## Knowing what it costs
+
+Every call records its own tokens, and cost is derived from a priced catalog that mirrors the model
+catalog exactly:
+
+```ts
+export function estimateCostUsd(
+  modelId: string,
+  inputTokens: number,
+  outputTokens: number
+): number | null {
+  const price = MODEL_PRICING[modelId]
+  if (!price) return null // "unpriced", never a silent zero
+  return (inputTokens * price.input + outputTokens * price.output) / 1_000_000
+}
+```
+
+Two decisions worth copying. **An unknown model returns `null`, not zero** — the caller says
+"unpriced" instead of quietly reporting free. And **cost is derived on read, not stored**, so
+changing a price re-prices history; the accepted trade-off is that a stale number never outlives
+the price that produced it.
+
+The WhatsApp side gets the same treatment, and it's the messier half. Meta's `pricing` object has
+been losing fields as the platform moved to per-message billing, and the client library's parser
+read one of them without a default — so a status that no longer carried it raised inside the
+library, the handler never ran, and two charged messages left no trace at all. The fix reads the
+raw webhook shape instead, on the reasoning that `entry[].changes[].value.statuses[]` has been
+stable across versions while the pricing fields inside it have not.
+
+That's the difference between a product that knows its margin and one that finds out at the end of
+the month.
+
+## Erasure as a design constraint
+
+Colombian **Ley 1581/2012** governs personal data here, and candidates' CVs are about as personal
+as it gets. Most products treat this as a policy page and a delete button. In Aluna it shaped the
+schema.
+
+`consent_records` writes one row per purpose — data processing, CV analysis, AI communication —
+each with the policy version, IP and user agent. `audit_logs` is append-only: the application never
+updates or deletes a row.
+
+But the design decision I keep thinking about is `deletion_receipts`, and specifically what it
+_isn't_ attached to:
+
+> Deliberately WITHOUT a foreign key to organization: every other table cascades from it,
+> `audit_logs` included, so closing an account also erases the record that anything was ever done —
+> and the record that it was erased. A receipt that dies with its subject proves nothing.
+
+Every table cascades from the organisation. So a receipt that referenced it would be destroyed by
+the very act it exists to document. It holds counts, never content — because under Ley 1581 the
+candidates whose data was deleted keep their rights over it, so keeping a copy "as evidence" would
+recreate the exact thing the erasure was for.
+
+<ImageBox
+  src="/images/aluna/data-model.png"
+  alt="Aluna's data model: identity and billing outside the tenant boundary; recruitment, AI and usage, conversation, WhatsApp onboarding and compliance inside it; deletion receipts deliberately outside"
+  width={920}
+  height={620}
+>
+  26 tables across six contexts. The dashed box at the bottom is the one that survives its own
+  tenant.
+</ImageBox>
+
+What it keeps is enough to answer one question — _was this account closed, when, and at whose
+request_ — and nothing more. That's a rare shape: a record designed around what it must **not**
+retain.
+
+## The code explains itself
+
+A last observation, less about architecture than about how the codebase is written. Almost every
+non-obvious decision carries the reasoning and the issue number that produced it — the missing
+Gemini model, the prose fallback, the receipt with no foreign key, the WhatsApp pricing parse.
+
+This is the opposite of the "self-documenting code, no comments" rule I've defended on other
+projects, and reading it changed my mind about where that rule applies. Code explains _what_.
+It cannot explain **"we tried this model and it failed 4 out of 4 times on a real CV"** — that's an
+empirical finding, and the only place it survives is a comment beside the thing it justifies.
+Delete it and someone re-adds the model in six months.
+
+## Takeaways
+
+- **Give each job its own agent, prompt, schema and model.** A CV analysis and a chat that drafts a
+  job post share nothing but the word "AI".
+- **Bind the shape at the API, not in the prompt.** `json_schema` is a constraint; "please return
+  JSON" is a request.
+- **When output breaks, degrade toward the person waiting.** A screening that runs one turn long
+  beats one that dies mid-sentence.
+- **Put your cheap checks first.** Consent, cache, dedup, quota — then the model. Order is the
+  cost control.
+- **Price unknown models as `null`, never zero.** A silent zero is a margin you find out about
+  later.
+- **If deletion matters, design for it in the schema.** A receipt with a foreign key to the thing
+  it documents is not a receipt.
+
+If there's a decision here you'd want me to go deeper on, [let's talk](/collaborate).
