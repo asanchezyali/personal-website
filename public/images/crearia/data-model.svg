@@ -1,0 +1,133 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 660" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif">
+  <defs>
+    <style>
+      .bg { fill: #f6faf7; }
+      .ent { fill: #ffffff; stroke: #d9e6dd; stroke-width: 1.5; }
+      .ent-green { fill: #e9f6ee; stroke: #bfe3cc; stroke-width: 1.5; }
+      .ent-dark { fill: #0f3d2e; stroke: #15543f; stroke-width: 1.5; }
+      .title { fill: #0f3d2e; font-size: 18px; font-weight: 700; }
+      .sub { fill: #5a6b62; font-size: 11px; }
+      .name { fill: #0f3d2e; font-size: 13px; font-weight: 700; }
+      .field { fill: #5a6b62; font-size: 10.5px; }
+      .wname { fill: #ffffff; font-size: 13px; font-weight: 700; }
+      .wfield { fill: #b9e6cc; font-size: 10.5px; }
+      .rel { stroke: #6b9e83; stroke-width: 1.6; fill: none; }
+      .rel-dash { stroke: #6b9e83; stroke-width: 1.6; fill: none; stroke-dasharray: 4 4; }
+      .card-lbl { fill: #3c6b53; font-size: 10px; font-weight: 700; }
+      .tenant-box { fill: none; stroke: #19a567; stroke-width: 1.6; stroke-dasharray: 6 5; }
+      .tenant-lbl { fill: #19a567; font-size: 11px; font-weight: 700; letter-spacing: .04em; }
+      .note { fill: #7b8a82; font-size: 10.5px; font-style: italic; }
+    </style>
+    <marker id="one" markerWidth="12" markerHeight="12" refX="6" refY="6" orient="auto">
+      <path d="M6,1 L6,11" stroke="#6b9e83" stroke-width="1.6"/>
+    </marker>
+    <marker id="many" markerWidth="14" markerHeight="14" refX="11" refY="7" orient="auto">
+      <path d="M11,2 L2,7 L11,12 M11,7 L2,7" stroke="#6b9e83" stroke-width="1.5" fill="none"/>
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="660" rx="14"/>
+  <text x="32" y="42" class="title">Data model — 51 tables, by group</text>
+  <text x="32" y="62" class="sub">Every table inside the boundary carries tenant_id; the LLM never gets to choose it</text>
+
+  <rect class="tenant-box" x="270" y="86" width="618" height="516" rx="14"/>
+  <text x="288" y="106" class="tenant-lbl">TENANT BOUNDARY</text>
+
+  <!-- Organization -->
+  <rect class="ent-dark" x="32" y="124" width="204" height="96" rx="11"/>
+  <text x="48" y="150" class="wname">Organization</text>
+  <text x="48" y="171" class="wfield">groups several tenants</text>
+  <text x="48" y="187" class="wfield">under one customer</text>
+  <text x="48" y="207" class="wfield">organizations</text>
+
+  <!-- Users -->
+  <rect class="ent" x="32" y="256" width="204" height="104" rx="11"/>
+  <text x="48" y="282" class="name">Users &amp; access</text>
+  <text x="48" y="303" class="field">users · user_sessions</text>
+  <text x="48" y="319" class="field">roles scoped per tenant</text>
+  <text x="48" y="339" class="field">dashboards read through</text>
+  <text x="48" y="355" class="field">this scope only</text>
+
+  <!-- Agent config -->
+  <rect class="ent-green" x="288" y="124" width="278" height="124" rx="11"/>
+  <text x="304" y="150" class="name">Agent configuration</text>
+  <text x="304" y="171" class="field">agent_configs — one per tenant</text>
+  <text x="304" y="187" class="field">agent_type: customer_service |</text>
+  <text x="304" y="203" class="field">coaching | real_estate</text>
+  <text x="304" y="219" class="field">settings_extensions (JSONB)</text>
+  <text x="304" y="235" class="field">brand voice · escalation phrases</text>
+
+  <!-- Providers and tools -->
+  <rect class="ent" x="590" y="124" width="278" height="124" rx="11"/>
+  <text x="606" y="150" class="name">Providers &amp; tools</text>
+  <text x="606" y="171" class="field">llm_providers — priority order,</text>
+  <text x="606" y="187" class="field">encrypted keys, per channel</text>
+  <text x="606" y="207" class="field">mcp_configs — one per server</text>
+  <text x="606" y="223" class="field">mcp_tenant_tools — which tools</text>
+  <text x="606" y="239" class="field">this tenant may actually call</text>
+
+  <!-- Conversation -->
+  <rect class="ent" x="288" y="278" width="278" height="124" rx="11"/>
+  <text x="304" y="304" class="name">Conversations</text>
+  <text x="304" y="325" class="field">conversations — status, channel,</text>
+  <text x="304" y="341" class="field">timeout &amp; follow-up timestamps</text>
+  <text x="304" y="361" class="field">conversation_contexts</text>
+  <text x="304" y="377" class="field">conversation_summaries · _insights</text>
+  <text x="304" y="393" class="field">_tags · _orphans</text>
+
+  <!-- Messages -->
+  <rect class="ent" x="590" y="278" width="278" height="124" rx="11"/>
+  <text x="606" y="304" class="name">Messages</text>
+  <text x="606" y="325" class="field">messages — role, content,</text>
+  <text x="606" y="341" class="field">tool_call_id, model_used,</text>
+  <text x="606" y="357" class="field">response_time_ms</text>
+  <text x="606" y="377" class="field">proxy_metadata marks the ones</text>
+  <text x="606" y="393" class="field">a human agent relayed</text>
+
+  <!-- Knowledge -->
+  <rect class="ent-green" x="288" y="432" width="278" height="104" rx="11"/>
+  <text x="304" y="458" class="name">Knowledge (what RAG reads)</text>
+  <text x="304" y="479" class="field">knowledge_documents — chunked</text>
+  <text x="304" y="495" class="field">text + pgvector embedding</text>
+  <text x="304" y="511" class="field">catalog_items · store_locations</text>
+  <text x="304" y="527" class="field">filtered by tenant_id, always</text>
+
+  <!-- Human agents -->
+  <rect class="ent-green" x="590" y="432" width="278" height="104" rx="11"/>
+  <text x="606" y="458" class="name">Human handoff</text>
+  <text x="606" y="479" class="field">human_agents — is_active,</text>
+  <text x="606" y="495" class="field">total_conversations (load)</text>
+  <text x="606" y="511" class="field">human_agent_assignments</text>
+  <text x="606" y="527" class="field">transfer_history</text>
+
+  <!-- Identity / CRM / coaching -->
+  <rect class="ent" x="288" y="556" width="278" height="34" rx="9"/>
+  <text x="304" y="577" class="field">Identity &amp; CRM: unified_contacts · contact_identities</text>
+
+  <rect class="ent" x="590" y="556" width="278" height="34" rx="9"/>
+  <text x="606" y="577" class="field">user_memories · deals · lead scoring</text>
+
+  <!-- Relations -->
+  <path class="rel" d="M236,172 L288,176" marker-start="url(#one)" marker-end="url(#many)"/>
+  <text x="242" y="166" class="card-lbl">1 · N</text>
+
+  <path class="rel" d="M236,300 L288,190" marker-end="url(#many)"/>
+  <text x="228" y="238" class="card-lbl">scope</text>
+
+  <path class="rel" d="M566,186 L590,186" marker-start="url(#one)" marker-end="url(#many)"/>
+
+  <path class="rel" d="M427,248 L427,278" marker-start="url(#one)" marker-end="url(#many)"/>
+  <text x="435" y="270" class="card-lbl">1 · N</text>
+
+  <path class="rel" d="M566,340 L590,340" marker-start="url(#one)" marker-end="url(#many)"/>
+  <text x="530" y="332" class="card-lbl">1 · N</text>
+
+  <path class="rel-dash" d="M427,402 L427,432" marker-end="url(#many)"/>
+  <text x="435" y="424" class="card-lbl">tools read</text>
+
+  <path class="rel" d="M566,402 L590,432" marker-end="url(#many)"/>
+  <text x="500" y="424" class="card-lbl">escalates to</text>
+
+  <text x="32" y="624" class="note">Not drawn: 17 tables behind the coaching agent type (courses, modules, enrollments, progress, activities, snapshots) and</text>
+  <text x="32" y="642" class="note">the channel plumbing (email_integrations, meta_integrations, whatsapp_templates, failed_webhook_events).</text>
+</svg>

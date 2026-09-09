@@ -17,7 +17,7 @@ export default function CollaboratePage({ locale }: CollaboratePageProps) {
     '/images/plixiq/plixiq-cover.png', // Plixiq
     '/images/ai-avatars/header-post2.png', // Morpheus
     '/images/ai-avatars/header-post1.png', // Digital Human
-    '', // CREARIA
+    '/images/crearia/crearia-cover.png', // CREARIA
     '/images/blockchain/post-solana.webp', // ROCKET CODE
   ]
 
