@@ -117,22 +117,22 @@
       ]
     },
     "project_2": {
-      "title": "Morpheus",
-      "description": "AI image generation platform enabling users to create custom images from text prompts and reference photos.",
-      "role": "Lead developer",
-      "context": "A creative tooling startup needed a production-ready image generation platform that could handle custom models and reference-based generation.",
-      "problem": "Existing tools lacked the ability to combine text prompts with reference photos for consistent brand imagery, and had no API for integration into existing workflows.",
-      "solution": "Built an end-to-end platform with FastAPI backend orchestrating Stable Diffusion pipelines, a React frontend with real-time preview, and a REST API for programmatic access.",
-      "link": "",
+      "title": "Digital Human",
+      "description": "A real-time 3D digital human that listens, thinks and speaks, with lip-sync driven by generated phonemes.",
+      "role": "Full-stack developer",
+      "context": "Research at Monadical into how far a browser-based avatar could go — realistic enough to hold a conversation, and responsive enough to feel like one.",
+      "problem": "A convincing digital human needs four things happening at once — speech recognition, a language model, voice synthesis and mouth movement — and any lag between them breaks the illusion.",
+      "solution": "Rendered a Ready Player Me GLTF avatar with React Three Fiber, layered Mixamo body animations on top, and drove the mouth from phonemes generated locally by Rhubarb lip-sync. Whisper handles speech-to-text, GPT-4 the conversation, and ElevenLabs the voice.",
+      "link": "/blog/ai-avatars/20240703DigitalHuman",
       "technologies": [
-        "Python",
-        "FastAPI",
-        "React",
-        "Stable Diffusion"
+        "React Three Fiber",
+        "Rhubarb lip-sync",
+        "ElevenLabs",
+        "GPT-4"
       ]
     },
     "project_3": {
-      "title": "Digital Human / Zippy",
+      "title": "Zippy",
       "description": "AI-powered 3D avatars with real-time speech, facial animation, and conversational capabilities.",
       "role": "Full-stack developer",
       "context": "A research project at Monadical exploring the intersection of LLMs, speech synthesis, and 3D rendering for interactive digital humans.",

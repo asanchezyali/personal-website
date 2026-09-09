@@ -15,8 +15,8 @@ export default function CollaboratePage({ locale }: CollaboratePageProps) {
 
   const projectImages = [
     '/images/plixiq/plixiq-cover.png', // Plixiq
-    '/images/ai-avatars/header-post2.png', // Morpheus
-    '/images/ai-avatars/header-post1.png', // Digital Human
+    '/images/ai-avatars/header-post2.png', // Digital Human
+    '/images/ai-avatars/header-post1.png', // Zippy
     '/images/crearia/crearia-cover.png', // CREARIA
   ]
 

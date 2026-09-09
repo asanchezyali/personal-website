@@ -117,22 +117,22 @@
       ]
     },
     "project_2": {
-      "title": "Morpheus",
-      "description": "Plataforma de generación de imágenes con IA que permite crear imágenes personalizadas a partir de prompts de texto y fotos de referencia.",
-      "role": "Desarrollador líder",
-      "context": "Una startup de herramientas creativas necesitaba una plataforma de generación de imágenes lista para producción que pudiera manejar modelos personalizados y generación basada en referencia.",
-      "problem": "Las herramientas existentes carecían de la capacidad de combinar prompts de texto con fotos de referencia para imágenes de marca consistentes, y no tenían API para integración.",
-      "solution": "Construí una plataforma end-to-end con backend en FastAPI orquestando pipelines de Stable Diffusion, frontend React con preview en tiempo real, y API REST para acceso programático.",
-      "link": "",
+      "title": "Digital Human",
+      "description": "Un humano digital 3D en tiempo real que escucha, piensa y habla, con sincronía labial generada a partir de fonemas.",
+      "role": "Desarrollador full-stack",
+      "context": "Investigación en Monadical sobre hasta dónde podía llegar un avatar en el navegador: lo bastante realista para sostener una conversación, y lo bastante ágil para que se sienta como tal.",
+      "problem": "Un humano digital convincente necesita cuatro cosas ocurriendo a la vez — reconocimiento de voz, un modelo de lenguaje, síntesis de voz y movimiento de boca — y cualquier desfase entre ellas rompe la ilusión.",
+      "solution": "Rendericé un avatar GLTF de Ready Player Me con React Three Fiber, superpuse animaciones corporales de Mixamo, y moví la boca a partir de fonemas generados localmente por Rhubarb lip-sync. Whisper hace el speech-to-text, GPT-4 la conversación y ElevenLabs la voz.",
+      "link": "/es/blog/ai-avatars/20240703DigitalHuman",
       "technologies": [
-        "Python",
-        "FastAPI",
-        "React",
-        "Stable Diffusion"
+        "React Three Fiber",
+        "Rhubarb lip-sync",
+        "ElevenLabs",
+        "GPT-4"
       ]
     },
     "project_3": {
-      "title": "Digital Human / Zippy",
+      "title": "Zippy",
       "description": "Avatares 3D impulsados por IA con habla en tiempo real, animación facial y capacidades conversacionales.",
       "role": "Desarrollador full-stack",
       "context": "Un proyecto de investigación en Monadical explorando la intersección de LLMs, síntesis de voz y renderizado 3D para humanos digitales interactivos.",
