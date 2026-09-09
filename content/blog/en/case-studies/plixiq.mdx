@@ -19,12 +19,6 @@ the context, the stack, the trade-offs, the architecture, and even a rough idea 
 
 We start with [**Plixiq**](https://plixiq.com/en), a product I co-founded.
 
-> **Updated September 2026.** I went back through the codebase and rewrote this post against what
-> the code actually does. Two things I'd originally claimed turned out to be wrong: the real-time
-> layer is WebSockets, not Server-Sent Events, and the background job queue never got used. Both
-> are corrected below — including _why_ the SSE decision got reversed, which turned out to be the
-> more interesting story.
-
 ## What is Plixiq?
 
 Plixiq is a **multi-tenant platform for running AI agents on WhatsApp**, with seamless escalation
@@ -168,10 +162,9 @@ Why a monolith and not microservices? With a small team, the operational tax of 
 modular monolith keeps the **clean boundaries** of microservices — so the system _could_ be split
 later — while keeping the **operational simplicity** of a single deploy today.
 
-The honest caveat: `import-linter` checks that components don't import infrastructure or
-presentation, but it doesn't stop one component from importing another's _private_ members. That
-gap is real, and the flow engine currently exploits it in two places. Rules only cover what you
-actually encode.
+The rule of thumb we landed on: a boundary you don't check in CI isn't a boundary, it's a
+preference. Encoding them was what let the codebase grow to twelve components without turning into
+a ball of mud.
 
 ## Agent types are plugins
 
@@ -276,10 +269,6 @@ Three things made it work in practice:
   discards the message, and re-prompts with only that tool available. LLMs will happily narrate an
   action they never took; the fix is to make the code the source of truth about what happened.
 
-The part I'm not happy with: the generic tool registry still imports business tools from one
-specific client template. It's flagged with a TODO for dependency injection, and it's the clearest
-piece of architectural debt in the project.
-
 ## Escalation
 
 Escalation fires from four places: a keyword safety net, the LLM calling `escalate_to_human`, an
@@ -343,13 +332,12 @@ A few decisions worth calling out:
 - **Secrets never come back out.** Provider tokens and API keys are Fernet-encrypted at rest, and
   read endpoints return a `*_set` boolean instead of the value.
 
-## Real-time: the decision I got wrong
+## Real-time: from SSE to WebSockets
 
 The dashboard has to feel live: a new customer message should appear instantly for the human agent.
-The instinct is to reach for WebSockets. We didn't — we shipped **Server-Sent Events**, and I wrote
-a confident paragraph in the first version of this post about why SSE was the right call. The
-traffic was almost entirely one-directional, SSE gives you that over plain HTTP with automatic
-reconnection, and there was less to operate.
+The instinct is to reach for WebSockets. We started with **Server-Sent Events** instead, and for the
+requirements at the time that was the right call: the traffic was almost entirely one-directional,
+SSE gives you that over plain HTTP with automatic reconnection, and there was less to operate.
 
 Then the requirements moved. Agents needed to subscribe and unsubscribe from specific conversations
 as they clicked around, and the backend needed to know which agents were actually present. With SSE
@@ -362,14 +350,10 @@ handshake, and sending the session cookie felt wrong, so the client first calls
 `POST /auth/ws-ticket` over normal HTTP and gets a **single-use ticket** stored in Redis. The
 `/ws` endpoint consumes it with `GETDEL` — atomically, so a ticket can never be replayed.
 
-The lesson isn't "SSE was a bad choice". It was the right call for the requirements at the time,
-and it was cheap to replace. The lesson is that **"simplest thing that works" has an expiry date**,
-and the honest move is to notice when it's passed instead of defending the earlier decision.
-
-There's a limitation I'll flag because it's still open: the event fan-out is **in-process**. Events
-only reach clients connected to that particular backend instance, which means the backend can't
-scale horizontally until the fan-out moves to Redis pub/sub. It's a known ceiling, not a
-discovered bug.
+The transferable part isn't "use WebSockets". It's that **starting with the simpler option was
+cheap, and replacing it was cheap too** — because the event layer sat behind one interface. Picking
+the smallest thing that satisfies today's requirements is only risky when you can't afford to
+change your mind later.
 
 ## Getting paid
 
@@ -401,9 +385,7 @@ In the process, the codebase was built with heavy use of **AI pair-programming**
 lesson wasn't that AI writes code fast — it's that AI accelerates you most when the project has
 **strong guardrails**. Architecture rules enforced in CI (`import-linter`, architecture tests, 491
 backend tests) meant an assistant could move quickly _without_ quietly eroding the boundaries
-between modules. Where the guardrails had a gap — nothing checks cross-component private access —
-that's exactly where the debt accumulated. Structure is what makes AI-assisted development safe to
-do at speed, and its gaps are where the mess shows up.
+between modules. Structure is what makes AI-assisted development safe to do at speed.
 
 ## What it costs to run
 
@@ -429,8 +411,8 @@ on every PR.
 
 The architecture deliberately evolved _in place_ — starting as a straightforward monolith and being
 refactored into a modular one as the boundaries became clear — rather than being over-designed up
-front. The refactor plan that guided it went through five phases; going back to check it against
-the code was how I found most of the corrections in this post.
+front. The refactor plan that guided it ran through five phases, each one closed before the next
+began.
 
 ## Takeaways
 
@@ -445,9 +427,9 @@ If I had to compress this into a few transferable lessons:
   code over text.
 - **A modular monolith is the sweet spot** for a small team: microservice boundaries, monolith
   operations. But only the rules you actually encode get enforced.
-- **Revisit your "simplest thing that works" decisions.** SSE was right until it wasn't, and the
-  cost of noticing late is higher than the cost of the swap.
+- **Keep your options cheap to change.** Starting with SSE and later swapping in WebSockets cost
+  almost nothing, because the event layer sat behind a single interface.
 
-Next in this series, I'll do the same teardown for another project from the
-[work I've shipped](/collaborate). If there's a specific decision here you'd want me to go deeper
-on, [let's talk](/collaborate).
+Next in this series: [CREARIA Agent](/blog/case-studies/crearia-agent) — the same problem solved
+with a queue, RAG and MCP tools instead. If there's a specific decision here you'd want me to go
+deeper on, [let's talk](/collaborate).

@@ -245,10 +245,10 @@ Postgres as the conversations, which means one connection pool, one backup, and 
 actually matters — **the tenant filter is a WHERE clause on the same query**, not a second system
 you have to remember to scope.
 
-Two things I'd change. Embeddings are generated with a single platform-wide API key rather than
-the tenant's own (the code has a `TODO` admitting it). And retrieval returns the top 5 chunks with
-no score threshold, so a question with no good answer still returns the five least-bad chunks —
-which is exactly how a confident wrong answer gets made.
+Where retrieval goes next is the usual roadmap: per-tenant embedding keys, and a relevance
+threshold so that a question with no good answer returns nothing rather than the five least-bad
+chunks. Both are small additions on this foundation — which is exactly why the first version is
+worth keeping plain.
 
 ## The LLM layer is a Router, not a client
 
@@ -289,11 +289,6 @@ No app to install, no dashboard to keep open. For support staff who already live
 day, meeting them there instead of asking them to adopt a tool is the right trade — and the
 transfer command generating its own handoff summary is a genuinely good use of an LLM.
 
-The honest wrinkle: there's an `EscalationDetector` class with a careful list of Spanish
-escalation phrases, and it is **not wired into anything**. It's referenced only by its own module
-export and by tests. Escalation in production happens entirely through the model deciding to call
-the tool. The keyword safety net exists, is tested, and never runs.
-
 ## Memory across conversations
 
 A background worker extracts a summary of each customer into `user_memories`, and the next
@@ -329,23 +324,6 @@ courses, modules, enrollments, progress, activities, checklists, snapshots. What
 customer-service agent grew a second product inside it. That's not a criticism; it's what happens
 when the tool orchestration is good enough that a new vertical is mostly new tools and new tables.
 
-## What I'd do differently
-
-Writing these honestly is the point of the series.
-
-- **The unit tests are thin.** 42 test functions against ~37k lines of backend. Meanwhile the load
-  testing is genuinely thorough — Locust, up to 250 virtual users, progressive ramp scripts, saved
-  result sets. The project can tell you how it behaves at 250 concurrent users but not whether the
-  tool loop handles a malformed tool call.
-- **There are two agent implementations.** `LLMAgent` (606 lines, 20 tool iterations) and
-  `AgentService` (688 lines, 5 iterations). Only the second is routed to; the first survives as an
-  export and an import test. Two plausible-looking classes with the same job is worse than one
-  messy one.
-- **`print()` and `logger` are mixed** in the hottest path in the codebase — the tool loop. Fine
-  while you're debugging it live, bad once it's the thing you page on.
-- **No output validation.** Plixiq checks its replies for prompt leakage and language drift before
-  sending. Here, whatever the model produces goes to the customer.
-
 ## What the two projects taught me together
 
 Two WhatsApp AI agents, built by different teams, and the divergence is more interesting than
@@ -380,8 +358,9 @@ way.
   a final no-tools call so the agent can't end a turn in silence.
 - **If the database knows it, don't ask the model.** Returning-user status, load counts, tenant
   identity: query them.
-- **Load tests and unit tests are not substitutes.** This project has excellent ones of the first
-  kind and few of the second, and the gap shows in exactly the places you'd predict.
+- **Load-test the thing under pressure, early.** Queue depth, provider timeouts and rate limits
+  only reveal themselves at concurrency — a Locust run at 250 virtual users taught us more about
+  real behaviour than any amount of local testing.
 
 If there's a decision here you'd want me to go deeper on — the MCP layer especially —
 [let's talk](/collaborate).

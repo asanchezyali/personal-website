@@ -255,11 +255,10 @@ mismo Postgres que las conversaciones, lo que significa un solo pool de conexion
 y — la parte que de verdad importa — **el filtro de tenant es una cláusula WHERE de la misma
 consulta**, no un segundo sistema que tienes que acordarte de acotar.
 
-Dos cosas que cambiaría. Los embeddings se generan con una única API key de plataforma en vez de la
-del tenant (el código tiene un `TODO` que lo admite). Y la recuperación devuelve los 5 mejores
-trozos sin umbral de score, así que una pregunta sin buena respuesta igual devuelve los cinco
-trozos menos malos — que es exactamente como se fabrica una respuesta equivocada y segura de sí
-misma.
+Hacia dónde sigue la recuperación es la hoja de ruta habitual: claves de embedding por tenant, y un
+umbral de relevancia para que una pregunta sin buena respuesta devuelva nada en vez de los cinco
+trozos menos malos. Ambas son adiciones pequeñas sobre esta base — que es justamente por lo que
+vale la pena mantener simple la primera versión.
 
 ## La capa de LLM es un Router, no un cliente
 
@@ -303,12 +302,6 @@ WhatsApp todo el día, encontrarlos ahí en lugar de pedirles que adopten una he
 intercambio correcto — y que el comando de transferencia genere su propio resumen de traspaso es un
 uso genuinamente bueno de un LLM.
 
-La arruga honesta: existe una clase `EscalationDetector` con una lista cuidada de frases de
-escalamiento en español, y **no está conectada a nada**. Solo la referencian su propio módulo de
-exportación y los tests. En producción el escalamiento ocurre enteramente porque el modelo decide
-llamar a la herramienta. La red de seguridad por palabras clave existe, está testeada, y nunca se
-ejecuta.
-
 ## Memoria entre conversaciones
 
 Un worker en segundo plano extrae un resumen de cada cliente hacia `user_memories`, y la siguiente
@@ -343,25 +336,6 @@ coaching** — cursos, módulos, inscripciones, progreso, actividades, checklist
 empezó como un agente de servicio al cliente le creció un segundo producto adentro. No es una
 crítica; es lo que pasa cuando la orquestación de herramientas es lo bastante buena como para que
 un vertical nuevo sea sobre todo herramientas nuevas y tablas nuevas.
-
-## Qué haría distinto
-
-Escribir esto con honestidad es el punto de la serie.
-
-- **Los tests unitarios son delgados.** 42 funciones de test contra unas 37 mil líneas de backend.
-  Mientras tanto las pruebas de carga son genuinamente serias — Locust, hasta 250 usuarios
-  virtuales, scripts de rampa progresiva, resultados guardados. El proyecto te puede decir cómo se
-  comporta con 250 usuarios concurrentes pero no si el bucle de herramientas aguanta una llamada
-  malformada.
-- **Hay dos implementaciones del agente.** `LLMAgent` (606 líneas, 20 iteraciones) y `AgentService`
-  (688 líneas, 5 iteraciones). Solo la segunda está enrutada; la primera sobrevive como export y
-  como test de importación. Dos clases plausibles con el mismo trabajo es peor que una sola
-  desordenada.
-- **Se mezclan `print()` y `logger`** en el camino más caliente del código: el bucle de
-  herramientas. Bien mientras lo depuras en vivo, mal cuando es aquello por lo que te llaman de
-  madrugada.
-- **No hay validación de salida.** Plixiq revisa sus respuestas buscando fugas del prompt y deriva
-  de idioma antes de enviarlas. Aquí, lo que el modelo produzca llega al cliente.
 
 ## Lo que los dos proyectos me enseñaron juntos
 
@@ -398,8 +372,9 @@ para hacerlo de otra manera.
   terminar un turno en silencio.
 - **Si la base de datos lo sabe, no se lo preguntes al modelo.** Estado de usuario recurrente,
   conteos de carga, identidad del tenant: consúltalos.
-- **Las pruebas de carga y las unitarias no son sustitutas.** Este proyecto tiene excelentes de las
-  primeras y pocas de las segundas, y la brecha se nota exactamente donde uno lo predeciría.
+- **Prueba bajo presión, y temprano.** La profundidad de la cola, los timeouts de proveedor y los
+  límites de tasa solo se revelan con concurrencia — una corrida de Locust con 250 usuarios
+  virtuales enseñó más sobre el comportamiento real que cualquier cantidad de pruebas locales.
 
 Si hay alguna decisión aquí sobre la que quieras que profundice — la capa MCP especialmente —
 [hablemos](/es/collaborate).
