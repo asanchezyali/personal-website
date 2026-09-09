@@ -160,6 +160,21 @@
         "pgvector",
         "WhatsApp API"
       ]
+    },
+    "project_5": {
+      "title": "Aluna",
+      "description": "AI hiring platform that scores CVs against a vacancy and pre-screens candidates over WhatsApp.",
+      "role": "Tech Lead",
+      "context": "Recruiters receive far more CVs than they can read properly, so most shortlists are decided by application order rather than by fit.",
+      "problem": "Screening at volume needs judgement a keyword filter can't provide, and a hiring product holds some of the most sensitive personal data there is — so speed cannot come at the cost of consent or auditability.",
+      "solution": "Built six specialised agents — each with its own prompt, schema and model — behind a stateless service that never writes to the database, plus a durable pipeline that checks consent, cache, deduplication and plan quota before spending a token. Consent records, an append-only audit log and erasure receipts are part of the schema, not an afterthought.",
+      "link": "/blog/case-studies/aluna",
+      "technologies": [
+        "Next.js",
+        "FastAPI",
+        "LiteLLM",
+        "pgvector"
+      ]
     }
   },
   "community": {
