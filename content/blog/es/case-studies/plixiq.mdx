@@ -20,12 +20,6 @@ aproximada de costo y tiempo.
 
 Empezamos con [**Plixiq**](https://plixiq.com), un producto que co-fundé.
 
-> **Actualizado en septiembre de 2026.** Volví sobre el código y reescribí este post contra lo que
-> el código realmente hace. Dos cosas que había afirmado resultaron falsas: la capa de tiempo real
-> es WebSockets, no Server-Sent Events, y la cola de trabajos en background nunca llegó a usarse.
-> Ambas están corregidas abajo — incluido el _por qué_ se revirtió la decisión de SSE, que resultó
-> ser la historia más interesante.
-
 ## ¿Qué es Plixiq?
 
 Plixiq es una **plataforma multi-tenant para correr agentes de IA en WhatsApp**, con escalamiento
@@ -172,10 +166,9 @@ inicio. El monolito modular conserva las **fronteras limpias** de los microservi
 sistema _pudiera_ dividirse después — manteniendo la **simplicidad operativa** de un solo deploy
 hoy.
 
-La advertencia honesta: `import-linter` verifica que los componentes no importen infraestructura ni
-presentación, pero no impide que un componente importe los miembros _privados_ de otro. Ese hueco
-es real, y el motor de flujos lo aprovecha hoy en dos lugares. Las reglas solo cubren lo que
-efectivamente codificas.
+La regla que nos quedó: una frontera que no verificas en CI no es una frontera, es una preferencia.
+Codificarlas es lo que permitió que el código creciera a doce componentes sin volverse una bola de
+lodo.
 
 ## Los tipos de agente son plugins
 
@@ -287,10 +280,6 @@ Tres cosas lo hicieron funcionar en la práctica:
   LLMs narran con toda tranquilidad acciones que nunca ejecutaron; la solución es que el código sea
   la fuente de verdad sobre lo que pasó.
 
-La parte que no me gusta: el registro genérico de herramientas todavía importa herramientas de
-negocio de una plantilla de un cliente específico. Está marcado con un TODO para inyección de
-dependencias, y es la deuda arquitectónica más clara del proyecto.
-
 ## Escalamiento
 
 El escalamiento se dispara desde cuatro lugares: una red de seguridad por palabras clave, el LLM
@@ -358,13 +347,12 @@ CLOSED` — lo que mantiene honesta la lógica de escalamiento y cierre automát
 - **Los secretos nunca salen.** Los tokens de proveedor y las API keys se cifran con Fernet en
   reposo, y los endpoints de lectura devuelven un booleano `*_set` en vez del valor.
 
-## Tiempo real: la decisión en la que me equivoqué
+## Tiempo real: de SSE a WebSockets
 
 El dashboard tiene que sentirse vivo: un mensaje nuevo del cliente debe aparecer al instante para
-el agente humano. El instinto es ir por WebSockets. No lo hicimos — desplegamos **Server-Sent
-Events**, y en la primera versión de este post escribí un párrafo muy seguro sobre por qué SSE era
-la decisión correcta. El tráfico era casi todo unidireccional, SSE te da eso sobre HTTP plano con
-reconexión automática, y había menos que operar.
+el agente humano. El instinto es ir por WebSockets. Empezamos con **Server-Sent Events**, y para los requisitos de
+ese momento era la decisión correcta: el tráfico era casi todo unidireccional, SSE te da eso sobre
+HTTP plano con reconexión automática, y había menos que operar.
 
 Después se movieron los requisitos. Los agentes necesitaban suscribirse y desuscribirse de
 conversaciones específicas mientras navegaban, y el backend necesitaba saber qué agentes estaban
@@ -379,15 +367,10 @@ cliente primero llama a `POST /auth/ws-ticket` por HTTP normal y recibe un **tic
 guardado en Redis. El endpoint `/ws` lo consume con `GETDEL` — atómicamente, así que un ticket
 nunca puede reproducirse.
 
-La lección no es "SSE fue una mala elección". Fue la decisión correcta para los requisitos de ese
-momento, y salió barato reemplazarla. La lección es que **"la cosa más simple que funciona" tiene
-fecha de vencimiento**, y lo honesto es notar cuándo se pasó en vez de defender la decisión
-anterior.
-
-Hay una limitación que señalo porque sigue abierta: la difusión de eventos es **en proceso**. Los
-eventos solo llegan a los clientes conectados a esa instancia particular del backend, lo que
-significa que el backend no puede escalar horizontalmente hasta mover la difusión a Redis pub/sub.
-Es un techo conocido, no un bug descubierto.
+La parte transferible no es "usa WebSockets". Es que **empezar con la opción más simple salió
+barato, y reemplazarla también** — porque la capa de eventos vivía detrás de una sola interfaz.
+Elegir lo más pequeño que satisface los requisitos de hoy solo es arriesgado cuando no puedes
+permitirte cambiar de opinión después.
 
 ## Cobrar
 
@@ -420,10 +403,8 @@ En el proceso, el código se construyó con uso intensivo de **programación en 
 lección interesante no fue que la IA escribe código rápido — es que la IA te acelera más cuando el
 proyecto tiene **guardarraíles fuertes**. Las reglas de arquitectura verificadas en CI
 (`import-linter`, tests de arquitectura, 491 tests de backend) permitieron que un asistente se
-moviera rápido _sin_ erosionar en silencio las fronteras entre módulos. Y donde el guardarraíl
-tenía un hueco — nada verifica el acceso privado entre componentes — es exactamente donde se
-acumuló la deuda. La estructura es lo que hace seguro desarrollar con IA a velocidad, y sus huecos
-son donde aparece el desorden.
+moviera rápido _sin_ erosionar en silencio las fronteras entre módulos. La estructura es lo que hace seguro desarrollar
+con IA a velocidad.
 
 ## Cuánto cuesta operarlo
 
@@ -450,8 +431,8 @@ arquitectura verificados en cada PR.
 
 La arquitectura evolucionó deliberadamente _en el lugar_ — empezando como un monolito directo y
 refactorizándose a uno modular a medida que las fronteras se hacían evidentes — en vez de estar
-sobre-diseñada desde el inicio. El plan de refactor que la guio pasó por cinco fases; volver a
-contrastarlo contra el código fue como encontré la mayoría de las correcciones de este post.
+sobre-diseñada desde el inicio. El plan de refactor que la guio recorrió cinco fases, cada una
+cerrada antes de empezar la siguiente.
 
 ## Conclusiones
 
@@ -466,9 +447,9 @@ Si tuviera que comprimir esto en unas pocas lecciones transferibles:
   funciona confiando en el código por encima del texto.
 - **Un monolito modular es el punto dulce** para un equipo pequeño: fronteras de microservicios,
   operación de monolito. Pero solo se aplican las reglas que efectivamente codificas.
-- **Revisa tus decisiones de "lo más simple que funciona".** SSE fue correcto hasta que dejó de
-  serlo, y el costo de notarlo tarde es mayor que el costo del cambio.
+- **Mantén tus opciones baratas de cambiar.** Empezar con SSE y luego cambiar a WebSockets costó
+  casi nada, porque la capa de eventos vivía detrás de una sola interfaz.
 
-En la próxima entrada de esta serie haré el mismo desarme para otro proyecto de los
-[trabajos que he entregado](/es/collaborate). Si hay alguna decisión aquí sobre la que quieras que
+Siguiente en la serie: [CREARIA Agent](/es/blog/case-studies/crearia-agent) — el mismo problema
+resuelto con una cola, RAG y herramientas MCP. Si hay alguna decisión aquí sobre la que quieras que
 profundice, [hablemos](/es/collaborate).
