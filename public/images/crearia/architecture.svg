@@ -1,0 +1,130 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 640" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif">
+  <defs>
+    <style>
+      .bg { fill: #f6faf7; }
+      .card { fill: #ffffff; stroke: #d9e6dd; stroke-width: 1.5; }
+      .card-green { fill: #e9f6ee; stroke: #bfe3cc; stroke-width: 1.5; }
+      .card-dark { fill: #0f3d2e; stroke: #15543f; stroke-width: 1.5; }
+      .title { fill: #0f3d2e; font-size: 15px; font-weight: 700; }
+      .label { fill: #1f4a39; font-size: 12px; font-weight: 600; }
+      .sub { fill: #5a6b62; font-size: 10.5px; }
+      .white { fill: #ffffff; font-size: 13px; font-weight: 700; }
+      .whitesub { fill: #b9e6cc; font-size: 10.5px; }
+      .group { fill: #0f3d2e; font-size: 11px; font-weight: 700; letter-spacing: .06em; }
+      .edge { stroke: #6b9e83; stroke-width: 1.6; fill: none; }
+      .edge-strong { stroke: #19a567; stroke-width: 2.2; fill: none; }
+      .elab { fill: #3c6b53; font-size: 10px; font-weight: 600; }
+    </style>
+    <marker id="arr" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+      <path d="M0,0 L9,4.5 L0,9 z" fill="#6b9e83"/>
+    </marker>
+    <marker id="arrs" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+      <path d="M0,0 L9,4.5 L0,9 z" fill="#19a567"/>
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="640" rx="14"/>
+  <text x="32" y="40" class="title" font-size="18">CREARIA Agent — high-level architecture</text>
+  <text x="32" y="60" class="sub" font-size="11">Multi-channel AI support: five services, MCP tools, RAG, and escalation to humans</text>
+
+  <!-- Channels -->
+  <text x="32" y="84" class="group">CHANNELS</text>
+  <rect class="card-green" x="32" y="96" width="146" height="60" rx="11"/>
+  <text x="105" y="122" text-anchor="middle" class="label">WhatsApp</text>
+  <text x="105" y="140" text-anchor="middle" class="sub">Cloud API · pywa</text>
+
+  <rect class="card-green" x="32" y="168" width="146" height="60" rx="11"/>
+  <text x="105" y="194" text-anchor="middle" class="label">Email</text>
+  <text x="105" y="212" text-anchor="middle" class="sub">Gmail API · OAuth</text>
+
+  <rect class="card-green" x="32" y="240" width="146" height="60" rx="11"/>
+  <text x="105" y="266" text-anchor="middle" class="label">Instagram / DM</text>
+  <text x="105" y="284" text-anchor="middle" class="sub">Meta Graph API</text>
+
+  <!-- Channel servers -->
+  <rect class="card" x="210" y="96" width="176" height="204" rx="12"/>
+  <text x="298" y="124" text-anchor="middle" class="label">Channel servers</text>
+  <text x="298" y="150" text-anchor="middle" class="sub">whatsapp-server</text>
+  <text x="298" y="168" text-anchor="middle" class="sub">email-server</text>
+  <text x="298" y="186" text-anchor="middle" class="sub">meta-server</text>
+  <text x="298" y="214" text-anchor="middle" class="sub">verify webhook · normalise</text>
+  <text x="298" y="230" text-anchor="middle" class="sub">media download · enqueue</text>
+  <text x="298" y="256" text-anchor="middle" class="sub">they never call the LLM —</text>
+  <text x="298" y="272" text-anchor="middle" class="sub">they only put work on a queue</text>
+
+  <!-- Queue -->
+  <rect class="card-green" x="210" y="324" width="176" height="86" rx="12"/>
+  <text x="298" y="350" text-anchor="middle" class="label">Redis + ARQ</text>
+  <text x="298" y="368" text-anchor="middle" class="sub">per-user &amp; per-tenant limits</text>
+  <text x="298" y="384" text-anchor="middle" class="sub">audio → Whisper</text>
+  <text x="298" y="400" text-anchor="middle" class="sub">image → vision description</text>
+
+  <!-- Orchestrator -->
+  <rect class="card-dark" x="422" y="96" width="280" height="280" rx="14"/>
+  <text x="442" y="124" class="white">agent-orchestrator</text>
+  <text x="442" y="148" class="whitesub">Processor strategy per agent type:</text>
+  <text x="442" y="164" class="whitesub">customer_service · coaching · real_estate</text>
+  <text x="442" y="190" class="whitesub">Tool loop — max 5 iterations,</text>
+  <text x="442" y="206" class="whitesub">120s budget, 60s per tool</text>
+  <text x="442" y="232" class="whitesub">RAG over pgvector</text>
+  <text x="442" y="248" class="whitesub">cross-conversation memory</text>
+  <text x="442" y="264" class="whitesub">CRM · deals · lead scoring</text>
+  <text x="442" y="280" class="whitesub">escalation to human agents</text>
+  <text x="442" y="306" class="whitesub">background workers extract</text>
+  <text x="442" y="322" class="whitesub">profile, memory and insights</text>
+  <text x="442" y="348" class="whitesub">51 tables · 100 migrations</text>
+
+  <!-- Right column -->
+  <rect class="card-green" x="726" y="96" width="162" height="76" rx="12"/>
+  <text x="807" y="122" text-anchor="middle" class="label">LiteLLM Router</text>
+  <text x="807" y="140" text-anchor="middle" class="sub">priority fallback groups</text>
+  <text x="807" y="156" text-anchor="middle" class="sub">OpenAI · Anthropic · Gemini</text>
+
+  <rect class="card" x="726" y="192" width="162" height="86" rx="12"/>
+  <text x="807" y="218" text-anchor="middle" class="label">PostgreSQL</text>
+  <text x="807" y="236" text-anchor="middle" class="sub">+ pgvector embeddings</text>
+  <text x="807" y="252" text-anchor="middle" class="sub">tenant-scoped rows</text>
+  <text x="807" y="268" text-anchor="middle" class="sub">51 tables</text>
+
+  <rect class="card" x="726" y="298" width="162" height="64" rx="12"/>
+  <text x="807" y="324" text-anchor="middle" class="label">Redis</text>
+  <text x="807" y="342" text-anchor="middle" class="sub">cache · queue · limits</text>
+
+  <rect class="card" x="726" y="382" width="162" height="104" rx="12"/>
+  <text x="807" y="408" text-anchor="middle" class="label">mcp-server</text>
+  <text x="807" y="426" text-anchor="middle" class="sub">MCP over SSE</text>
+  <text x="807" y="442" text-anchor="middle" class="sub">11 tools: knowledge base,</text>
+  <text x="807" y="458" text-anchor="middle" class="sub">catalog, hours, orders…</text>
+  <text x="807" y="474" text-anchor="middle" class="sub">tenant_id injected here</text>
+
+  <!-- Bottom -->
+  <rect class="card-dark" x="32" y="510" width="380" height="100" rx="14"/>
+  <text x="52" y="538" class="white">Next.js dashboards</text>
+  <text x="52" y="560" class="whitesub">admin (platform) · tenant (per client)</text>
+  <text x="52" y="578" class="whitesub">agent config, knowledge base, CRM,</text>
+  <text x="52" y="596" class="whitesub">conversations, courses</text>
+
+  <rect class="card-green" x="436" y="510" width="266" height="100" rx="14"/>
+  <text x="569" y="538" text-anchor="middle" class="label">Human agent</text>
+  <text x="569" y="558" text-anchor="middle" class="sub">Least-loaded assignment</text>
+  <text x="569" y="576" text-anchor="middle" class="sub">WhatsApp proxy, both directions</text>
+  <text x="569" y="594" text-anchor="middle" class="sub">/end · /status · /transfer · /online</text>
+
+  <!-- Edges -->
+  <path class="edge" d="M178,126 L210,126" marker-end="url(#arr)"/>
+  <path class="edge" d="M178,198 L210,198" marker-end="url(#arr)"/>
+  <path class="edge" d="M178,270 L210,270" marker-end="url(#arr)"/>
+  <path class="edge-strong" d="M298,300 L298,324" marker-end="url(#arrs)"/>
+  <text x="306" y="318" class="elab">enqueue</text>
+  <path class="edge-strong" d="M386,350 L422,340" marker-end="url(#arrs)"/>
+  <text x="392" y="336" class="elab">HTTP</text>
+  <path class="edge" d="M702,134 L726,134" marker-end="url(#arr)"/>
+  <path class="edge" d="M702,232 L726,232" marker-end="url(#arr)"/>
+  <path class="edge" d="M702,318 L726,326" marker-end="url(#arr)"/>
+  <path class="edge-strong" d="M702,360 L726,412" marker-end="url(#arrs)"/>
+  <text x="640" y="392" class="elab">tool calls</text>
+  <path class="edge" d="M562,376 L562,510" marker-end="url(#arr)"/>
+  <text x="570" y="470" class="elab">escalation</text>
+  <path class="edge" d="M380,510 L432,382" marker-end="url(#arr)"/>
+  <text x="330" y="470" class="elab">REST API</text>
+</svg>

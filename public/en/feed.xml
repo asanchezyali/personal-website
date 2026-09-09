@@ -7,9 +7,19 @@
       <language>en</language>
       <managingEditor>alejandro@piagents.dev (Yali Dev)</managingEditor>
       <webMaster>alejandro@piagents.dev (Yali Dev)</webMaster>
-      <lastBuildDate>Thu, 25 Jun 2026 05:00:00 GMT</lastBuildDate>
+      <lastBuildDate>Wed, 09 Sep 2026 05:00:00 GMT</lastBuildDate>
       <atom:link href="https://asanchezyali.com/feed.xml" rel="self" type="application/rss+xml"/>
       
+  <item>
+    <guid>https://asanchezyali.com/blog/case-studies/crearia-agent</guid>
+    <title>Building CREARIA Agent: RAG, MCP tools, and a queue that changed the design</title>
+    <link>https://asanchezyali.com/blog/case-studies/crearia-agent</link>
+    <description>The second engineering case study: how CREARIA Agent answers customer questions on WhatsApp using RAG over pgvector and MCP tool orchestration — and why putting a queue between the channel and the LLM turned out to be the decision everything else hangs off.</description>
+    <pubDate>Wed, 09 Sep 2026 05:00:00 GMT</pubDate>
+    <author>alejandro@piagents.dev (Yali Dev)</author>
+    <category>case-study</category><category>crearia</category><category>ai-agents</category><category>rag</category><category>mcp</category><category>whatsapp</category><category>system-design</category>
+  </item>
+
   <item>
     <guid>https://asanchezyali.com/blog/case-studies/plixiq</guid>
     <title>Building Plixiq: a multi-tenant WhatsApp AI agent platform</title>

@@ -108,7 +108,13 @@
       "problem": "La adopción de LLMs en equipos está fragmentada — cada desarrollador tiene sus propias cuentas, los costos son invisibles, y no hay forma unificada de gestionar modelos, límites de uso o enrutamiento de prompts.",
       "solution": "Construí una plataforma multi-tenant con LiteLLM como gateway unificado de modelos, frontend en Next.js y backend en Python. Los equipos tienen un dashboard para gestionar modelos, rastrear costos, establecer límites por usuario y enrutar prompts automáticamente.",
       "link": "/es/blog/case-studies/plixiq",
-      "technologies": ["Python", "LiteLLM", "Next.js", "Multi-tenant", "PostgreSQL"]
+      "technologies": [
+        "Python",
+        "LiteLLM",
+        "Next.js",
+        "Multi-tenant",
+        "PostgreSQL"
+      ]
     },
     "project_2": {
       "title": "Morpheus",
@@ -118,7 +124,12 @@
       "problem": "Las herramientas existentes carecían de la capacidad de combinar prompts de texto con fotos de referencia para imágenes de marca consistentes, y no tenían API para integración.",
       "solution": "Construí una plataforma end-to-end con backend en FastAPI orquestando pipelines de Stable Diffusion, frontend React con preview en tiempo real, y API REST para acceso programático.",
       "link": "",
-      "technologies": ["Python", "FastAPI", "React", "Stable Diffusion"]
+      "technologies": [
+        "Python",
+        "FastAPI",
+        "React",
+        "Stable Diffusion"
+      ]
     },
     "project_3": {
       "title": "Digital Human / Zippy",
@@ -128,7 +139,12 @@
       "problem": "Crear un humano digital convincente en tiempo real requiere sincronizar generación de voz, lip-sync, expresiones faciales e IA conversacional con baja latencia.",
       "solution": "Integré OpenAI GPT para conversación, Whisper para reconocimiento de voz, ElevenLabs para síntesis de voz, y Three.js para renderizado 3D — todo conectado a través de un pipeline WebSocket en tiempo real.",
       "link": "",
-      "technologies": ["OpenAI GPT", "Whisper", "ElevenLabs", "Three.js"]
+      "technologies": [
+        "OpenAI GPT",
+        "Whisper",
+        "ElevenLabs",
+        "Three.js"
+      ]
     },
     "project_4": {
       "title": "CREARIA Agent",
@@ -137,8 +153,13 @@
       "context": "Una empresa necesitaba automatizar su soporte al cliente en WhatsApp manteniendo la calidad y precisión de los agentes humanos.",
       "problem": "Los chatbots tradicionales fallan cuando las preguntas requieren acceso a conocimiento específico del negocio o cuando necesitan realizar acciones como verificar estado de pedidos.",
       "solution": "Construí un agente RAG con orquestación de herramientas MCP que puede buscar documentación interna, acceder a sistemas del negocio y manejar conversaciones multi-turno — todo a través del API de WhatsApp.",
-      "link": "",
-      "technologies": ["RAG", "MCP", "LangChain", "WhatsApp API"]
+      "link": "/es/blog/case-studies/crearia-agent",
+      "technologies": [
+        "RAG",
+        "MCP",
+        "pgvector",
+        "WhatsApp API"
+      ]
     },
     "project_5": {
       "title": "ROCKET CODE",
@@ -148,7 +169,12 @@
       "problem": "Cada proyecto tenía su propio setup, dependencias e implementaciones de componentes — generando inconsistencia, trabajo duplicado y onboarding lento.",
       "solution": "Diseñé una arquitectura NX monorepo con librerías compartidas de componentes React, microservicios NestJS y pipelines CI/CD automatizados. Nuevos proyectos se podían crear en minutos con patrones consistentes.",
       "link": "",
-      "technologies": ["NX Monorepo", "React", "NestJS", "PostgreSQL"]
+      "technologies": [
+        "NX Monorepo",
+        "React",
+        "NestJS",
+        "PostgreSQL"
+      ]
     }
   },
   "community": {
