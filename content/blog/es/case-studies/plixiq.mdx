@@ -20,6 +20,29 @@ aproximada de costo y tiempo.
 
 Empezamos con [**Plixiq**](https://plixiq.com), un producto que co-fundé.
 
+<CaseSummary
+  stats={[
+    { value: '12', label: 'bounded contexts' },
+    { value: '43k', label: 'líneas de código' },
+    { value: '491', label: 'tests de backend' },
+    { value: '4 meses', label: 'hasta el MVP' },
+  ]}
+  rows={[
+    {
+      k: 'Problema',
+      v: 'La atención al cliente en WhatsApp no escala con headcount. O pagas gente para vigilar un buzón de chat todo el día, o los clientes esperan.',
+    },
+    {
+      k: 'Enfoque',
+      v: 'Un monolito modular multi-tenant donde el comportamiento del agente es un plugin: tres tipos de agente, un motor de flujos guionados por grafo, agendamiento de citas y escalamiento a un humano sin perder contexto.',
+    },
+    {
+      k: 'Resultado',
+      v: 'Un solo despliegue sirviendo a muchos clientes aislados, facturado por conversación vía Polar, con las fronteras de arquitectura verificadas en CI en cada pull request.',
+    },
+  ]}
+/>
+
 ## ¿Qué es Plixiq?
 
 Plixiq es una **plataforma multi-tenant para correr agentes de IA en WhatsApp**, con escalamiento

@@ -21,6 +21,29 @@ construido cada uno.
 Ese contraste es la razón por la que quise escribirlo. Mismo canal, mismo problema general, dos
 equipos, dos conjuntos de restricciones, y casi ninguna respuesta en común.
 
+<CaseSummary
+  stats={[
+    { value: '5', label: 'servicios de backend' },
+    { value: '51', label: 'tablas en la base' },
+    { value: '11', label: 'herramientas MCP' },
+    { value: '250', label: 'usuarios en carga' },
+  ]}
+  rows={[
+    {
+      k: 'Problema',
+      v: 'Un agente de soporte capaz de responder desde los documentos del negocio y actuar sobre sus sistemas — sin alcanzar jamás los datos de otro tenant.',
+    },
+    {
+      k: 'Enfoque',
+      v: 'Una cola entre el canal y el modelo, RAG sobre pgvector, y herramientas descubiertas en runtime por MCP con la identidad del tenant inyectada del lado del servidor.',
+    },
+    {
+      k: 'Resultado',
+      v: 'Tres canales (WhatsApp, correo, Instagram), entrada multimodal, y traspaso a humano manejado enteramente con comandos de barra en WhatsApp.',
+    },
+  ]}
+/>
+
 ## ¿Qué es CREARIA Agent?
 
 CREARIA Agent es un **agente de soporte con IA multicanal**. Un negocio conecta WhatsApp (y,

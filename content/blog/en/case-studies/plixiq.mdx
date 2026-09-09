@@ -19,6 +19,29 @@ the context, the stack, the trade-offs, the architecture, and even a rough idea 
 
 We start with [**Plixiq**](https://plixiq.com/en), a product I co-founded.
 
+<CaseSummary
+  stats={[
+    { value: '12', label: 'bounded contexts' },
+    { value: '43k', label: 'lines of code' },
+    { value: '491', label: 'backend tests' },
+    { value: '4 mo', label: 'to working MVP' },
+  ]}
+  rows={[
+    {
+      k: 'Problem',
+      v: 'Customer support on WhatsApp does not scale with headcount. Either you pay people to watch a chat inbox around the clock, or customers wait.',
+    },
+    {
+      k: 'Approach',
+      v: 'A multi-tenant modular monolith where agent behaviour is a plugin: three agent types, a graph-based scripted-flow engine, appointment booking, and escalation to a human without losing context.',
+    },
+    {
+      k: 'Outcome',
+      v: 'One deployment serving many isolated clients, billed per conversation through Polar, with architecture boundaries checked in CI on every pull request.',
+    },
+  ]}
+/>
+
 ## What is Plixiq?
 
 Plixiq is a **multi-tenant platform for running AI agents on WhatsApp**, with seamless escalation
