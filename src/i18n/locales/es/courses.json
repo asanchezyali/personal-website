@@ -1,0 +1,21 @@
+{
+  "hero": {
+    "eyebrow": "Cursos libres",
+    "title_pre": "Aprende las matemáticas ",
+    "title_accent": "detrás del código",
+    "lead": "Cursos interactivos donde cada idea tiene una figura que puedes mover y unas líneas de Python que puedes correr. Sin muro de pago."
+  },
+  "empty": "Todavía no hay cursos publicados.",
+  "start": "Empezar el curso",
+  "back_to_courses": "← Todos los cursos",
+  "toc_title": "Contenido",
+  "previous": "Anterior",
+  "next": "Siguiente",
+  "finish": "Volver al curso",
+  "progress": "Lección {{current}} de {{total}}",
+  "meta": {
+    "modules": "{{count}} módulos",
+    "lessons": "{{count}} lecciones",
+    "free": "libre"
+  }
+}

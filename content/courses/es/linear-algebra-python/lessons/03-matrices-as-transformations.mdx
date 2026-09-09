@@ -1,0 +1,94 @@
+---
+title: 'Matrices como transformaciones'
+language: 'es'
+module: 'Matrices como funciones'
+moduleOrder: 2
+order: 1
+summary: 'Una matriz no es una tabla de números. Es la instrucción de a dónde se mueve el plano entero.'
+---
+
+Esta es la lección bisagra del curso. Si solo te llevas una idea, que sea esta.
+
+Una matriz de $2 \times 2$ **no es una tabla**. Es una función que toma el plano completo y lo
+mueve, de forma que las rectas siguen siendo rectas, están igualmente espaciadas, y el origen se
+queda donde está. A eso se le llama una **transformación lineal**.
+
+## La idea que lo hace fácil
+
+Aquí está el truco que convierte esto de algo memorizable en algo obvio.
+
+Como todo vector es una combinación lineal de $\hat{\imath}$ y $\hat{\jmath}$ — lo viste en la
+lección anterior — para saber a dónde va *cualquier* vector basta saber a dónde van esos dos.
+
+Y eso es exactamente lo que guarda una matriz: **sus columnas son las imágenes de $\hat{\imath}$ y
+$\hat{\jmath}$.**
+
+$$A = \begin{bmatrix} a & b \\ c & d \end{bmatrix} \quad\Longrightarrow\quad \hat{\imath} \mapsto \begin{bmatrix} a \\ c \end{bmatrix}, \qquad \hat{\jmath} \mapsto \begin{bmatrix} b \\ d \end{bmatrix}$$
+
+Todo lo demás se deduce. Si $\hat{\imath}$ va a $(a, c)$ y $\hat{\jmath}$ va a $(b, d)$, entonces
+$(x, y) = x\hat{\imath} + y\hat{\jmath}$ tiene que ir a $x(a,c) + y(b,d)$. Escribe eso y obtienes la
+regla de multiplicación que probablemente memorizaste:
+
+$$A\vec{v} = \begin{bmatrix} ax + by \\ cx + dy \end{bmatrix}$$
+
+La regla no es arbitraria. Es la única que respeta la linealidad.
+
+## Muévelo
+
+Los sliders son las cuatro entradas de la matriz. La flecha roja es a dónde fue $\hat{\imath}$; la
+verde, a dónde fue $\hat{\jmath}$. La cuadrícula muestra qué le pasó al plano entero.
+
+<MatrixPlayground
+  initial={[1, 0, 0, 1]}
+  showDeterminant={false}
+  labels={{ reset: 'Reiniciar' }}
+/>
+
+Cosas que vale la pena provocar:
+
+- Deja la matriz en $\begin{bmatrix}1&0\\0&1\end{bmatrix}$ — nada se mueve. Es la **identidad**.
+- Pon $a = 0, b = -1, c = 1, d = 0$ — el plano gira 90°.
+- Pon $a = 2, d = 2$ — todo se aleja del origen al doble.
+- Pon $b = 1$ dejando el resto — eso es un **cizallamiento**: las verticales se inclinan.
+- Haz que las dos columnas sean paralelas — el plano se aplasta contra una recta. Volveremos a eso
+  en la lección del determinante.
+
+## En NumPy
+
+```python
+import numpy as np
+
+A = np.array([[0, -1],
+              [1,  0]])     # rotación de 90°
+
+v = np.array([3, 2])
+A @ v                       # array([-2, 3])
+```
+
+El operador `@` es multiplicación de matrices. Si vienes de `*`, ojo: `A * v` en NumPy multiplica
+elemento a elemento, que es otra cosa completamente distinta.
+
+Y puedes comprobar la afirmación central directamente:
+
+```python
+A @ np.array([1, 0])    # array([0, 1]) — primera columna de A
+A @ np.array([0, 1])    # array([-1, 0]) — segunda columna de A
+```
+
+Las columnas son las imágenes de la base. No es una metáfora, es literal.
+
+## Por qué "lineal"
+
+La transformación cumple dos propiedades, y de ahí viene el nombre de toda la disciplina:
+
+$$A(\vec{v} + \vec{w}) = A\vec{v} + A\vec{w} \qquad A(s\vec{v}) = s(A\vec{v})$$
+
+En palabras: da igual si sumas primero y transformas después, o al revés. Esa es la razón por la
+que basta conocer la imagen de la base — cualquier otro vector se arma sumando y escalando, y la
+transformación respeta ambas operaciones.
+
+---
+
+**Para probar.** Sin correr nada, ¿qué matriz refleja el plano sobre el eje horizontal? Piensa a
+dónde debe ir $\hat{\imath}$ y a dónde $\hat{\jmath}$, y escríbelas como columnas. Después
+verifícalo en el widget.

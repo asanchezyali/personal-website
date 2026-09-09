@@ -1,0 +1,21 @@
+{
+  "hero": {
+    "eyebrow": "Free courses",
+    "title_pre": "Learn the maths ",
+    "title_accent": "behind the code",
+    "lead": "Interactive courses where every idea has a picture you can move and a few lines of Python you can run. No paywall."
+  },
+  "empty": "No courses published yet.",
+  "start": "Start the course",
+  "back_to_courses": "← All courses",
+  "toc_title": "Contents",
+  "previous": "Previous",
+  "next": "Next",
+  "finish": "Back to the course",
+  "progress": "Lesson {{current}} of {{total}}",
+  "meta": {
+    "modules": "{{count}} modules",
+    "lessons": "{{count}} lessons",
+    "free": "free"
+  }
+}

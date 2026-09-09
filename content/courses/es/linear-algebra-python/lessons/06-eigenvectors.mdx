@@ -1,0 +1,105 @@
+---
+title: 'Vectores propios'
+language: 'es'
+module: 'La estructura oculta'
+moduleOrder: 3
+order: 1
+summary: 'Las direcciones que una transformación no consigue torcer — y por qué son las que revelan qué hace realmente.'
+---
+
+Aplica una transformación al plano y casi todos los vectores salen despedidos de su recta original:
+cambian de dirección, no solo de longitud.
+
+Casi todos. Algunos, no.
+
+Un **vector propio** es un vector que, tras la transformación, sigue sobre su propia recta. Puede
+haberse estirado, encogido o dado la vuelta, pero no rotó. El factor por el que se escaló es su
+**valor propio**.
+
+$$A\vec{v} = \lambda\vec{v}$$
+
+Esa ecuación es la definición completa: aplicar la matriz hace lo mismo que multiplicar por un
+número.
+
+## Encuéntralos
+
+Las rectas punteadas naranjas son las direcciones propias. Mueve la matriz y observa: sobre esas
+rectas los vectores solo se estiran, nunca giran.
+
+<MatrixPlayground
+  initial={[2, 1, 1, 2]}
+  showDeterminant={false}
+  showEigen
+  labels={{
+    reset: 'Reiniciar',
+    eigen: 'valores propios',
+    noEigen: 'ninguno real — la transformación rota',
+  }}
+/>
+
+Prueba dos casos:
+
+- Una matriz **diagonal** como $\begin{bmatrix}3&0\\0&2\end{bmatrix}$: los ejes mismos son las
+  direcciones propias, y los valores propios son las entradas de la diagonal. Por eso las matrices
+  diagonales son fáciles: ya están escritas en su propia base.
+- Una **rotación** como $\begin{bmatrix}0&-1\\1&0\end{bmatrix}$: no hay ninguna recta que sobreviva,
+  porque una rotación tuerce absolutamente todo. El widget te dirá que no hay valores propios
+  reales. Los hay complejos, y describen precisamente el ángulo de giro — pero eso es otra lección.
+
+## En NumPy
+
+```python
+import numpy as np
+
+A = np.array([[2, 1],
+              [1, 2]])
+
+valores, vectores = np.linalg.eig(A)
+
+valores      # array([3., 1.])
+vectores     # las columnas son los vectores propios, normalizados
+# array([[ 0.707, -0.707],
+#        [ 0.707,  0.707]])
+```
+
+Ojo con la convención: `np.linalg.eig` devuelve los vectores propios **como columnas**, no como
+filas. Es un error clásico. Verifícalo siempre:
+
+```python
+v = vectores[:, 0]        # primer vector propio
+A @ v                     # array([2.121, 2.121])
+valores[0] * v            # array([2.121, 2.121])  — igual
+```
+
+## Por qué importan
+
+Los vectores propios responden a la pregunta *"¿qué hace esta transformación, esencialmente?"*.
+Descontando el estiramiento a lo largo de sus direcciones propias, no hace nada más.
+
+Eso los vuelve la herramienta central en un montón de sitios:
+
+- **PCA** busca las direcciones propias de la matriz de covarianza: los ejes a lo largo de los
+  cuales los datos más varían. Reducir dimensiones es quedarse con los valores propios grandes y
+  tirar los pequeños.
+- **PageRank** es el vector propio principal de la matriz de enlaces de la web.
+- Aplicar $A$ muchas veces a un vector cualquiera lo alinea con la dirección propia de mayor valor
+  — que es la razón por la que las cadenas de Markov convergen a un estado estable.
+
+En todos esos casos la pregunta es la misma: qué sobrevive a repetir la transformación. Y la
+respuesta siempre es la dirección propia dominante.
+
+## Hasta aquí
+
+Empezamos con flechas y dos operaciones, sumar y escalar. De ahí salieron las combinaciones
+lineales, y de ahí el span. Las matrices resultaron ser las funciones que respetan esas dos
+operaciones, con sus columnas guardando el destino de la base. El determinante midió cuánto se
+estira el área y avisó cuándo la transformación es irreversible. Y los vectores propios revelaron
+qué hace la transformación, quitando el ruido.
+
+Nada de eso necesitó memorizar una regla.
+
+---
+
+**Para probar.** Calcula los vectores propios de $\begin{bmatrix}1&1\\0&1\end{bmatrix}$, un
+cizallamiento. Vas a encontrar un único valor propio repetido y una sola dirección. ¿Puedes ver en
+el widget por qué un cizallamiento solo deja una recta intacta?

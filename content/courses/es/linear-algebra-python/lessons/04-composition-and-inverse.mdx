@@ -1,0 +1,106 @@
+---
+title: 'Componer y deshacer'
+language: 'es'
+module: 'Matrices como funciones'
+moduleOrder: 2
+order: 2
+summary: 'Multiplicar matrices es aplicar una transformación después de otra. Y a veces no hay vuelta atrás.'
+---
+
+Si una matriz es una transformación, multiplicar dos matrices tiene que significar **aplicar una y
+después la otra**. Eso es todo lo que es el producto de matrices.
+
+## El orden importa
+
+$AB$ significa: aplica $B$ primero, luego $A$. Se lee de derecha a izquierda, igual que la
+composición de funciones $f(g(x))$.
+
+```python
+import numpy as np
+
+R = np.array([[0, -1], [1, 0]])   # rotar 90°
+S = np.array([[2,  0], [0, 1]])   # estirar el eje x al doble
+
+R @ S     # array([[ 0, -1], [ 2,  0]])
+S @ R     # array([[ 0, -2], [ 1,  0]])
+```
+
+Son distintas. Estirar y luego rotar no es lo mismo que rotar y luego estirar — algo que resulta
+evidente si lo piensas geométricamente, y completamente opaco si solo miras la regla de filas por
+columnas.
+
+Esta es la razón de fondo por la que el producto de matrices **no es conmutativo**. No es una
+rareza del álgebra: es que componer funciones tampoco lo es.
+
+## Deshacer una transformación
+
+Si $A$ mueve el plano, la pregunta natural es si existe una matriz que lo devuelva a su sitio. Esa
+es la **inversa**, $A^{-1}$, y cumple:
+
+$$A^{-1}A = I$$
+
+donde $I$ es la identidad — la matriz que no hace nada.
+
+```python
+A = np.array([[2, 1],
+              [1, 1]])
+
+A_inv = np.linalg.inv(A)
+# array([[ 1., -1.],
+#        [-1.,  2.]])
+
+A_inv @ A     # la identidad, salvo error de punto flotante
+```
+
+## Cuando no hay vuelta atrás
+
+Mueve los sliders hasta que la cuadrícula se aplaste sobre una sola recta. El indicador de abajo te
+dice cuándo pasa.
+
+<MatrixPlayground
+  initial={[2, 1, 1, 1]}
+  showDeterminant
+  labels={{
+    reset: 'Reiniciar',
+    determinant: 'det',
+    hint: 'el plano colapsa a una recta — no hay inversa',
+  }}
+/>
+
+Cuando el plano colapsa, la transformación **destruye información**. Dos puntos distintos del plano
+original terminan en el mismo sitio, y ninguna matriz puede separarlos de nuevo: no sabría a cuál
+de los dos devolver cada punto.
+
+En ese caso se dice que la matriz es **singular** y no tiene inversa.
+
+```python
+B = np.array([[2, 4],
+              [1, 2]])       # la segunda columna es el doble de la primera
+
+np.linalg.inv(B)
+# LinAlgError: Singular matrix
+```
+
+NumPy no te da un resultado dudoso: falla. Y en la práctica es mejor así — un sistema sin solución
+única debería avisarte, no devolverte un número cualquiera.
+
+## Resolver sistemas es deshacer
+
+Un sistema de ecuaciones $A\vec{x} = \vec{b}$ pregunta: *¿qué vector, al ser transformado por $A$,
+cae en $\vec{b}$?* Es la transformación al revés.
+
+```python
+b = np.array([5, 3])
+np.linalg.solve(A, b)     # array([2., 1.])
+```
+
+Y ahora la advertencia práctica: aunque $A^{-1}b$ da lo mismo matemáticamente, **usa `solve` y no
+`inv`**. Calcular la inversa completa es más caro y numéricamente menos estable que resolver el
+sistema directamente. Es de esos detalles que solo se notan cuando la matriz es grande, y para
+entonces ya duele.
+
+---
+
+**Para probar.** Verifica que $(AB)^{-1} = B^{-1}A^{-1}$ con dos matrices cualesquiera. ¿Por qué se
+invierte el orden? Pista: para deshacer "ponte los calcetines y luego los zapatos", ¿qué haces
+primero?

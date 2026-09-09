@@ -10,6 +10,9 @@ import ImageBox from './ImageBox'
 import Reference from './Reference'
 import StackList from './StackList'
 import CaseSummary from './CaseSummary'
+import VectorPlot from './VectorPlot'
+import MatrixPlayground from './MatrixPlayground'
+import LinearCombo from './LinearCombo'
 import { PseudoCodeLine, PseudoCode } from './PseudoCode'
 
 export const components: MDXComponents = {
@@ -18,6 +21,9 @@ export const components: MDXComponents = {
   ImageBox,
   StackList,
   CaseSummary,
+  VectorPlot,
+  MatrixPlayground,
+  LinearCombo,
   TOCInline,
   a: CustomLink,
   pre: CodeBlock,

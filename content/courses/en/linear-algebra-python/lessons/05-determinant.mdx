@@ -1,0 +1,86 @@
+---
+title: 'The determinant'
+language: 'en'
+module: 'Matrices as functions'
+moduleOrder: 2
+order: 3
+summary: 'One number answering a very concrete question: how much does area stretch, and did the plane flip over.'
+---
+
+The determinant is usually introduced as a formula to memorise: $ad - bc$. But it's a number with a
+sharp geometric meaning, and once you see it the formula stops being necessary.
+
+## What it measures
+
+The determinant of a matrix is **the factor by which area is multiplied** when you apply the
+transformation.
+
+Take the unit square — the one spanned by $\hat{\imath}$ and $\hat{\jmath}$, of area 1. Apply the
+matrix. The area of the resulting figure *is* the determinant.
+
+<MatrixPlayground
+  initial={[2, 0.5, 0.5, 1.5]}
+  showDeterminant
+  labels={{ hint: 'area is zero: the plane got flattened' }}
+/>
+
+The purple region is the image of the unit square. Move it and watch the number follow.
+
+- $\det = 1$ → area unchanged. Rotations and shears are like this.
+- $\det = 3$ → everything takes up three times the room.
+- $\det = 0.5$ → everything shrinks by half.
+
+## Zero means collapse
+
+Drive the determinant to zero. The purple region disappears, because the entire plane flattened onto
+a line.
+
+This ties the three previous lessons into one sentence: **$\det A = 0$ if and only if the columns of
+$A$ are linearly dependent**, if and only if the span collapses, if and only if $A$ has no inverse.
+Four ways of saying the same thing.
+
+```python
+import numpy as np
+
+np.linalg.det(np.array([[2, 1], [1, 1]]))   # 1.0  → invertible
+np.linalg.det(np.array([[2, 4], [1, 2]]))   # 0.0  → singular
+```
+
+## The sign
+
+Now something the formula doesn't suggest: the determinant can be **negative**.
+
+Set $a = -1$ and leave the rest at the identity. The determinant becomes $-1$. The area is still 1
+in magnitude, but the plane has been **flipped**: what used to be on the left of $\hat{\imath}$ is
+now on its right.
+
+The sign records orientation. Positive, the plane keeps its handedness; negative, it was reflected.
+
+## Why that formula
+
+With the interpretation in hand, $ad - bc$ stops being arbitrary.
+
+The columns of the matrix are the two sides of the parallelogram the unit square became: $(a, c)$ and
+$(b, d)$. The area of a parallelogram with those sides is exactly $|ad - bc|$ — it drops out of
+subtracting the leftover triangles from the enclosing rectangle. The formula *is* the area.
+
+## A property that comes free
+
+$$\det(AB) = \det(A)\det(B)$$
+
+Which in words is almost obvious: if $B$ triples area and $A$ doubles it, doing both multiplies it by
+six. Proving it with the formulas is tedious; seeing it geometrically is immediate.
+
+```python
+A = np.array([[2, 0], [0, 1]])
+B = np.array([[1, 1], [0, 1]])
+
+np.linalg.det(A @ B)                          # 2.0
+np.linalg.det(A) * np.linalg.det(B)           # 2.0
+```
+
+---
+
+**Try it.** What's the determinant of a 90° rotation? Reason it out before computing: a rotation
+changes neither area nor handedness. Then confirm with
+`np.linalg.det(np.array([[0, -1], [1, 0]]))`.

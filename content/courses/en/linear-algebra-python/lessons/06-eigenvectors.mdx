@@ -1,0 +1,100 @@
+---
+title: 'Eigenvectors'
+language: 'en'
+module: 'The hidden structure'
+moduleOrder: 3
+order: 1
+summary: 'The directions a transformation cannot twist — and why they reveal what it is really doing.'
+---
+
+Apply a transformation to the plane and almost every vector gets knocked off its original line: it
+changes direction, not just length.
+
+Almost every one. Some don't.
+
+An **eigenvector** is a vector that, after the transformation, still lies on its own line. It may
+have stretched, shrunk or flipped, but it didn't rotate. The factor it scaled by is its
+**eigenvalue**.
+
+$$A\vec{v} = \lambda\vec{v}$$
+
+That equation is the whole definition: applying the matrix does the same thing as multiplying by a
+number.
+
+## Find them
+
+The dashed orange lines are the eigen-directions. Move the matrix and watch: on those lines vectors
+only stretch, never turn.
+
+<MatrixPlayground
+  initial={[2, 1, 1, 2]}
+  showDeterminant={false}
+  showEigen
+  labels={{ noEigen: 'none real — the transformation rotates' }}
+/>
+
+Try two cases:
+
+- A **diagonal** matrix like $\begin{bmatrix}3&0\\0&2\end{bmatrix}$: the axes themselves are the
+  eigen-directions, and the eigenvalues are the diagonal entries. That's why diagonal matrices are
+  easy — they're already written in their own basis.
+- A **rotation** like $\begin{bmatrix}0&-1\\1&0\end{bmatrix}$: no line survives, because a rotation
+  twists absolutely everything. The widget will tell you there are no real eigenvalues. There are
+  complex ones, and they describe precisely the angle of rotation — but that's another lesson.
+
+## In NumPy
+
+```python
+import numpy as np
+
+A = np.array([[2, 1],
+              [1, 2]])
+
+values, vectors = np.linalg.eig(A)
+
+values       # array([3., 1.])
+vectors      # the columns are the eigenvectors, normalised
+# array([[ 0.707, -0.707],
+#        [ 0.707,  0.707]])
+```
+
+Mind the convention: `np.linalg.eig` returns eigenvectors **as columns**, not rows. It's a classic
+mistake. Always check:
+
+```python
+v = vectors[:, 0]         # first eigenvector
+A @ v                     # array([2.121, 2.121])
+values[0] * v             # array([2.121, 2.121])  — same
+```
+
+## Why they matter
+
+Eigenvectors answer the question *"what does this transformation essentially do?"*. Discounting the
+stretching along its eigen-directions, it does nothing else.
+
+That makes them the central tool in a lot of places:
+
+- **PCA** looks for the eigen-directions of the covariance matrix: the axes along which the data
+  varies most. Reducing dimensions is keeping the large eigenvalues and discarding the small ones.
+- **PageRank** is the principal eigenvector of the web's link matrix.
+- Applying $A$ many times to an arbitrary vector aligns it with the dominant eigen-direction —
+  which is why Markov chains converge to a steady state.
+
+In all of those the question is the same: what survives repeating the transformation. And the answer
+is always the dominant eigen-direction.
+
+## Where we got to
+
+We started with arrows and two operations, adding and scaling. Out of those came linear
+combinations, and out of those the span. Matrices turned out to be the functions that respect those
+two operations, their columns storing the destination of the basis. The determinant measured how
+much area stretches and flagged when a transformation is irreversible. And eigenvectors revealed
+what a transformation does, with the noise removed.
+
+None of it needed a memorised rule.
+
+---
+
+**Try it.** Compute the eigenvectors of $\begin{bmatrix}1&1\\0&1\end{bmatrix}$, a shear. You'll find
+a single repeated eigenvalue and one direction. Can you see in the widget why a shear leaves only
+one line intact?
