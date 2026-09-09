@@ -46,7 +46,8 @@ equipos, dos conjuntos de restricciones, y casi ninguna respuesta en común.
 
 ## ¿Qué es CREARIA Agent?
 
-CREARIA Agent es un **agente de soporte con IA multicanal**. Un negocio conecta WhatsApp (y,
+CREARIA Agent es un **agente de soporte con IA multicanal**, desarrollado para
+[CrearIA](https://crearia.co/). Un negocio conecta WhatsApp (y,
 opcionalmente, correo o Instagram), sube lo que sabe — un PDF, una lista de precios, un conjunto de
 preguntas frecuentes — y el agente responde a los clientes a partir de ese material. Cuando una
 pregunta necesita una acción real o una persona real, o llama a una herramienta o entrega la
@@ -317,6 +318,16 @@ Cuando el modelo llama a `escalate_to_human`, el servicio elige al **agente acti
 conversación pasa entonces a un **proxy silencioso**: los mensajes del cliente se retransmiten al
 teléfono del agente, y las respuestas del agente se retransmiten de vuelta, con `proxy_metadata` en
 cada mensaje registrando que lo envió un humano.
+
+<ImageBox
+  src="/images/crearia/escalation-proxy.png"
+  alt="El proxy de escalamiento: cliente y agente humano cada uno en su propio WhatsApp, conectados por un proxy silencioso que retransmite en ambas direcciones, con los comandos de barra del agente listados abajo"
+  width={920}
+  height={470}
+>
+  El traspaso. Ninguna de las dos partes instala nada — el cliente sigue chateando y el agente
+  trabaja desde su propio teléfono.
+</ImageBox>
 
 Lo que no esperaba es que toda la interfaz del agente humano sean **comandos de barra por
 WhatsApp**:
