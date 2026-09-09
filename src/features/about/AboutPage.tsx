@@ -114,7 +114,7 @@ export default function AboutPage({ author, locale }: AboutPageProps) {
     {
       icon: dcIcon,
       href: siteMetadata.discord,
-      title: 'Topofilosofía',
+      title: 'CODE & MATH',
       desc: t('elsewhere.items.3.desc'),
       hl: t('elsewhere.discord_cta'),
     },
