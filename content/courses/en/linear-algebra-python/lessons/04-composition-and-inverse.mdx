@@ -1,0 +1,99 @@
+---
+title: 'Composing and undoing'
+language: 'en'
+module: 'Matrices as functions'
+moduleOrder: 2
+order: 2
+summary: 'Multiplying matrices is applying one transformation after another. And sometimes there is no way back.'
+---
+
+If a matrix is a transformation, multiplying two matrices has to mean **applying one and then the
+other**. That's all the matrix product is.
+
+## Order matters
+
+$AB$ means: apply $B$ first, then $A$. It reads right to left, just like function composition
+$f(g(x))$.
+
+```python
+import numpy as np
+
+R = np.array([[0, -1], [1, 0]])   # rotate 90°
+S = np.array([[2,  0], [0, 1]])   # stretch x by 2
+
+R @ S     # array([[ 0, -1], [ 2,  0]])
+S @ R     # array([[ 0, -2], [ 1,  0]])
+```
+
+They differ. Stretching then rotating isn't the same as rotating then stretching — obvious if you
+picture it, and completely opaque if you only look at the rows-times-columns rule.
+
+This is the underlying reason matrix multiplication **isn't commutative**. It's not an algebraic
+quirk: composing functions isn't either.
+
+## Undoing a transformation
+
+If $A$ moves the plane, the natural question is whether some matrix moves it back. That's the
+**inverse**, $A^{-1}$, and it satisfies:
+
+$$A^{-1}A = I$$
+
+where $I$ is the identity — the matrix that does nothing.
+
+```python
+A = np.array([[2, 1],
+              [1, 1]])
+
+A_inv = np.linalg.inv(A)
+# array([[ 1., -1.],
+#        [-1.,  2.]])
+
+A_inv @ A     # the identity, up to floating-point error
+```
+
+## When there's no way back
+
+Move the sliders until the grid flattens onto a single line. The readout below tells you when.
+
+<MatrixPlayground
+  initial={[2, 1, 1, 1]}
+  showDeterminant
+  labels={{ hint: 'the plane collapses to a line — no inverse exists' }}
+/>
+
+When the plane collapses, the transformation **destroys information**. Two distinct points of the
+original plane land in the same place, and no matrix can pull them apart again: it wouldn't know
+which of the two to send each point back to.
+
+Such a matrix is called **singular**, and it has no inverse.
+
+```python
+B = np.array([[2, 4],
+              [1, 2]])       # second column is twice the first
+
+np.linalg.inv(B)
+# LinAlgError: Singular matrix
+```
+
+NumPy doesn't hand you a dubious result: it fails. Which is the right call — a system with no unique
+solution should tell you, not return some number.
+
+## Solving a system is undoing
+
+A system $A\vec{x} = \vec{b}$ asks: *which vector, transformed by $A$, lands on $\vec{b}$?* It's the
+transformation run backwards.
+
+```python
+b = np.array([5, 3])
+np.linalg.solve(A, b)     # array([2., 1.])
+```
+
+And now the practical warning: although $A^{-1}b$ is mathematically the same, **use `solve`, not
+`inv`**. Computing the full inverse is more expensive and numerically less stable than solving the
+system directly. It's the kind of detail you only notice once the matrix is large — by which point
+it hurts.
+
+---
+
+**Try it.** Verify that $(AB)^{-1} = B^{-1}A^{-1}$ with any two matrices. Why does the order flip?
+Hint: to undo "socks on, then shoes on", what do you take off first?

@@ -467,6 +467,128 @@
     .case-stat:first-child { border-top: none; }
   }
 
+  /* ---- Course visuals: VectorPlot / MatrixPlayground / LinearCombo ---- */
+  :root { --vp-a: #e11d48; --vp-b: #0f766e; --vp-c: #7c3aed; --vp-d: #b45309; }
+  html.dark { --vp-a: #fb7185; --vp-b: #2dd4bf; --vp-c: #a78bfa; --vp-d: #fbbf24; }
+
+  .vplot { margin: 28px 0; display: flex; flex-direction: column; align-items: center; }
+  .vplot svg { width: 100%; max-width: var(--vplot-h, 340px); height: auto; background: color-mix(in oklab, var(--g-50) 60%, transparent); border: 1px solid var(--g-200); border-radius: 14px; }
+  html.dark .vplot svg { background: color-mix(in oklab, var(--g-100) 45%, transparent); border-color: var(--g-300); }
+  .vplot figcaption { margin-top: 10px; font-size: 13.5px; color: var(--g-500); text-align: center; }
+  .vplot-grid { stroke: var(--g-200); stroke-width: 1; }
+  html.dark .vplot-grid { stroke: var(--g-300); }
+  .vplot-axis { stroke: var(--g-400); stroke-width: 1.4; }
+  .vplot-label { font-size: 13px; font-weight: 700; font-family: var(--f-ubuntu); }
+
+  .mplay, .lcombo { margin: 30px 0; border: 1px solid var(--g-200); border-radius: 16px; overflow: hidden; background: color-mix(in oklab, var(--g-50) 60%, transparent); display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  html.dark .mplay, html.dark .lcombo { border-color: var(--g-300); background: color-mix(in oklab, var(--g-100) 45%, transparent); }
+  .mplay-canvas, .lcombo-canvas { padding: 18px; display: flex; align-items: center; justify-content: center; }
+  .mplay-canvas svg, .lcombo-canvas svg { width: 100%; height: auto; }
+  .mplay-grid { stroke: var(--g-300); stroke-width: 0.9; }
+  html.dark .mplay-grid { stroke: var(--g-300); }
+  .mplay-axis { stroke: var(--g-500); stroke-width: 1.4; }
+  .mplay-area { fill: color-mix(in oklab, var(--vp-c) 22%, transparent); stroke: var(--vp-c); stroke-width: 1.4; }
+  .mplay-eigen { stroke: var(--vp-d); stroke-width: 1.6; stroke-dasharray: 6 5; }
+
+  .mplay-controls, .lcombo-controls { padding: 20px 22px; border-left: 1px solid var(--g-200); display: flex; flex-direction: column; gap: 10px; justify-content: center; }
+  html.dark .mplay-controls, html.dark .lcombo-controls { border-left-color: var(--g-300); }
+  .mplay-matrix { display: flex; align-items: center; gap: 4px; margin-bottom: 6px; }
+  .mplay-bracket { font-size: 44px; line-height: 1; color: var(--g-400); font-weight: 300; }
+  .mplay-cells { display: grid; grid-template-columns: repeat(2, 46px); gap: 2px 10px; font-family: var(--f-ubuntu); font-weight: 700; font-size: 15px; color: var(--fg); text-align: center; }
+  .mplay-slider { display: grid; grid-template-columns: 18px 1fr 34px; align-items: center; gap: 10px; }
+  .mplay-name { font-family: var(--f-ubuntu); font-weight: 700; font-size: 13px; color: var(--s-500); }
+  html.dark .mplay-name { color: var(--s-400); }
+  .mplay-val { font-size: 12.5px; color: var(--g-500); text-align: right; font-variant-numeric: tabular-nums; }
+  .mplay-slider input[type="range"] { width: 100%; accent-color: var(--s-500); }
+  .post-body .mplay-readout { margin: 2px 0 0; font-size: 13.5px; color: var(--g-600); }
+  .mplay-readout strong { color: var(--fg); }
+  .mplay-reset { align-self: flex-start; margin-top: 6px; font-size: 12.5px; font-weight: 600; padding: 6px 14px; border-radius: 999px; border: 1px solid var(--g-300); background: transparent; color: var(--g-600); cursor: pointer; transition: background .18s var(--ease); }
+  .mplay-reset:hover { background: var(--g-100); }
+  .post-body .mplay-code { grid-column: 1 / -1; margin: 0; border-top: 1px solid var(--g-200); border-radius: 0; }
+  html.dark .post-body .mplay-code { border-top-color: var(--g-300); }
+  .lcombo-ghost { stroke-width: 1.8; stroke-dasharray: 5 4; opacity: .55; }
+
+  @media (max-width: 720px) {
+    .mplay, .lcombo { grid-template-columns: 1fr; }
+    .mplay-controls, .lcombo-controls { border-left: none; border-top: 1px solid var(--g-200); }
+    html.dark .mplay-controls, html.dark .lcombo-controls { border-top-color: var(--g-300); }
+  }
+
+  /* ---- Courses: index, overview and lesson shell ---- */
+  .courses-hero { padding: 64px 0 40px; max-width: 720px; }
+  .courses-hero h1 { font-size: clamp(34px, 5vw, 52px); line-height: 1.08; margin: 10px 0 18px; letter-spacing: -0.02em; }
+  .courses-list { display: grid; gap: 20px; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); padding-bottom: 80px; }
+  .courses-empty { color: var(--g-500); }
+  .course-card { display: block; border: 1px solid var(--g-200); border-radius: 18px; overflow: hidden; text-decoration: none; background: color-mix(in oklab, var(--g-50) 55%, transparent); transition: border-color .18s var(--ease), transform .18s var(--ease); }
+  html.dark .course-card { border-color: var(--g-300); background: color-mix(in oklab, var(--g-100) 45%, transparent); }
+  .course-card:hover { border-color: var(--s-500); transform: translateY(-2px); }
+  .course-card-body { padding: 26px 28px 28px; }
+  .course-card-body h2 { font-size: 24px; margin: 8px 0 10px; color: var(--fg); letter-spacing: -0.01em; }
+  .course-card-body p { margin: 0; color: var(--g-600); font-size: 15px; line-height: 1.6; }
+  .course-card-level { display: inline-block; font-family: var(--f-ubuntu); text-transform: uppercase; letter-spacing: .12em; font-size: 10.5px; font-weight: 700; color: var(--s-500); }
+  html.dark .course-card-level { color: var(--s-400); }
+  .course-card-meta { margin-top: 14px !important; font-size: 13px !important; color: var(--g-500) !important; }
+  .course-card-tags { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 16px; }
+  .course-card-tags span { font-size: 11.5px; font-weight: 600; color: var(--g-500); background: var(--g-100); padding: 3px 10px; border-radius: 999px; }
+  html.dark .course-card-tags span { background: var(--g-200); color: var(--g-600); }
+
+  .course-overview { padding-bottom: 80px; }
+  .course-head { padding: 48px 0 30px; max-width: 760px; }
+  .course-head h1 { font-size: clamp(30px, 4.4vw, 46px); line-height: 1.1; margin: 10px 0 16px; letter-spacing: -0.02em; }
+  .course-head-meta { font-size: 13.5px; color: var(--g-500); margin: 6px 0 24px; }
+  .course-back { display: inline-block; font-size: 13px; font-weight: 600; color: var(--g-500); text-decoration: none; margin-bottom: 12px; }
+  .course-back:hover { color: var(--s-500); }
+  .course-start { display: inline-block; font-family: var(--f-ubuntu); font-weight: 700; font-size: 14.5px; padding: 11px 24px; border-radius: 999px; background: var(--s-500); color: #fff; text-decoration: none; transition: opacity .18s var(--ease); }
+  .course-start:hover { opacity: .88; }
+  .course-overview-grid { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 48px; align-items: start; }
+  .course-intro { max-width: none; }
+
+  .course-toc { border: 1px solid var(--g-200); border-radius: 16px; padding: 20px 22px; background: color-mix(in oklab, var(--g-50) 55%, transparent); position: sticky; top: 92px; }
+  html.dark .course-toc { border-color: var(--g-300); background: color-mix(in oklab, var(--g-100) 45%, transparent); }
+  .course-toc-title { font-family: var(--f-ubuntu); text-transform: uppercase; letter-spacing: .12em; font-size: 10.5px; font-weight: 700; color: var(--s-500); margin: 0 0 14px; }
+  html.dark .course-toc-title { color: var(--s-400); }
+  .course-toc-modules, .course-toc-lessons { list-style: none; margin: 0; padding: 0; }
+  .course-toc-module + .course-toc-module { margin-top: 18px; }
+  .course-toc-module-title { display: flex; gap: 8px; align-items: baseline; font-size: 13px; font-weight: 700; color: var(--fg); margin: 0 0 8px; }
+  .course-toc-module-num { font-family: var(--f-ubuntu); font-size: 11px; color: var(--g-400); }
+  .course-toc-lessons { border-left: 1px solid var(--g-200); padding-left: 2px; }
+  html.dark .course-toc-lessons { border-left-color: var(--g-300); }
+  .course-toc-link { display: grid; grid-template-columns: 22px 1fr; gap: 8px; align-items: baseline; padding: 6px 10px; border-radius: 8px; text-decoration: none; font-size: 13.5px; line-height: 1.45; color: var(--g-600); transition: background .16s var(--ease), color .16s var(--ease); }
+  .course-toc-link:hover { background: var(--g-100); color: var(--fg); }
+  .course-toc-link.is-active { background: color-mix(in oklab, var(--s-500) 14%, transparent); color: var(--fg); font-weight: 600; }
+  .course-toc-num { font-family: var(--f-ubuntu); font-size: 11px; color: var(--g-400); text-align: right; }
+  .course-toc-link.is-active .course-toc-num { color: var(--s-500); }
+
+  .lesson-shell { display: grid; grid-template-columns: 300px minmax(0, 1fr); gap: 56px; align-items: start; padding: 44px 0 80px; }
+  .lesson-aside { position: sticky; top: 92px; }
+  .lesson-aside .course-toc { position: static; }
+  .lesson-progress { height: 4px; border-radius: 999px; background: var(--g-200); overflow: hidden; margin: 10px 0 6px; }
+  html.dark .lesson-progress { background: var(--g-300); }
+  .lesson-progress span { display: block; height: 100%; background: var(--s-500); border-radius: 999px; }
+  .lesson-progress-label { font-size: 12px; color: var(--g-500); margin: 0 0 18px; }
+  .lesson-head { margin-bottom: 26px; }
+  .lesson-module { font-family: var(--f-ubuntu); text-transform: uppercase; letter-spacing: .12em; font-size: 10.5px; font-weight: 700; color: var(--s-500); margin: 0 0 8px; }
+  html.dark .lesson-module { color: var(--s-400); }
+  .lesson-head h1 { font-size: clamp(28px, 4vw, 42px); line-height: 1.12; margin: 0 0 14px; letter-spacing: -0.02em; }
+  .lesson-nav { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 56px; padding-top: 28px; border-top: 1px solid var(--g-200); }
+  html.dark .lesson-nav { border-top-color: var(--g-300); }
+  .lesson-nav a { display: flex; flex-direction: column; gap: 5px; padding: 16px 18px; border: 1px solid var(--g-200); border-radius: 14px; text-decoration: none; transition: border-color .18s var(--ease); }
+  html.dark .lesson-nav a { border-color: var(--g-300); }
+  .lesson-nav a:hover { border-color: var(--s-500); }
+  .lesson-nav span { font-size: 12px; color: var(--g-500); }
+  .lesson-nav strong { font-size: 14.5px; color: var(--fg); font-weight: 600; line-height: 1.4; }
+  .lesson-nav-next { text-align: right; grid-column: 2; }
+
+  @media (max-width: 1000px) {
+    .course-overview-grid { grid-template-columns: 1fr; gap: 32px; }
+    .lesson-shell { grid-template-columns: 1fr; gap: 28px; }
+    .lesson-aside, .course-toc { position: static; }
+  }
+  @media (max-width: 620px) {
+    .lesson-nav { grid-template-columns: 1fr; }
+    .lesson-nav-next { grid-column: 1; text-align: left; }
+  }
+
   .math-block { background: color-mix(in oklab, var(--p-50) 60%, transparent); border: 1px dashed var(--p-300); padding: 24px; border-radius: 12px; margin: 24px 0; text-align: center; font-family: "Latin Modern Math", Georgia, serif; font-style: italic; font-size: 20px; color: var(--g-800); }
   html.dark .math-block { background: color-mix(in oklab, var(--p-900) 20%, transparent); border-color: var(--p-700); color: var(--g-200); }
 

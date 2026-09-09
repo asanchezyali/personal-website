@@ -1,0 +1,111 @@
+---
+title: 'Qué es un vector'
+language: 'es'
+module: 'Vectores'
+moduleOrder: 1
+order: 1
+summary: 'Tres definiciones que resultan ser la misma, y por qué la geométrica es la que conviene tener en la cabeza.'
+---
+
+Pregúntale a tres personas qué es un vector y obtendrás tres respuestas.
+
+Un **físico** dirá que es una flecha en el espacio: tiene magnitud y dirección, y puedes moverla
+sin que deje de ser la misma flecha. Un **programador** dirá que es una lista de números. Un
+**matemático** dirá que es un elemento de un espacio vectorial, y te dará una lista de axiomas.
+
+Las tres son correctas. Pero para trabajar, la primera es la que da intuición y la segunda es la
+que se ejecuta — y el álgebra lineal es, en buena medida, el arte de pasar de una a otra.
+
+## Un vector es una instrucción de movimiento
+
+Piensa en $\vec{v} = (3, 2)$ no como un punto, sino como una **instrucción**: muévete 3 a la
+derecha y 2 hacia arriba. El origen es donde empiezas.
+
+<VectorPlot
+  vectors={[
+    { x: 3, y: 2, label: 'v = (3, 2)' },
+    { x: -2, y: 3, label: 'w = (-2, 3)' },
+  ]}
+  caption="Dos vectores del plano. Cada uno es una instrucción: cuánto avanzar horizontal y verticalmente."
+/>
+
+En NumPy esa instrucción es literalmente una lista:
+
+```python
+import numpy as np
+
+v = np.array([3, 2])
+w = np.array([-2, 3])
+```
+
+## Sumar es encadenar instrucciones
+
+Aquí está la primera idea que vale la pena tener clara. Sumar dos vectores **no** es una regla
+arbitraria sobre listas de números: es hacer un movimiento y luego el otro.
+
+Si $\vec{v}$ te dice "3 a la derecha, 2 arriba" y $\vec{w}$ dice "2 a la izquierda, 3 arriba",
+hacer los dos seguidos te deja en $(1, 5)$. Que es exactamente lo que da sumar componente a
+componente.
+
+```python
+v + w        # array([1, 5])
+```
+
+Esa correspondencia — mover el punto de partida al final de la primera flecha — se llama *poner los
+vectores punta con cola*, y es la razón por la que la suma se define así y no de otro modo.
+
+## Escalar es estirar
+
+Multiplicar por un número **escala** la instrucción sin cambiar su dirección:
+
+```python
+2 * v        # array([6, 4])   — el doble de lejos, mismo rumbo
+-1 * v       # array([-3, -2]) — misma recta, sentido opuesto
+0.5 * v      # array([1.5, 1.0])
+```
+
+Un número negativo da la vuelta a la flecha. Por eso a los números se les llama **escalares** en
+este contexto: su único trabajo es escalar.
+
+<VectorPlot
+  vectors={[
+    { x: 3, y: 2, label: 'v' },
+    { x: 6, y: 4, label: '2v', dashed: true },
+    { x: -3, y: -2, label: '−v', dashed: true },
+  ]}
+  range={7}
+  caption="Escalar mueve el vector a lo largo de su propia recta. Nunca lo saca de ella."
+/>
+
+## La longitud
+
+La magnitud de un vector sale del teorema de Pitágoras, porque sus componentes son justamente los
+catetos de un triángulo rectángulo:
+
+$$\|\vec{v}\| = \sqrt{v_1^2 + v_2^2}$$
+
+```python
+np.linalg.norm(v)    # 3.605551275463989
+```
+
+Un vector de longitud 1 se llama **unitario**, y sirve para hablar de dirección sin mezclarla con
+magnitud:
+
+```python
+v / np.linalg.norm(v)    # array([0.83205029, 0.5547002])
+```
+
+## Por qué esto importa después
+
+Todo lo que viene se apoya en dos operaciones: **sumar** vectores y **escalarlos**. Nada más. Las
+matrices, los determinantes, los vectores propios — todo se construye encima de esas dos.
+
+Un espacio vectorial es, de hecho, *cualquier* conjunto donde esas dos operaciones se comporten
+como aquí. Por eso el álgebra lineal aparece en sitios que no parecen geometría: los embeddings de
+un modelo de lenguaje son vectores porque se pueden sumar y escalar, y eso basta para que toda esta
+maquinaria aplique.
+
+---
+
+**Para probar.** Toma $\vec{v} = (3, 2)$ y $\vec{w} = (-2, 3)$ y calcula $\vec{v} - \vec{w}$ a mano
+antes de correrlo. ¿Qué instrucción de movimiento describe? Pista: restar es sumar el opuesto.

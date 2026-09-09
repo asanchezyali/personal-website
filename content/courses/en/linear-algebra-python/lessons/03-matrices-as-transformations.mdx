@@ -1,0 +1,90 @@
+---
+title: 'Matrices as transformations'
+language: 'en'
+module: 'Matrices as functions'
+moduleOrder: 2
+order: 1
+summary: 'A matrix is not a table of numbers. It is the instruction for where the whole plane moves.'
+---
+
+This is the hinge lesson of the course. If you take one idea away, make it this one.
+
+A $2 \times 2$ matrix **is not a table**. It's a function that takes the entire plane and moves it,
+in such a way that lines stay lines, stay evenly spaced, and the origin stays put. That's what a
+**linear transformation** is.
+
+## The idea that makes it easy
+
+Here's the trick that turns this from something memorisable into something obvious.
+
+Since every vector is a linear combination of $\hat{\imath}$ and $\hat{\jmath}$ — you saw that last
+lesson — knowing where *any* vector goes only requires knowing where those two go.
+
+And that is exactly what a matrix stores: **its columns are the images of $\hat{\imath}$ and
+$\hat{\jmath}$.**
+
+$$A = \begin{bmatrix} a & b \\ c & d \end{bmatrix} \quad\Longrightarrow\quad \hat{\imath} \mapsto \begin{bmatrix} a \\ c \end{bmatrix}, \qquad \hat{\jmath} \mapsto \begin{bmatrix} b \\ d \end{bmatrix}$$
+
+Everything else follows. If $\hat{\imath}$ goes to $(a, c)$ and $\hat{\jmath}$ goes to $(b, d)$, then
+$(x, y) = x\hat{\imath} + y\hat{\jmath}$ has to go to $x(a,c) + y(b,d)$. Write that out and you get
+the multiplication rule you probably memorised:
+
+$$A\vec{v} = \begin{bmatrix} ax + by \\ cx + dy \end{bmatrix}$$
+
+The rule isn't arbitrary. It's the only one that respects linearity.
+
+## Move it
+
+The sliders are the four entries. The red arrow is where $\hat{\imath}$ went; the green one, where
+$\hat{\jmath}$ went. The grid shows what happened to the whole plane.
+
+<MatrixPlayground initial={[1, 0, 0, 1]} showDeterminant={false} />
+
+Things worth provoking:
+
+- Leave it at $\begin{bmatrix}1&0\\0&1\end{bmatrix}$ — nothing moves. That's the **identity**.
+- Set $a = 0, b = -1, c = 1, d = 0$ — the plane rotates 90°.
+- Set $a = 2, d = 2$ — everything moves twice as far from the origin.
+- Set $b = 1$ and leave the rest — that's a **shear**: verticals tilt.
+- Make the two columns parallel — the plane flattens onto a line. We'll come back to that in the
+  determinant lesson.
+
+## In NumPy
+
+```python
+import numpy as np
+
+A = np.array([[0, -1],
+              [1,  0]])     # 90° rotation
+
+v = np.array([3, 2])
+A @ v                       # array([-2, 3])
+```
+
+The `@` operator is matrix multiplication. If you're coming from `*`, careful: `A * v` in NumPy
+multiplies element by element, which is a completely different thing.
+
+And you can check the central claim directly:
+
+```python
+A @ np.array([1, 0])    # array([0, 1])  — first column of A
+A @ np.array([0, 1])    # array([-1, 0]) — second column of A
+```
+
+The columns are the images of the basis. Not a metaphor — literally.
+
+## Why "linear"
+
+The transformation satisfies two properties, and the name of the whole field comes from them:
+
+$$A(\vec{v} + \vec{w}) = A\vec{v} + A\vec{w} \qquad A(s\vec{v}) = s(A\vec{v})$$
+
+In words: it doesn't matter whether you add first and transform after, or the other way round. That
+is why knowing the image of the basis suffices — any other vector is built by adding and scaling,
+and the transformation respects both.
+
+---
+
+**Try it.** Without running anything, which matrix reflects the plane across the horizontal axis?
+Think about where $\hat{\imath}$ must go and where $\hat{\jmath}$ must go, and write them as columns.
+Then check it in the widget.

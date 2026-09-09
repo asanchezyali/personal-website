@@ -1,0 +1,102 @@
+---
+title: 'Combinaciones lineales y span'
+language: 'es'
+module: 'Vectores'
+moduleOrder: 1
+order: 2
+summary: 'Con dos vectores y dos números puedes alcanzar casi todo el plano. Casi.'
+---
+
+Ya tienes las dos operaciones: sumar y escalar. Combínalas y obtienes la construcción central de
+todo el curso.
+
+Dados dos vectores $\vec{v}$ y $\vec{w}$ y dos números $s$ y $t$, la expresión
+
+$$s\vec{v} + t\vec{w}$$
+
+se llama **combinación lineal**. Escala cada vector, súmalos, y mira dónde caes.
+
+## Muévelo
+
+Los dos sliders son $s$ y $t$. Las flechas sólidas son $\vec{v}$ y $\vec{w}$; la punteada muestra
+cómo se encadenan; la morada es el resultado.
+
+<LinearCombo
+  v={[2, 1]}
+  w={[-1, 2]}
+  labels={{ result: 'resultado', reset: 'Reiniciar', degenerate: 'Estos dos vectores son paralelos — su span es una recta.' }}
+/>
+
+Juega un momento antes de seguir. La pregunta que importa es: **¿a qué puntos del plano puedes
+llegar?**
+
+## El span
+
+El conjunto de todos los puntos alcanzables se llama el **span** de $\vec{v}$ y $\vec{w}$.
+
+Con los valores de arriba, la respuesta es *todo el plano*. Cualquier punto que se te ocurra tiene
+un par $(s, t)$ que lo alcanza. Dos vectores que apuntan en direcciones distintas bastan para
+generar $\mathbb{R}^2$ entero.
+
+```python
+import numpy as np
+
+v = np.array([2, 1])
+w = np.array([-1, 2])
+
+# ¿Qué combinación llega a (4, 3)?
+np.linalg.solve(np.column_stack([v, w]), np.array([4, 3]))
+# array([2.2, 0.4])  →  2.2·v + 0.4·w = (4, 3)
+```
+
+Esa línea de `solve` es, en el fondo, todo lo que hace resolver un sistema de ecuaciones: buscar
+los coeficientes de una combinación lineal.
+
+## Cuando el plano se encoge
+
+Ahora el caso interesante. ¿Qué pasa si los dos vectores apuntan en la **misma** dirección?
+
+Prueba con $\vec{v} = (2, 1)$ y $\vec{w} = (4, 2)$ — el segundo es el doble del primero. Por más
+que muevas los sliders, el resultado nunca sale de una sola recta. El span colapsó de un plano a
+una línea.
+
+Cuando eso ocurre se dice que los vectores son **linealmente dependientes**: uno no aporta
+información nueva porque ya estaba contenido en el otro. Si son independientes, el span es todo el
+plano.
+
+```python
+# El determinante detecta exactamente esto (lección 5)
+np.linalg.det(np.column_stack([[2, 1], [4, 2]]))   # 0.0  → dependientes
+np.linalg.det(np.column_stack([[2, 1], [-1, 2]]))  # 5.0  → independientes
+```
+
+## Base
+
+Un conjunto de vectores independientes cuyo span es todo el espacio se llama **base**. Los dos que
+usaste arriba forman una base de $\mathbb{R}^2$.
+
+La base que todo el mundo usa por defecto es
+$\hat{\imath} = (1, 0)$ y $\hat{\jmath} = (0, 1)$:
+
+<VectorPlot
+  vectors={[
+    { x: 1, y: 0, label: 'î' },
+    { x: 0, y: 1, label: 'ĵ' },
+    { x: 3, y: 2, label: '3î + 2ĵ', dashed: true },
+  ]}
+  range={4}
+  caption="Escribir (3, 2) ya es una combinación lineal: 3 veces î más 2 veces ĵ."
+/>
+
+Y aquí está el giro que conviene notar: **cuando escribes un vector como $(3, 2)$ ya estás usando
+una combinación lineal**, solo que con una base tan habitual que no la mencionas. Las coordenadas
+son siempre coordenadas *respecto a alguna base*.
+
+Esa observación es la puerta de entrada al siguiente módulo: si cambiar de base cambia las
+coordenadas, entonces una matriz puede entenderse como la instrucción de a dónde va cada vector de
+la base.
+
+---
+
+**Para probar.** Con $\vec{v} = (2, 1)$ y $\vec{w} = (-1, 2)$, encuentra a mano los coeficientes
+que llegan a $(0, 5)$. Después verifícalo con `np.linalg.solve`.

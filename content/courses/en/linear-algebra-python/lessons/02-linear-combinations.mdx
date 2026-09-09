@@ -1,0 +1,94 @@
+---
+title: 'Linear combinations and span'
+language: 'en'
+module: 'Vectors'
+moduleOrder: 1
+order: 2
+summary: 'With two vectors and two numbers you can reach almost the whole plane. Almost.'
+---
+
+You have the two operations now: add and scale. Combine them and you get the central construction of
+the whole course.
+
+Given two vectors $\vec{v}$ and $\vec{w}$ and two numbers $s$ and $t$, the expression
+
+$$s\vec{v} + t\vec{w}$$
+
+is called a **linear combination**. Scale each vector, add them, see where you land.
+
+## Move it
+
+The two sliders are $s$ and $t$. The solid arrows are $\vec{v}$ and $\vec{w}$; the dashed ones show
+how they chain; the purple one is the result.
+
+<LinearCombo v={[2, 1]} w={[-1, 2]} />
+
+Play with it for a moment before reading on. The question that matters is: **which points of the
+plane can you reach?**
+
+## Span
+
+The set of all reachable points is called the **span** of $\vec{v}$ and $\vec{w}$.
+
+With the values above, the answer is *the whole plane*. Any point you can name has a pair $(s, t)$
+that reaches it. Two vectors pointing in different directions are enough to generate all of
+$\mathbb{R}^2$.
+
+```python
+import numpy as np
+
+v = np.array([2, 1])
+w = np.array([-1, 2])
+
+# Which combination reaches (4, 3)?
+np.linalg.solve(np.column_stack([v, w]), np.array([4, 3]))
+# array([2.2, 0.4])  →  2.2·v + 0.4·w = (4, 3)
+```
+
+That `solve` line is, underneath, all that solving a system of equations ever does: find the
+coefficients of a linear combination.
+
+## When the plane collapses
+
+Now the interesting case. What if both vectors point in the **same** direction?
+
+Try $\vec{v} = (2, 1)$ and $\vec{w} = (4, 2)$ — the second is twice the first. However you move the
+sliders, the result never leaves a single line. The span collapsed from a plane to a line.
+
+When that happens the vectors are called **linearly dependent**: one adds no new information because
+it was already contained in the other. If they're independent, the span is the whole plane.
+
+```python
+# The determinant detects exactly this (lesson 5)
+np.linalg.det(np.column_stack([[2, 1], [4, 2]]))   # 0.0  → dependent
+np.linalg.det(np.column_stack([[2, 1], [-1, 2]]))  # 5.0  → independent
+```
+
+## Basis
+
+A set of independent vectors whose span is the whole space is called a **basis**. The two you used
+above form a basis of $\mathbb{R}^2$.
+
+The basis everyone uses by default is $\hat{\imath} = (1, 0)$ and $\hat{\jmath} = (0, 1)$:
+
+<VectorPlot
+  vectors={[
+    { x: 1, y: 0, label: 'î' },
+    { x: 0, y: 1, label: 'ĵ' },
+    { x: 3, y: 2, label: '3î + 2ĵ', dashed: true },
+  ]}
+  range={4}
+  caption="Writing (3, 2) is already a linear combination: 3 times î plus 2 times ĵ."
+/>
+
+And here's the turn worth noticing: **when you write a vector as $(3, 2)$ you are already using a
+linear combination** — just with a basis so habitual you don't mention it. Coordinates are always
+coordinates *with respect to some basis*.
+
+That observation is the door into the next module: if changing the basis changes the coordinates,
+then a matrix can be understood as the instruction for where each basis vector goes.
+
+---
+
+**Try it.** With $\vec{v} = (2, 1)$ and $\vec{w} = (-1, 2)$, find by hand the coefficients that reach
+$(0, 5)$. Then check yourself with `np.linalg.solve`.

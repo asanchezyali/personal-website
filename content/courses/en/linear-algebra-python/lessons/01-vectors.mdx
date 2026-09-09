@@ -1,0 +1,111 @@
+---
+title: 'What a vector is'
+language: 'en'
+module: 'Vectors'
+moduleOrder: 1
+order: 1
+summary: 'Three definitions that turn out to be the same one, and why the geometric one is worth keeping in your head.'
+---
+
+Ask three people what a vector is and you'll get three answers.
+
+A **physicist** will say it's an arrow in space: it has magnitude and direction, and you can move it
+around without it ceasing to be the same arrow. A **programmer** will say it's a list of numbers. A
+**mathematician** will say it's an element of a vector space, and hand you a list of axioms.
+
+All three are right. But for working, the first gives you intuition and the second is what runs —
+and linear algebra is largely the craft of moving between them.
+
+## A vector is a movement instruction
+
+Think of $\vec{v} = (3, 2)$ not as a point but as an **instruction**: move 3 right and 2 up. The
+origin is where you start.
+
+<VectorPlot
+  vectors={[
+    { x: 3, y: 2, label: 'v = (3, 2)' },
+    { x: -2, y: 3, label: 'w = (-2, 3)' },
+  ]}
+  caption="Two vectors in the plane. Each is an instruction: how far to move horizontally and vertically."
+/>
+
+In NumPy that instruction is literally a list:
+
+```python
+import numpy as np
+
+v = np.array([3, 2])
+w = np.array([-2, 3])
+```
+
+## Adding is chaining instructions
+
+Here's the first idea worth being clear about. Adding two vectors is **not** an arbitrary rule about
+lists of numbers: it's doing one movement and then the other.
+
+If $\vec{v}$ says "3 right, 2 up" and $\vec{w}$ says "2 left, 3 up", doing both in sequence leaves
+you at $(1, 5)$ — which is exactly what adding component by component gives.
+
+```python
+v + w        # array([1, 5])
+```
+
+That correspondence — moving your starting point to the tip of the first arrow — is called putting
+the vectors *tip to tail*, and it's why addition is defined this way and not some other.
+
+## Scaling is stretching
+
+Multiplying by a number **scales** the instruction without changing its direction:
+
+```python
+2 * v        # array([6, 4])   — twice as far, same heading
+-1 * v       # array([-3, -2]) — same line, opposite way
+0.5 * v      # array([1.5, 1.0])
+```
+
+A negative number flips the arrow. That's why numbers are called **scalars** here: their only job is
+to scale.
+
+<VectorPlot
+  vectors={[
+    { x: 3, y: 2, label: 'v' },
+    { x: 6, y: 4, label: '2v', dashed: true },
+    { x: -3, y: -2, label: '−v', dashed: true },
+  ]}
+  range={7}
+  caption="Scaling moves a vector along its own line. It never takes it off that line."
+/>
+
+## Length
+
+A vector's magnitude comes from Pythagoras, because its components are precisely the legs of a right
+triangle:
+
+$$\|\vec{v}\| = \sqrt{v_1^2 + v_2^2}$$
+
+```python
+np.linalg.norm(v)    # 3.605551275463989
+```
+
+A vector of length 1 is called a **unit vector**, and it lets you talk about direction without
+mixing in magnitude:
+
+```python
+v / np.linalg.norm(v)    # array([0.83205029, 0.5547002])
+```
+
+## Why this matters later
+
+Everything that follows rests on two operations: **adding** vectors and **scaling** them. Nothing
+else. Matrices, determinants, eigenvectors — all of it is built on those two.
+
+A vector space is in fact *any* set where those two operations behave the way they do here. That's
+why linear algebra turns up in places that don't look like geometry: a language model's embeddings
+are vectors because they can be added and scaled, and that alone is enough for all this machinery
+to apply.
+
+---
+
+**Try it.** Take $\vec{v} = (3, 2)$ and $\vec{w} = (-2, 3)$ and work out $\vec{v} - \vec{w}$ by hand
+before running it. What movement instruction does it describe? Hint: subtracting is adding the
+opposite.
