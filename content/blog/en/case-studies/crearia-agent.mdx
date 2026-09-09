@@ -1,0 +1,387 @@
+---
+title: 'Building CREARIA Agent: RAG, MCP tools, and a queue that changed the design'
+date: '2026/09/09'
+lastmod: '2026-09-09'
+tags: ['case-study', 'crearia', 'ai-agents', 'rag', 'mcp', 'whatsapp', 'system-design']
+draft: false
+featured: true
+summary: 'The second engineering case study: how CREARIA Agent answers customer questions on WhatsApp using RAG over pgvector and MCP tool orchestration — and why putting a queue between the channel and the LLM turned out to be the decision everything else hangs off.'
+layout: PostLayout
+headerImage: '/images/crearia/crearia-cover.png'
+images: ['/images/crearia/crearia-cover.png']
+language: 'en'
+authors: ['yali']
+---
+
+This is the second entry in my series of **engineering case studies**. The first was
+[Plixiq](/blog/case-studies/plixiq), a WhatsApp AI agent platform. This one is also a WhatsApp AI
+agent — which sounds like a repeat, until you look at how differently the two are built.
+
+That contrast is the reason I wanted to write it. Same channel, same broad problem, two teams,
+two sets of constraints, and almost none of the same answers.
+
+## What is CREARIA Agent?
+
+CREARIA Agent is a **multi-channel AI support agent**. A business connects WhatsApp (and,
+optionally, email or Instagram), uploads what it knows — a PDF, a price list, a set of FAQs —
+and the agent answers customers from that material. When a question needs a real action or a real
+person, it either calls a tool or hands the conversation to a human without dropping context.
+
+The card version is "RAG and tool orchestration for automated support". That's accurate but it
+undersells the interesting part. The retrieval is the easy half. The hard half is **letting a
+language model call into a business's systems without letting it reach data that isn't its
+tenant's** — and doing it while a queue, three channels and five services sit between the
+customer's message and the model.
+
+## The stack, and why
+
+<StackList
+  title="Backend (five Python services)"
+  items={[
+    {
+      name: 'FastAPI + SQLModel',
+      what: 'All five services',
+      why: 'Async-first, Pydantic-typed; one model definition instead of an ORM class plus a schema.',
+    },
+    {
+      name: 'ARQ + Redis',
+      what: 'Job queue',
+      why: 'The channel server answers Meta in milliseconds and does the slow work off the hot path.',
+    },
+    {
+      name: 'PostgreSQL + pgvector',
+      what: 'Database and vector store',
+      why: 'Embeddings live next to the rows they belong to — one database, one backup, one tenant filter.',
+    },
+    {
+      name: 'LiteLLM Router',
+      what: 'LLM gateway',
+      why: 'Priority fallback groups with cooldowns, so a provider outage degrades instead of failing.',
+    },
+    {
+      name: 'MCP (Model Context Protocol)',
+      what: 'Tool transport',
+      why: 'Tools live in their own server and are discovered at runtime, not compiled into the agent.',
+    },
+    {
+      name: 'pywa · Gmail API · Meta Graph',
+      what: 'Channels',
+      why: 'One small service per channel, each responsible for exactly one API’s quirks.',
+    },
+  ]}
+/>
+
+<StackList
+  title="Frontend"
+  items={[
+    {
+      name: 'Next.js × 2',
+      what: 'Admin and tenant dashboards',
+      why: 'A platform console and a per-client console, deliberately kept as separate apps.',
+    },
+    {
+      name: 'TanStack Query',
+      what: 'Server state',
+      why: 'Caching and invalidation for a dashboard that is mostly reads over the same entities.',
+    },
+    {
+      name: 'Radix + react-hook-form + Zod',
+      what: 'UI and forms',
+      why: 'The agent editor is a very large form; schema-validated fields keep it honest.',
+    },
+    { name: 'next-intl', what: 'i18n', why: 'The product ships in Spanish first.' },
+  ]}
+/>
+
+<StackList
+  title="Infrastructure"
+  items={[
+    {
+      name: 'Nx monorepo',
+      why: 'Five Python services and two Next.js apps in one repo, with per-project targets.',
+    },
+    {
+      name: 'AWS ECS + Terraform',
+      why: 'Each service scales on its own; infrastructure is reviewed as code.',
+    },
+    {
+      name: 'Locust',
+      why: 'Load tests up to 250 virtual users — the part of testing this project took most seriously.',
+    },
+  ]}
+/>
+
+## Architecture
+
+Five backend services, not one. Three of them exist only to speak a channel's dialect.
+
+<ImageBox
+  src="/images/crearia/architecture.png"
+  alt="CREARIA Agent architecture: WhatsApp, email and Instagram feed three channel servers, which enqueue to Redis/ARQ; a worker calls the agent-orchestrator, which uses a LiteLLM Router, PostgreSQL with pgvector, Redis, and an MCP server; human agents and two Next.js dashboards sit at the bottom"
+  width={920}
+  height={640}
+>
+  The five services. The channel servers never call an LLM — they normalise a message and put it on
+  a queue. Everything expensive happens on the other side of that queue.
+</ImageBox>
+
+The split is not architectural purity. Each channel API is annoying in its own specific way —
+WhatsApp has a 24-hour messaging window and template rules, Gmail needs OAuth refresh and polling,
+Meta's Graph API has its own webhook shape. Keeping each one in its own small service means those
+quirks don't leak into the part that does the thinking.
+
+The `agent-orchestrator` is where everything else lives: prompts, tools, retrieval, memory,
+escalation, CRM. It's the one service that would be painful to split further, and at roughly 37k
+lines it's the one that would benefit most from it.
+
+## The queue is the design decision
+
+Plixiq processes a WhatsApp message inline: the webhook fires and the same request runs the guard,
+the LLM call and the reply. CREARIA puts a queue in the middle, and almost every other difference
+follows from that.
+
+When the webhook's only job is _normalise and enqueue_, several things become easy that are
+otherwise hard:
+
+- **Meta gets its 200 immediately.** No risk of the LLM's latency tripping a webhook timeout and
+  triggering redelivery.
+- **Rate limiting has somewhere sensible to live.** Per-user limits answer the customer with a
+  "slow down" message. Per-tenant limits raise `Retry(defer=10)` — ARQ puts the job back and tries
+  again in ten seconds. The customer never sees a tenant-level limit; they just wait.
+- **Media processing fits.** Audio goes to Whisper, images go to a vision model, and each becomes
+  a text line the agent can read (`[Audio transcript]: "..."`). That's seconds of work that would
+  never survive on a webhook thread.
+- **Retries are free.** A crashed worker means a retried job, not a lost customer message.
+
+The cost is a contract you now have to keep. The worker expects the orchestrator to return either
+a response or an explicit `silent: true` flag, and the code logs a **"contract violation"** when it
+gets neither — an empty reply with no silent flag means someone broke the protocol. I like that
+this is checked and named rather than silently swallowed.
+
+## How one message becomes an answer
+
+<ImageBox
+  src="/images/crearia/message-flow.png"
+  alt="Message pipeline: webhook, enqueue, worker with rate limiting and media processing, orchestrator, tool loop with LiteLLM, tools, post-processing, and reply — plus the escalation branch"
+  width={920}
+  height={560}
+>
+  The pipeline. Steps 5 and 6 are a loop: the model may call a tool, read its result, and decide
+  again, up to five times.
+</ImageBox>
+
+Steps 1–4 are plumbing. Step 5 is the agent:
+
+```python
+while iteration_count < self.max_tool_iterations:   # 5
+    response_text, tool_call, model = await self.llm_service.call_llm_with_tools(...)
+    if not tool_call:
+        final_response = response_text
+        return
+    result = await asyncio.wait_for(registry.execute_tool(...), timeout=60.0)
+    tool_messages.append({"role": "tool", "content": f"<tool_result>{result}</tool_result>"})
+```
+
+Three bounds, all deliberate: **five iterations**, a **120-second budget** for the whole loop, and
+**60 seconds per individual tool**. Tool results are truncated to 4,000 characters before going
+back to the model. If the loop ends without a text answer — five tool calls and no conclusion —
+there's a final LLM call with `tools=[]`, which forces the model to say something in words.
+
+That last detail is the kind of thing you only add after watching an agent loop itself into
+silence in production.
+
+## Tools are the product
+
+The agent has exactly **three built-in tools**: `end_conversation`, `escalate_to_human`, and a
+profile-saving tool used by one agent type. Everything else a tenant can do — search the knowledge
+base, look up a product, check an order, find a store, book a meeting — comes from an **MCP
+server** and is discovered at runtime.
+
+This is the part I'd take to another project unchanged. Three properties make it work:
+
+**Tools are discovered, not deployed.** The orchestrator connects to an MCP server over SSE, calls
+`list_tools()`, and stores what it finds. Adding a capability to every tenant is a deploy of the
+MCP server, not of the agent.
+
+**Each tenant gets its own subset.** A `mcp_tenant_tools` row per tenant per tool decides whether
+that tenant may call it, and carries a `custom_config` blob for tool-level settings. Two tenants
+on the same MCP server can have entirely different toolboxes.
+
+**The model cannot choose the tenant.** This is the one that matters. When tool schemas are built
+for the LLM, `tenant_id` and `tool_config` are _stripped from the parameters the model sees_:
+
+```python
+schema["properties"].pop("tenant_id", None)
+schema["properties"].pop("tool_config", None)
+```
+
+and then injected server-side at execution time, from the authenticated context:
+
+```python
+secure_arguments = {
+    **llm_generated_arguments,
+    "tenant_id": str(tenant_id),   # CRITICAL: always injected, never model-supplied
+    "tool_config": tool_config,
+}
+```
+
+Every MCP tool then refuses to run without it (`if not tenant_id: raise ValueError(...)`). So a
+prompt injection that convinces the model to "look up orders for tenant X" produces an argument
+the model was never given a slot for, and the server overwrites it anyway. **The isolation
+boundary is in code the model can't reach, not in an instruction asking it to behave.**
+
+## RAG, and what it actually retrieves
+
+The retrieval side is deliberately plain, and I mean that as praise:
+
+- Documents (PDF, TXT, and via a separate processor DOCX, XLSX, CSV) are chunked with a recursive
+  splitter — 1,000 characters, 200 overlap
+- Each chunk is embedded with `text-embedding-3-small` and stored in a `knowledge_documents` row
+  alongside its `tenant_id`
+- Retrieval is a cosine-distance ordering in Postgres, filtered by tenant and `is_active`, top 5
+
+No separate vector database, no re-ranker, no hybrid search. The embeddings live in the same
+Postgres as the conversations, which means one connection pool, one backup, and — the part that
+actually matters — **the tenant filter is a WHERE clause on the same query**, not a second system
+you have to remember to scope.
+
+Two things I'd change. Embeddings are generated with a single platform-wide API key rather than
+the tenant's own (the code has a `TODO` admitting it). And retrieval returns the top 5 chunks with
+no score threshold, so a question with no good answer still returns the five least-bad chunks —
+which is exactly how a confident wrong answer gets made.
+
+## The LLM layer is a Router, not a client
+
+Most projects at this stage call `acompletion()` and wrap it in a try/except. This one builds a
+LiteLLM **`Router`** per tenant, with providers ordered by priority into fallback groups:
+
+- 30-second cooldown for a failing deployment, after 2 allowed failures
+- 45-second request timeout, 2 retries
+- A global `asyncio.Semaphore(50)` capping concurrent LLM calls across the process
+- Message trimming to 80% of the model's context window, using a per-model table of real context
+  limits, dropping the oldest turns until it fits
+- `<thinking>` tags stripped from output before the customer ever sees them
+
+The context-trimming detail is the one people skip. Long WhatsApp conversations plus a large system
+prompt plus tool results will eventually exceed a context window, and the failure mode is an API
+error in the middle of a customer conversation. Trimming turns that into slightly less memory.
+
+## Escalation: WhatsApp is the agent console
+
+When the model calls `escalate_to_human`, the service picks the **least-loaded active agent** —
+ordered by `total_conversations` — and notifies them by WhatsApp, dashboard, or email. The
+conversation then flips into a **silent proxy**: messages from the customer are relayed to the
+agent's phone, and the agent's replies are relayed back, with `proxy_metadata` on each message
+recording that a human sent it.
+
+What I didn't expect is that the human agent's entire interface is **slash commands over
+WhatsApp**:
+
+```
+/status     what am I handling, and for how long
+/transfer   hand this conversation to another agent, with an LLM-written summary
+/end        give the conversation back to the AI
+/online     /offline    availability
+/help
+```
+
+No app to install, no dashboard to keep open. For support staff who already live in WhatsApp all
+day, meeting them there instead of asking them to adopt a tool is the right trade — and the
+transfer command generating its own handoff summary is a genuinely good use of an LLM.
+
+The honest wrinkle: there's an `EscalationDetector` class with a careful list of Spanish
+escalation phrases, and it is **not wired into anything**. It's referenced only by its own module
+export and by tests. Escalation in production happens entirely through the model deciding to call
+the tool. The keyword safety net exists, is tested, and never runs.
+
+## Memory across conversations
+
+A background worker extracts a summary of each customer into `user_memories`, and the next
+conversation gets it injected into the system prompt under a `<user_history>` tag — with an
+instruction I appreciated:
+
+> "NO le digas que tienes un 'perfil' o 'memoria' — simplemente usa los datos naturalmente."
+> _(Don't tell them you have a 'profile' or 'memory' — just use the data naturally.)_
+
+There's also a "returning user" signal, and the comment above it documents a bug worth repeating:
+it used to be derived from LLM output, which made it non-deterministic. It's now a direct query for
+a prior closed conversation within a configurable window. The lesson generalises — **if a fact is
+knowable from the database, never ask the model for it.**
+
+## Data model
+
+<ImageBox
+  src="/images/crearia/data-model.png"
+  alt="Data model grouped by area: organizations and users outside the tenant boundary; agent configuration, providers and tools, conversations, messages, knowledge, human handoff, identity and CRM inside it"
+  width={920}
+  height={660}
+>
+  51 tables, grouped. Everything inside the dashed boundary carries a `tenant_id`.
+</ImageBox>
+
+Two levels of tenancy: an `Organization` can own several `Tenant`s, and a tenant is the unit
+everything else scopes to. Agent behaviour that varies by type lives in a `settings_extensions`
+JSONB column, which is the same trick Plixiq used and, I think, the right default for
+configuration that differs per product line.
+
+The table count tells its own story. Of 51 tables, **17 belong to the coaching agent type** —
+courses, modules, enrollments, progress, activities, checklists, snapshots. What started as a
+customer-service agent grew a second product inside it. That's not a criticism; it's what happens
+when the tool orchestration is good enough that a new vertical is mostly new tools and new tables.
+
+## What I'd do differently
+
+Writing these honestly is the point of the series.
+
+- **The unit tests are thin.** 42 test functions against ~37k lines of backend. Meanwhile the load
+  testing is genuinely thorough — Locust, up to 250 virtual users, progressive ramp scripts, saved
+  result sets. The project can tell you how it behaves at 250 concurrent users but not whether the
+  tool loop handles a malformed tool call.
+- **There are two agent implementations.** `LLMAgent` (606 lines, 20 tool iterations) and
+  `AgentService` (688 lines, 5 iterations). Only the second is routed to; the first survives as an
+  export and an import test. Two plausible-looking classes with the same job is worse than one
+  messy one.
+- **`print()` and `logger` are mixed** in the hottest path in the codebase — the tool loop. Fine
+  while you're debugging it live, bad once it's the thing you page on.
+- **No output validation.** Plixiq checks its replies for prompt leakage and language drift before
+  sending. Here, whatever the model produces goes to the customer.
+
+## What the two projects taught me together
+
+Two WhatsApp AI agents, built by different teams, and the divergence is more interesting than
+either alone:
+
+|                    | Plixiq                          | CREARIA Agent                         |
+| ------------------ | ------------------------------- | ------------------------------------- |
+| Message path       | Inline, in the webhook          | Queue + worker                        |
+| Extensibility      | Agent types as code strategies  | Tools discovered over MCP             |
+| Retrieval          | None — config-driven prompts    | RAG over pgvector                     |
+| Escalation trigger | Keywords + LLM + guard failure  | LLM tool only                         |
+| Agent interface    | Web dashboard + optional proxy  | WhatsApp slash commands               |
+| Guardrails         | Input classifier + output guard | Tenant injection at the tool boundary |
+| Deployment         | One service on Railway          | Five services on ECS                  |
+
+Neither is the right answer in general. Plixiq's inline path is simpler to reason about and its
+guards are stronger; CREARIA's queue is what lets it absorb multimodal input and multiple channels
+without the design falling over. They optimised for different failure modes.
+
+If there's one transferable lesson, it's the tenant injection. Everything else on this list is a
+trade-off you could argue either way. **Stripping `tenant_id` out of the model's vocabulary and
+putting it back server-side is just correct**, and I haven't seen a good reason to do it any other
+way.
+
+## Takeaways
+
+- **Put a queue between the channel and the model.** It buys you retries, rate limiting, media
+  processing and honest webhook latency in one move.
+- **Never let the model name the tenant.** Strip the parameter from the schema, inject it from
+  authenticated context, and make the tool refuse to run without it.
+- **Bound your tool loop three ways** — iterations, total time, and per-tool time — and always have
+  a final no-tools call so the agent can't end a turn in silence.
+- **If the database knows it, don't ask the model.** Returning-user status, load counts, tenant
+  identity: query them.
+- **Load tests and unit tests are not substitutes.** This project has excellent ones of the first
+  kind and few of the second, and the gap shows in exactly the places you'd predict.
+
+If there's a decision here you'd want me to go deeper on — the MCP layer especially —
+[let's talk](/collaborate).

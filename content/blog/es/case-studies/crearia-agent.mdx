@@ -1,0 +1,405 @@
+---
+title: 'Construyendo CREARIA Agent: RAG, herramientas MCP y una cola que cambió el diseño'
+date: '2026/09/09'
+lastmod: '2026-09-09'
+tags: ['case-study', 'crearia', 'ai-agents', 'rag', 'mcp', 'whatsapp', 'system-design']
+draft: false
+featured: true
+summary: 'El segundo caso de estudio de ingeniería: cómo CREARIA Agent responde preguntas de clientes en WhatsApp usando RAG sobre pgvector y orquestación de herramientas por MCP — y por qué meter una cola entre el canal y el LLM resultó ser la decisión de la que cuelga todo lo demás.'
+layout: PostLayout
+headerImage: '/images/crearia/crearia-cover.png'
+images: ['/images/crearia/crearia-cover.png']
+language: 'es'
+authors: ['yali']
+---
+
+Esta es la segunda entrada de mi serie de **casos de estudio de ingeniería**. El primero fue
+[Plixiq](/es/blog/case-studies/plixiq), una plataforma de agentes de IA en WhatsApp. Este también
+es un agente de IA en WhatsApp — lo que suena a repetición, hasta que miras lo distinto que está
+construido cada uno.
+
+Ese contraste es la razón por la que quise escribirlo. Mismo canal, mismo problema general, dos
+equipos, dos conjuntos de restricciones, y casi ninguna respuesta en común.
+
+## ¿Qué es CREARIA Agent?
+
+CREARIA Agent es un **agente de soporte con IA multicanal**. Un negocio conecta WhatsApp (y,
+opcionalmente, correo o Instagram), sube lo que sabe — un PDF, una lista de precios, un conjunto de
+preguntas frecuentes — y el agente responde a los clientes a partir de ese material. Cuando una
+pregunta necesita una acción real o una persona real, o llama a una herramienta o entrega la
+conversación a un humano sin perder el contexto.
+
+La versión de tarjeta es "RAG y orquestación de herramientas para soporte automatizado". Es exacto
+pero se queda corto en lo interesante. La recuperación es la mitad fácil. La mitad difícil es
+**dejar que un modelo de lenguaje entre a los sistemas de un negocio sin permitirle alcanzar datos
+que no son de su tenant** — y hacerlo mientras una cola, tres canales y cinco servicios se
+interponen entre el mensaje del cliente y el modelo.
+
+## El stack, y por qué
+
+<StackList
+  title="Backend (cinco servicios Python)"
+  items={[
+    {
+      name: 'FastAPI + SQLModel',
+      what: 'Los cinco servicios',
+      why: 'Async-first, tipado con Pydantic; una definición de modelo en vez de una clase ORM más un schema.',
+    },
+    {
+      name: 'ARQ + Redis',
+      what: 'Cola de trabajos',
+      why: 'El servidor de canal le responde a Meta en milisegundos y hace el trabajo lento fuera del camino caliente.',
+    },
+    {
+      name: 'PostgreSQL + pgvector',
+      what: 'Base de datos y vector store',
+      why: 'Los embeddings viven junto a las filas a las que pertenecen — una base, un backup, un filtro de tenant.',
+    },
+    {
+      name: 'LiteLLM Router',
+      what: 'Gateway de LLMs',
+      why: 'Grupos de fallback por prioridad con cooldowns, para que una caída de proveedor degrade en vez de fallar.',
+    },
+    {
+      name: 'MCP (Model Context Protocol)',
+      what: 'Transporte de herramientas',
+      why: 'Las herramientas viven en su propio servidor y se descubren en runtime, no se compilan dentro del agente.',
+    },
+    {
+      name: 'pywa · Gmail API · Meta Graph',
+      what: 'Canales',
+      why: 'Un servicio pequeño por canal, cada uno responsable de las rarezas de exactamente una API.',
+    },
+  ]}
+/>
+
+<StackList
+  title="Frontend"
+  items={[
+    {
+      name: 'Next.js × 2',
+      what: 'Dashboards de admin y de tenant',
+      why: 'Una consola de plataforma y una consola por cliente, mantenidas deliberadamente como apps separadas.',
+    },
+    {
+      name: 'TanStack Query',
+      what: 'Estado del servidor',
+      why: 'Caché e invalidación para un dashboard que es sobre todo lecturas de las mismas entidades.',
+    },
+    {
+      name: 'Radix + react-hook-form + Zod',
+      what: 'UI y formularios',
+      why: 'El editor de agentes es un formulario enorme; los campos validados por schema lo mantienen honesto.',
+    },
+    { name: 'next-intl', what: 'i18n', why: 'El producto sale primero en español.' },
+  ]}
+/>
+
+<StackList
+  title="Infraestructura"
+  items={[
+    {
+      name: 'Monorepo Nx',
+      why: 'Cinco servicios Python y dos apps Next.js en un repo, con targets por proyecto.',
+    },
+    {
+      name: 'AWS ECS + Terraform',
+      why: 'Cada servicio escala por su cuenta; la infraestructura se revisa como código.',
+    },
+    {
+      name: 'Locust',
+      why: 'Pruebas de carga hasta 250 usuarios virtuales — la parte del testing que este proyecto se tomó más en serio.',
+    },
+  ]}
+/>
+
+## Arquitectura
+
+Cinco servicios de backend, no uno. Tres de ellos existen solo para hablar el dialecto de un canal.
+
+<ImageBox
+  src="/images/crearia/architecture.png"
+  alt="Arquitectura de CREARIA Agent: WhatsApp, correo e Instagram alimentan tres servidores de canal que encolan en Redis/ARQ; un worker llama al agent-orchestrator, que usa un Router de LiteLLM, PostgreSQL con pgvector, Redis y un servidor MCP; abajo están los agentes humanos y dos dashboards Next.js"
+  width={920}
+  height={640}
+>
+  Los cinco servicios. Los servidores de canal nunca llaman a un LLM — normalizan un mensaje y lo
+  ponen en una cola. Todo lo costoso ocurre del otro lado de esa cola.
+</ImageBox>
+
+La división no es pureza arquitectónica. Cada API de canal es molesta a su manera específica —
+WhatsApp tiene una ventana de mensajería de 24 horas y reglas de plantillas, Gmail necesita
+refresco de OAuth y polling, la Graph API de Meta tiene su propia forma de webhook. Mantener cada
+una en su propio servicio pequeño evita que esas rarezas se filtren a la parte que piensa.
+
+El `agent-orchestrator` es donde vive todo lo demás: prompts, herramientas, recuperación, memoria,
+escalamiento, CRM. Es el único servicio que sería doloroso dividir más, y con unas 37 mil líneas es
+el que más se beneficiaría de ello.
+
+## La cola es la decisión de diseño
+
+Plixiq procesa un mensaje de WhatsApp en línea: el webhook se dispara y la misma petición ejecuta
+el guard, la llamada al LLM y la respuesta. CREARIA pone una cola en el medio, y casi todas las
+demás diferencias se derivan de ahí.
+
+Cuando el único trabajo del webhook es _normalizar y encolar_, varias cosas se vuelven fáciles:
+
+- **Meta recibe su 200 de inmediato.** Sin riesgo de que la latencia del LLM dispare un timeout de
+  webhook y provoque reenvíos.
+- **El rate limiting tiene dónde vivir.** Los límites por usuario responden al cliente con un
+  mensaje de "más despacio". Los límites por tenant lanzan `Retry(defer=10)` — ARQ devuelve el
+  trabajo a la cola y reintenta en diez segundos. El cliente nunca ve un límite de tenant;
+  simplemente espera.
+- **El procesamiento de medios cabe.** El audio va a Whisper, las imágenes a un modelo de visión, y
+  cada uno se convierte en una línea de texto que el agente puede leer
+  (`[Transcripción de audio]: "..."`). Son segundos de trabajo que jamás sobrevivirían en un hilo
+  de webhook.
+- **Los reintentos son gratis.** Un worker caído significa un trabajo reintentado, no un mensaje de
+  cliente perdido.
+
+El costo es un contrato que ahora tienes que cumplir. El worker espera que el orquestador devuelva
+o una respuesta o una bandera explícita `silent: true`, y el código registra una **"contract
+violation"** cuando no recibe ninguna de las dos — una respuesta vacía sin bandera de silencio
+significa que alguien rompió el protocolo. Me gusta que esto esté verificado y nombrado en lugar de
+tragado en silencio.
+
+## Cómo un mensaje se convierte en respuesta
+
+<ImageBox
+  src="/images/crearia/message-flow.png"
+  alt="Pipeline de mensajes: webhook, encolado, worker con rate limiting y procesamiento de medios, orquestador, bucle de herramientas con LiteLLM, herramientas, post-procesamiento y respuesta — más la rama de escalamiento"
+  width={920}
+  height={560}
+>
+  El pipeline. Los pasos 5 y 6 son un bucle: el modelo puede llamar a una herramienta, leer su
+  resultado y volver a decidir, hasta cinco veces.
+</ImageBox>
+
+Los pasos 1 a 4 son plomería. El paso 5 es el agente:
+
+```python
+while iteration_count < self.max_tool_iterations:   # 5
+    response_text, tool_call, model = await self.llm_service.call_llm_with_tools(...)
+    if not tool_call:
+        final_response = response_text
+        return
+    result = await asyncio.wait_for(registry.execute_tool(...), timeout=60.0)
+    tool_messages.append({"role": "tool", "content": f"<tool_result>{result}</tool_result>"})
+```
+
+Tres límites, todos deliberados: **cinco iteraciones**, un **presupuesto de 120 segundos** para
+todo el bucle, y **60 segundos por herramienta individual**. Los resultados se truncan a 4.000
+caracteres antes de volver al modelo. Si el bucle termina sin una respuesta de texto — cinco
+llamadas a herramientas y ninguna conclusión — hay una llamada final al LLM con `tools=[]`, que
+obliga al modelo a decir algo con palabras.
+
+Ese último detalle es de los que solo se agregan después de ver a un agente enredarse en su propio
+bucle hasta quedarse mudo en producción.
+
+## Las herramientas son el producto
+
+El agente tiene exactamente **tres herramientas propias**: `end_conversation`, `escalate_to_human`
+y una de guardado de perfil que usa un tipo de agente. Todo lo demás que un tenant puede hacer —
+buscar en la base de conocimiento, consultar un producto, revisar un pedido, encontrar una tienda,
+agendar una reunión — viene de un **servidor MCP** y se descubre en runtime.
+
+Esta es la parte que me llevaría intacta a otro proyecto. Tres propiedades la hacen funcionar:
+
+**Las herramientas se descubren, no se despliegan.** El orquestador se conecta a un servidor MCP
+por SSE, llama a `list_tools()` y guarda lo que encuentra. Agregar una capacidad para todos los
+tenants es un deploy del servidor MCP, no del agente.
+
+**Cada tenant recibe su propio subconjunto.** Una fila `mcp_tenant_tools` por tenant y por
+herramienta decide si ese tenant puede llamarla, y lleva un blob `custom_config` con ajustes a
+nivel de herramienta. Dos tenants en el mismo servidor MCP pueden tener cajas de herramientas
+completamente distintas.
+
+**El modelo no puede elegir el tenant.** Esta es la que importa. Cuando se construyen los schemas
+de herramientas para el LLM, `tenant_id` y `tool_config` se _eliminan de los parámetros que el
+modelo ve_:
+
+```python
+schema["properties"].pop("tenant_id", None)
+schema["properties"].pop("tool_config", None)
+```
+
+y luego se inyectan del lado del servidor al ejecutar, desde el contexto autenticado:
+
+```python
+secure_arguments = {
+    **llm_generated_arguments,
+    "tenant_id": str(tenant_id),   # CRÍTICO: siempre inyectado, nunca provisto por el modelo
+    "tool_config": tool_config,
+}
+```
+
+Y cada herramienta MCP se niega a correr sin él (`if not tenant_id: raise ValueError(...)`). Así,
+una inyección de prompt que convenza al modelo de "buscar pedidos del tenant X" produce un
+argumento para el que el modelo nunca tuvo una casilla, y el servidor lo sobrescribe de todos
+modos. **La frontera de aislamiento está en código que el modelo no puede alcanzar, no en una
+instrucción pidiéndole que se porte bien.**
+
+## RAG, y qué recupera en realidad
+
+El lado de recuperación es deliberadamente simple, y lo digo como elogio:
+
+- Los documentos (PDF, TXT y, vía un procesador aparte, DOCX, XLSX, CSV) se trocean con un splitter
+  recursivo — 1.000 caracteres, 200 de solapamiento
+- Cada trozo se embebe con `text-embedding-3-small` y se guarda en una fila `knowledge_documents`
+  junto a su `tenant_id`
+- La recuperación es un ordenamiento por distancia coseno en Postgres, filtrado por tenant y por
+  `is_active`, top 5
+
+Sin base de datos vectorial aparte, sin re-ranker, sin búsqueda híbrida. Los embeddings viven en el
+mismo Postgres que las conversaciones, lo que significa un solo pool de conexiones, un solo backup
+y — la parte que de verdad importa — **el filtro de tenant es una cláusula WHERE de la misma
+consulta**, no un segundo sistema que tienes que acordarte de acotar.
+
+Dos cosas que cambiaría. Los embeddings se generan con una única API key de plataforma en vez de la
+del tenant (el código tiene un `TODO` que lo admite). Y la recuperación devuelve los 5 mejores
+trozos sin umbral de score, así que una pregunta sin buena respuesta igual devuelve los cinco
+trozos menos malos — que es exactamente como se fabrica una respuesta equivocada y segura de sí
+misma.
+
+## La capa de LLM es un Router, no un cliente
+
+La mayoría de los proyectos en esta etapa llaman a `acompletion()` y lo envuelven en un
+try/except. Este construye un **`Router`** de LiteLLM por tenant, con los proveedores ordenados por
+prioridad en grupos de fallback:
+
+- Cooldown de 30 segundos para un deployment que falla, tras 2 fallos permitidos
+- Timeout de 45 segundos por petición, 2 reintentos
+- Un `asyncio.Semaphore(50)` global que limita las llamadas concurrentes al LLM en todo el proceso
+- Recorte de mensajes al 80% de la ventana de contexto del modelo, usando una tabla por modelo con
+  los límites reales, descartando los turnos más viejos hasta que quepa
+- Etiquetas `<thinking>` eliminadas de la salida antes de que el cliente las vea
+
+El detalle del recorte de contexto es el que la gente se salta. Conversaciones largas de WhatsApp
+más un system prompt grande más resultados de herramientas terminan excediendo una ventana de
+contexto, y el modo de falla es un error de API a mitad de una conversación con un cliente. El
+recorte convierte eso en un poco menos de memoria.
+
+## Escalamiento: WhatsApp es la consola del agente
+
+Cuando el modelo llama a `escalate_to_human`, el servicio elige al **agente activo menos cargado**
+— ordenando por `total_conversations` — y lo notifica por WhatsApp, dashboard o correo. La
+conversación pasa entonces a un **proxy silencioso**: los mensajes del cliente se retransmiten al
+teléfono del agente, y las respuestas del agente se retransmiten de vuelta, con `proxy_metadata` en
+cada mensaje registrando que lo envió un humano.
+
+Lo que no esperaba es que toda la interfaz del agente humano sean **comandos de barra por
+WhatsApp**:
+
+```
+/status     qué estoy atendiendo, y desde hace cuánto
+/transfer   pasar la conversación a otro agente, con un resumen escrito por el LLM
+/end        devolver la conversación a la IA
+/online     /offline    disponibilidad
+/help
+```
+
+Sin app que instalar, sin dashboard que mantener abierto. Para personal de soporte que ya vive en
+WhatsApp todo el día, encontrarlos ahí en lugar de pedirles que adopten una herramienta es el
+intercambio correcto — y que el comando de transferencia genere su propio resumen de traspaso es un
+uso genuinamente bueno de un LLM.
+
+La arruga honesta: existe una clase `EscalationDetector` con una lista cuidada de frases de
+escalamiento en español, y **no está conectada a nada**. Solo la referencian su propio módulo de
+exportación y los tests. En producción el escalamiento ocurre enteramente porque el modelo decide
+llamar a la herramienta. La red de seguridad por palabras clave existe, está testeada, y nunca se
+ejecuta.
+
+## Memoria entre conversaciones
+
+Un worker en segundo plano extrae un resumen de cada cliente hacia `user_memories`, y la siguiente
+conversación lo recibe inyectado en el system prompt bajo una etiqueta `<user_history>` — con una
+instrucción que me gustó:
+
+> "NO le digas que tienes un 'perfil' o 'memoria' — simplemente usa los datos naturalmente."
+
+También hay una señal de "usuario recurrente", y el comentario encima documenta un bug que vale la
+pena repetir: antes se derivaba de la salida del LLM, lo que la hacía no determinista. Ahora es una
+consulta directa por una conversación cerrada previa dentro de una ventana configurable. La lección
+generaliza — **si un dato se puede saber desde la base de datos, nunca se lo preguntes al modelo.**
+
+## Modelo de datos
+
+<ImageBox
+  src="/images/crearia/data-model.png"
+  alt="Modelo de datos agrupado por área: organizaciones y usuarios fuera de la frontera de tenant; configuración del agente, proveedores y herramientas, conversaciones, mensajes, conocimiento, traspaso a humano, identidad y CRM dentro de ella"
+  width={920}
+  height={660}
+>
+  51 tablas, agrupadas. Todo lo que está dentro de la frontera punteada lleva un `tenant_id`.
+</ImageBox>
+
+Dos niveles de tenancy: una `Organization` puede tener varios `Tenant`, y el tenant es la unidad a
+la que se acota todo lo demás. El comportamiento del agente que varía por tipo vive en una columna
+JSONB `settings_extensions`, que es el mismo truco que usó Plixiq y, creo, el default correcto para
+configuración que difiere por línea de producto.
+
+El conteo de tablas cuenta su propia historia. De 51 tablas, **17 pertenecen al tipo de agente de
+coaching** — cursos, módulos, inscripciones, progreso, actividades, checklists, snapshots. Lo que
+empezó como un agente de servicio al cliente le creció un segundo producto adentro. No es una
+crítica; es lo que pasa cuando la orquestación de herramientas es lo bastante buena como para que
+un vertical nuevo sea sobre todo herramientas nuevas y tablas nuevas.
+
+## Qué haría distinto
+
+Escribir esto con honestidad es el punto de la serie.
+
+- **Los tests unitarios son delgados.** 42 funciones de test contra unas 37 mil líneas de backend.
+  Mientras tanto las pruebas de carga son genuinamente serias — Locust, hasta 250 usuarios
+  virtuales, scripts de rampa progresiva, resultados guardados. El proyecto te puede decir cómo se
+  comporta con 250 usuarios concurrentes pero no si el bucle de herramientas aguanta una llamada
+  malformada.
+- **Hay dos implementaciones del agente.** `LLMAgent` (606 líneas, 20 iteraciones) y `AgentService`
+  (688 líneas, 5 iteraciones). Solo la segunda está enrutada; la primera sobrevive como export y
+  como test de importación. Dos clases plausibles con el mismo trabajo es peor que una sola
+  desordenada.
+- **Se mezclan `print()` y `logger`** en el camino más caliente del código: el bucle de
+  herramientas. Bien mientras lo depuras en vivo, mal cuando es aquello por lo que te llaman de
+  madrugada.
+- **No hay validación de salida.** Plixiq revisa sus respuestas buscando fugas del prompt y deriva
+  de idioma antes de enviarlas. Aquí, lo que el modelo produzca llega al cliente.
+
+## Lo que los dos proyectos me enseñaron juntos
+
+Dos agentes de IA en WhatsApp, construidos por equipos distintos, y la divergencia es más
+interesante que cualquiera de los dos por separado:
+
+|                         | Plixiq                                     | CREARIA Agent                                      |
+| ----------------------- | ------------------------------------------ | -------------------------------------------------- |
+| Camino del mensaje      | En línea, en el webhook                    | Cola + worker                                      |
+| Extensibilidad          | Tipos de agente como estrategias en código | Herramientas descubiertas por MCP                  |
+| Recuperación            | Ninguna — prompts por configuración        | RAG sobre pgvector                                 |
+| Disparo de escalamiento | Keywords + LLM + fallo de guard            | Solo herramienta del LLM                           |
+| Interfaz del agente     | Dashboard web + proxy opcional             | Comandos de barra en WhatsApp                      |
+| Guardarraíles           | Clasificador de entrada + guard de salida  | Inyección de tenant en la frontera de herramientas |
+| Despliegue              | Un servicio en Railway                     | Cinco servicios en ECS                             |
+
+Ninguno es la respuesta correcta en general. El camino en línea de Plixiq es más simple de razonar
+y sus guards son más fuertes; la cola de CREARIA es lo que le permite absorber entrada multimodal y
+múltiples canales sin que el diseño se venga abajo. Optimizaron para modos de falla distintos.
+
+Si hay una lección transferible, es la inyección de tenant. Todo lo demás en esa lista es un
+trade-off que podrías defender en cualquier dirección. **Sacar `tenant_id` del vocabulario del
+modelo y reponerlo del lado del servidor es simplemente correcto**, y no he visto una buena razón
+para hacerlo de otra manera.
+
+## Conclusiones
+
+- **Pon una cola entre el canal y el modelo.** Te compra reintentos, rate limiting, procesamiento
+  de medios y latencia honesta de webhook en un solo movimiento.
+- **Nunca dejes que el modelo nombre al tenant.** Saca el parámetro del schema, inyéctalo desde el
+  contexto autenticado, y haz que la herramienta se niegue a correr sin él.
+- **Acota tu bucle de herramientas por tres lados** — iteraciones, tiempo total y tiempo por
+  herramienta — y ten siempre una llamada final sin herramientas para que el agente no pueda
+  terminar un turno en silencio.
+- **Si la base de datos lo sabe, no se lo preguntes al modelo.** Estado de usuario recurrente,
+  conteos de carga, identidad del tenant: consúltalos.
+- **Las pruebas de carga y las unitarias no son sustitutas.** Este proyecto tiene excelentes de las
+  primeras y pocas de las segundas, y la brecha se nota exactamente donde uno lo predeciría.
+
+Si hay alguna decisión aquí sobre la que quieras que profundice — la capa MCP especialmente —
+[hablemos](/es/collaborate).
