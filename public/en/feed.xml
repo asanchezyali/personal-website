@@ -7,9 +7,19 @@
       <language>en</language>
       <managingEditor>alejandro@piagents.dev (Yali Dev)</managingEditor>
       <webMaster>alejandro@piagents.dev (Yali Dev)</webMaster>
-      <lastBuildDate>Wed, 06 Nov 2024 05:00:00 GMT</lastBuildDate>
+      <lastBuildDate>Thu, 25 Jun 2026 05:00:00 GMT</lastBuildDate>
       <atom:link href="https://asanchezyali.com/feed.xml" rel="self" type="application/rss+xml"/>
       
+  <item>
+    <guid>https://asanchezyali.com/blog/case-studies/plixiq</guid>
+    <title>Building Plixiq: a multi-tenant WhatsApp AI agent platform</title>
+    <link>https://asanchezyali.com/blog/case-studies/plixiq</link>
+    <description>A behind-the-scenes case study of Plixiq — why we picked FastAPI, Next.js, LiteLLM and a modular monolith to run AI agents on WhatsApp, plus the pluggable agent types, the graph-based flow engine, the guards, the billing loop, and the architecture diagrams.</description>
+    <pubDate>Thu, 25 Jun 2026 05:00:00 GMT</pubDate>
+    <author>alejandro@piagents.dev (Yali Dev)</author>
+    <category>case-study</category><category>plixiq</category><category>ai-agents</category><category>whatsapp</category><category>system-design</category>
+  </item>
+
   <item>
     <guid>https://asanchezyali.com/blog/blockchain/20241106Blockchain</guid>
     <title>Cryptography: The Fundamental Pillar of Blockchain</title>

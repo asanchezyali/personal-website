@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 470" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 650" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif">
   <defs>
     <style>
       .bg { fill: #f6faf7; }
@@ -15,6 +15,7 @@
       .card-lbl { fill: #3c6b53; font-size: 10px; font-weight: 700; }
       .tenant-box { fill: none; stroke: #19a567; stroke-width: 1.6; stroke-dasharray: 6 5; }
       .tenant-lbl { fill: #19a567; font-size: 11px; font-weight: 700; letter-spacing: .04em; }
+      .note { fill: #7b8a82; font-size: 10.5px; font-style: italic; }
     </style>
     <marker id="one" markerWidth="12" markerHeight="12" refX="6" refY="6" orient="auto">
       <path d="M6,1 L6,11" stroke="#6b9e83" stroke-width="1.6"/>
@@ -24,83 +25,116 @@
     </marker>
   </defs>
 
-  <rect class="bg" x="0" y="0" width="920" height="470" rx="14"/>
+  <rect class="bg" x="0" y="0" width="920" height="650" rx="14"/>
   <text x="32" y="42" class="title">Core data model &amp; multi-tenancy</text>
   <text x="32" y="62" class="sub">Every agent, conversation and message is scoped to an Organization (tenant)</text>
 
   <!-- Tenant boundary -->
-  <rect class="tenant-box" x="300" y="86" width="588" height="356" rx="14"/>
+  <rect class="tenant-box" x="300" y="86" width="588" height="500" rx="14"/>
   <text x="318" y="106" class="tenant-lbl">ORGANIZATION (TENANT) BOUNDARY</text>
 
   <!-- Organization -->
-  <rect class="ent-dark" x="32" y="120" width="210" height="104" rx="11"/>
+  <rect class="ent-dark" x="32" y="120" width="210" height="100" rx="11"/>
   <text x="48" y="146" class="wname">Organization</text>
   <text x="48" y="167" class="wfield">id · name · slug</text>
-  <text x="48" y="183" class="wfield">branding (logo, colors)</text>
-  <text x="48" y="199" class="wfield">is_active</text>
-  <text x="48" y="215" class="wfield">→ members, agents</text>
+  <text x="48" y="183" class="wfield">branding · is_active</text>
+  <text x="48" y="199" class="wfield">the tenant boundary</text>
+
+  <!-- BillingAccount -->
+  <rect class="ent" x="32" y="240" width="170" height="92" rx="11"/>
+  <text x="48" y="266" class="name">BillingAccount</text>
+  <text x="48" y="287" class="field">mode: polar | manual</text>
+  <text x="48" y="303" class="field">seats · status</text>
+  <text x="48" y="319" class="field">current_period_start/end</text>
 
   <!-- User -->
-  <rect class="ent" x="32" y="256" width="210" height="120" rx="11"/>
-  <text x="48" y="282" class="name">User · Member</text>
-  <text x="48" y="303" class="field">id · email · role</text>
-  <text x="48" y="319" class="field">SUPER_ADMIN / ADMIN /</text>
-  <text x="48" y="335" class="field">HUMAN_AGENT</text>
-  <text x="48" y="351" class="field">org membership + RBAC</text>
-  <text x="48" y="367" class="field">JWT in HttpOnly cookie</text>
+  <rect class="ent" x="32" y="356" width="210" height="130" rx="11"/>
+  <text x="48" y="382" class="name">User · OrgMember</text>
+  <text x="48" y="403" class="field">id · email</text>
+  <text x="48" y="419" class="field">role: SUPER_ADMIN /</text>
+  <text x="48" y="435" class="field">ADMIN / HUMAN_AGENT</text>
+  <text x="48" y="451" class="field">org_role: admin |</text>
+  <text x="48" y="467" class="field">human_agent</text>
 
   <!-- AgentConfig -->
-  <rect class="ent-green" x="318" y="124" width="248" height="120" rx="11"/>
+  <rect class="ent-green" x="318" y="124" width="248" height="124" rx="11"/>
   <text x="334" y="150" class="name">AgentConfig</text>
   <text x="334" y="171" class="field">id · name · system_prompt</text>
-  <text x="334" y="187" class="field">llm provider/model + fallback</text>
-  <text x="334" y="203" class="field">temperature · max_tokens</text>
-  <text x="334" y="219" class="field">type_config (escalation,</text>
-  <text x="334" y="235" class="field">timeouts, brand, calendar)</text>
+  <text x="334" y="187" class="field">agent_type: customer_support |</text>
+  <text x="334" y="203" class="field">sales | flow</text>
+  <text x="334" y="219" class="field">type_config (JSON, validated)</text>
+  <text x="334" y="235" class="field">channel_config (JSON)</text>
+
+  <!-- Channel + LLM credentials -->
+  <rect class="ent" x="624" y="124" width="240" height="124" rx="11"/>
+  <text x="640" y="150" class="name">Channel &amp; credentials</text>
+  <text x="640" y="171" class="field">WhatsAppPhoneNumber · 1:1</text>
+  <text x="640" y="187" class="field">phone_number_id · tokens (enc.)</text>
+  <text x="640" y="209" class="field">LLMCredential</text>
+  <text x="640" y="225" class="field">role: primary | fallback</text>
+  <text x="640" y="241" class="field">provider · model · key (enc.)</text>
 
   <!-- Conversation -->
-  <rect class="ent" x="318" y="284" width="248" height="142" rx="11"/>
-  <text x="334" y="310" class="name">Conversation</text>
-  <text x="334" y="331" class="field">id · customer_phone</text>
-  <text x="334" y="347" class="field">status: ACTIVE /</text>
-  <text x="334" y="363" class="field">WITH_HUMAN / CLOSED</text>
-  <text x="334" y="379" class="field">assigned_agent_id</text>
-  <text x="334" y="395" class="field">escalation_reason</text>
-  <text x="334" y="411" class="field">timestamps · collected_fields</text>
+  <rect class="ent" x="318" y="300" width="248" height="150" rx="11"/>
+  <text x="334" y="326" class="name">Conversation</text>
+  <text x="334" y="347" class="field">id · customer_phone</text>
+  <text x="334" y="363" class="field">status: ACTIVE / WITH_HUMAN /</text>
+  <text x="334" y="379" class="field">CLOSED</text>
+  <text x="334" y="395" class="field">assigned_agent_id · queued_at</text>
+  <text x="334" y="411" class="field">current_node_id · collected_fields</text>
+  <text x="334" y="427" class="field">is_test (excluded from billing)</text>
 
   <!-- Message -->
-  <rect class="ent" x="624" y="284" width="240" height="142" rx="11"/>
-  <text x="640" y="310" class="name">Message</text>
-  <text x="640" y="331" class="field">id · conversation_id</text>
-  <text x="640" y="347" class="field">role: USER / ASSISTANT /</text>
-  <text x="640" y="363" class="field">HUMAN_AGENT / SYSTEM</text>
-  <text x="640" y="379" class="field">content</text>
-  <text x="640" y="395" class="field">prompt / completion /</text>
-  <text x="640" y="411" class="field">total tokens · created_at</text>
+  <rect class="ent" x="624" y="300" width="240" height="150" rx="11"/>
+  <text x="640" y="326" class="name">Message</text>
+  <text x="640" y="347" class="field">id + conversation_id (PK)</text>
+  <text x="640" y="363" class="field">role: USER / ASSISTANT /</text>
+  <text x="640" y="379" class="field">HUMAN_AGENT / SYSTEM</text>
+  <text x="640" y="395" class="field">content · channel</text>
+  <text x="640" y="411" class="field">prompt / completion / total</text>
+  <text x="640" y="427" class="field">tokens · partitioned table</text>
+
+  <!-- Appointment -->
+  <rect class="ent-green" x="318" y="470" width="248" height="100" rx="11"/>
+  <text x="334" y="496" class="name">Appointment</text>
+  <text x="334" y="517" class="field">starts_at · ends_at · status</text>
+  <text x="334" y="533" class="field">created_by: ai_agent | admin |</text>
+  <text x="334" y="549" class="field">human_agent · reminder_at</text>
 
   <!-- HumanAgent -->
-  <rect class="ent-green" x="624" y="124" width="240" height="120" rx="11"/>
-  <text x="640" y="150" class="name">HumanAgent</text>
-  <text x="640" y="171" class="field">id · user_id · display_name</text>
-  <text x="640" y="187" class="field">role · max_concurrent</text>
-  <text x="640" y="203" class="field">is_available · is_online</text>
-  <text x="640" y="219" class="field">whatsapp_proxy_enabled</text>
-  <text x="640" y="235" class="field">handles escalations</text>
+  <rect class="ent-green" x="624" y="470" width="240" height="100" rx="11"/>
+  <text x="640" y="496" class="name">HumanAgent</text>
+  <text x="640" y="517" class="field">role · max_concurrent</text>
+  <text x="640" y="533" class="field">is_available · is_online</text>
+  <text x="640" y="549" class="field">whatsapp_proxy_enabled</text>
 
   <!-- Relations -->
-  <!-- Org -> AgentConfig (1..N) -->
-  <path class="rel" d="M242,172 L318,180" marker-start="url(#one)" marker-end="url(#many)"/>
-  <text x="252" y="166" class="card-lbl">1 · N</text>
-  <!-- User -> HumanAgent (1..1) reuse: User becomes HumanAgent -->
-  <path class="rel" d="M242,300 C420,300 470,250 624,200" marker-end="url(#many)"/>
-  <text x="450" y="262" class="card-lbl">becomes</text>
-  <!-- AgentConfig -> Conversation -->
-  <path class="rel" d="M442,244 L442,284" marker-start="url(#one)" marker-end="url(#many)"/>
-  <text x="450" y="270" class="card-lbl">1 · N</text>
-  <!-- Conversation -> Message -->
-  <path class="rel" d="M566,355 L624,355" marker-start="url(#one)" marker-end="url(#many)"/>
-  <text x="576" y="346" class="card-lbl">1 · N</text>
-  <!-- HumanAgent -> Conversation (assigned) -->
-  <path class="rel" d="M700,244 L560,300" marker-end="url(#many)"/>
-  <text x="612" y="268" class="card-lbl">assigned</text>
+  <path class="rel" d="M242,170 L318,178" marker-start="url(#one)" marker-end="url(#many)"/>
+  <text x="252" y="164" class="card-lbl">1 · N</text>
+
+  <path class="rel" d="M100,220 L100,240" marker-start="url(#one)" marker-end="url(#one)"/>
+  <text x="108" y="236" class="card-lbl">1 · 1</text>
+
+  <path class="rel" d="M222,220 L222,356" marker-start="url(#one)" marker-end="url(#many)"/>
+  <text x="228" y="292" class="card-lbl">members</text>
+
+  <path class="rel" d="M566,186 L624,186" marker-start="url(#one)" marker-end="url(#many)"/>
+  <text x="572" y="178" class="card-lbl">1 · N</text>
+
+  <path class="rel" d="M442,248 L442,300" marker-start="url(#one)" marker-end="url(#many)"/>
+  <text x="450" y="278" class="card-lbl">1 · N</text>
+
+  <path class="rel" d="M566,375 L624,375" marker-start="url(#one)" marker-end="url(#many)"/>
+  <text x="576" y="366" class="card-lbl">1 · N</text>
+
+  <path class="rel" d="M442,450 L442,470" marker-start="url(#one)" marker-end="url(#many)"/>
+  <text x="478" y="464" class="card-lbl">0 · N</text>
+
+  <path class="rel" d="M624,505 L594,505 L594,412 L566,412" marker-end="url(#many)"/>
+  <text x="590" y="462" class="card-lbl" transform="rotate(-90 590 462)" text-anchor="middle">assigned</text>
+
+  <path class="rel" d="M137,486 L137,608 L744,608 L744,570" marker-end="url(#many)"/>
+  <text x="400" y="602" class="card-lbl">a user with the HUMAN_AGENT role becomes a HumanAgent</text>
+
+  <text x="32" y="636" class="note">Not shown: audit_events · acceptance_tokens · contract_acceptances · sessions · agent_human_assignments — 16 tables in total.</text>
 </svg>
