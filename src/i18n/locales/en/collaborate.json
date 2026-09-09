@@ -138,7 +138,7 @@
       "context": "A research project at Monadical exploring the intersection of LLMs, speech synthesis, and 3D rendering for interactive digital humans.",
       "problem": "Creating a convincing real-time digital human requires synchronizing speech generation, lip-sync, facial expressions, and conversational AI with low latency.",
       "solution": "Integrated OpenAI GPT for conversation, Whisper for speech recognition, ElevenLabs for voice synthesis, and Three.js for 3D rendering — all connected through a real-time WebSocket pipeline.",
-      "link": "",
+      "link": "/blog/ai-avatars/2024020AIAvatar",
       "technologies": [
         "OpenAI GPT",
         "Whisper",
@@ -159,21 +159,6 @@
         "MCP",
         "pgvector",
         "WhatsApp API"
-      ]
-    },
-    "project_5": {
-      "title": "ROCKET CODE",
-      "description": "Monorepo-based workflow automation platform for development teams with shared component libraries.",
-      "role": "Full-stack developer",
-      "context": "A growing development agency needed to standardize their tooling, share components across projects, and automate repetitive development workflows.",
-      "problem": "Each project had its own setup, dependencies, and component implementations — leading to inconsistency, duplicated work, and slow onboarding for new team members.",
-      "solution": "Designed an NX monorepo architecture with shared React component libraries, NestJS microservices, and automated CI/CD pipelines. New projects could be scaffolded in minutes with consistent patterns.",
-      "link": "",
-      "technologies": [
-        "NX Monorepo",
-        "React",
-        "NestJS",
-        "PostgreSQL"
       ]
     }
   },
