@@ -45,7 +45,8 @@ two sets of constraints, and almost none of the same answers.
 
 ## What is CREARIA Agent?
 
-CREARIA Agent is a **multi-channel AI support agent**. A business connects WhatsApp (and,
+CREARIA Agent is a **multi-channel AI support agent**, built for
+[CrearIA](https://crearia.co/). A business connects WhatsApp (and,
 optionally, email or Instagram), uploads what it knows — a PDF, a price list, a set of FAQs —
 and the agent answers customers from that material. When a question needs a real action or a real
 person, it either calls a tool or hands the conversation to a human without dropping context.
@@ -306,6 +307,16 @@ ordered by `total_conversations` — and notifies them by WhatsApp, dashboard, o
 conversation then flips into a **silent proxy**: messages from the customer are relayed to the
 agent's phone, and the agent's replies are relayed back, with `proxy_metadata` on each message
 recording that a human sent it.
+
+<ImageBox
+  src="/images/crearia/escalation-proxy.png"
+  alt="The escalation proxy: customer and human agent each on their own WhatsApp, bridged by a silent message proxy that relays both directions, with the agent's slash commands listed below"
+  width={920}
+  height={470}
+>
+  The handoff. Neither side installs anything — the customer keeps chatting, and the agent works
+  from their own phone.
+</ImageBox>
 
 What I didn't expect is that the human agent's entire interface is **slash commands over
 WhatsApp**:
