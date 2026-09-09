@@ -180,11 +180,13 @@ Cuando el único trabajo del webhook es _normalizar y encolar_, varias cosas se 
 - **Los reintentos son gratis.** Un worker caído significa un trabajo reintentado, no un mensaje de
   cliente perdido.
 
-El costo es un contrato que ahora tienes que cumplir. El worker espera que el orquestador devuelva
-o una respuesta o una bandera explícita `silent: true`, y el código registra una **"contract
-violation"** cuando no recibe ninguna de las dos — una respuesta vacía sin bandera de silencio
-significa que alguien rompió el protocolo. Me gusta que esto esté verificado y nombrado en lugar de
-tragado en silencio.
+El costo es un contrato que ahora tienes que cumplir: el worker espera o una respuesta o una bandera
+explícita `silent: true`, y registra una **"contract violation"** cuando no recibe ninguna.
+
+Comercialmente, la cola es lo que hace esto vendible a un negocio al que le importan sus clientes.
+Una caída de proveedor, un modelo lento o un despliegue se vuelven una respuesta demorada en vez de
+una perdida — y "nunca perdemos un mensaje de un cliente" es una promesa que solo puedes hacer si
+algo durable está sosteniendo el trabajo.
 
 ## Cómo un mensaje se convierte en respuesta
 
@@ -228,9 +230,10 @@ agendar una reunión — viene de un **servidor MCP** y se descubre en runtime.
 
 Esta es la parte que me llevaría intacta a otro proyecto. Tres propiedades la hacen funcionar:
 
-**Las herramientas se descubren, no se despliegan.** El orquestador se conecta a un servidor MCP
-por SSE, llama a `list_tools()` y guarda lo que encuentra. Agregar una capacidad para todos los
-tenants es un deploy del servidor MCP, no del agente.
+**Las herramientas se descubren, no se despliegan.** El orquestador se conecta a un servidor MCP por
+SSE, llama a `list_tools()` y guarda lo que encuentra. Agregar una capacidad para todos los
+clientes es un solo deploy del servidor MCP — no una release del agente, ni un cambio repetido por
+cliente. El trabajo de integración deja de escalar con el número de clientes.
 
 **Cada tenant recibe su propio subconjunto.** Una fila `mcp_tenant_tools` por tenant y por
 herramienta decide si ese tenant puede llamarla, y lleva un blob `custom_config` con ajustes a
@@ -262,6 +265,14 @@ argumento para el que el modelo nunca tuvo una casilla, y el servidor lo sobresc
 modos. **La frontera de aislamiento está en código que el modelo no puede alcanzar, no en una
 instrucción pidiéndole que se porte bien.**
 
+Esa distinción es lo que permite que un solo despliegue atienda a dos empresas que compiten en el
+mismo mercado. Es también la primera pregunta que hace cualquier comprador serio, y "el prompt le
+dice que no lo haga" nunca ha sido una respuesta aceptable.
+
+La caja de herramientas por tenant tiene además un uso comercial más silencioso: como
+`mcp_tenant_tools` decide qué puede llamar cada cliente, las capacidades se vuelven algo que puedes
+empaquetar y cobrar en vez de algo que todos reciben por defecto.
+
 ## RAG, y qué recupera en realidad
 
 El lado de recuperación es deliberadamente simple, y lo digo como elogio:
@@ -289,12 +300,10 @@ La mayoría de los proyectos en esta etapa llaman a `acompletion()` y lo envuelv
 try/except. Este construye un **`Router`** de LiteLLM por tenant, con los proveedores ordenados por
 prioridad en grupos de fallback:
 
-- Cooldown de 30 segundos para un deployment que falla, tras 2 fallos permitidos
-- Timeout de 45 segundos por petición, 2 reintentos
+- Cooldown de 30 s para un deployment que falla, tras 2 fallos permitidos; timeouts de 45 s, 2 reintentos
 - Un `asyncio.Semaphore(50)` global que limita las llamadas concurrentes al LLM en todo el proceso
-- Recorte de mensajes al 80% de la ventana de contexto del modelo, usando una tabla por modelo con
-  los límites reales, descartando los turnos más viejos hasta que quepa
-- Etiquetas `<thinking>` eliminadas de la salida antes de que el cliente las vea
+- Recorte de mensajes al 80% de la ventana de contexto real del modelo, descartando los turnos más viejos
+- Etiquetas `<thinking>` eliminadas antes de que el cliente las vea
 
 El detalle del recorte de contexto es el que la gente se salta. Conversaciones largas de WhatsApp
 más un system prompt grande más resultados de herramientas terminan excediendo una ventana de

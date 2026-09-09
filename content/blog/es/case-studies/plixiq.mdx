@@ -227,7 +227,12 @@ registerAgentType('flow', {
 ```
 
 Agregar un tipo de agente es una estrategia en el backend, un manifiesto en el frontend, y cero
-cambios en el pipeline. Ese es el retorno.
+cambios en el pipeline.
+
+La versión comercial de esa frase importa más: **un vertical nuevo deja de ser un fork.** Cuando un
+prospecto necesita un comportamiento que el producto todavía no tiene, la respuesta es una clase de
+estrategia nueva junto a las tres existentes — no una rama del código que mantener por cliente, que
+es como una agencia convierte en silencio un producto en cinco.
 
 ## Cómo se procesa un mensaje
 
@@ -243,28 +248,17 @@ El corazón de Plixiq es el pipeline que convierte un mensaje entrante de WhatsA
   respuesta de la IA; la rama ámbar es el traspaso a un humano, y la gris es lo que se factura.
 </ImageBox>
 
-Recorriéndolo:
+El diagrama lleva la secuencia; cuatro pasos vale la pena nombrarlos:
 
-1. **Entra el webhook** — Meta publica el mensaje. Verificamos la firma HMAC-SHA256 contra el app
-   secret guardado de ese número, aplicamos rate limit y resolvemos a qué tenant pertenece el
-   número de WhatsApp.
-2. **Enrutamiento y cortocircuitos** — si quien escribe es un agente humano registrado, el mensaje
-   va al proxy de WhatsApp. Las conversaciones que ya están con un humano, en cola, o respondiendo
-   un menú de roles se resuelven aquí, antes de gastar un solo token.
-3. **Input guard** — un clasificador LLM devuelve `SAFE`, `UNSAFE_INJECTION` o `UNSAFE_DANGEROUS`.
-   Apunta sobre todo a prompt injection, y **falla cerrado**: si el clasificador falla o devuelve
-   algo inesperado, el mensaje se bloquea.
-4. **Despacho por tipo** — los agentes `flow` van al motor de grafo. Los demás reciben un system
-   prompt construido con el perfil del agente, la configuración de escalamiento, el contexto de
-   calendario y el historial, con las definiciones de herramientas adjuntas.
-5. **Llamada al LLM** — vía LiteLLM, usando la credencial primaria de ese agente y cayendo a su
-   secundaria si falla. El uso de tokens vuelve con la respuesta.
-6. **Manejo de herramientas** — `escalate_to_human` desvía a la ruta de escalamiento; las
-   herramientas de calendario y de flujo se ejecutan y moldean la respuesta.
-7. **Output guard** — una verificación determinista, que cubro más abajo.
-8. **Envío y persistencia** — la respuesta sale por la Cloud API, se guarda con sus contadores de
-   tokens, un evento de WebSocket llega al dashboard, y los temporizadores de seguimiento y cierre
-   se escriben en Redis.
+- **Los cortocircuitos van antes del gasto.** Las conversaciones que ya están con un humano, en
+  cola o respondiendo un menú de roles se resuelven antes de comprar un solo token — la petición
+  más barata es la que nunca llega al modelo.
+- **El input guard falla cerrado.** Un clasificador LLM devuelve `SAFE`, `UNSAFE_INJECTION` o
+  `UNSAFE_DANGEROUS`; si falla o devuelve algo inesperado, el mensaje se bloquea en vez de pasar.
+- **El despacho es por tipo de agente.** Los `flow` van al motor de grafo; los demás reciben un
+  system prompt armado con perfil, configuración de escalamiento, contexto de calendario e historial.
+- **Todo se persiste con su costo.** Cada respuesta se guarda con sus contadores de tokens, que es
+  lo que después hace posibles la facturación por tenant y el tope de gasto por conversación.
 
 Los mensajes del cliente se envuelven en delimitadores explícitos antes de llegar al modelo:
 
@@ -278,9 +272,11 @@ No es una frontera de seguridad por sí sola, pero es una capa barata debajo del
 
 ## El motor de flujos
 
-Lo más grande que construimos empezó como un pedido simple: "¿puede el agente seguir un guion?".
-Una conversación guionada es una **máquina de estados**, y una vez que aceptas eso, el diseño se
-sigue solo.
+Lo más grande que construimos empezó como un pedido simple: "¿puede el agente seguir un guion?". Es
+también la funcionalidad que amplió el mercado: las preguntas y respuestas libres se le venden a
+empresas que responden preguntas, pero un flujo guionado se le vende a empresas cuyo soporte _es_
+un proceso: admisión, elegibilidad, agendamiento, seguimiento. Una conversación guionada es una
+**máquina de estados**, y una vez que aceptas eso, el diseño se sigue solo.
 
 Un flujo es un grafo de nodos guardado en el `type_config` del agente. Cada nodo tiene un tipo
 (`data_collection`, `validation`, `selection`, `activation`, `survey`, `llm`, …), un prompt, los
@@ -423,11 +419,11 @@ escalamiento y clasifica la respuesta del cliente. Modelos locales (Ollama) muev
 conversaciones que hace pasar clientes virtuales por el pipeline real durante las pruebas.
 
 En el proceso, el código se construyó con uso intensivo de **programación en pareja con IA**. La
-lección interesante no fue que la IA escribe código rápido — es que la IA te acelera más cuando el
-proyecto tiene **guardarraíles fuertes**. Las reglas de arquitectura verificadas en CI
-(`import-linter`, tests de arquitectura, 491 tests de backend) permitieron que un asistente se
-moviera rápido _sin_ erosionar en silencio las fronteras entre módulos. La estructura es lo que hace seguro desarrollar
-con IA a velocidad.
+lección no fue que la IA escribe código rápido — es que te acelera más cuando el proyecto tiene
+**guardarraíles fuertes**. Las reglas verificadas en CI (`import-linter`, tests de arquitectura, 491
+tests de backend) dejaron que un asistente se moviera rápido _sin_ erosionar las fronteras entre
+módulos. La estructura es lo que hace seguro desarrollar con IA a velocidad — y es la diferencia
+entre entregar esto en cuatro meses o pasar esos cuatro meses desenredándolo.
 
 ## Cuánto cuesta operarlo
 
