@@ -20,6 +20,29 @@ agent — which sounds like a repeat, until you look at how differently the two 
 That contrast is the reason I wanted to write it. Same channel, same broad problem, two teams,
 two sets of constraints, and almost none of the same answers.
 
+<CaseSummary
+  stats={[
+    { value: '5', label: 'backend services' },
+    { value: '51', label: 'database tables' },
+    { value: '11', label: 'MCP tools' },
+    { value: '250', label: 'users load-tested' },
+  ]}
+  rows={[
+    {
+      k: 'Problem',
+      v: 'A support agent that can answer from a business’s own documents and act on its systems — without ever reaching another tenant’s data.',
+    },
+    {
+      k: 'Approach',
+      v: 'A queue between the channel and the model, RAG over pgvector, and tools discovered at runtime over MCP with tenant identity injected server-side.',
+    },
+    {
+      k: 'Outcome',
+      v: 'Three channels (WhatsApp, email, Instagram), multimodal input, and human handoff driven entirely from WhatsApp slash commands.',
+    },
+  ]}
+/>
+
 ## What is CREARIA Agent?
 
 CREARIA Agent is a **multi-channel AI support agent**. A business connects WhatsApp (and,

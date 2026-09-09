@@ -9,6 +9,7 @@ import MathBox from './MathBox'
 import ImageBox from './ImageBox'
 import Reference from './Reference'
 import StackList from './StackList'
+import CaseSummary from './CaseSummary'
 import { PseudoCodeLine, PseudoCode } from './PseudoCode'
 
 export const components: MDXComponents = {
@@ -16,6 +17,7 @@ export const components: MDXComponents = {
   PseudoCodeLine,
   ImageBox,
   StackList,
+  CaseSummary,
   TOCInline,
   a: CustomLink,
   pre: CodeBlock,
