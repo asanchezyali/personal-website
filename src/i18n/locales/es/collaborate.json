@@ -160,6 +160,21 @@
         "pgvector",
         "WhatsApp API"
       ]
+    },
+    "project_5": {
+      "title": "Aluna",
+      "description": "Plataforma de contratación con IA que puntúa hojas de vida contra una vacante y preselecciona candidatos por WhatsApp.",
+      "role": "Tech Lead",
+      "context": "Los reclutadores reciben muchas más hojas de vida de las que pueden leer bien, así que la mayoría de las listas cortas las decide el orden de postulación y no el ajuste al cargo.",
+      "problem": "Filtrar a volumen exige un criterio que un filtro de palabras clave no da, y un producto de contratación guarda algunos de los datos personales más sensibles que existen — así que la velocidad no puede costar consentimiento ni trazabilidad.",
+      "solution": "Construí seis agentes especializados — cada uno con su prompt, su esquema y su modelo — detrás de un servicio sin estado que nunca escribe en la base, más un pipeline durable que revisa consentimiento, caché, deduplicación y cuota de plan antes de gastar un token. Los registros de consentimiento, un log de auditoría append-only y los recibos de borrado son parte del esquema, no un añadido.",
+      "link": "/es/blog/case-studies/aluna",
+      "technologies": [
+        "Next.js",
+        "FastAPI",
+        "LiteLLM",
+        "pgvector"
+      ]
     }
   },
   "community": {
