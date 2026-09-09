@@ -18,10 +18,9 @@ export default function CollaboratePage({ locale }: CollaboratePageProps) {
     '/images/ai-avatars/header-post2.png', // Morpheus
     '/images/ai-avatars/header-post1.png', // Digital Human
     '/images/crearia/crearia-cover.png', // CREARIA
-    '/images/blockchain/post-solana.webp', // ROCKET CODE
   ]
 
-  const projects = [1, 2, 3, 4, 5].map((n) => ({
+  const projects = [1, 2, 3, 4].map((n) => ({
     title: t(`projects.project_${n}.title`),
     description: t(`projects.project_${n}.description`),
     role: t(`projects.project_${n}.role`),
