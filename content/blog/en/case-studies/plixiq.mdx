@@ -220,7 +220,12 @@ registerAgentType('flow', {
 ```
 
 Adding an agent type is a strategy on the backend, a manifest on the frontend, and no changes to
-the pipeline. That's the payoff.
+the pipeline.
+
+The commercial version of that sentence matters more: **a new vertical stops being a fork.** When a
+prospect needs behaviour the product doesn't have yet, the answer is a new strategy class beside
+the existing three — not a branch of the codebase to maintain per customer, which is how agencies
+quietly turn one product into five.
 
 ## How a message is handled
 
@@ -236,26 +241,18 @@ The heart of Plixiq is the pipeline that turns an inbound WhatsApp message into 
   branch is the human handoff, and the grey one is what gets billed.
 </ImageBox>
 
-Walking through it:
+The diagram carries the sequence; four steps are worth naming:
 
-1. **Webhook in** — Meta posts the message. We verify the HMAC-SHA256 signature against that
-   number's stored app secret, rate-limit, and resolve which tenant the WhatsApp number belongs to.
-2. **Route and short-circuit** — if the sender is a registered human agent, the message goes to the
-   WhatsApp proxy instead. Conversations already with a human, sitting in the queue, or answering a
-   role menu are handled here, before spending a single token.
-3. **Input guard** — an LLM classifier returns `SAFE`, `UNSAFE_INJECTION` or `UNSAFE_DANGEROUS`. It
-   is aimed mostly at prompt injection, and it **fails closed**: if the classifier errors or returns
-   anything unexpected, the message is blocked.
-4. **Dispatch by type** — `flow` agents go to the graph engine. The others get a system prompt built
-   from the agent profile, escalation config, calendar context and history, with tool definitions
-   attached.
-5. **LLM call** — through LiteLLM, using that agent's own primary credential, falling back to its
-   secondary on failure. Token usage comes back with the response.
-6. **Tool handling** — `escalate_to_human` diverts to the escalation path; calendar and flow tools
-   execute and shape the reply.
-7. **Output guard** — a deterministic check, covered below.
-8. **Send and persist** — the reply goes out through the Cloud API, is stored with its token counts,
-   a WebSocket event reaches the dashboard, and follow-up and auto-close timers are written to Redis.
+- **Short-circuits come before spend.** Conversations already with a human, in the queue, or
+  answering a role menu are resolved before a single token is bought — the cheapest request is the
+  one that never reaches the model.
+- **The input guard fails closed.** An LLM classifier returns `SAFE`, `UNSAFE_INJECTION` or
+  `UNSAFE_DANGEROUS`; if it errors or returns anything unexpected, the message is blocked rather
+  than passed through.
+- **Dispatch is by agent type.** `flow` agents go to the graph engine; the others get a system
+  prompt assembled from profile, escalation config, calendar context and history.
+- **Everything is persisted with its cost.** Each reply is stored with its token counts, which is
+  what later makes per-tenant billing and the per-conversation spend cap possible.
 
 Customer messages are wrapped in explicit delimiters before they ever reach the model:
 
@@ -269,8 +266,10 @@ Not a security boundary on its own, but a cheap layer under the classifier.
 
 ## The flow engine
 
-The largest thing we built is the one that started as a simple feature request: "can the agent
-follow a script?" A scripted conversation is a **state machine**, and once you accept that, the
+The largest thing we built started as a simple feature request: "can the agent follow a script?" It
+is also the feature that widened the market — free-form Q&A sells to companies that answer
+questions, but a scripted flow sells to companies whose support _is_ a process: intake, eligibility,
+booking, follow-up. A scripted conversation is a **state machine**, and once you accept that, the
 design follows.
 
 A flow is a graph of nodes stored in the agent's `type_config`. Each node has a type
@@ -404,11 +403,12 @@ the safety input guard, and the LLM also writes the escalation role menu and cla
 customer's answer to it. Local models (Ollama) drive a conversation simulator that runs virtual
 customers through the real pipeline during testing.
 
-In the process, the codebase was built with heavy use of **AI pair-programming**. The interesting
-lesson wasn't that AI writes code fast — it's that AI accelerates you most when the project has
-**strong guardrails**. Architecture rules enforced in CI (`import-linter`, architecture tests, 491
-backend tests) meant an assistant could move quickly _without_ quietly eroding the boundaries
-between modules. Structure is what makes AI-assisted development safe to do at speed.
+In the process, the codebase was built with heavy use of **AI pair-programming**. The lesson wasn't
+that AI writes code fast — it's that AI accelerates you most when the project has **strong
+guardrails**. Architecture rules enforced in CI (`import-linter`, architecture tests, 491 backend
+tests) let an assistant move quickly _without_ quietly eroding module boundaries. Structure is what
+makes AI-assisted development safe at speed — and it's the difference between shipping this in four
+months and spending those four months untangling it.
 
 ## What it costs to run
 

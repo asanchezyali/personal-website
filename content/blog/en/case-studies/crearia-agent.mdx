@@ -176,10 +176,13 @@ otherwise hard:
   never survive on a webhook thread.
 - **Retries are free.** A crashed worker means a retried job, not a lost customer message.
 
-The cost is a contract you now have to keep. The worker expects the orchestrator to return either
-a response or an explicit `silent: true` flag, and the code logs a **"contract violation"** when it
-gets neither — an empty reply with no silent flag means someone broke the protocol. I like that
-this is checked and named rather than silently swallowed.
+The cost is a contract you now have to keep: the worker expects either a response or an explicit
+`silent: true` flag, and logs a **"contract violation"** when it gets neither.
+
+Commercially, the queue is what makes the thing sellable to a business that cares about its
+customers. A provider outage, a slow model or a deploy becomes a delayed reply instead of a
+dropped one — and "we never lose a customer message" is a promise you can only make if something
+durable is holding the work.
 
 ## How one message becomes an answer
 
@@ -223,8 +226,9 @@ server** and is discovered at runtime.
 This is the part I'd take to another project unchanged. Three properties make it work:
 
 **Tools are discovered, not deployed.** The orchestrator connects to an MCP server over SSE, calls
-`list_tools()`, and stores what it finds. Adding a capability to every tenant is a deploy of the
-MCP server, not of the agent.
+`list_tools()`, and stores what it finds. Adding a capability for every client is one deploy of the
+MCP server — not a release of the agent, and not a change repeated per customer. Integration work
+stops scaling with the number of clients.
 
 **Each tenant gets its own subset.** A `mcp_tenant_tools` row per tenant per tool decides whether
 that tenant may call it, and carries a `custom_config` blob for tool-level settings. Two tenants
@@ -253,6 +257,14 @@ prompt injection that convinces the model to "look up orders for tenant X" produ
 the model was never given a slot for, and the server overwrites it anyway. **The isolation
 boundary is in code the model can't reach, not in an instruction asking it to behave.**
 
+That distinction is what lets one deployment serve two companies competing in the same market. It
+is also the first question any serious buyer asks, and "the prompt tells it not to" has never been
+an acceptable answer.
+
+The per-tenant toolbox has a quieter commercial use too: because `mcp_tenant_tools` decides what
+each client can call, capabilities become something you can package and price rather than
+something every client gets by default.
+
 ## RAG, and what it actually retrieves
 
 The retrieval side is deliberately plain, and I mean that as praise:
@@ -278,12 +290,10 @@ worth keeping plain.
 Most projects at this stage call `acompletion()` and wrap it in a try/except. This one builds a
 LiteLLM **`Router`** per tenant, with providers ordered by priority into fallback groups:
 
-- 30-second cooldown for a failing deployment, after 2 allowed failures
-- 45-second request timeout, 2 retries
+- A 30-second cooldown for a failing deployment, after 2 allowed failures; 45-second timeouts, 2 retries
 - A global `asyncio.Semaphore(50)` capping concurrent LLM calls across the process
-- Message trimming to 80% of the model's context window, using a per-model table of real context
-  limits, dropping the oldest turns until it fits
-- `<thinking>` tags stripped from output before the customer ever sees them
+- Message trimming to 80% of the model's real context window, dropping the oldest turns until it fits
+- `<thinking>` tags stripped before the customer ever sees them
 
 The context-trimming detail is the one people skip. Long WhatsApp conversations plus a large system
 prompt plus tool results will eventually exceed a context window, and the failure mode is an API
