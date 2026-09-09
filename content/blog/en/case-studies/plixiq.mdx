@@ -15,7 +15,7 @@ authors: ['yali']
 
 This is the first entry in a series of **engineering case studies** about the products I build. The
 goal isn't marketing — it's to open the hood and show the _why_ behind the technical decisions:
-the context, the stack, the trade-offs, the architecture, and even a rough idea of cost and time.
+the context, the stack, the trade-offs, and the architecture.
 
 We start with [**Plixiq**](https://plixiq.com/en), a product I co-founded.
 
@@ -251,8 +251,8 @@ The diagram carries the sequence; four steps are worth naming:
   than passed through.
 - **Dispatch is by agent type.** `flow` agents go to the graph engine; the others get a system
   prompt assembled from profile, escalation config, calendar context and history.
-- **Everything is persisted with its cost.** Each reply is stored with its token counts, which is
-  what later makes per-tenant billing and the per-conversation spend cap possible.
+- **Everything is persisted with its token counts.** Each reply is stored with them, which is what
+  later makes per-tenant metering and the per-conversation token cap possible.
 
 Customer messages are wrapped in explicit delimiters before they ever reach the model:
 
@@ -349,8 +349,8 @@ A few decisions worth calling out:
   exposed to JavaScript.
 - **Conversation status is a small state machine** — `ACTIVE → WITH_HUMAN → CLOSED` — which keeps
   escalation and auto-close logic honest. Flow state hangs off the same row.
-- **Token usage is stored per message**, which is what makes per-tenant cost reporting, the
-  per-conversation spend cap, and the billing anomaly alerts possible.
+- **Token usage is stored per message**, which is what makes per-tenant metering, the
+  per-conversation token cap, and the usage anomaly alerts possible.
 - **Secrets never come back out.** Provider tokens and API keys are Fernet-encrypted at rest, and
   read endpoints return a `*_set` boolean instead of the value.
 
@@ -409,21 +409,6 @@ guardrails**. Architecture rules enforced in CI (`import-linter`, architecture t
 tests) let an assistant move quickly _without_ quietly eroding module boundaries. Structure is what
 makes AI-assisted development safe at speed — and it's the difference between shipping this in four
 months and spending those four months untangling it.
-
-## What it costs to run
-
-Costs scale almost entirely with **LLM usage and message volume** — the infrastructure itself is
-cheap. These are rough, order-of-magnitude estimates for a production deployment, not invoices:
-
-| Scenario                       | Monthly estimate | Notes                                                                         |
-| ------------------------------ | ---------------- | ----------------------------------------------------------------------------- |
-| **Early / low volume**         | ~$60–80          | Free Groq tier, Neon + Upstash free tiers, one small Railway service each     |
-| **Mid (~10k conversations)**   | ~$150–250        | Paid database, fallback provider usage, WhatsApp message fees start to matter |
-| **High (100k+ conversations)** | $500+            | LLM and WhatsApp per-message costs dominate; infra is still a rounding error  |
-
-The headline: a startup can run this for the price of a couple of lunches a month, and the cost
-curve is dominated by usage you only pay for once you have customers. The per-conversation token
-cap exists precisely because the tail of that curve is where a runaway loop would hurt.
 
 ## Timeline
 

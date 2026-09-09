@@ -15,8 +15,7 @@ authors: ['yali']
 
 Esta es la primera entrada de una serie de **casos de estudio de ingeniería** sobre los productos
 que construyo. La idea no es vender — es abrir el capó y mostrar el _porqué_ detrás de las
-decisiones técnicas: el contexto, el stack, los trade-offs, la arquitectura, y hasta una idea
-aproximada de costo y tiempo.
+decisiones técnicas: el contexto, el stack, los trade-offs y la arquitectura.
 
 Empezamos con [**Plixiq**](https://plixiq.com), un producto que co-fundé.
 
@@ -257,8 +256,8 @@ El diagrama lleva la secuencia; cuatro pasos vale la pena nombrarlos:
   `UNSAFE_DANGEROUS`; si falla o devuelve algo inesperado, el mensaje se bloquea en vez de pasar.
 - **El despacho es por tipo de agente.** Los `flow` van al motor de grafo; los demás reciben un
   system prompt armado con perfil, configuración de escalamiento, contexto de calendario e historial.
-- **Todo se persiste con su costo.** Cada respuesta se guarda con sus contadores de tokens, que es
-  lo que después hace posibles la facturación por tenant y el tope de gasto por conversación.
+- **Todo se persiste con sus contadores de tokens.** Cada respuesta se guarda con ellos, que es lo
+  que después hace posibles la medición por tenant y el tope de tokens por conversación.
 
 Los mensajes del cliente se envuelven en delimitadores explícitos antes de llegar al modelo:
 
@@ -361,8 +360,8 @@ Algunas decisiones que vale la pena destacar:
 - **El estado de la conversación es una máquina de estados pequeña** — `ACTIVE → WITH_HUMAN →
 CLOSED` — lo que mantiene honesta la lógica de escalamiento y cierre automático. El estado del
   flujo cuelga de la misma fila.
-- **El uso de tokens se guarda por mensaje**, que es lo que hace posibles el reporte de costos por
-  tenant, el tope de gasto por conversación y las alertas de anomalías de facturación.
+- **El uso de tokens se guarda por mensaje**, que es lo que hace posibles la medición por tenant, el
+  tope de tokens por conversación y las alertas de anomalías de uso.
 - **Los secretos nunca salen.** Los tokens de proveedor y las API keys se cifran con Fernet en
   reposo, y los endpoints de lectura devuelven un booleano `*_set` en vez del valor.
 
@@ -424,22 +423,6 @@ lección no fue que la IA escribe código rápido — es que te acelera más cua
 tests de backend) dejaron que un asistente se moviera rápido _sin_ erosionar las fronteras entre
 módulos. La estructura es lo que hace seguro desarrollar con IA a velocidad — y es la diferencia
 entre entregar esto en cuatro meses o pasar esos cuatro meses desenredándolo.
-
-## Cuánto cuesta operarlo
-
-Los costos escalan casi por completo con el **uso de LLM y el volumen de mensajes** — la
-infraestructura en sí es barata. Estas son estimaciones aproximadas, de orden de magnitud, para un
-despliegue en producción, no facturas:
-
-| Escenario                       | Estimado mensual | Notas                                                                                       |
-| ------------------------------- | ---------------- | ------------------------------------------------------------------------------------------- |
-| **Inicial / bajo volumen**      | ~$60–80          | Tier gratis de Groq, tiers gratis de Neon + Upstash, un servicio pequeño en Railway         |
-| **Medio (~10k conversaciones)** | ~$150–250        | Base de datos paga, uso del proveedor de respaldo, empiezan a pesar las tarifas de WhatsApp |
-| **Alto (100k+ conversaciones)** | $500+            | Dominan los costos por mensaje de LLM y WhatsApp; la infra sigue siendo un redondeo         |
-
-El titular: una startup puede correr esto por el precio de un par de almuerzos al mes, y la curva
-de costo está dominada por uso que solo pagas cuando ya tienes clientes. El tope de tokens por
-conversación existe justamente porque la cola de esa curva es donde un bucle desbocado dolería.
 
 ## Tiempos
 
