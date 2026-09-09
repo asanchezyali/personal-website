@@ -1,0 +1,100 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 530" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif">
+  <defs>
+    <style>
+      .bg { fill: #f4f9f9; }
+      .step { fill: #ffffff; stroke: #dde4ea; stroke-width: 1.5; }
+      .step-accent { fill: #d7f4f0; stroke: #9fddd6; stroke-width: 1.5; }
+      .step-dark { fill: #101a2b; stroke: #1e2c45; stroke-width: 1.5; }
+      .title { fill: #101a2b; font-size: 18px; font-weight: 700; }
+      .sub { fill: #4a5a72; font-size: 11px; }
+      .label { fill: #1f3350; font-size: 12.5px; font-weight: 700; }
+      .desc { fill: #4a5a72; font-size: 10.5px; }
+      .white { fill: #ffffff; font-size: 12.5px; font-weight: 700; }
+      .whitesub { fill: #8ee0d6; font-size: 10.5px; }
+      .edge { stroke: #0f766e; stroke-width: 2; fill: none; }
+      .branch { stroke: #8b9bbf; stroke-width: 2; fill: none; stroke-dasharray: 5 4; }
+      .elab { fill: #4a5a72; font-size: 10px; font-weight: 600; }
+    </style>
+    <marker id="m" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+      <path d="M0,0 L9,4.5 L0,9 z" fill="#0f766e"/>
+    </marker>
+    <marker id="g" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+      <path d="M0,0 L9,4.5 L0,9 z" fill="#8b9bbf"/>
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="530" rx="14"/>
+  <text x="32" y="42" class="title">From an uploaded CV to a ranked candidate</text>
+  <text x="32" y="62" class="sub">A durable Inngest job. Every step retries on its own — and three of them can stop the run before it costs anything</text>
+
+  <rect class="step-accent" x="32" y="96" width="190" height="104" rx="11"/>
+  <text x="46" y="122" class="label">1 · Upload</text>
+  <text x="46" y="142" class="desc">file to S3, process row</text>
+  <text x="46" y="158" class="desc">created, job queued</text>
+  <text x="46" y="174" class="desc">the recruiter is not</text>
+  <text x="46" y="190" class="desc">left waiting on it</text>
+
+  <rect class="step" x="254" y="96" width="190" height="104" rx="11"/>
+  <text x="268" y="122" class="label">2 · Consent gate</text>
+  <text x="268" y="142" class="desc">Ley 1581/2012</text>
+  <text x="268" y="158" class="desc">a candidate who revoked</text>
+  <text x="268" y="174" class="desc">consent is never analysed,</text>
+  <text x="268" y="190" class="desc">not even on a re-run</text>
+
+  <rect class="step" x="476" y="96" width="190" height="104" rx="11"/>
+  <text x="490" y="122" class="label">3 · Extract text</text>
+  <text x="490" y="142" class="desc">PDF and DOCX → text</text>
+  <text x="490" y="158" class="desc">cached in cvs.raw_text</text>
+  <text x="490" y="174" class="desc">on the first run, so a</text>
+  <text x="490" y="190" class="desc">retry never re-parses</text>
+
+  <rect class="step" x="698" y="96" width="190" height="104" rx="11"/>
+  <text x="712" y="122" class="label">4 · Dedup</text>
+  <text x="712" y="142" class="desc">hash of CV + vacancy +</text>
+  <text x="712" y="158" class="desc">deal-breakers</text>
+  <text x="712" y="174" class="desc">unchanged input reuses</text>
+  <text x="712" y="190" class="desc">the previous result</text>
+
+  <rect class="step" x="698" y="244" width="190" height="104" rx="11"/>
+  <text x="712" y="270" class="label">5 · Plan gate</text>
+  <text x="712" y="290" class="desc">monthly analysis quota</text>
+  <text x="712" y="306" class="desc">for this organisation</text>
+  <text x="712" y="322" class="desc">refuses before the</text>
+  <text x="712" y="338" class="desc">call, not after</text>
+
+  <rect class="step-dark" x="476" y="244" width="190" height="104" rx="11"/>
+  <text x="490" y="270" class="white">6 · Analyse</text>
+  <text x="490" y="290" class="whitesub">cv_analysis agent</text>
+  <text x="490" y="306" class="whitesub">JSON object, temp 0.2</text>
+  <text x="490" y="322" class="whitesub">90s cap on the call</text>
+  <text x="490" y="338" class="whitesub">model chosen per agent</text>
+
+  <rect class="step" x="254" y="244" width="190" height="104" rx="11"/>
+  <text x="268" y="270" class="label">7 · Record the cost</text>
+  <text x="268" y="290" class="desc">input/output tokens from</text>
+  <text x="268" y="306" class="desc">the provider response,</text>
+  <text x="268" y="322" class="desc">priced from the same</text>
+  <text x="268" y="338" class="desc">catalog the model came from</text>
+
+  <rect class="step-accent" x="32" y="244" width="190" height="104" rx="11"/>
+  <text x="46" y="270" class="label">8 · Persist + notify</text>
+  <text x="46" y="290" class="desc">score, summary and</text>
+  <text x="46" y="306" class="desc">extracted fields saved</text>
+  <text x="46" y="322" class="desc">email to whoever opted in</text>
+  <text x="46" y="338" class="desc">(owner, by default)</text>
+
+  <rect x="254" y="404" width="634" height="86" rx="11" stroke="#9fddd6" fill="#eafaf8" stroke-width="1.5"/>
+  <text x="270" y="430" class="label">Then, if the score clears the bar — auto-screening</text>
+  <text x="270" y="450" class="desc">a second job opens a WhatsApp conversation with the candidate and runs the screening_questions the vacancy defined</text>
+  <text x="270" y="466" class="desc">the conversation agent decides turn by turn whether it has enough to stop, and returns a match score and a summary</text>
+  <text x="270" y="482" class="desc">every Meta status that carries a billable pricing object is recorded too — the WhatsApp side of the bill is not a guess</text>
+
+  <path class="edge" d="M222,148 L254,148" marker-end="url(#m)"/>
+  <path class="edge" d="M444,148 L476,148" marker-end="url(#m)"/>
+  <path class="edge" d="M666,148 L698,148" marker-end="url(#m)"/>
+  <path class="edge" d="M793,200 L793,244" marker-end="url(#m)"/>
+  <path class="edge" d="M698,296 L666,296" marker-end="url(#m)"/>
+  <path class="edge" d="M476,296 L444,296" marker-end="url(#m)"/>
+  <path class="edge" d="M254,296 L222,296" marker-end="url(#m)"/>
+  <path class="branch" d="M571,348 L571,404" marker-end="url(#g)"/>
+</svg>

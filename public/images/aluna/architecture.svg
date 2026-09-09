@@ -1,0 +1,127 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 600" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif">
+  <defs>
+    <style>
+      .bg { fill: #f4f9f9; }
+      .card { fill: #ffffff; stroke: #dde4ea; stroke-width: 1.5; }
+      .card-accent { fill: #d7f4f0; stroke: #9fddd6; stroke-width: 1.5; }
+      .card-dark { fill: #101a2b; stroke: #1e2c45; stroke-width: 1.5; }
+      .title { fill: #101a2b; font-size: 15px; font-weight: 700; }
+      .label { fill: #1f3350; font-size: 12px; font-weight: 600; }
+      .sub { fill: #4a5a72; font-size: 10.5px; }
+      .white { fill: #ffffff; font-size: 13px; font-weight: 700; }
+      .whitesub { fill: #8ee0d6; font-size: 10.5px; }
+      .group { fill: #101a2b; font-size: 11px; font-weight: 700; letter-spacing: .06em; }
+      .edge { stroke: #8b9bbf; stroke-width: 1.6; fill: none; }
+      .edge-strong { stroke: #0f766e; stroke-width: 2.2; fill: none; }
+      .elab { fill: #4a5a72; font-size: 10px; font-weight: 600; }
+    </style>
+    <marker id="arr" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+      <path d="M0,0 L9,4.5 L0,9 z" fill="#8b9bbf"/>
+    </marker>
+    <marker id="arrs" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+      <path d="M0,0 L9,4.5 L0,9 z" fill="#0f766e"/>
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="920" height="600" rx="14"/>
+  <text x="32" y="40" class="title" font-size="18">Aluna — high-level architecture</text>
+  <text x="32" y="60" class="sub" font-size="11">One Turborepo: a Next.js product and a Python agent service that only ever answers questions</text>
+
+  <!-- Recruiter -->
+  <rect class="card-accent" x="32" y="150" width="140" height="100" rx="12"/>
+  <text x="102" y="182" text-anchor="middle" class="label">Recruiter</text>
+  <text x="102" y="202" text-anchor="middle" class="sub">posts a vacancy,</text>
+  <text x="102" y="218" text-anchor="middle" class="sub">uploads CVs, reads</text>
+  <text x="102" y="234" text-anchor="middle" class="sub">the ranked shortlist</text>
+
+  <!-- Web app -->
+  <rect class="card-dark" x="204" y="96" width="250" height="290" rx="14"/>
+  <text x="222" y="124" class="white">Next.js web app</text>
+  <text x="222" y="148" class="whitesub">Owns the domain and the data.</text>
+  <text x="222" y="172" class="whitesub">Modules: vacancies · candidates ·</text>
+  <text x="222" y="188" class="whitesub">conversations · reports · billing ·</text>
+  <text x="222" y="204" class="whitesub">companies · admin · settings</text>
+  <text x="222" y="228" class="whitesub">Server actions + internal API</text>
+  <text x="222" y="252" class="whitesub">Plan gate on every metered action</text>
+  <text x="222" y="276" class="whitesub">Consent, audit log, erasure</text>
+  <text x="222" y="300" class="whitesub">PDF reports · score emails</text>
+  <text x="222" y="330" class="whitesub">better-auth + organizations</text>
+  <text x="222" y="354" class="whitesub">next-intl (ES / EN)</text>
+
+  <!-- AI service -->
+  <rect class="card" x="486" y="96" width="230" height="290" rx="14"/>
+  <text x="504" y="124" class="group">AI SERVICE · FastAPI</text>
+  <text x="504" y="150" class="sub">Stateless. No database writes.</text>
+  <text x="504" y="176" class="label">Six agents</text>
+  <text x="504" y="196" class="sub">vacancy_post · vacancy_chat</text>
+  <text x="504" y="212" class="sub">cv_analysis · screening_questions</text>
+  <text x="504" y="228" class="sub">conversation · report_readings</text>
+  <text x="504" y="256" class="label">Each one:</text>
+  <text x="504" y="276" class="sub">its own prompt + schema</text>
+  <text x="504" y="292" class="sub">its own model, chosen per agent</text>
+  <text x="504" y="308" class="sub">structured output, enforced</text>
+  <text x="504" y="332" class="sub">LiteLLM → 11 curated models</text>
+  <text x="504" y="356" class="sub">WhatsApp webhook mounts here</text>
+
+  <!-- Meta -->
+  <rect class="card" x="748" y="110" width="140" height="90" rx="12"/>
+  <text x="818" y="140" text-anchor="middle" class="label">WhatsApp</text>
+  <text x="818" y="158" text-anchor="middle" class="label">Cloud API</text>
+  <text x="818" y="178" text-anchor="middle" class="sub">Meta · pywa</text>
+
+  <!-- Candidate -->
+  <rect class="card-accent" x="748" y="240" width="140" height="90" rx="12"/>
+  <text x="818" y="270" text-anchor="middle" class="label">Candidate</text>
+  <text x="818" y="290" text-anchor="middle" class="sub">screened in a chat</text>
+  <text x="818" y="306" text-anchor="middle" class="sub">they already use</text>
+
+  <!-- Bottom infra -->
+  <rect class="card" x="32" y="430" width="160" height="118" rx="12"/>
+  <text x="112" y="456" text-anchor="middle" class="label">PostgreSQL</text>
+  <text x="112" y="476" text-anchor="middle" class="sub">+ pgvector</text>
+  <text x="112" y="494" text-anchor="middle" class="sub">26 tables, Drizzle</text>
+  <text x="112" y="512" text-anchor="middle" class="sub">CV and vacancy</text>
+  <text x="112" y="528" text-anchor="middle" class="sub">embeddings</text>
+
+  <rect class="card-accent" x="206" y="430" width="160" height="118" rx="12"/>
+  <text x="286" y="456" text-anchor="middle" class="label">Inngest</text>
+  <text x="286" y="476" text-anchor="middle" class="sub">durable jobs</text>
+  <text x="286" y="494" text-anchor="middle" class="sub">cv-pipeline</text>
+  <text x="286" y="512" text-anchor="middle" class="sub">auto-screening</text>
+  <text x="286" y="528" text-anchor="middle" class="sub">steps retry on their own</text>
+
+  <rect class="card" x="380" y="430" width="160" height="118" rx="12"/>
+  <text x="460" y="456" text-anchor="middle" class="label">S3</text>
+  <text x="460" y="476" text-anchor="middle" class="sub">CV files, presigned</text>
+  <text x="460" y="494" text-anchor="middle" class="sub">Text extracted from</text>
+  <text x="460" y="512" text-anchor="middle" class="sub">PDF and DOCX</text>
+  <text x="460" y="528" text-anchor="middle" class="sub">before analysis</text>
+
+  <rect class="card" x="554" y="430" width="160" height="118" rx="12"/>
+  <text x="634" y="456" text-anchor="middle" class="label">Upstash Redis</text>
+  <text x="634" y="476" text-anchor="middle" class="sub">rate limiting on the</text>
+  <text x="634" y="494" text-anchor="middle" class="sub">public apply page and</text>
+  <text x="634" y="512" text-anchor="middle" class="sub">the internal endpoints</text>
+
+  <rect class="card" x="728" y="430" width="160" height="118" rx="12"/>
+  <text x="808" y="456" text-anchor="middle" class="label">Polar</text>
+  <text x="808" y="476" text-anchor="middle" class="sub">four plan tiers</text>
+  <text x="808" y="494" text-anchor="middle" class="sub">seats, vacancies,</text>
+  <text x="808" y="512" text-anchor="middle" class="sub">monthly analyses and</text>
+  <text x="808" y="528" text-anchor="middle" class="sub">screenings</text>
+
+  <!-- Edges -->
+  <path class="edge" d="M172,200 L204,200" marker-end="url(#arr)"/>
+  <path class="edge-strong" d="M454,180 L486,180" marker-end="url(#arrs)"/>
+  <text x="470" y="176" class="elab" transform="rotate(-90 470 176)" text-anchor="middle">asks</text>
+  <path class="edge" d="M486,250 L454,250" marker-end="url(#arr)"/>
+  <text x="470" y="288" class="elab" transform="rotate(-90 470 288)" text-anchor="middle">answers</text>
+  <path class="edge-strong" d="M716,155 L748,155" marker-end="url(#arrs)"/>
+  <path class="edge" d="M818,200 L818,240" marker-end="url(#arr)"/>
+  <text x="826" y="226" class="elab">screening</text>
+  <path class="edge" d="M300,386 L300,430" marker-end="url(#arr)"/>
+  <path class="edge" d="M360,386 L112,430" marker-end="url(#arr)"/>
+  <path class="edge" d="M400,386 L460,430" marker-end="url(#arr)"/>
+  <path class="edge" d="M430,386 L634,430" marker-end="url(#arr)"/>
+  <path class="edge" d="M448,386 L790,430" marker-end="url(#arr)"/>
+</svg>

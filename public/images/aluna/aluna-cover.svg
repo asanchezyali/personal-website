@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif">
+  <defs>
+    <linearGradient id="bgg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0a1233"/>
+      <stop offset="55%" stop-color="#101a2b"/>
+      <stop offset="100%" stop-color="#0f3b3a"/>
+    </linearGradient>
+    <style>
+      .eyebrow { fill: #2dd4bf; font-size: 19px; font-weight: 700; letter-spacing: .18em; }
+      .h1 { fill: #ffffff; font-size: 62px; font-weight: 800; letter-spacing: -.015em; }
+      .lede { fill: #9fddd6; font-size: 25px; }
+      .chip-t { fill: #d7f4f0; font-size: 17px; font-weight: 600; }
+      .chip { fill: #12433f; stroke: #1d6b63; stroke-width: 1.5; }
+      .bar { fill: #0f766e; }
+      .bar-hi { fill: #2dd4bf; }
+      .track { fill: #1b2a42; }
+      .rank { fill: #8ee0d6; font-size: 15px; font-weight: 700; }
+    </style>
+  </defs>
+
+  <rect x="0" y="0" width="1200" height="630" fill="url(#bgg)"/>
+
+  <!-- decorative ranked-candidate bars -->
+  <g opacity="0.95">
+    <rect class="track" x="830" y="150" width="300" height="16" rx="8"/>
+    <rect class="bar-hi" x="830" y="150" width="274" height="16" rx="8"/>
+    <text x="1146" y="163" class="rank">92</text>
+
+    <rect class="track" x="830" y="200" width="300" height="16" rx="8"/>
+    <rect class="bar" x="830" y="200" width="228" height="16" rx="8"/>
+    <text x="1146" y="213" class="rank">78</text>
+
+    <rect class="track" x="830" y="250" width="300" height="16" rx="8"/>
+    <rect class="bar" x="830" y="250" width="192" height="16" rx="8"/>
+    <text x="1146" y="263" class="rank">64</text>
+
+    <rect class="track" x="830" y="300" width="300" height="16" rx="8"/>
+    <rect class="bar" x="830" y="300" width="141" height="16" rx="8"/>
+    <text x="1146" y="313" class="rank">47</text>
+
+    <rect class="track" x="830" y="350" width="300" height="16" rx="8"/>
+    <rect class="bar" x="830" y="350" width="96" height="16" rx="8"/>
+    <text x="1146" y="363" class="rank">32</text>
+  </g>
+
+  <text x="88" y="152" class="eyebrow">ENGINEERING CASE STUDY · 03</text>
+  <text x="88" y="248" class="h1">Aluna</text>
+  <text x="88" y="316" class="lede">Six agents, structured output, and a</text>
+  <text x="88" y="352" class="lede">receipt that outlives the data.</text>
+
+  <rect class="chip" x="88" y="416" width="132" height="44" rx="22"/>
+  <text x="154" y="444" text-anchor="middle" class="chip-t">Next.js</text>
+  <rect class="chip" x="234" y="416" width="128" height="44" rx="22"/>
+  <text x="298" y="444" text-anchor="middle" class="chip-t">FastAPI</text>
+  <rect class="chip" x="376" y="416" width="126" height="44" rx="22"/>
+  <text x="439" y="444" text-anchor="middle" class="chip-t">Inngest</text>
+  <rect class="chip" x="516" y="416" width="112" height="44" rx="22"/>
+  <text x="572" y="444" text-anchor="middle" class="chip-t">LiteLLM</text>
+  <rect class="chip" x="642" y="416" width="128" height="44" rx="22"/>
+  <text x="706" y="444" text-anchor="middle" class="chip-t">pgvector</text>
+
+  <text x="88" y="536" class="lede" font-size="20" fill="#63a99f">asanchezyali.com</text>
+</svg>
