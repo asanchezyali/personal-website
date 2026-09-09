@@ -15,7 +15,7 @@ const siteMetadata = {
   x: 'https://x.com/asanchezyali',
   linkedin: 'https://www.linkedin.com/in/asanchezyali/',
   instagram: 'https://www.instagram.com/asanchezyali/',
-  discord: 'https://discord.gg/VF9QHBBF',
+  discord: 'https://discord.gg/cBSw4bKZDj',
   locale: 'en',
   analytics: {
     googleAnalytics: { googleAnalyticsId: process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID },
