@@ -1,5 +1,3 @@
-import 'katex/dist/katex.css'
-import 'styles/prism.css'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { LocaleTypes } from '@/i18n/settings'

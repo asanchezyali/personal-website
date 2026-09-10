@@ -14,8 +14,25 @@
   "finish": "Back to the course",
   "progress": "Lesson {{current}} of {{total}}",
   "meta": {
-    "modules": "{{count}} modules",
-    "lessons": "{{count}} lessons",
+    "modules_one": "{{count}} module",
+    "modules_other": "{{count}} modules",
+    "lessons_one": "{{count}} lesson",
+    "lessons_other": "{{count}} lessons",
     "free": "free"
+  },
+  "syllabus": "See the syllabus",
+  "pitch": {
+    "one": {
+      "title": "Figures you can move",
+      "body": "Drag a matrix and watch the plane bend with it. The intuition comes from your hands, not from a paragraph."
+    },
+    "two": {
+      "title": "Python that runs",
+      "body": "Every idea ends in the three or four lines of NumPy that do the same thing, so the maths and the code never drift apart."
+    },
+    "three": {
+      "title": "No paywall",
+      "body": "The whole course is here, in the open. No sign-up, no drip feed, no upsell at lesson four."
+    }
   }
 }
