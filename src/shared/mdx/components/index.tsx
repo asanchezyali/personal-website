@@ -22,6 +22,7 @@ import TransposeGrid from './TransposeGrid'
 import Conditioning from './Conditioning'
 import GradientSteps from './GradientSteps'
 import CosineSimilarity from './CosineSimilarity'
+import SolutionSet from './SolutionSet'
 import { PseudoCodeLine, PseudoCode } from './PseudoCode'
 
 export const components: MDXComponents = {
@@ -42,6 +43,7 @@ export const components: MDXComponents = {
   Conditioning,
   GradientSteps,
   CosineSimilarity,
+  SolutionSet,
   TOCInline,
   a: CustomLink,
   pre: CodeBlock,
