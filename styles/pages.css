@@ -411,6 +411,13 @@
   .katex-display > .katex > .katex-html > .tag { border: none !important; border-radius: 0 !important; background: none !important; box-shadow: none !important; }
   .post-body pre .k { color: #c084fc; } .post-body pre .s { color: #86efac; } .post-body pre .c { color: #64748b; font-style: italic; } .post-body pre .n { color: #fbbf24; } .post-body pre .f { color: #60a5fa; }
   .post-body code { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: .9em; padding: 2px 6px; border-radius: 4px; background: var(--g-100); }
+  /* Block code: the MDX pipeline emits <code class="code-highlight"> with no <pre>.
+     Prism's default display:table drops indentation when the anonymous table cells
+     are generated, even under white-space:pre, so lay the lines out as blocks
+     instead. The inline-code pill above must not apply here either. */
+  .post-body code.code-highlight { display: block; white-space: pre; background: none; padding: 20px 32px; border-radius: 0; font-size: 14px; line-height: 1.6; color: #e2e8f0; }
+  html.dark .post-body code.code-highlight { background: none; }
+  .post-body code.code-highlight .code-line { display: block; white-space: pre; }
   html.dark .post-body code { background: var(--g-200); }
 
   /* ---- Tables (MDX <TableWrapper />) ---- */
@@ -693,14 +700,17 @@
   .comment-form .row { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
   .comment-form .muted { font-size: 12px; color: var(--g-500); }
   .comment-list { margin-top: 24px; display: flex; flex-direction: column; gap: 20px; }
-  .comment { display: flex; gap: 12px; }
-  .comment .avatar { width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0; overflow: hidden; }
-  .comment .avatar .ph { width: 100%; height: 100%; font-size: 11px; }
-  .comment .b { flex: 1; }
-  .comment .head { display: flex; gap: 10px; align-items: baseline; font-size: 13px; }
-  .comment .head .name { font-weight: 600; }
-  .comment .head .time { color: var(--g-500); font-size: 12px; }
-  .comment .body { font-size: 14px; color: var(--g-600); line-height: 1.6; margin-top: 4px; }
+  /* Scoped to .comment-list on purpose: a bare .comment also matches Prism's
+     <span class="token comment">, which turned every code comment on the site
+     into a full-width flex block on its own line. */
+  .comment-list .comment { display: flex; gap: 12px; }
+  .comment-list .comment .avatar { width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0; overflow: hidden; }
+  .comment-list .comment .avatar .ph { width: 100%; height: 100%; font-size: 11px; }
+  .comment-list .comment .b { flex: 1; }
+  .comment-list .comment .head { display: flex; gap: 10px; align-items: baseline; font-size: 13px; }
+  .comment-list .comment .head .name { font-weight: 600; }
+  .comment-list .comment .head .time { color: var(--g-500); font-size: 12px; }
+  .comment-list .comment .body { font-size: 14px; color: var(--g-600); line-height: 1.6; margin-top: 4px; }
   html.dark .comment .body { color: var(--g-600); }
 
   @media (max-width: 900px) {
