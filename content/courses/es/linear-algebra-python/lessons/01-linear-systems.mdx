@@ -1,0 +1,196 @@
+---
+title: 'Sistemas lineales con Python'
+language: 'es'
+module: 'Sistemas y vectores'
+moduleOrder: 1
+order: 1
+summary: 'Resolver A·x = b en una línea de NumPy, entender qué hace esa línea por dentro y saber cuándo no va a funcionar.'
+---
+
+Casi todo el álgebra lineal aplicada empieza en el mismo sitio: tienes varias ecuaciones, todas
+lineales, y quieres los valores que las satisfacen a la vez.
+
+$$
+\begin{aligned}
+  x_1 + x_2 + x_3 &= 3\\
+  x_1 - x_2 + 2x_3 &= 2\\
+  x_2 + x_3 &= 2
+\end{aligned}
+$$
+
+Escrito así parece un rompecabezas de despejes. Escrito de la otra forma —una **matriz** $A$ con los
+coeficientes y un **vector** $\vec{b}$ con los términos de la derecha— es una sola pregunta:
+
+$$A\vec{x} = \vec{b}$$
+
+Y esa pregunta tiene una respuesta de una línea.
+
+## Montar el sistema
+
+Cada fila de $A$ es una ecuación. El vector $\vec{b}$ son los números del otro lado del igual:
+
+```python
+import numpy as np
+
+A = np.array([[1,  1, 1],
+              [1, -1, 2],
+              [0,  1, 1]])
+b = np.array([3, 2, 2])
+```
+
+Fíjate en que los coeficientes que no aparecen sí ocupan sitio: la tercera ecuación no tiene $x_1$,
+así que su primera entrada es un `0`. La matriz no admite huecos.
+
+## Resolverlo
+
+```python
+x = np.linalg.solve(A, b)
+```
+
+```python
+# array([1., 1., 1.])
+```
+
+Eso es todo. Pero conviene saber qué pasó ahí dentro, porque explica por qué esta línea es la
+correcta y otras que parecen equivalentes no lo son.
+
+`solve` **no** calcula la inversa de $A$. Factoriza la matriz en dos triangulares, $A = LU$, y con
+eso resuelve dos sistemas encadenados, cada uno trivial porque es triangular. El trabajo es
+$O(n^3)$, y por debajo lo hace LAPACK, la biblioteca de álgebra lineal que sostiene el cómputo
+científico desde los noventa.
+
+## Lo que hace la eliminación, paso a paso
+
+La factorización es eliminación gaussiana organizada. Dale al play y míralo: cada paso es una
+operación de fila, y el objetivo es dejar la identidad a la izquierda. Cuando lo consigues, la
+columna de la derecha **es** la solución.
+
+<EliminationSteps
+  a={[[1, 1, 1], [1, -1, 2], [0, 1, 1]]}
+  b={[3, 2, 2]}
+  rowLetter="F"
+  labels={{
+    start: 'Matriz ampliada [A | b]',
+    done: 'Listo: la última columna es x',
+    singular: 'A es singular — no hay solución única',
+    step: 'Paso',
+  }}
+/>
+
+No hay magia: sumar un múltiplo de una ecuación a otra no cambia las soluciones del sistema, y
+repitiendo esa jugada se llega a un sistema tan simple que la respuesta se lee directamente.
+
+## Verificar
+
+Nunca confíes a ciegas en un resultado numérico. Sustituye y comprueba:
+
+```python
+np.allclose(A @ x, b)
+```
+
+```python
+# True
+```
+
+El operador `@` es el producto matriz-vector. Y la comprobación es `allclose`, no `==`: en coma
+flotante el resultado exacto casi nunca sale exacto, y comparar por igualdad estricta te va a dar
+`False` por un error de $10^{-16}$ que no significa nada.
+
+## Verlo en dos dimensiones
+
+Con dos incógnitas cada ecuación es una **recta**, y resolver el sistema es preguntar dónde se
+cruzan. Mueve los coeficientes:
+
+<LinearSystem2D
+  first={[1, 1, 1.25]}
+  second={[1, -2, 0.5]}
+  labels={{
+    hint: 'Cada ecuación es una recta. Mueve los coeficientes y mira qué le pasa al punto de corte.',
+    unique: 'Una solución: las rectas se cruzan en un punto.',
+    none: 'Sin solución: son paralelas y nunca se encuentran.',
+    infinite: 'Infinitas soluciones: es la misma recta dos veces.',
+    solution: 'x',
+    reset: 'Reiniciar',
+  }}
+/>
+
+Intenta dejar el determinante en cero. Verás que solo hay dos maneras de que eso ocurra, y que son
+exactamente los dos casos en los que `solve` no puede darte una respuesta.
+
+Con tres incógnitas la imagen es la misma un piso más arriba: cada ecuación es un **plano**, y la
+solución es el punto donde se cortan los tres.
+
+## ¿Y si no hay solución única?
+
+`solve` exige que $A$ sea invertible. Si una fila es combinación de las otras, la matriz es
+**singular** y la función se niega:
+
+```python
+C = np.array([[1,  1, 1],
+              [1, -1, 2],
+              [2,  0, 3]])
+
+np.linalg.solve(C, np.array([3, 2, 1]))
+```
+
+```python
+# LinAlgError: Singular matrix
+```
+
+Aquí la tercera fila es la suma de las dos primeras, así que no aporta información nueva: son dos
+ecuaciones disfrazadas de tres. Quien lo decide es el **rango**, el número de filas que de verdad
+son independientes:
+
+```python
+np.linalg.matrix_rank(C)
+```
+
+```python
+# 2
+```
+
+Con $\operatorname{rank}(A) < n$ hay cero o infinitas soluciones, nunca una sola. Cuál de las dos
+depende de $\vec{b}$: si es compatible con la dependencia, sobran soluciones; si la contradice, no
+hay ninguna.
+
+<EliminationSteps
+  a={[[1, 1, 1], [1, -1, 2], [2, 0, 3]]}
+  b={[3, 2, 1]}
+  rowLetter="F"
+  labels={{
+    start: 'Matriz ampliada de un sistema singular',
+    done: 'Listo',
+    singular: 'Fila de ceros a la izquierda: el rango es 2, no 3',
+    step: 'Paso',
+  }}
+/>
+
+Mira el final: aparece una fila de ceros en la parte de $A$. Esa fila es la prueba de que la tercera
+ecuación no decía nada nuevo. Si su término independiente acaba distinto de cero, el sistema está
+pidiendo que $0 = \text{algo}$, y por eso no hay solución.
+
+Para estos casos existe `lstsq`, que devuelve la solución de mínimos cuadrados —la que menos se
+equivoca— aunque `solve` se rinda:
+
+```python
+x, residuos, rango, sv = np.linalg.lstsq(C, np.array([3, 2, 1]), rcond=None)
+```
+
+## La regla de oro
+
+Para resolver $A\vec{x} = \vec{b}$, usa `solve`. Nunca `inv(A) @ b`.
+
+```python
+x = np.linalg.solve(A, b)      # sí
+x = np.linalg.inv(A) @ b       # no
+```
+
+Las dos líneas dan casi el mismo número, pero la segunda hace más trabajo (calcular la inversa
+completa es más caro que resolver el sistema) y arrastra más error numérico. Además, casi nunca
+necesitas la inversa en sí: lo que necesitas es su *efecto* sobre un vector, y eso es justo lo que
+`solve` te da.
+
+---
+
+**Para probar.** Cambia el `2` de la tercera fila de `C` por un `3` y vuelve a calcular el rango.
+¿Sigue siendo singular? ¿Qué hiciste, geométricamente, al tocar ese número?

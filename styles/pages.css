@@ -487,18 +487,18 @@
   .vplot-axis { stroke: var(--g-400); stroke-width: 1.4; }
   .vplot-label { font-size: 13px; font-weight: 700; font-family: var(--f-ubuntu); }
 
-  .mplay, .lcombo, .dvec { margin: 30px 0; border: 1px solid var(--g-200); border-radius: 16px; overflow: hidden; background: color-mix(in oklab, var(--g-50) 60%, transparent); display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
-  html.dark .mplay, html.dark .lcombo, html.dark .dvec { border-color: var(--g-300); background: color-mix(in oklab, var(--g-100) 45%, transparent); }
-  .mplay-canvas, .lcombo-canvas, .dvec-canvas { padding: 18px; display: flex; align-items: center; justify-content: center; }
-  .mplay-canvas svg, .lcombo-canvas svg, .dvec-canvas svg { width: 100%; height: auto; }
+  .mplay, .lcombo, .dvec, .lsys, .elim { margin: 30px 0; border: 1px solid var(--g-200); border-radius: 16px; overflow: hidden; background: color-mix(in oklab, var(--g-50) 60%, transparent); display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  html.dark .mplay, html.dark .lcombo, html.dark .dvec, html.dark .lsys, html.dark .elim { border-color: var(--g-300); background: color-mix(in oklab, var(--g-100) 45%, transparent); }
+  .mplay-canvas, .lcombo-canvas, .dvec-canvas, .lsys-canvas, .elim-stage { padding: 18px; display: flex; align-items: center; justify-content: center; }
+  .mplay-canvas svg, .lcombo-canvas svg, .dvec-canvas svg, .lsys-canvas svg { width: 100%; height: auto; }
   .mplay-grid { stroke: var(--g-300); stroke-width: 0.9; }
   html.dark .mplay-grid { stroke: var(--g-300); }
   .mplay-axis { stroke: var(--g-500); stroke-width: 1.4; }
   .mplay-area { fill: color-mix(in oklab, var(--vp-c) 22%, transparent); stroke: var(--vp-c); stroke-width: 1.4; }
   .mplay-eigen { stroke: var(--vp-d); stroke-width: 1.6; stroke-dasharray: 6 5; }
 
-  .mplay-controls, .lcombo-controls, .dvec-controls { padding: 20px 22px; border-left: 1px solid var(--g-200); display: flex; flex-direction: column; gap: 10px; justify-content: center; }
-  html.dark .mplay-controls, html.dark .lcombo-controls, html.dark .dvec-controls { border-left-color: var(--g-300); }
+  .mplay-controls, .lcombo-controls, .dvec-controls, .lsys-controls, .elim-controls { padding: 20px 22px; border-left: 1px solid var(--g-200); display: flex; flex-direction: column; gap: 10px; justify-content: center; }
+  html.dark .mplay-controls, html.dark .lcombo-controls, html.dark .dvec-controls, html.dark .lsys-controls, html.dark .elim-controls { border-left-color: var(--g-300); }
   .mplay-matrix { display: flex; align-items: center; gap: 4px; margin-bottom: 6px; }
   .mplay-bracket { font-size: 44px; line-height: 1; color: var(--g-400); font-weight: 300; }
   .mplay-cells { display: grid; grid-template-columns: repeat(2, 46px); gap: 2px 10px; font-family: var(--f-ubuntu); font-weight: 700; font-size: 15px; color: var(--fg); text-align: center; }
@@ -523,10 +523,51 @@
   .dvec-handle:focus-visible .dvec-grip { stroke: var(--s-500); stroke-width: 3.5; }
   .post-body .dvec-hint { margin: 0 0 4px; font-size: 12.5px; line-height: 1.5; color: var(--g-500); }
 
+  /* Two-line system explorer */
+  .lsys-line { stroke-width: 2.4; transition: none; }
+  .lsys-dot { fill: var(--s-500); stroke: var(--bg); stroke-width: 2.5; transition: cx .2s var(--ease), cy .2s var(--ease); }
+  .post-body .lsys-eq { margin: 10px 0 2px; font-family: var(--f-ubuntu); font-size: 13px; font-weight: 700; }
+  .lsys-row { display: flex; flex-direction: column; gap: 4px; }
+  .post-body .lsys-verdict { margin: 12px 0 0; font-size: 13.5px; font-weight: 600; padding: 7px 12px; border-radius: 10px; border-left: 3px solid var(--g-400); background: var(--g-100); color: var(--fg); }
+  html.dark .lsys-verdict { background: var(--g-200); }
+  .lsys-verdict.is-unique { border-left-color: var(--s-500); }
+  .lsys-verdict.is-none { border-left-color: var(--vp-b); }
+  .lsys-verdict.is-infinite { border-left-color: var(--vp-c); }
+
+  /* Gauss-Jordan stepper */
+  .elim-stage { flex-direction: column; gap: 16px; }
+  .elim-matrix { display: flex; align-items: stretch; gap: 6px; }
+  .elim-bracket { width: 9px; border: 2px solid var(--g-400); border-right: none; border-radius: 3px 0 0 3px; }
+  .elim-bracket.is-right { border: 2px solid var(--g-400); border-left: none; border-radius: 0 3px 3px 0; }
+  .elim-cells { display: grid; gap: 6px 14px; align-items: center; padding: 10px 4px; }
+  .elim-cell { font-family: var(--f-ubuntu); font-size: 15px; font-variant-numeric: tabular-nums; text-align: right; color: var(--fg); padding: 3px 5px; border-radius: 6px; }
+  .elim-cell.is-pivot { background: color-mix(in oklab, var(--vp-a) 18%, transparent); }
+  .elim-cell.is-target { background: color-mix(in oklab, var(--s-500) 20%, transparent); }
+  .elim-cell.is-changed { animation: elim-flash .7s var(--ease); }
+  @keyframes elim-flash {
+    0%   { transform: translateY(-3px); color: var(--s-500); }
+    100% { transform: translateY(0);    color: var(--fg); }
+  }
+  .elim-sep { border-left: 1px dashed var(--g-400); height: 100%; }
+  .post-body .elim-note { margin: 0; font-family: var(--f-ubuntu); font-size: 13.5px; font-weight: 700; color: var(--s-500); min-height: 1.4em; text-align: center; }
+  html.dark .elim-note { color: var(--s-400); }
+  .elim-buttons { display: flex; gap: 8px; }
+  .elim-btn { width: 38px; height: 34px; border-radius: 9px; border: 1px solid var(--g-300); background: transparent; color: var(--g-600); font-size: 13px; cursor: pointer; transition: background .18s var(--ease); }
+  .elim-btn:hover:not(:disabled) { background: var(--g-100); }
+  .elim-btn:disabled { opacity: .35; cursor: default; }
+  .elim-btn.is-play { background: var(--s-500); border-color: var(--s-500); color: #fff; }
+  .elim-track { height: 4px; border-radius: 999px; background: var(--g-200); overflow: hidden; margin-top: 12px; }
+  .elim-track span { display: block; height: 100%; background: var(--s-500); transition: width .3s var(--ease); }
+  .post-body .elim-count { margin: 6px 0 0; font-size: 12px; color: var(--g-500); }
+  @media (prefers-reduced-motion: reduce) {
+    .elim-cell.is-changed { animation: none; }
+    .lsys-dot { transition: none; }
+  }
+
   @media (max-width: 720px) {
-    .mplay, .lcombo, .dvec { grid-template-columns: 1fr; }
-    .mplay-controls, .lcombo-controls, .dvec-controls { border-left: none; border-top: 1px solid var(--g-200); }
-    html.dark .mplay-controls, html.dark .lcombo-controls, html.dark .dvec-controls { border-top-color: var(--g-300); }
+    .mplay, .lcombo, .dvec, .lsys, .elim { grid-template-columns: 1fr; }
+    .mplay-controls, .lcombo-controls, .dvec-controls, .lsys-controls, .elim-controls { border-left: none; border-top: 1px solid var(--g-200); }
+    html.dark .mplay-controls, html.dark .lcombo-controls, html.dark .dvec-controls, html.dark .lsys-controls, html.dark .elim-controls { border-top-color: var(--g-300); }
   }
 
   /* ---- Courses: index, overview and lesson shell ---- */

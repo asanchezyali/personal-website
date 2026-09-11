@@ -14,6 +14,8 @@ import VectorPlot from './VectorPlot'
 import MatrixPlayground from './MatrixPlayground'
 import LinearCombo from './LinearCombo'
 import DragVector from './DragVector'
+import LinearSystem2D from './LinearSystem2D'
+import EliminationSteps from './EliminationSteps'
 import { PseudoCodeLine, PseudoCode } from './PseudoCode'
 
 export const components: MDXComponents = {
@@ -26,6 +28,8 @@ export const components: MDXComponents = {
   MatrixPlayground,
   LinearCombo,
   DragVector,
+  LinearSystem2D,
+  EliminationSteps,
   TOCInline,
   a: CustomLink,
   pre: CodeBlock,
