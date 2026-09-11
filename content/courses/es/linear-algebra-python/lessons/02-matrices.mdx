@@ -118,7 +118,9 @@ de `.shape` antes de operar evita la mayor parte de estos fallos.
 Dadas $A \in \mathbb{R}^{m\times k}$ y $B \in \mathbb{R}^{k\times n}$, el producto
 $C = AB \in \mathbb{R}^{m\times n}$ se define entrada a entrada como
 
-$$c_{ij} = \sum_{l=1}^{k} a_{il}\,b_{lj}$$
+$$
+c_{ij} = \sum_{l=1}^{k} a_{il}\,b_{lj}
+$$
 
 Cada entrada de $C$ es el producto escalar de una fila de $A$ por una columna de $B$. La figura
 recorre ese cálculo celda a celda:
@@ -134,7 +136,9 @@ La definición impone la condición de compatibilidad: el número de columnas de
 el número de filas de $B$. Las dimensiones interiores se cancelan y las exteriores determinan la
 forma del resultado.
 
-$$(m \times \underbrace{k)\,(k}_{\text{deben coincidir}} \times n) \;\longrightarrow\; (m \times n)$$
+$$
+(m \times \underbrace{k)\,(k}_{\text{deben coincidir}} \times n) \;\longrightarrow\; (m \times n)
+$$
 
 ```python
 A = np.ones((2, 3))
@@ -178,12 +182,16 @@ A = np.ones((2, 3))
 Las dos expresiones son legales y producen matrices de tamaños distintos, lo que ilustra de forma
 inmediata que el producto no es conmutativo. La transpuesta invierte además el orden de un producto:
 
-$$(AB)^\top = B^\top A^\top$$
+$$
+(AB)^\top = B^\top A^\top
+$$
 
 La **matriz identidad** $I_n$ tiene unos en la diagonal y ceros fuera de ella, y es el elemento
 neutro del producto:
 
-$$I_m A = A I_n = A, \qquad A \in \mathbb{R}^{m\times n}$$
+$$
+I_m A = A I_n = A, \qquad A \in \mathbb{R}^{m\times n}
+$$
 
 ```python
 I = np.eye(3)
@@ -197,7 +205,9 @@ np.allclose(I @ M3, M3)     # True
 Una capa densa de una red neuronal aplica a cada ejemplo una transformación afín: un producto por
 una matriz de pesos seguido de la suma de un sesgo.
 
-$$\vec{y} = W\vec{x} + \vec{b}, \qquad W \in \mathbb{R}^{d_{\text{out}} \times d_{\text{in}}}$$
+$$
+\vec{y} = W\vec{x} + \vec{b}, \qquad W \in \mathbb{R}^{d_{\text{out}} \times d_{\text{in}}}
+$$
 
 En la práctica los ejemplos no se procesan de uno en uno. Un **lote** de $N$ ejemplos se dispone
 como una matriz $X \in \mathbb{R}^{N \times d_{\text{in}}}$, con un ejemplo por fila, y la capa
