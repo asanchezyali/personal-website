@@ -18,6 +18,8 @@ import LinearSystem2D from './LinearSystem2D'
 import EliminationSteps from './EliminationSteps'
 import MatMulGrid from './MatMulGrid'
 import Broadcasting from './Broadcasting'
+import TransposeGrid from './TransposeGrid'
+import Conditioning from './Conditioning'
 import { PseudoCodeLine, PseudoCode } from './PseudoCode'
 
 export const components: MDXComponents = {
@@ -34,6 +36,8 @@ export const components: MDXComponents = {
   EliminationSteps,
   MatMulGrid,
   Broadcasting,
+  TransposeGrid,
+  Conditioning,
   TOCInline,
   a: CustomLink,
   pre: CodeBlock,
