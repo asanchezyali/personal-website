@@ -39,8 +39,10 @@ export default async function LessonView({ locale, courseSlug, lessonSlug }: Les
           courseSlug={courseSlug}
           modules={modules}
           activeSlug={lessonSlug}
+          sections={lesson.toc}
           title={t('toc_title')}
           compact
+          labels={{ read: t('read') }}
         />
       </aside>
 

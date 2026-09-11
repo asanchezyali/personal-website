@@ -714,8 +714,13 @@
   html.dark .course-toc-title { color: var(--s-400); }
   .course-toc-modules, .course-toc-lessons { list-style: none; margin: 0; padding: 0; }
   .course-toc-module + .course-toc-module { margin-top: 18px; }
-  .course-toc-module-title { display: flex; gap: 8px; align-items: baseline; font-size: 13px; font-weight: 700; color: var(--fg); margin: 0 0 8px; }
+  .course-toc-module-title { display: flex; gap: 8px; align-items: baseline; font-size: 13px; font-weight: 700; color: var(--g-500); margin: 0 0 8px; }
+  .course-toc-module.is-current .course-toc-module-title { color: var(--fg); }
   .course-toc-module-num { font-family: var(--f-ubuntu); font-size: 11px; color: var(--g-400); }
+  .course-toc-module.is-current .course-toc-module-num { color: var(--s-500); }
+  .course-toc-module-name { flex: 1; }
+  .course-toc-module-count { font-family: var(--f-ubuntu); font-size: 10.5px; font-weight: 600; color: var(--g-400); background: var(--g-100); border-radius: 999px; padding: 1px 7px; }
+  html.dark .course-toc-module-count { background: var(--g-200); color: var(--g-500); }
   .course-toc-lessons { border-left: 1px solid var(--g-200); padding-left: 2px; }
   html.dark .course-toc-lessons { border-left-color: var(--g-300); }
   .course-toc-link { display: grid; grid-template-columns: 22px 1fr; gap: 8px; align-items: baseline; padding: 6px 10px; border-radius: 8px; text-decoration: none; font-size: 13.5px; line-height: 1.45; color: var(--g-600); transition: background .16s var(--ease), color .16s var(--ease); }
@@ -723,6 +728,17 @@
   .course-toc-link.is-active { background: color-mix(in oklab, var(--s-500) 14%, transparent); color: var(--fg); font-weight: 600; }
   .course-toc-num { font-family: var(--f-ubuntu); font-size: 11px; color: var(--g-400); text-align: right; }
   .course-toc-link.is-active .course-toc-num { color: var(--s-500); }
+  .course-toc-link.is-read { color: var(--g-500); }
+  .course-toc-link.is-read .course-toc-num { color: var(--s-500); font-size: 12px; }
+
+  /* Headings of the lesson being read, nested under its entry and tracked on scroll. */
+  .course-toc-sections { list-style: none; margin: 2px 0 6px; padding: 0 0 0 30px; }
+  .course-toc-section { display: block; position: relative; padding: 4px 10px 4px 12px; border-radius: 6px; font-size: 12.5px; line-height: 1.4; color: var(--g-500); text-decoration: none; transition: color .16s var(--ease); }
+  .course-toc-section::before { content: ''; position: absolute; left: 0; top: 50%; width: 2px; height: 70%; border-radius: 2px; background: var(--s-500); transform: translateY(-50%) scaleY(0); transition: transform .18s var(--ease); }
+  .course-toc-section:hover { color: var(--fg); }
+  .course-toc-section.is-active { color: var(--fg); font-weight: 600; }
+  .course-toc-section.is-active::before { transform: translateY(-50%) scaleY(1); }
+  @media (prefers-reduced-motion: reduce) { .course-toc-section::before { transition: none; } }
 
   .lesson-shell { display: grid; grid-template-columns: 300px minmax(0, 1fr); gap: 56px; align-items: start; padding-top: 44px; padding-bottom: 80px; }
   .lesson-aside { position: sticky; top: 92px; }

@@ -1,6 +1,6 @@
-import Link from 'next/link'
 import type { CourseModule } from './lib'
 import { lessonPath } from './lib'
+import TocLessons, { type TocSection } from './TocLessons'
 
 interface CourseTocProps {
   locale: string
@@ -8,8 +8,11 @@ interface CourseTocProps {
   modules: CourseModule[]
   /** Highlights the lesson being read; omit on the course overview. */
   activeSlug?: string
+  /** Headings of the lesson being read, nested under its entry. */
+  sections?: TocSection[]
   title?: string
   compact?: boolean
+  labels?: { read?: string; lessons?: (n: number) => string }
 }
 
 export default function CourseToc({
@@ -17,40 +20,47 @@ export default function CourseToc({
   courseSlug,
   modules,
   activeSlug,
+  sections,
   title,
   compact = false,
+  labels = {},
 }: CourseTocProps) {
   let counter = 0
   return (
     <nav className={compact ? 'course-toc course-toc--compact' : 'course-toc'} aria-label={title}>
       {title && <p className="course-toc-title">{title}</p>}
       <ol className="course-toc-modules">
-        {modules.map((m) => (
-          <li key={m.order} className="course-toc-module">
-            <p className="course-toc-module-title">
-              <span className="course-toc-module-num">{String(m.order).padStart(2, '0')}</span>
-              {m.title}
-            </p>
-            <ol className="course-toc-lessons">
-              {m.lessons.map((l) => {
-                counter += 1
-                const active = l.lessonSlug === activeSlug
-                return (
-                  <li key={l.lessonSlug}>
-                    <Link
-                      href={lessonPath(locale, courseSlug, l.lessonSlug)}
-                      className={active ? 'course-toc-link is-active' : 'course-toc-link'}
-                      aria-current={active ? 'page' : undefined}
-                    >
-                      <span className="course-toc-num">{counter}</span>
-                      <span className="course-toc-text">{l.title}</span>
-                    </Link>
-                  </li>
-                )
-              })}
-            </ol>
-          </li>
-        ))}
+        {modules.map((m) => {
+          const entries = m.lessons.map((l) => {
+            counter += 1
+            return {
+              slug: l.lessonSlug,
+              title: l.title,
+              num: counter,
+              href: lessonPath(locale, courseSlug, l.lessonSlug),
+            }
+          })
+          const holdsActive = entries.some((e) => e.slug === activeSlug)
+          return (
+            <li
+              key={m.order}
+              className={holdsActive ? 'course-toc-module is-current' : 'course-toc-module'}
+            >
+              <p className="course-toc-module-title">
+                <span className="course-toc-module-num">{String(m.order).padStart(2, '0')}</span>
+                <span className="course-toc-module-name">{m.title}</span>
+                <span className="course-toc-module-count">{m.lessons.length}</span>
+              </p>
+              <TocLessons
+                lessons={entries}
+                activeSlug={activeSlug}
+                sections={holdsActive ? sections : undefined}
+                storageKey={`course:${locale}:${courseSlug}:visited`}
+                labels={{ read: labels.read }}
+              />
+            </li>
+          )
+        })}
       </ol>
     </nav>
   )
