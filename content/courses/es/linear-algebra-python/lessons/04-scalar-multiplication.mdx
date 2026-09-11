@@ -1,0 +1,242 @@
+---
+title: 'Multiplicación escalar con Python'
+language: 'es'
+module: 'Sistemas y matrices'
+moduleOrder: 1
+order: 4
+summary: 'El producto por un escalar, la norma y la normalización, con la similitud coseno entre embeddings y la tasa de aprendizaje del descenso por gradiente como aplicaciones.'
+---
+
+De las operaciones del álgebra lineal, el producto por un escalar es la más simple de definir y la
+que menos atención suele recibir. Sin embargo, dos de las decisiones más consecuentes en aprendizaje
+automático —cómo se compara la similitud entre representaciones y a qué velocidad aprende un
+modelo— se reducen a elegir un número por el que multiplicar.
+
+## Definición
+
+Dado $\lambda \in \mathbb{R}$ y $A \in \mathbb{R}^{m\times n}$, el producto $\lambda A$ se define
+entrada a entrada:
+
+$$
+(\lambda A)_{ij} = \lambda\, a_{ij}
+$$
+
+```python
+import numpy as np
+
+A = np.array([[1., 2.],
+              [3., 4.]])
+
+2 * A
+# array([[2., 4.],
+#        [6., 8.]])
+```
+
+La expresión `2 * A` no recorre la matriz en Python. El escalar se trata como un array de forma
+vacía y el mecanismo de broadcasting lo extiende sobre las $mn$ entradas, que se procesan en un
+bucle compilado.
+
+## Propiedades
+
+El producto por un escalar satisface cuatro identidades que, junto con las de la suma, constituyen
+los axiomas de espacio vectorial mencionados al tratar $\mathbb{R}^{m\times n}$:
+
+$$
+\begin{aligned}
+\lambda(A + B) &= \lambda A + \lambda B & \text{(distributiva sobre la suma de matrices)}\\
+(\lambda + \mu)A &= \lambda A + \mu A & \text{(distributiva sobre la suma de escalares)}\\
+\lambda(\mu A) &= (\lambda\mu)A & \text{(asociativa)}\\
+1 \cdot A &= A & \text{(elemento neutro)}
+\end{aligned}
+$$
+
+```python
+B = np.ones((2, 2))
+lam, mu = 3.0, -0.5
+
+np.allclose(lam * (A + B), lam * A + lam * B)    # True
+np.allclose(lam * (mu * A), (lam * mu) * A)      # True
+```
+
+El escalar además conmuta con la transposición y se desplaza libremente entre los factores de un
+producto matricial:
+
+$$
+(\lambda C)^\top = \lambda\, C^\top, \qquad \lambda(AB) = (\lambda A)B = A(\lambda B)
+$$
+
+```python
+C = np.random.randn(2, 3)
+np.allclose((lam * C).T, lam * C.T)              # True
+```
+
+Esa libertad de movimiento tiene una consecuencia práctica: en una expresión larga, el escalar puede
+aplicarse donde resulte más barato. Multiplicar una matriz $1000\times 1000$ por $\lambda$ cuesta un
+millón de operaciones; aplicar $\lambda$ al vector resultante, mil.
+
+## La norma
+
+El efecto geométrico del escalar se enuncia en términos de la longitud del vector. La **norma
+euclídea** de $\vec{v} \in \mathbb{R}^n$ es
+
+$$
+\lVert \vec{v} \rVert_2 = \sqrt{\sum_{i=1}^{n} v_i^2}
+$$
+
+Es la notación que apareció en la lección anterior al acotar la propagación del error; aquí queda
+definida. Con ella, el efecto del escalar se expresa exactamente:
+
+$$
+\lVert \lambda\vec{v} \rVert = |\lambda|\,\lVert \vec{v} \rVert
+$$
+
+```python
+v = np.array([3., 4.])
+
+np.linalg.norm(v)           # 5.0
+np.linalg.norm(2 * v)       # 10.0
+```
+
+El valor absoluto es necesario: con $\lambda < 0$ el vector invierte su sentido, pero su longitud es
+una magnitud no negativa. En términos geométricos, $|\lambda| > 1$ dilata, $|\lambda| < 1$ contrae y
+$\lambda < 0$ refleja respecto del origen. La dirección, entendida como la recta que el vector
+genera, no cambia en ningún caso.
+
+La norma euclídea no es la única en uso. `np.linalg.norm` admite el parámetro `ord`:
+
+| Norma | Definición | Dónde aparece |
+| --- | --- | --- |
+| $\lVert\vec{v}\rVert_1$ | $\sum_i \lvert v_i \rvert$ | regularización L1, que induce dispersión |
+| $\lVert\vec{v}\rVert_2$ | $\sqrt{\sum_i v_i^2}$ | regularización L2, mínimos cuadrados |
+| $\lVert\vec{v}\rVert_\infty$ | $\max_i \lvert v_i \rvert$ | cotas, recorte de gradientes |
+
+Las tres cumplen $\lVert \lambda\vec{v} \rVert = |\lambda| \lVert \vec{v} \rVert$, propiedad conocida
+como homogeneidad absoluta y exigida por la definición axiomática de norma.
+
+## Normalización
+
+Para $\vec{v} \neq \vec{0}$, elegir $\lambda = 1/\lVert\vec{v}\rVert$ produce un vector de norma
+unitaria en la misma dirección:
+
+$$
+\hat{v} = \frac{\vec{v}}{\lVert \vec{v} \rVert}, \qquad \lVert \hat{v} \rVert = 1
+$$
+
+```python
+u = v / np.linalg.norm(v)
+np.linalg.norm(u)           # 1.0
+```
+
+La operación separa la información de un vector en dos partes independientes: la **dirección**, que
+retiene $\hat{v}$, y la **magnitud**, que queda en el escalar $\lVert\vec{v}\rVert$. Esa separación
+es la razón de su uso en aprendizaje automático.
+
+## Aplicación: similitud coseno
+
+Al comparar dos *embeddings*, lo relevante suele ser la dirección y no la magnitud. Dos textos sobre
+el mismo tema deberían considerarse próximos aunque uno sea mucho más largo que el otro, y la
+longitud del vector tiende a reflejar esa extensión antes que el contenido.
+
+La **similitud coseno** descarta la magnitud por construcción:
+
+$$
+\cos\theta = \frac{\vec{u} \cdot \vec{v}}{\lVert \vec{u} \rVert\,\lVert \vec{v} \rVert} = \hat{u} \cdot \hat{v}
+$$
+
+<CosineSimilarity
+  u={[3, 1]}
+  v={[1, 2.5]}
+  labels={{
+    hint: 'Los extremos son arrastrables. Las flechas interiores son el par normalizado, sobre la circunferencia unidad.',
+    cos: 'cos θ',
+    invariant: 'λ cambia ‖λu‖ pero nunca cos θ: es exactamente la propiedad que se busca al comparar embeddings.',
+    reset: 'Reiniciar',
+  }}
+/>
+
+El deslizador $\lambda$ reescala $\vec{u}$. Su norma cambia, su flecha se alarga o se acorta, y el
+valor de $\cos\theta$ permanece idéntico. La verificación algebraica es inmediata:
+
+$$
+\frac{(\lambda\vec{u}) \cdot \vec{v}}{\lVert \lambda\vec{u} \rVert \lVert \vec{v} \rVert} = \frac{\lambda\,(\vec{u} \cdot \vec{v})}{|\lambda|\,\lVert \vec{u} \rVert \lVert \vec{v} \rVert}
+$$
+
+Para $\lambda > 0$ los factores se cancelan. Esa invariancia frente al escalado es la propiedad que
+hace de la similitud coseno la medida habitual en recuperación semántica.
+
+```python
+def cosine(u, v):
+    return (u @ v) / (np.linalg.norm(u) * np.linalg.norm(v))
+
+cosine(v, 100 * v)     # 1.0: misma dirección, magnitudes incomparables
+```
+
+Cuando los vectores se normalizan de antemano, la similitud se reduce a un producto escalar, y la
+comparación de un vector contra un corpus completo pasa a ser un único producto matricial:
+
+```python
+E = E / np.linalg.norm(E, axis=1, keepdims=True)   # filas unitarias
+sims = E @ q                                        # similitud contra la consulta q
+```
+
+Esa es la operación que ejecuta una base de datos vectorial en cada consulta.
+
+## Aplicación: la tasa de aprendizaje
+
+El descenso por gradiente es, en su forma básica, producto por un escalar:
+
+$$
+\vec{w} \leftarrow \vec{w} - \alpha\,\nabla f(\vec{w})
+$$
+
+El gradiente indica la dirección de máximo crecimiento; el escalar $\alpha$, la **tasa de
+aprendizaje**, decide cuánto se avanza en sentido contrario. Es un único número, y de él depende que
+el entrenamiento converja.
+
+<GradientSteps
+  a={1}
+  b={4}
+  start={[2.4, 1.4]}
+  labels={{
+    hint: 'Las elipses son las curvas de nivel de f. Lo único que cambia es α.',
+    converges: 'Converge',
+    diverges: 'Diverge',
+    threshold: 'estable mientras α <',
+    norm: '‖w‖ tras',
+    steps: 'pasos',
+    reset: 'Reiniciar',
+  }}
+/>
+
+Con $f(\vec{w}) = \tfrac{1}{2}(w_1^2 + 4w_2^2)$, cada paso contrae la coordenada $i$ por un factor
+$1 - \alpha c_i$, donde $c_i$ es la curvatura en ese eje. El método converge si y solo si
+$|1 - \alpha c_i| < 1$ para toda coordenada, es decir
+
+$$
+0 < \alpha < \frac{2}{\max_i c_i}
+$$
+
+En la figura ese umbral vale $0.5$. Tres regímenes son observables: con $\alpha$ pequeño el avance
+es correcto pero lento; cerca del umbral aparece la oscilación característica en zigzag a lo largo
+del eje de mayor curvatura; por encima, la iteración diverge.
+
+```python
+grad = np.array([0.5, -1.2])
+w = np.array([2.0, 1.0])
+lr = 0.1
+
+w = w - lr * grad        # un paso
+```
+
+La dificultad práctica es que $\alpha$ se elige una vez y la curvatura varía según la dirección. Esa
+disparidad —el cociente entre la curvatura mayor y la menor, que es el número de condición de la
+Hessiana— es la que fuerza a tomar un $\alpha$ pequeño y hace lenta la convergencia. Los métodos
+adaptativos como Adam sustituyen el escalar único por un factor por coordenada, y toda su ventaja
+procede de ahí.
+
+---
+
+**Ejercicio.** Verificar que `cosine(v, -v)` vale $-1$ y explicar por qué la invariancia del coseno
+frente al escalado exige $\lambda > 0$. Determinar después, para
+$f(\vec{w}) = \tfrac{1}{2}(w_1^2 + 4w_2^2)$, el valor de $\alpha$ que anula en un solo paso la
+coordenada de mayor curvatura, y observar qué le ocurre a la otra.

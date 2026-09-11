@@ -497,18 +497,18 @@
   .vplot-axis { stroke: var(--g-400); stroke-width: 1.4; }
   .vplot-label { font-size: 13px; font-weight: 700; font-family: var(--f-ubuntu); }
 
-  .mplay, .lcombo, .dvec, .lsys, .elim, .mmul, .bc, .cond { margin: 30px 0; border: 1px solid var(--g-200); border-radius: 16px; overflow: hidden; background: color-mix(in oklab, var(--g-50) 60%, transparent); display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
-  html.dark .mplay, html.dark .lcombo, html.dark .dvec, html.dark .lsys, html.dark .elim, html.dark .mmul, html.dark .bc, html.dark .cond { border-color: var(--g-300); background: color-mix(in oklab, var(--g-100) 45%, transparent); }
-  .mplay-canvas, .lcombo-canvas, .dvec-canvas, .lsys-canvas, .elim-stage, .mmul-stage, .bc-stage, .cond-stage { padding: 18px; display: flex; align-items: center; justify-content: center; }
-  .mplay-canvas svg, .lcombo-canvas svg, .dvec-canvas svg, .lsys-canvas svg { width: 100%; height: auto; }
+  .mplay, .lcombo, .dvec, .lsys, .elim, .mmul, .bc, .cond, .gstep { margin: 30px 0; border: 1px solid var(--g-200); border-radius: 16px; overflow: hidden; background: color-mix(in oklab, var(--g-50) 60%, transparent); display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  html.dark .mplay, html.dark .lcombo, html.dark .dvec, html.dark .lsys, html.dark .elim, html.dark .mmul, html.dark .bc, html.dark .cond, html.dark .gstep { border-color: var(--g-300); background: color-mix(in oklab, var(--g-100) 45%, transparent); }
+  .mplay-canvas, .lcombo-canvas, .dvec-canvas, .lsys-canvas, .elim-stage, .mmul-stage, .bc-stage, .cond-stage, .gstep-canvas { padding: 18px; display: flex; align-items: center; justify-content: center; }
+  .mplay-canvas svg, .lcombo-canvas svg, .dvec-canvas svg, .lsys-canvas svg, .gstep-canvas svg { width: 100%; height: auto; }
   .mplay-grid { stroke: var(--g-300); stroke-width: 0.9; }
   html.dark .mplay-grid { stroke: var(--g-300); }
   .mplay-axis { stroke: var(--g-500); stroke-width: 1.4; }
   .mplay-area { fill: color-mix(in oklab, var(--vp-c) 22%, transparent); stroke: var(--vp-c); stroke-width: 1.4; }
   .mplay-eigen { stroke: var(--vp-d); stroke-width: 1.6; stroke-dasharray: 6 5; }
 
-  .mplay-controls, .lcombo-controls, .dvec-controls, .lsys-controls, .elim-controls, .mmul-controls, .bc-controls, .cond-controls { padding: 20px 22px; border-left: 1px solid var(--g-200); display: flex; flex-direction: column; gap: 10px; justify-content: center; }
-  html.dark .mplay-controls, html.dark .lcombo-controls, html.dark .dvec-controls, html.dark .lsys-controls, html.dark .elim-controls, html.dark .mmul-controls, html.dark .bc-controls, html.dark .cond-controls { border-left-color: var(--g-300); }
+  .mplay-controls, .lcombo-controls, .dvec-controls, .lsys-controls, .elim-controls, .mmul-controls, .bc-controls, .cond-controls, .gstep-controls { padding: 20px 22px; border-left: 1px solid var(--g-200); display: flex; flex-direction: column; gap: 10px; justify-content: center; }
+  html.dark .mplay-controls, html.dark .lcombo-controls, html.dark .dvec-controls, html.dark .lsys-controls, html.dark .elim-controls, html.dark .mmul-controls, html.dark .bc-controls, html.dark .cond-controls, html.dark .gstep-controls { border-left-color: var(--g-300); }
   .mplay-matrix { display: flex; align-items: center; gap: 4px; margin-bottom: 6px; }
   .mplay-bracket { font-size: 44px; line-height: 1; color: var(--g-400); font-weight: 300; }
   .mplay-cells { display: grid; grid-template-columns: repeat(2, 46px); gap: 2px 10px; font-family: var(--f-ubuntu); font-weight: 700; font-size: 15px; color: var(--fg); text-align: center; }
@@ -614,6 +614,24 @@
   .post-body .cond-warning { margin: 4px 0 0; font-family: var(--f-ubuntu); font-size: 12.5px; font-weight: 600; color: var(--vp-a); }
   @media (prefers-reduced-motion: reduce) { .cond-bar span { transition: none; } }
 
+  /* Gradient descent: the path a single number decides */
+  .gstep-level { fill: none; stroke: var(--g-200); stroke-width: 1; }
+  html.dark .gstep-level { stroke: var(--g-300); }
+  .gstep-path { fill: none; stroke: var(--s-500); stroke-width: 1.8; stroke-linejoin: round; }
+  .gstep-dot { fill: var(--s-500); }
+  .gstep-dot.is-last { fill: var(--s-500); stroke: var(--bg); stroke-width: 2; }
+  .gstep-min { fill: var(--vp-b); }
+  .post-body .gstep-verdict { margin: 10px 0 2px; font-family: var(--f-ubuntu); font-size: 13.5px; font-weight: 700; }
+  .gstep-verdict.is-ok { color: var(--vp-b); }
+  .gstep-verdict.is-bad { color: var(--vp-a); }
+  .gstep-controls .elim-buttons { margin-top: 10px; align-items: center; }
+
+  /* Cosine similarity: the unit circle and the normalised pair */
+  .cs-circle { fill: none; stroke: var(--g-300); stroke-width: 1; stroke-dasharray: 3 4; }
+  .cs-unit { stroke-width: 3.5; opacity: .45; }
+  .cs-unit-dot { stroke: var(--bg); stroke-width: 1.5; }
+  .post-body .cs-note { margin: 8px 0 0; font-size: 12px; line-height: 1.5; color: var(--g-500); border-left: 2px solid var(--vp-c); padding-left: 10px; }
+
   /* Broadcasting: shape alignment */
   .bc-stage { flex-direction: column; gap: 14px; justify-content: center; }
   .bc-presets { display: flex; gap: 8px; flex-wrap: wrap; }
@@ -650,9 +668,9 @@
   }
 
   @media (max-width: 720px) {
-    .mplay, .lcombo, .dvec, .lsys, .elim, .mmul, .bc, .cond { grid-template-columns: 1fr; }
-    .mplay-controls, .lcombo-controls, .dvec-controls, .lsys-controls, .elim-controls, .mmul-controls, .bc-controls, .cond-controls { border-left: none; border-top: 1px solid var(--g-200); }
-    html.dark .mplay-controls, html.dark .lcombo-controls, html.dark .dvec-controls, html.dark .lsys-controls, html.dark .elim-controls, html.dark .mmul-controls, html.dark .bc-controls, html.dark .cond-controls { border-top-color: var(--g-300); }
+    .mplay, .lcombo, .dvec, .lsys, .elim, .mmul, .bc, .cond, .gstep { grid-template-columns: 1fr; }
+    .mplay-controls, .lcombo-controls, .dvec-controls, .lsys-controls, .elim-controls, .mmul-controls, .bc-controls, .cond-controls, .gstep-controls { border-left: none; border-top: 1px solid var(--g-200); }
+    html.dark .mplay-controls, html.dark .lcombo-controls, html.dark .dvec-controls, html.dark .lsys-controls, html.dark .elim-controls, html.dark .mmul-controls, html.dark .bc-controls, html.dark .cond-controls, html.dark .gstep-controls { border-top-color: var(--g-300); }
   }
 
   /* ---- Courses: index, overview and lesson shell ---- */

@@ -1,0 +1,241 @@
+---
+title: 'Scalar multiplication with Python'
+language: 'en'
+module: 'Systems and matrices'
+moduleOrder: 1
+order: 4
+summary: 'Multiplication by a scalar, the norm and normalisation, with cosine similarity between embeddings and the learning rate of gradient descent as the applications.'
+---
+
+Of the operations of linear algebra, multiplication by a scalar is the simplest to define and the
+one that usually receives the least attention. Yet two of the most consequential decisions in
+machine learning — how similarity between representations is compared, and how fast a model learns
+— come down to choosing a number to multiply by.
+
+## Definition
+
+Given $\lambda \in \mathbb{R}$ and $A \in \mathbb{R}^{m\times n}$, the product $\lambda A$ is
+defined entry by entry:
+
+$$
+(\lambda A)_{ij} = \lambda\, a_{ij}
+$$
+
+```python
+import numpy as np
+
+A = np.array([[1., 2.],
+              [3., 4.]])
+
+2 * A
+# array([[2., 4.],
+#        [6., 8.]])
+```
+
+The expression `2 * A` does not traverse the matrix in Python. The scalar is treated as an array of
+empty shape and broadcasting extends it over the $mn$ entries, which are processed in a compiled
+loop.
+
+## Properties
+
+Multiplication by a scalar satisfies four identities which, together with those of addition, make up
+the vector space axioms mentioned when $\mathbb{R}^{m\times n}$ was introduced:
+
+$$
+\begin{aligned}
+\lambda(A + B) &= \lambda A + \lambda B & \text{(distributive over matrix addition)}\\
+(\lambda + \mu)A &= \lambda A + \mu A & \text{(distributive over scalar addition)}\\
+\lambda(\mu A) &= (\lambda\mu)A & \text{(associative)}\\
+1 \cdot A &= A & \text{(identity element)}
+\end{aligned}
+$$
+
+```python
+B = np.ones((2, 2))
+lam, mu = 3.0, -0.5
+
+np.allclose(lam * (A + B), lam * A + lam * B)    # True
+np.allclose(lam * (mu * A), (lam * mu) * A)      # True
+```
+
+The scalar also commutes with transposition and moves freely between the factors of a matrix
+product:
+
+$$
+(\lambda C)^\top = \lambda\, C^\top, \qquad \lambda(AB) = (\lambda A)B = A(\lambda B)
+$$
+
+```python
+C = np.random.randn(2, 3)
+np.allclose((lam * C).T, lam * C.T)              # True
+```
+
+That freedom of movement has a practical consequence: in a long expression, the scalar can be
+applied wherever it is cheapest. Multiplying a $1000\times 1000$ matrix by $\lambda$ costs a million
+operations; applying $\lambda$ to the resulting vector costs a thousand.
+
+## The norm
+
+The geometric effect of the scalar is stated in terms of the length of the vector. The **Euclidean
+norm** of $\vec{v} \in \mathbb{R}^n$ is
+
+$$
+\lVert \vec{v} \rVert_2 = \sqrt{\sum_{i=1}^{n} v_i^2}
+$$
+
+This is the notation that appeared in the previous lesson when bounding error propagation; here it
+is defined. With it, the effect of the scalar is stated exactly:
+
+$$
+\lVert \lambda\vec{v} \rVert = |\lambda|\,\lVert \vec{v} \rVert
+$$
+
+```python
+v = np.array([3., 4.])
+
+np.linalg.norm(v)           # 5.0
+np.linalg.norm(2 * v)       # 10.0
+```
+
+The absolute value is necessary: with $\lambda < 0$ the vector reverses its sense, but its length is
+a non-negative quantity. Geometrically, $|\lambda| > 1$ dilates, $|\lambda| < 1$ contracts and
+$\lambda < 0$ reflects through the origin. The direction, understood as the line the vector
+generates, is unchanged in every case.
+
+The Euclidean norm is not the only one in use. `np.linalg.norm` accepts the `ord` parameter:
+
+| Norm | Definition | Where it appears |
+| --- | --- | --- |
+| $\lVert\vec{v}\rVert_1$ | $\sum_i \lvert v_i \rvert$ | L1 regularisation, which induces sparsity |
+| $\lVert\vec{v}\rVert_2$ | $\sqrt{\sum_i v_i^2}$ | L2 regularisation, least squares |
+| $\lVert\vec{v}\rVert_\infty$ | $\max_i \lvert v_i \rvert$ | bounds, gradient clipping |
+
+All three satisfy $\lVert \lambda\vec{v} \rVert = |\lambda| \lVert \vec{v} \rVert$, a property known
+as absolute homogeneity and required by the axiomatic definition of a norm.
+
+## Normalisation
+
+For $\vec{v} \neq \vec{0}$, choosing $\lambda = 1/\lVert\vec{v}\rVert$ produces a vector of unit
+norm in the same direction:
+
+$$
+\hat{v} = \frac{\vec{v}}{\lVert \vec{v} \rVert}, \qquad \lVert \hat{v} \rVert = 1
+$$
+
+```python
+u = v / np.linalg.norm(v)
+np.linalg.norm(u)           # 1.0
+```
+
+The operation separates the information in a vector into two independent parts: the **direction**,
+retained by $\hat{v}$, and the **magnitude**, left in the scalar $\lVert\vec{v}\rVert$. That
+separation is the reason for its use in machine learning.
+
+## Application: cosine similarity
+
+When comparing two *embeddings*, what matters is usually the direction and not the magnitude. Two
+texts on the same subject should count as close even if one is far longer than the other, and the
+length of the vector tends to reflect that extent rather than the content.
+
+**Cosine similarity** discards the magnitude by construction:
+
+$$
+\cos\theta = \frac{\vec{u} \cdot \vec{v}}{\lVert \vec{u} \rVert\,\lVert \vec{v} \rVert} = \hat{u} \cdot \hat{v}
+$$
+
+<CosineSimilarity
+  u={[3, 1]}
+  v={[1, 2.5]}
+  labels={{
+    hint: 'The tips can be dragged. The inner arrows are the normalised pair, on the unit circle.',
+    cos: 'cos θ',
+    invariant: 'λ changes ‖λu‖ but never cos θ: exactly the property wanted when comparing embeddings.',
+    reset: 'Reset',
+  }}
+/>
+
+The $\lambda$ slider rescales $\vec{u}$. Its norm changes, its arrow lengthens or shortens, and the
+value of $\cos\theta$ stays identical. The algebraic check is immediate:
+
+$$
+\frac{(\lambda\vec{u}) \cdot \vec{v}}{\lVert \lambda\vec{u} \rVert \lVert \vec{v} \rVert} = \frac{\lambda\,(\vec{u} \cdot \vec{v})}{|\lambda|\,\lVert \vec{u} \rVert \lVert \vec{v} \rVert}
+$$
+
+For $\lambda > 0$ the factors cancel. That invariance under scaling is what makes cosine similarity
+the standard measure in semantic retrieval.
+
+```python
+def cosine(u, v):
+    return (u @ v) / (np.linalg.norm(u) * np.linalg.norm(v))
+
+cosine(v, 100 * v)     # 1.0: same direction, incomparable magnitudes
+```
+
+When the vectors are normalised in advance, similarity reduces to a dot product, and comparing one
+vector against an entire corpus becomes a single matrix product:
+
+```python
+E = E / np.linalg.norm(E, axis=1, keepdims=True)   # unit rows
+sims = E @ q                                        # similarity against the query q
+```
+
+That is the operation a vector database runs on every query.
+
+## Application: the learning rate
+
+Gradient descent is, in its basic form, multiplication by a scalar:
+
+$$
+\vec{w} \leftarrow \vec{w} - \alpha\,\nabla f(\vec{w})
+$$
+
+The gradient gives the direction of steepest increase; the scalar $\alpha$, the **learning rate**,
+decides how far to move in the opposite direction. It is a single number, and whether training
+converges depends on it.
+
+<GradientSteps
+  a={1}
+  b={4}
+  start={[2.4, 1.4]}
+  labels={{
+    hint: 'The ellipses are the level sets of f. The only thing changing is α.',
+    converges: 'Converges',
+    diverges: 'Diverges',
+    threshold: 'stable while α <',
+    norm: '‖w‖ after',
+    steps: 'steps',
+    reset: 'Reset',
+  }}
+/>
+
+With $f(\vec{w}) = \tfrac{1}{2}(w_1^2 + 4w_2^2)$, each step contracts coordinate $i$ by a factor
+$1 - \alpha c_i$, where $c_i$ is the curvature along that axis. The method converges if and only if
+$|1 - \alpha c_i| < 1$ for every coordinate, that is
+
+$$
+0 < \alpha < \frac{2}{\max_i c_i}
+$$
+
+In the figure that threshold is $0.5$. Three regimes are observable: with small $\alpha$ progress is
+correct but slow; near the threshold the characteristic zigzag oscillation appears along the axis of
+greatest curvature; above it, the iteration diverges.
+
+```python
+grad = np.array([0.5, -1.2])
+w = np.array([2.0, 1.0])
+lr = 0.1
+
+w = w - lr * grad        # one step
+```
+
+The practical difficulty is that $\alpha$ is chosen once while the curvature varies by direction.
+That disparity — the ratio of largest to smallest curvature, which is the condition number of the
+Hessian — is what forces a small $\alpha$ and makes convergence slow. Adaptive methods such as Adam
+replace the single scalar with a per-coordinate factor, and their whole advantage comes from that.
+
+---
+
+**Exercise.** Verify that `cosine(v, -v)` equals $-1$ and explain why the invariance of the cosine
+under scaling requires $\lambda > 0$. Then determine, for
+$f(\vec{w}) = \tfrac{1}{2}(w_1^2 + 4w_2^2)$, the value of $\alpha$ that zeroes the coordinate of
+greatest curvature in a single step, and observe what happens to the other one.

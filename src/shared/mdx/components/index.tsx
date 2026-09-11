@@ -20,6 +20,8 @@ import MatMulGrid from './MatMulGrid'
 import Broadcasting from './Broadcasting'
 import TransposeGrid from './TransposeGrid'
 import Conditioning from './Conditioning'
+import GradientSteps from './GradientSteps'
+import CosineSimilarity from './CosineSimilarity'
 import { PseudoCodeLine, PseudoCode } from './PseudoCode'
 
 export const components: MDXComponents = {
@@ -38,6 +40,8 @@ export const components: MDXComponents = {
   Broadcasting,
   TransposeGrid,
   Conditioning,
+  GradientSteps,
+  CosineSimilarity,
   TOCInline,
   a: CustomLink,
   pre: CodeBlock,
