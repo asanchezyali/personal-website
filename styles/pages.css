@@ -407,6 +407,12 @@
   .post-body pre { background: #0f172a; color: #e2e8f0; padding: 20px 32px; border-radius: 0; overflow: visible; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 14px; line-height: 1.6; margin: 0; border: none; outline: none; box-shadow: none; min-width: max-content; }
   .post-body div.relative { margin: 24px 0; border: none; outline: none; box-shadow: none; }
   .post-body div.relative pre { margin: 0; }
+  /* Math (KaTeX): scale to sit closer to the 18px body text instead of 1.21em */
+  .post-body .katex { font-size: 1.05em; }
+  .post-body .katex-display { margin: 28px 0; overflow-x: auto; overflow-y: hidden; padding: 4px 0; }
+  .post-body .katex-display > .katex { font-size: 1.1em; }
+  /* Equation number: muted, same scale as the equation */
+  .post-body .katex-display .tag { color: var(--g-500); }
   .katex .eqn-num::before { border: none !important; border-radius: 0 !important; background: none !important; box-shadow: none !important; padding: 0 !important; }
   .katex-display > .katex > .katex-html > .tag { border: none !important; border-radius: 0 !important; background: none !important; box-shadow: none !important; }
   .post-body pre .k { color: #c084fc; } .post-body pre .s { color: #86efac; } .post-body pre .c { color: #64748b; font-style: italic; } .post-body pre .n { color: #fbbf24; } .post-body pre .f { color: #60a5fa; }
