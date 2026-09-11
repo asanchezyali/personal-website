@@ -21,12 +21,14 @@ que se ejecuta — y el álgebra lineal es, en buena medida, el arte de pasar de
 Piensa en $\vec{v} = (3, 2)$ no como un punto, sino como una **instrucción**: muévete 3 a la
 derecha y 2 hacia arriba. El origen es donde empiezas.
 
-<VectorPlot
-  vectors={[
-    { x: 3, y: 2, label: 'v = (3, 2)' },
-    { x: -2, y: 3, label: 'w = (-2, 3)' },
-  ]}
-  caption="Dos vectores del plano. Cada uno es una instrucción: cuánto avanzar horizontal y verticalmente."
+<DragVector
+  initial={[3, 2]}
+  second={[-2, 3]}
+  labels={{
+    hint: 'Arrastra cualquiera de las dos puntas — o enfócala con el tabulador y muévela con las flechas. Cada posición es una instrucción distinta.',
+    length: '‖v‖',
+    reset: 'Reiniciar',
+  }}
 />
 
 En NumPy esa instrucción es literalmente una lista:
@@ -53,6 +55,17 @@ v + w        # array([1, 5])
 
 Esa correspondencia — mover el punto de partida al final de la primera flecha — se llama *poner los
 vectores punta con cola*, y es la razón por la que la suma se define así y no de otro modo.
+
+<DragVector
+  initial={[3, 2]}
+  second={[-2, 3]}
+  showSum
+  labels={{
+    hint: 'Mueve v o w. La flecha larga es la suma, y la punteada muestra por qué: es w arrancando donde termina v.',
+    sum: 'v + w',
+    reset: 'Reiniciar',
+  }}
+/>
 
 ## Escalar es estirar
 

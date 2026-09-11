@@ -13,6 +13,7 @@ import CaseSummary from './CaseSummary'
 import VectorPlot from './VectorPlot'
 import MatrixPlayground from './MatrixPlayground'
 import LinearCombo from './LinearCombo'
+import DragVector from './DragVector'
 import { PseudoCodeLine, PseudoCode } from './PseudoCode'
 
 export const components: MDXComponents = {
@@ -24,6 +25,7 @@ export const components: MDXComponents = {
   VectorPlot,
   MatrixPlayground,
   LinearCombo,
+  DragVector,
   TOCInline,
   a: CustomLink,
   pre: CodeBlock,

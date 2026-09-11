@@ -21,12 +21,14 @@ and linear algebra is largely the craft of moving between them.
 Think of $\vec{v} = (3, 2)$ not as a point but as an **instruction**: move 3 right and 2 up. The
 origin is where you start.
 
-<VectorPlot
-  vectors={[
-    { x: 3, y: 2, label: 'v = (3, 2)' },
-    { x: -2, y: 3, label: 'w = (-2, 3)' },
-  ]}
-  caption="Two vectors in the plane. Each is an instruction: how far to move horizontally and vertically."
+<DragVector
+  initial={[3, 2]}
+  second={[-2, 3]}
+  labels={{
+    hint: 'Drag either tip — or focus it with the tab key and move it with the arrow keys. Every position is a different instruction.',
+    length: '‖v‖',
+    reset: 'Reset',
+  }}
 />
 
 In NumPy that instruction is literally a list:
@@ -52,6 +54,17 @@ v + w        # array([1, 5])
 
 That correspondence — moving your starting point to the tip of the first arrow — is called putting
 the vectors *tip to tail*, and it's why addition is defined this way and not some other.
+
+<DragVector
+  initial={[3, 2]}
+  second={[-2, 3]}
+  showSum
+  labels={{
+    hint: 'Move v or w. The long arrow is the sum, and the dashed one shows why: it is w starting where v ends.',
+    sum: 'v + w',
+    reset: 'Reset',
+  }}
+/>
 
 ## Scaling is stretching
 
