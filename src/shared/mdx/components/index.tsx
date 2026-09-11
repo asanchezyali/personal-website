@@ -23,6 +23,8 @@ import Conditioning from './Conditioning'
 import GradientSteps from './GradientSteps'
 import CosineSimilarity from './CosineSimilarity'
 import SolutionSet from './SolutionSet'
+import LUFactors from './LUFactors'
+import SolveCost from './SolveCost'
 import { PseudoCodeLine, PseudoCode } from './PseudoCode'
 
 export const components: MDXComponents = {
@@ -44,6 +46,8 @@ export const components: MDXComponents = {
   GradientSteps,
   CosineSimilarity,
   SolutionSet,
+  LUFactors,
+  SolveCost,
   TOCInline,
   a: CustomLink,
   pre: CodeBlock,
