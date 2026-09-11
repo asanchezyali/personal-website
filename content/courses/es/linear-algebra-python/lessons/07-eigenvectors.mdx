@@ -4,27 +4,25 @@ language: 'es'
 module: 'La estructura oculta'
 moduleOrder: 3
 order: 1
-summary: 'Las direcciones que una transformación no consigue torcer — y por qué son las que revelan qué hace realmente.'
+summary: 'Las direcciones que una transformación no consigue desviar, y por qué son las que revelan su comportamiento esencial.'
 ---
 
-Aplica una transformación al plano y casi todos los vectores salen despedidos de su recta original:
-cambian de dirección, no solo de longitud.
+Al aplicar una transformación al plano, la mayoría de los vectores abandona su recta original:
+modifican su dirección y no únicamente su longitud. Algunos, sin embargo, permanecen sobre ella.
 
-Casi todos. Algunos, no.
-
-Un **vector propio** es un vector que, tras la transformación, sigue sobre su propia recta. Puede
-haberse estirado, encogido o dado la vuelta, pero no rotó. El factor por el que se escaló es su
-**valor propio**.
+Un **vector propio** es un vector que, tras la transformación, continúa situado sobre su propia
+recta. Puede haberse dilatado, contraído o invertido, pero no ha rotado. El factor por el que ha
+quedado escalado constituye su **valor propio**.
 
 $$A\vec{v} = \lambda\vec{v}$$
 
-Esa ecuación es la definición completa: aplicar la matriz hace lo mismo que multiplicar por un
-número.
+Esa ecuación es la definición completa: aplicar la matriz produce el mismo efecto que multiplicar
+por un número.
 
-## Encuéntralos
+## Identificación de las direcciones propias
 
-Las rectas punteadas naranjas son las direcciones propias. Mueve la matriz y observa: sobre esas
-rectas los vectores solo se estiran, nunca giran.
+Las rectas discontinuas de color naranja señalan las direcciones propias. Al modificar la matriz
+puede observarse que, sobre esas rectas, los vectores únicamente se escalan y en ningún caso giran.
 
 <MatrixPlayground
   initial={[2, 1, 1, 2]}
@@ -37,16 +35,17 @@ rectas los vectores solo se estiran, nunca giran.
   }}
 />
 
-Prueba dos casos:
+Dos configuraciones resultan especialmente instructivas:
 
-- Una matriz **diagonal** como $\begin{bmatrix}3&0\\0&2\end{bmatrix}$: los ejes mismos son las
-  direcciones propias, y los valores propios son las entradas de la diagonal. Por eso las matrices
-  diagonales son fáciles: ya están escritas en su propia base.
-- Una **rotación** como $\begin{bmatrix}0&-1\\1&0\end{bmatrix}$: no hay ninguna recta que sobreviva,
-  porque una rotación tuerce absolutamente todo. El widget te dirá que no hay valores propios
-  reales. Los hay complejos, y describen precisamente el ángulo de giro — pero eso es otra lección.
+- Una matriz **diagonal** como $\begin{bmatrix}3&0\\0&2\end{bmatrix}$: los propios ejes constituyen
+  las direcciones propias, y los valores propios coinciden con las entradas de la diagonal. De ahí
+  que las matrices diagonales resulten sencillas de interpretar: están expresadas en su propia base.
+- Una **rotación** como $\begin{bmatrix}0&-1\\1&0\end{bmatrix}$: ninguna recta permanece invariante,
+  dado que una rotación desvía todas las direcciones sin excepción. La figura indicará que no
+  existen valores propios reales. Sí existen valores complejos, y describen precisamente el ángulo
+  de giro, pero ese desarrollo corresponde a otra lección.
 
-## En NumPy
+## El cálculo en NumPy
 
 ```python
 import numpy as np
@@ -62,44 +61,46 @@ vectores     # las columnas son los vectores propios, normalizados
 #        [ 0.707,  0.707]])
 ```
 
-Ojo con la convención: `np.linalg.eig` devuelve los vectores propios **como columnas**, no como
-filas. Es un error clásico. Verifícalo siempre:
+Conviene atender a la convención: `np.linalg.eig` devuelve los vectores propios **como columnas** y
+no como filas, una fuente habitual de errores. La comprobación es inmediata:
 
 ```python
 v = vectores[:, 0]        # primer vector propio
 A @ v                     # array([2.121, 2.121])
-valores[0] * v            # array([2.121, 2.121])  — igual
+valores[0] * v            # array([2.121, 2.121])  — coinciden
 ```
 
-## ¿Por qué importan?
+## ¿Por qué importan los vectores propios?
 
-Los vectores propios responden a la pregunta *"¿qué hace esta transformación, esencialmente?"*.
-Descontando el estiramiento a lo largo de sus direcciones propias, no hace nada más.
+Los vectores propios responden a la pregunta de qué hace una transformación en lo esencial.
+Descontado el escalado a lo largo de sus direcciones propias, no realiza ninguna otra operación.
 
-Eso los vuelve la herramienta central en un montón de sitios:
+Esa propiedad los convierte en una herramienta central en numerosos contextos:
 
-- **PCA** busca las direcciones propias de la matriz de covarianza: los ejes a lo largo de los
-  cuales los datos más varían. Reducir dimensiones es quedarse con los valores propios grandes y
-  tirar los pequeños.
+- El **análisis de componentes principales** busca las direcciones propias de la matriz de
+  covarianza, es decir, los ejes a lo largo de los cuales los datos presentan mayor varianza.
+  Reducir la dimensionalidad consiste en conservar los valores propios grandes y descartar los
+  pequeños.
 - **PageRank** es el vector propio principal de la matriz de enlaces de la web.
-- Aplicar $A$ muchas veces a un vector cualquiera lo alinea con la dirección propia de mayor valor
-  — que es la razón por la que las cadenas de Markov convergen a un estado estable.
+- Aplicar $A$ de forma reiterada a un vector arbitrario lo alinea con la dirección propia de mayor
+  valor, que es la razón por la que las cadenas de Markov convergen hacia un estado estacionario.
 
-En todos esos casos la pregunta es la misma: qué sobrevive a repetir la transformación. Y la
-respuesta siempre es la dirección propia dominante.
+En todos esos casos la pregunta es la misma: qué subsiste al repetir la transformación. Y la
+respuesta es siempre la dirección propia dominante.
 
-## Hasta aquí
+## Recapitulación
 
-Empezamos con flechas y dos operaciones, sumar y escalar. De ahí salieron las combinaciones
-lineales, y de ahí el span. Las matrices resultaron ser las funciones que respetan esas dos
-operaciones, con sus columnas guardando el destino de la base. El determinante midió cuánto se
-estira el área y avisó cuándo la transformación es irreversible. Y los vectores propios revelaron
-qué hace la transformación, quitando el ruido.
+El curso partió de dos operaciones, la suma y el producto por un escalar. De ellas surgieron las
+combinaciones lineales y, a partir de estas, el span. Las matrices resultaron ser las funciones que
+respetan ambas operaciones, con sus columnas almacenando el destino de los vectores de la base. El
+determinante midió la variación del área y señaló las transformaciones irreversibles. Los vectores
+propios, finalmente, revelaron el comportamiento esencial de la transformación.
 
-Nada de eso necesitó memorizar una regla.
+Ninguno de esos resultados requirió memorizar una regla de cálculo.
 
 ---
 
-**Para probar.** Calcula los vectores propios de $\begin{bmatrix}1&1\\0&1\end{bmatrix}$, un
-cizallamiento. Vas a encontrar un único valor propio repetido y una sola dirección. ¿Puedes ver en
-el widget por qué un cizallamiento solo deja una recta intacta?
+**Ejercicio.** Calcula los vectores propios de $\begin{bmatrix}1&1\\0&1\end{bmatrix}$, un
+cizallamiento. El resultado presenta un único valor propio repetido y una sola dirección. ¿Puede
+justificarse, a partir de la figura anterior, por qué un cizallamiento deja invariante una única
+recta?

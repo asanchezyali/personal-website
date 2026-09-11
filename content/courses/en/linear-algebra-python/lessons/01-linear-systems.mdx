@@ -4,11 +4,11 @@ language: 'en'
 module: 'Systems and vectors'
 moduleOrder: 1
 order: 1
-summary: 'Solving A·x = b in one line of NumPy, what that line actually does, and how to tell when it will refuse.'
+summary: 'Solving A·x = b with NumPy: how the system is set up, what solve does internally, and the conditions under which no unique solution exists.'
 ---
 
-Almost all applied linear algebra starts in the same place: you have several equations, all linear,
-and you want the values that satisfy them at once.
+A large part of applied linear algebra originates in a single problem: we have several equations, all
+linear, and we are looking for the values that satisfy them simultaneously.
 
 $$
 \begin{aligned}
@@ -18,18 +18,18 @@ $$
 \end{aligned}
 $$
 
-Written that way it looks like a puzzle of substitutions. Written the other way — a **matrix** $A$
-holding the coefficients and a **vector** $\vec{b}$ holding the right-hand sides — it is a single
-question:
+Presented this way, the system appears to call for a sequence of substitutions. Expressed
+differently — as a **matrix** $A$ holding the coefficients and a **vector** $\vec{b}$ holding the
+constant terms — it becomes a single question:
 
 $$A\vec{x} = \vec{b}$$
 
-And that question has a one-line answer.
+That question has a direct answer in NumPy.
 
-## Setting the system up
+## Setting up the system
 
-Each row of $A$ is one equation. The vector $\vec{b}$ is the numbers on the other side of the
-equals sign:
+Each row of $A$ corresponds to one equation, and the vector $\vec{b}$ collects the terms on the
+other side of the equality:
 
 ```python
 import numpy as np
@@ -40,32 +40,29 @@ A = np.array([[1,  1, 1],
 b = np.array([3, 2, 2])
 ```
 
-Note that the coefficients that aren't there still take up space: the third equation has no $x_1$,
-so its first entry is a `0`. A matrix has no gaps.
+It is worth noting that absent coefficients still occupy a position: the third equation has no
+$x_1$, so its first entry is a `0`. A matrix admits no gaps.
 
-## Solving it
+## Solving with NumPy
 
 ```python
 x = np.linalg.solve(A, b)
-```
-
-```python
 # array([1., 1., 1.])
 ```
 
-That's it. But it's worth knowing what happened in there, because it explains why this line is the
-right one and other lines that look equivalent are not.
+The result comes from a single call, but the internals deserve examination, because they explain why
+this is the appropriate instruction and why other apparently equivalent ones are not.
 
-`solve` does **not** compute the inverse of $A$. It factors the matrix into two triangular ones,
-$A = LU$, and uses them to solve two chained systems, each trivial because it is triangular. The
-work is $O(n^3)$, and underneath it is LAPACK, the linear algebra library that has carried
-scientific computing since the nineties.
+`solve` does not compute the inverse of $A$. It decomposes the matrix into two triangular factors,
+$A = LU$, and uses them to solve two chained systems, each immediate by virtue of being triangular.
+The cost is $O(n^3)$, and the implementation rests on LAPACK, the linear algebra library that has
+underpinned scientific computing since the nineties.
 
-## What elimination does, step by step
+## Gaussian elimination, step by step
 
-That factorisation is Gaussian elimination, organised. Hit play and watch: every step is one row
-operation, and the goal is to leave the identity on the left. When you get there, the right-hand
-column **is** the solution.
+That decomposition is systematised Gaussian elimination. The figure below reproduces the process:
+each step is an elementary row operation, and the objective is to obtain the identity in the
+left-hand block. Once that point is reached, the right-hand column holds the solution.
 
 <EliminationSteps
   a={[[1, 1, 1], [1, -1, 2], [0, 1, 1]]}
@@ -73,60 +70,58 @@ column **is** the solution.
   rowLetter="R"
   labels={{
     start: 'Augmented matrix [A | b]',
-    done: 'Done — the last column is x',
-    singular: 'A is singular — no unique solution',
+    done: 'Identity on the left: the last column is x',
+    singular: 'A is singular — no unique solution exists',
     step: 'Step',
   }}
 />
 
-There's no trick to it: adding a multiple of one equation to another doesn't change the solutions of
-the system, and repeating that move gets you to a system simple enough to read the answer off
-directly.
+The underlying principle is straightforward: adding a multiple of one equation to another does not
+alter the solution set of the system. Repeating that operation leads to a formulation simple enough
+for the answer to be read off directly.
 
-## Checking
+## Verifying the result
 
-Never trust a numerical result blindly. Substitute and check:
+Every numerical result warrants checking. Substitution is immediate:
 
 ```python
 np.allclose(A @ x, b)
-```
-
-```python
 # True
 ```
 
-The `@` operator is the matrix-vector product. And the check is `allclose`, not `==`: in floating
-point the exact result almost never comes out exact, and strict equality will hand you `False` over
-a $10^{-16}$ error that means nothing.
+The `@` operator denotes the matrix-vector product. The check uses `allclose` rather than `==`
+deliberately: in floating-point arithmetic the exact result is rarely obtained exactly, and a strict
+comparison would return `False` over an error on the order of $10^{-16}$ that carries no meaning.
 
-## Seeing it in two dimensions
+## Geometric interpretation in two dimensions
 
-With two unknowns each equation is a **line**, and solving the system is asking where they cross.
-Move the coefficients:
+With two unknowns, each equation describes a **line**, and solving the system amounts to determining
+where they intersect. The figure below allows the coefficients to be modified so that the effect on
+the intersection point can be observed:
 
 <LinearSystem2D
   first={[1, 1, 1.25]}
   second={[1, -2, 0.5]}
   labels={{
-    hint: 'Each equation is a line. Move the coefficients and watch the crossing point.',
-    unique: 'One solution: the lines cross at a point.',
-    none: 'No solution: they are parallel and never meet.',
-    infinite: 'Infinitely many: it is the same line twice.',
+    hint: 'Each equation describes a line. The sliders modify its coefficients.',
+    unique: 'Unique solution: the lines intersect at a point.',
+    none: 'No solution: the lines are parallel and never meet.',
+    infinite: 'Infinitely many solutions: both equations describe the same line.',
     solution: 'x',
     reset: 'Reset',
   }}
 />
 
-Try driving the determinant to zero. You'll find there are only two ways for that to happen, and
-they are exactly the two cases where `solve` cannot give you an answer.
+Driving the determinant to zero shows that only two configurations are possible, and that they
+correspond exactly to the two cases in which `solve` cannot provide an answer.
 
-With three unknowns the picture is the same one floor up: each equation is a **plane**, and the
-solution is the point where all three meet.
+With three unknowns the situation is analogous one dimension higher: each equation describes a
+**plane**, and the solution is the point at which all three intersect.
 
-## What if there is no unique solution?
+## When is there no unique solution?
 
 `solve` requires $A$ to be invertible. If one row is a combination of the others, the matrix is
-**singular** and the function refuses:
+**singular** and the function returns an error:
 
 ```python
 C = np.array([[1,  1, 1],
@@ -134,27 +129,21 @@ C = np.array([[1,  1, 1],
               [2,  0, 3]])
 
 np.linalg.solve(C, np.array([3, 2, 1]))
-```
-
-```python
 # LinAlgError: Singular matrix
 ```
 
-Here the third row is the sum of the first two, so it carries no new information: two equations
-dressed up as three. What decides this is the **rank**, the number of rows that are genuinely
-independent:
+Here the third row is the sum of the first two, so it contributes no additional information: two
+independent equations presented as three. The criterion that settles this is the **rank**, the
+number of genuinely independent rows:
 
 ```python
 np.linalg.matrix_rank(C)
-```
-
-```python
 # 2
 ```
 
-With $\operatorname{rank}(A) < n$ there are zero or infinitely many solutions, never exactly one.
-Which of the two depends on $\vec{b}$: if it agrees with the dependency, solutions are in surplus;
-if it contradicts it, there are none.
+When $\operatorname{rank}(A) < n$, the system admits either zero or infinitely many solutions, never
+exactly one. Which of the two occurs depends on $\vec{b}$: if it is compatible with the dependency,
+the solutions are infinite; if it contradicts it, none exists.
 
 <EliminationSteps
   a={[[1, 1, 1], [1, -1, 2], [2, 0, 3]]}
@@ -162,37 +151,39 @@ if it contradicts it, there are none.
   rowLetter="R"
   labels={{
     start: 'Augmented matrix of a singular system',
-    done: 'Done',
+    done: 'Process complete',
     singular: 'A row of zeros on the left: the rank is 2, not 3',
     step: 'Step',
   }}
 />
 
-Look at the end: a row of zeros appears in the $A$ part. That row is the proof that the third
-equation said nothing new. If its right-hand entry ends up non-zero, the system is asking for
-$0 = \text{something}$, which is why no solution exists.
+The final state is revealing: a row of zeros appears in the block corresponding to $A$, confirming
+that the third equation carried no new information. If its constant term ends up non-zero, the
+system requires that $0 = \text{something}$, an impossible condition, and therefore admits no
+solution.
 
-For these cases there is `lstsq`, which returns the least-squares solution — the one that is wrong
-by the smallest amount — even when `solve` gives up:
+For these situations NumPy provides `lstsq`, which returns the least-squares solution — the one that
+minimises the residual error — even when `solve` cannot operate:
 
 ```python
 x, residuals, rank, sv = np.linalg.lstsq(C, np.array([3, 2, 1]), rcond=None)
 ```
 
-## The rule of thumb
+## `solve` versus `inv`
 
-To solve $A\vec{x} = \vec{b}$, use `solve`. Never `inv(A) @ b`.
+To solve $A\vec{x} = \vec{b}$, `solve` is the appropriate choice and `inv(A) @ b` should be avoided.
 
 ```python
-x = np.linalg.solve(A, b)      # yes
-x = np.linalg.inv(A) @ b       # no
+x = np.linalg.solve(A, b)      # recommended
+x = np.linalg.inv(A) @ b       # discouraged
 ```
 
-Both lines give nearly the same number, but the second does more work (computing the full inverse
-costs more than solving the system) and carries more numerical error. And you almost never need the
-inverse itself: what you need is its *effect* on a vector, which is exactly what `solve` hands you.
+Both expressions produce practically identical results, but the second performs more work —
+computing the full inverse is costlier than solving the system — and accumulates greater numerical
+error. Moreover, the inverse itself is rarely required: what is needed is its *effect* on a vector,
+which is precisely what `solve` provides.
 
 ---
 
-**Try it.** Change the `2` in the third row of `C` to a `3` and compute the rank again. Is it still
-singular? Geometrically, what did you just do by touching that number?
+**Exercise.** Replace the `2` in the third row of `C` with a `3` and compute the rank again. Is the
+matrix still singular? What geometric change does that substitution introduce?

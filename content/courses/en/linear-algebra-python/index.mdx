@@ -2,23 +2,23 @@
 title: 'Linear Algebra with Python'
 language: 'en'
 level: 'Introductory'
-summary: 'Seven lessons to understand systems, vectors, matrices and transformations by watching them move — and writing them in NumPy.'
+summary: 'Seven lessons on systems, vectors, matrices and transformations approached through their geometric behaviour, with the corresponding NumPy implementation.'
 tags: ['linear-algebra', 'python', 'numpy', 'mathematics']
 ---
 
-Linear algebra is almost always taught as a list of procedures: multiply these rows by these
-columns, compute this determinant, solve this system. You can pass an entire course that way
-without ever learning **what any of it means**.
+Linear algebra is usually taught as a sequence of procedures: multiply these rows by these columns,
+compute this determinant, solve this system. It is possible to complete an entire course that way
+without ever grasping what any of those operations mean.
 
-This course goes the other way round. Every idea starts with a figure you can move with your mouse,
-and ends with the three or four lines of NumPy that do the same thing. The arithmetic comes after
-the intuition, not before it.
+This course reverses the order. Each concept is introduced through a figure that can be manipulated
+and closes with the few lines of NumPy that perform the equivalent operation. The computation comes
+after the geometric intuition, not before it.
 
 ## What you need
 
-A little Python, and a memory of what a Cartesian plane is. That's it. No prior linear algebra
-required — and if you have taken it and came away feeling you'd memorised recipes, this is exactly
-what it's for.
+A basic command of Python and familiarity with the Cartesian plane. Nothing more. No prior study of
+linear algebra is required; those who have taken a course and retain the impression of having
+memorised procedures will find the complementary approach here.
 
 To run the examples:
 
@@ -26,13 +26,14 @@ To run the examples:
 pip install numpy
 ```
 
-## How it's organised
+## How it is organised
 
-Three modules, each built on the last. The first opens by solving **linear systems** with NumPy —
-the problem that motivates everything else — and moves from there to **vectors**: what they are and
-what you can build from them. The second treats **matrices as functions** that move the plane, which
-is the idea that makes everything fit together. The third reaches **eigenvectors**: the directions a
-transformation cannot manage to twist.
+The course consists of three consecutive modules. The first begins with solving **linear systems**
+in NumPy — the problem that motivates the whole discipline — and continues with **vectors**: their
+definition and the constructions they admit. The second presents **matrices as functions** that
+transform the plane, an interpretation on which the remaining material rests. The third addresses
+**eigenvectors**, the directions a transformation cannot deflect.
 
-Every lesson has an interactive figure. Move it before reading the explanation — that's where the
-intuition comes from.
+Each lesson includes an interactive figure. It is worth manipulating it before reading the
+corresponding explanation, since the geometric intuition makes the subsequent reading considerably
+easier.

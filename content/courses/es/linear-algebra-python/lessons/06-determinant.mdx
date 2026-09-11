@@ -4,20 +4,20 @@ language: 'es'
 module: 'Matrices como funciones'
 moduleOrder: 2
 order: 3
-summary: 'Un número que responde una pregunta muy concreta: cuánto se estira el área, y si el plano se dio la vuelta.'
+summary: 'Un número que responde a dos preguntas concretas: en qué proporción se altera el área y si la orientación del plano se invierte.'
 ---
 
-El determinante suele presentarse como una fórmula que hay que memorizar: $ad - bc$. Pero es un
-número con un significado geométrico muy nítido, y una vez que lo ves, la fórmula deja de hacer
-falta.
+El determinante suele introducirse como una fórmula que conviene memorizar, $ad - bc$. Se trata, sin
+embargo, de un número con un significado geométrico preciso, y una vez comprendido ese significado
+la fórmula deja de requerir memorización.
 
-## ¿Qué mide?
+## ¿Qué mide el determinante?
 
-El determinante de una matriz es **el factor por el que se multiplica el área** cuando aplicas la
+El determinante de una matriz es **el factor por el que queda multiplicada el área** al aplicar la
 transformación.
 
-Toma el cuadrado unitario — el que forman $\hat{\imath}$ y $\hat{\jmath}$, de área 1. Aplícale la
-matriz. El área de la figura resultante *es* el determinante.
+Considérese el cuadrado unitario, el que forman $\hat{\imath}$ y $\hat{\jmath}$, de área 1. Al
+aplicarle la matriz, el área de la figura resultante *coincide* con el determinante.
 
 <MatrixPlayground
   initial={[2, 0.5, 0.5, 1.5]}
@@ -25,24 +25,26 @@ matriz. El área de la figura resultante *es* el determinante.
   labels={{
     reset: 'Reiniciar',
     determinant: 'det',
-    hint: 'el área es cero: el plano se aplastó',
+    hint: 'el área es cero: el plano se ha aplastado',
   }}
 />
 
-La región morada es la imagen del cuadrado unitario. Muévela y observa cómo el número la sigue.
+La región de color morado es la imagen del cuadrado unitario, y el valor numérico la acompaña en
+todo momento:
 
-- $\det = 1$ → el área no cambia. Rotaciones y cizallamientos son de este tipo.
-- $\det = 3$ → todo ocupa el triple.
-- $\det = 0.5$ → todo se encoge a la mitad.
+- $\det = 1$ indica que el área permanece constante. Las rotaciones y los cizallamientos pertenecen
+  a este grupo.
+- $\det = 3$ indica que el área se triplica.
+- $\det = 0.5$ indica que el área se reduce a la mitad.
 
-## Cero significa colapso
+## El significado del valor cero
 
-Lleva el determinante a cero. La región morada desaparece porque el plano entero se aplastó sobre
-una recta.
+Cuando el determinante alcanza el valor cero, la región morada desaparece: el plano completo se ha
+aplastado sobre una recta.
 
-Esto conecta las tres lecciones anteriores en una sola frase: **$\det A = 0$ si y solo si las
-columnas de $A$ son linealmente dependientes**, si y solo si el span colapsa, si y solo si $A$ no
-tiene inversa. Son cuatro maneras de decir lo mismo.
+Esa condición conecta las lecciones anteriores en una sola afirmación: **$\det A = 0$ si y solo si
+las columnas de $A$ son linealmente dependientes**, si y solo si el span degenera, si y solo si $A$
+carece de inversa. Son cuatro formulaciones equivalentes de un mismo hecho.
 
 ```python
 import numpy as np
@@ -53,30 +55,31 @@ np.linalg.det(np.array([[2, 4], [1, 2]]))   # 0.0  → singular
 
 ## El signo
 
-Ahora algo que la fórmula no sugiere: el determinante puede ser **negativo**.
+La fórmula no lo sugiere, pero el determinante puede tomar valores **negativos**.
 
-Pon $a = -1$ dejando el resto en la identidad. El determinante se vuelve $-1$. El área sigue
-siendo 1 en magnitud, pero el plano se **dio la vuelta**: lo que antes estaba a la izquierda de
-$\hat{\imath}$ ahora está a la derecha.
+Fijando $a = -1$ y dejando el resto de las entradas en la identidad, el determinante pasa a valer
+$-1$. El área conserva su magnitud, pero el plano ha quedado **invertido**: lo que se situaba a la
+izquierda de $\hat{\imath}$ pasa a situarse a la derecha.
 
-El signo registra la orientación. Positivo, el plano conserva su sentido; negativo, se reflejó.
+El signo registra, por tanto, la orientación. Si es positivo, el plano conserva su sentido; si es
+negativo, se ha producido una reflexión.
 
-## ¿Por qué la fórmula es esa?
+## ¿Por qué la fórmula adopta esa forma?
 
-Con la interpretación en mano, $ad - bc$ deja de ser arbitraria.
+Con la interpretación geométrica establecida, la expresión $ad - bc$ deja de resultar arbitraria.
 
-Las columnas de la matriz son los dos lados del paralelogramo en que se convirtió el cuadrado
-unitario: $(a, c)$ y $(b, d)$. El área de un paralelogramo con esos lados es exactamente
-$|ad - bc|$ — sale de restarle al rectángulo que lo contiene los triángulos que sobran. La fórmula
-*es* el área.
+Las columnas de la matriz son los dos lados del paralelogramo en que se ha convertido el cuadrado
+unitario: $(a, c)$ y $(b, d)$. El área de un paralelogramo definido por esos lados es exactamente
+$|ad - bc|$, resultado que se obtiene restando al rectángulo que lo contiene los triángulos
+sobrantes. La fórmula *es* el área.
 
-## Una propiedad que sale gratis
+## Una propiedad inmediata
 
 $$\det(AB) = \det(A)\det(B)$$
 
-Que en palabras es casi una obviedad: si $B$ triplica el área y $A$ la duplica, aplicar las dos
-seguidas la multiplica por seis. Demostrarlo con las fórmulas es tedioso; verlo geométricamente es
-inmediato.
+Expresada en palabras, la propiedad resulta casi evidente: si $B$ triplica el área y $A$ la duplica,
+aplicar ambas de forma consecutiva la multiplica por seis. La demostración algebraica es laboriosa,
+mientras que la justificación geométrica es inmediata.
 
 ```python
 A = np.array([[2, 0], [0, 1]])
@@ -88,6 +91,6 @@ np.linalg.det(A) * np.linalg.det(B)           # 2.0
 
 ---
 
-**Para probar.** ¿Cuál es el determinante de una rotación de 90°? Piénsalo antes de calcularlo: la
-rotación no cambia áreas ni voltea el plano. Después confírmalo con
-`np.linalg.det(np.array([[0, -1], [1, 0]]))`.
+**Ejercicio.** ¿Cuál es el determinante de una rotación de 90°? Conviene razonarlo antes de
+calcularlo: una rotación no altera las áreas ni invierte la orientación del plano. Confírmalo
+después con `np.linalg.det(np.array([[0, -1], [1, 0]]))`.

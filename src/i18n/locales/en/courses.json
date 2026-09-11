@@ -3,7 +3,7 @@
     "eyebrow": "Free courses",
     "title_pre": "Learn the maths ",
     "title_accent": "behind the code",
-    "lead": "Interactive courses where every idea has a picture you can move and a few lines of Python you can run. No paywall."
+    "lead": "Interactive courses in which every concept comes with a figure you can manipulate and the equivalent implementation in Python. Freely available."
   },
   "empty": "No courses published yet.",
   "start": "Start the course",
@@ -23,16 +23,16 @@
   "syllabus": "See the syllabus",
   "pitch": {
     "one": {
-      "title": "Figures you can move",
-      "body": "Drag a matrix and watch the plane bend with it. The intuition comes from your hands, not from a paragraph."
+      "title": "Figures you can manipulate",
+      "body": "Each concept is introduced through a figure that responds to interaction, so that geometric intuition precedes the algebraic formulation."
     },
     "two": {
-      "title": "Python that runs",
-      "body": "Every idea ends in the three or four lines of NumPy that do the same thing, so the maths and the code never drift apart."
+      "title": "Implementation in Python",
+      "body": "Each idea closes with the lines of NumPy that perform the equivalent operation, keeping the mathematics and the code together."
     },
     "three": {
-      "title": "No paywall",
-      "body": "The whole course is here, in the open. No sign-up, no drip feed, no upsell at lesson four."
+      "title": "Freely available",
+      "body": "The complete material is available without prior registration or access restrictions."
     }
   }
 }

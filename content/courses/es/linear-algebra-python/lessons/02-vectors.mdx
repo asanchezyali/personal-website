@@ -4,34 +4,37 @@ language: 'es'
 module: 'Sistemas y vectores'
 moduleOrder: 1
 order: 2
-summary: 'Tres definiciones que resultan ser la misma, y por qué la geométrica es la que conviene tener en la cabeza.'
+summary: 'Tres definiciones que resultan equivalentes, y por qué la interpretación geométrica es la más productiva para trabajar.'
 ---
 
-Pregúntale a tres personas qué es un vector y obtendrás tres respuestas.
+La pregunta admite tres respuestas distintas según a quién se le formule, y las tres son correctas.
 
-Un **físico** dirá que es una flecha en el espacio: tiene magnitud y dirección, y puedes moverla
-sin que deje de ser la misma flecha. Un **programador** dirá que es una lista de números. Un
-**matemático** dirá que es un elemento de un espacio vectorial, y te dará una lista de axiomas.
+Un **físico** describirá un vector como una flecha en el espacio, dotada de magnitud y dirección,
+que puede desplazarse sin dejar de ser la misma flecha. Un **programador** lo definirá como una
+lista de números. Un **matemático** dirá que se trata de un elemento de un espacio vectorial, y
+acompañará la definición de una lista de axiomas.
 
-Las tres son correctas. Pero para trabajar, la primera es la que da intuición y la segunda es la
-que se ejecuta — y el álgebra lineal es, en buena medida, el arte de pasar de una a otra.
+Las tres caracterizaciones son válidas. Para trabajar, sin embargo, la primera aporta la intuición y
+la segunda es la que se ejecuta, y buena parte del álgebra lineal consiste precisamente en
+transitar entre ambas.
 
-## Un vector es una instrucción de movimiento
+## El vector como desplazamiento
 
-Piensa en $\vec{v} = (3, 2)$ no como un punto, sino como una **instrucción**: muévete 3 a la
-derecha y 2 hacia arriba. El origen es donde empiezas.
+Conviene interpretar $\vec{v} = (3, 2)$ no como un punto, sino como una **instrucción de
+desplazamiento**: tres unidades hacia la derecha y dos hacia arriba, tomando el origen como punto de
+partida.
 
 <DragVector
   initial={[3, 2]}
   second={[-2, 3]}
   labels={{
-    hint: 'Arrastra cualquiera de las dos puntas — o enfócala con el tabulador y muévela con las flechas. Cada posición es una instrucción distinta.',
+    hint: 'Ambos extremos son arrastrables. También pueden enfocarse con el tabulador y desplazarse con las flechas del teclado.',
     length: '‖v‖',
     reset: 'Reiniciar',
   }}
 />
 
-En NumPy esa instrucción es literalmente una lista:
+En NumPy esa instrucción se representa, literalmente, como una lista:
 
 ```python
 import numpy as np
@@ -40,45 +43,48 @@ v = np.array([3, 2])
 w = np.array([-2, 3])
 ```
 
-## Sumar es encadenar instrucciones
+## La suma como encadenamiento
 
-Aquí está la primera idea que vale la pena tener clara. Sumar dos vectores **no** es una regla
-arbitraria sobre listas de números: es hacer un movimiento y luego el otro.
+Aquí aparece la primera idea que conviene fijar con claridad. La suma de dos vectores no responde a
+una regla arbitraria sobre listas de números: consiste en realizar un desplazamiento y a
+continuación el otro.
 
-Si $\vec{v}$ te dice "3 a la derecha, 2 arriba" y $\vec{w}$ dice "2 a la izquierda, 3 arriba",
-hacer los dos seguidos te deja en $(1, 5)$. Que es exactamente lo que da sumar componente a
-componente.
+Si $\vec{v}$ indica «tres a la derecha, dos arriba» y $\vec{w}$ indica «dos a la izquierda, tres
+arriba», ejecutar ambos de forma consecutiva conduce a $(1, 5)$, que es exactamente el resultado de
+sumar componente a componente.
 
 ```python
-v + w        # array([1, 5])
+v + w
+# array([1, 5])
 ```
 
-Esa correspondencia — mover el punto de partida al final de la primera flecha — se llama *poner los
-vectores punta con cola*, y es la razón por la que la suma se define así y no de otro modo.
+Esa correspondencia —trasladar el punto de partida al extremo de la primera flecha— se conoce como
+disponer los vectores *punta con cola*, y explica por qué la suma se define de este modo y no de
+otro.
 
 <DragVector
   initial={[3, 2]}
   second={[-2, 3]}
   showSum
   labels={{
-    hint: 'Mueve v o w. La flecha larga es la suma, y la punteada muestra por qué: es w arrancando donde termina v.',
+    hint: 'Al desplazar v o w, la flecha larga representa la suma; la discontinua muestra w partiendo del extremo de v.',
     sum: 'v + w',
     reset: 'Reiniciar',
   }}
 />
 
-## Escalar es estirar
+## El producto por un escalar
 
-Multiplicar por un número **escala** la instrucción sin cambiar su dirección:
+Multiplicar por un número **escala** la instrucción sin alterar su dirección:
 
 ```python
-2 * v        # array([6, 4])   — el doble de lejos, mismo rumbo
+2 * v        # array([6, 4])   — el doble de distancia, misma dirección
 -1 * v       # array([-3, -2]) — misma recta, sentido opuesto
 0.5 * v      # array([1.5, 1.0])
 ```
 
-Un número negativo da la vuelta a la flecha. Por eso a los números se les llama **escalares** en
-este contexto: su único trabajo es escalar.
+Un factor negativo invierte el sentido de la flecha. De ahí que a los números se les denomine
+**escalares** en este contexto: su única función consiste en escalar.
 
 <VectorPlot
   vectors={[
@@ -87,38 +93,42 @@ este contexto: su único trabajo es escalar.
     { x: -3, y: -2, label: '−v', dashed: true },
   ]}
   range={7}
-  caption="Escalar mueve el vector a lo largo de su propia recta. Nunca lo saca de ella."
+  caption="El producto por un escalar desplaza el vector a lo largo de su propia recta, sin sacarlo nunca de ella."
 />
 
 ## La longitud
 
-La magnitud de un vector sale del teorema de Pitágoras, porque sus componentes son justamente los
-catetos de un triángulo rectángulo:
+La magnitud de un vector se obtiene del teorema de Pitágoras, dado que sus componentes constituyen
+los catetos de un triángulo rectángulo:
 
 $$\|\vec{v}\| = \sqrt{v_1^2 + v_2^2}$$
 
 ```python
-np.linalg.norm(v)    # 3.605551275463989
+np.linalg.norm(v)
+# 3.605551275463989
 ```
 
-Un vector de longitud 1 se llama **unitario**, y sirve para hablar de dirección sin mezclarla con
-magnitud:
+Un vector de longitud 1 recibe el nombre de **unitario**, y resulta útil para referirse a una
+dirección sin mezclarla con la magnitud:
 
 ```python
-v / np.linalg.norm(v)    # array([0.83205029, 0.5547002])
+v / np.linalg.norm(v)
+# array([0.83205029, 0.5547002])
 ```
 
 ## ¿Por qué esto importa después?
 
-Todo lo que viene se apoya en dos operaciones: **sumar** vectores y **escalarlos**. Nada más. Las
-matrices, los determinantes, los vectores propios — todo se construye encima de esas dos.
+Todo el contenido posterior se apoya en dos operaciones: la suma de vectores y el producto por un
+escalar. No hay más. Las matrices, los determinantes y los vectores propios se construyen sobre esas
+dos.
 
-Un espacio vectorial es, de hecho, *cualquier* conjunto donde esas dos operaciones se comporten
-como aquí. Por eso el álgebra lineal aparece en sitios que no parecen geometría: los embeddings de
-un modelo de lenguaje son vectores porque se pueden sumar y escalar, y eso basta para que toda esta
-maquinaria aplique.
+Un espacio vectorial es, de hecho, *cualquier* conjunto en el que ambas operaciones se comporten
+como aquí. Esa generalidad explica que el álgebra lineal aparezca en contextos que no guardan
+relación aparente con la geometría: los *embeddings* de un modelo de lenguaje son vectores porque
+admiten suma y escalado, y esa condición basta para que toda la maquinaria resulte aplicable.
 
 ---
 
-**Para probar.** Toma $\vec{v} = (3, 2)$ y $\vec{w} = (-2, 3)$ y calcula $\vec{v} - \vec{w}$ a mano
-antes de correrlo. ¿Qué instrucción de movimiento describe? Pista: restar es sumar el opuesto.
+**Ejercicio.** Con $\vec{v} = (3, 2)$ y $\vec{w} = (-2, 3)$, calcula $\vec{v} - \vec{w}$ a mano
+antes de ejecutarlo. ¿Qué desplazamiento describe el resultado? Conviene recordar que restar
+equivale a sumar el opuesto.

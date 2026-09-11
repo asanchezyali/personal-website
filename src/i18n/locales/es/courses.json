@@ -3,7 +3,7 @@
     "eyebrow": "Cursos libres",
     "title_pre": "Aprende las matemáticas ",
     "title_accent": "detrás del código",
-    "lead": "Cursos interactivos donde cada idea tiene una figura que puedes mover y unas líneas de Python que puedes correr. Sin muro de pago."
+    "lead": "Cursos interactivos en los que cada concepto se acompaña de una figura manipulable y de la implementación equivalente en Python. De acceso libre."
   },
   "empty": "Todavía no hay cursos publicados.",
   "start": "Empezar el curso",
@@ -23,16 +23,16 @@
   "syllabus": "Ver el temario",
   "pitch": {
     "one": {
-      "title": "Figuras que puedes mover",
-      "body": "Arrastra una matriz y mira el plano doblarse con ella. La intuición entra por las manos, no por un párrafo."
+      "title": "Figuras manipulables",
+      "body": "Cada concepto se introduce con una figura que responde a la interacción, de modo que la intuición geométrica precede a la formulación algebraica."
     },
     "two": {
-      "title": "Python que corre",
-      "body": "Cada idea termina en las tres o cuatro líneas de NumPy que hacen lo mismo, así las matemáticas y el código nunca se separan."
+      "title": "Implementación en Python",
+      "body": "Cada idea se cierra con las líneas de NumPy que realizan la operación equivalente, manteniendo unidas la formulación matemática y el código."
     },
     "three": {
-      "title": "Sin muro de pago",
-      "body": "El curso completo está aquí, abierto. Sin registro, sin dosificar por correo, sin venta cruzada en la lección cuatro."
+      "title": "Acceso libre",
+      "body": "El material completo está disponible sin registro previo ni restricciones de acceso."
     }
   }
 }
