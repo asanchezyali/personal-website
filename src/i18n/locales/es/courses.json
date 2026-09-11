@@ -1,9 +1,9 @@
 {
   "hero": {
     "eyebrow": "Cursos libres",
-    "title_pre": "Aprende las matemáticas ",
+    "title_pre": "Las matemáticas ",
     "title_accent": "detrás del código",
-    "lead": "Cursos interactivos en los que cada concepto se acompaña de una figura manipulable y de la implementación equivalente en Python. De acceso libre."
+    "lead": "Material de estudio sobre los fundamentos matemáticos del cómputo. Cada concepto se presenta con su interpretación geométrica, su definición formal y su implementación en Python."
   },
   "empty": "Todavía no hay cursos publicados.",
   "start": "Empezar el curso",
@@ -23,16 +23,16 @@
   "syllabus": "Ver el temario",
   "pitch": {
     "one": {
-      "title": "Figuras manipulables",
-      "body": "Cada concepto se introduce con una figura que responde a la interacción, de modo que la intuición geométrica precede a la formulación algebraica."
+      "title": "Interpretación geométrica",
+      "body": "Los conceptos se introducen mediante figuras manipulables, de modo que la intuición precede a la formulación algebraica."
     },
     "two": {
-      "title": "Implementación en Python",
-      "body": "Cada idea se cierra con las líneas de NumPy que realizan la operación equivalente, manteniendo unidas la formulación matemática y el código."
+      "title": "Definición y código",
+      "body": "Cada lección enuncia la definición formal y la implementación equivalente en NumPy, sin separar la teoría del cálculo."
     },
     "three": {
       "title": "Acceso libre",
-      "body": "El material completo está disponible sin registro previo ni restricciones de acceso."
+      "body": "El material completo está disponible sin registro previo ni restricciones."
     }
   }
 }

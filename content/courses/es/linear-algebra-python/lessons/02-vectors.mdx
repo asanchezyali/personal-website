@@ -4,37 +4,37 @@ language: 'es'
 module: 'Sistemas y vectores'
 moduleOrder: 1
 order: 2
-summary: 'Tres definiciones que resultan equivalentes, y por qué la interpretación geométrica es la más productiva para trabajar.'
+summary: 'Definición axiomática de espacio vectorial, su realización geométrica en el plano y la implementación de las dos operaciones en NumPy.'
 ---
 
-La pregunta admite tres respuestas distintas según a quién se le formule, y las tres son correctas.
+Un **espacio vectorial** sobre $\mathbb{R}$ es un conjunto $V$ dotado de dos operaciones, una suma
+$V \times V \to V$ y un producto por escalar $\mathbb{R} \times V \to V$, que satisfacen ocho
+axiomas: asociatividad y conmutatividad de la suma, existencia de elemento neutro $\vec{0}$ y de
+opuesto, compatibilidad del producto con el producto de escalares, elemento neutro $1$, y las dos
+distributividades. Los elementos de $V$ se denominan **vectores**.
 
-Un **físico** describirá un vector como una flecha en el espacio, dotada de magnitud y dirección,
-que puede desplazarse sin dejar de ser la misma flecha. Un **programador** lo definirá como una
-lista de números. Un **matemático** dirá que se trata de un elemento de un espacio vectorial, y
-acompañará la definición de una lista de axiomas.
+La definición no menciona flechas ni listas de números. Ambas son realizaciones concretas del mismo
+objeto abstracto, y esa es la razón por la que el álgebra lineal se aplica en contextos sin
+contenido geométrico aparente.
 
-Las tres caracterizaciones son válidas. Para trabajar, sin embargo, la primera aporta la intuición y
-la segunda es la que se ejecuta, y buena parte del álgebra lineal consiste precisamente en
-transitar entre ambas.
+Esta lección trabaja en $V = \mathbb{R}^2$, donde un vector es un par ordenado
+$\vec{v} = (v_1, v_2)$ y las operaciones actúan componente a componente.
 
-## El vector como desplazamiento
+## Realización geométrica
 
-Conviene interpretar $\vec{v} = (3, 2)$ no como un punto, sino como una **instrucción de
-desplazamiento**: tres unidades hacia la derecha y dos hacia arriba, tomando el origen como punto de
-partida.
+En $\mathbb{R}^2$, el par $\vec{v} = (3, 2)$ admite la lectura de un **desplazamiento**: tres
+unidades en la dirección del primer eje y dos en la del segundo. La representación como flecha desde
+el origen es convencional; lo que define al vector es el desplazamiento, no su punto de aplicación.
 
 <DragVector
   initial={[3, 2]}
   second={[-2, 3]}
   labels={{
-    hint: 'Ambos extremos son arrastrables. También pueden enfocarse con el tabulador y desplazarse con las flechas del teclado.',
+    hint: 'Los extremos admiten arrastre. También pueden enfocarse con el tabulador y desplazarse con las flechas del teclado.',
     length: '‖v‖',
     reset: 'Reiniciar',
   }}
 />
-
-En NumPy esa instrucción se representa, literalmente, como una lista:
 
 ```python
 import numpy as np
@@ -43,48 +43,49 @@ v = np.array([3, 2])
 w = np.array([-2, 3])
 ```
 
-## La suma como encadenamiento
+## Suma
 
-Aquí aparece la primera idea que conviene fijar con claridad. La suma de dos vectores no responde a
-una regla arbitraria sobre listas de números: consiste en realizar un desplazamiento y a
-continuación el otro.
+La suma se define componente a componente:
 
-Si $\vec{v}$ indica «tres a la derecha, dos arriba» y $\vec{w}$ indica «dos a la izquierda, tres
-arriba», ejecutar ambos de forma consecutiva conduce a $(1, 5)$, que es exactamente el resultado de
-sumar componente a componente.
+$$
+\vec{v} + \vec{w} = (v_1 + w_1,\; v_2 + w_2)
+$$
+
+Geométricamente corresponde a la composición de los dos desplazamientos: el segundo se aplica desde
+el extremo del primero. Esa construcción se conoce como regla del paralelogramo, o disposición
+*punta con cola*, y no es una convención sino la consecuencia directa de la definición.
 
 ```python
 v + w
 # array([1, 5])
 ```
 
-Esa correspondencia —trasladar el punto de partida al extremo de la primera flecha— se conoce como
-disponer los vectores *punta con cola*, y explica por qué la suma se define de este modo y no de
-otro.
-
 <DragVector
   initial={[3, 2]}
   second={[-2, 3]}
   showSum
   labels={{
-    hint: 'Al desplazar v o w, la flecha larga representa la suma; la discontinua muestra w partiendo del extremo de v.',
+    hint: 'La flecha larga representa la suma; la discontinua, el segundo sumando aplicado desde el extremo del primero.',
     sum: 'v + w',
     reset: 'Reiniciar',
   }}
 />
 
-## El producto por un escalar
+## Producto por un escalar
 
-Multiplicar por un número **escala** la instrucción sin alterar su dirección:
+$$
+\lambda\vec{v} = (\lambda v_1,\; \lambda v_2), \qquad \lambda \in \mathbb{R}
+$$
+
+El resultado permanece sobre la recta que contiene a $\vec{v}$ y pasa por el origen. La magnitud
+queda multiplicada por $|\lambda|$ y el sentido se invierte si $\lambda < 0$. De esa función
+exclusiva procede el término **escalar**.
 
 ```python
-2 * v        # array([6, 4])   — el doble de distancia, misma dirección
--1 * v       # array([-3, -2]) — misma recta, sentido opuesto
+2 * v        # array([6, 4])
+-1 * v       # array([-3, -2])
 0.5 * v      # array([1.5, 1.0])
 ```
-
-Un factor negativo invierte el sentido de la flecha. De ahí que a los números se les denomine
-**escalares** en este contexto: su única función consiste en escalar.
 
 <VectorPlot
   vectors={[
@@ -93,42 +94,47 @@ Un factor negativo invierte el sentido de la flecha. De ahí que a los números 
     { x: -3, y: -2, label: '−v', dashed: true },
   ]}
   range={7}
-  caption="El producto por un escalar desplaza el vector a lo largo de su propia recta, sin sacarlo nunca de ella."
+  caption="El producto por un escalar deja el vector sobre la recta generada por él."
 />
 
-## La longitud
+## Norma
 
-La magnitud de un vector se obtiene del teorema de Pitágoras, dado que sus componentes constituyen
-los catetos de un triángulo rectángulo:
+La **norma euclídea** de $\vec{v} \in \mathbb{R}^2$ es
 
-$$\|\vec{v}\| = \sqrt{v_1^2 + v_2^2}$$
+$$
+\lVert \vec{v} \rVert_2 = \sqrt{v_1^2 + v_2^2}
+$$
+
+Sus componentes son los catetos de un triángulo rectángulo cuya hipotenusa mide $\lVert\vec{v}\rVert$,
+de donde la expresión coincide con el teorema de Pitágoras.
 
 ```python
 np.linalg.norm(v)
 # 3.605551275463989
 ```
 
-Un vector de longitud 1 recibe el nombre de **unitario**, y resulta útil para referirse a una
-dirección sin mezclarla con la magnitud:
+Un vector de norma $1$ se denomina **unitario**. Para $\vec{v} \neq \vec{0}$, el vector
+$\vec{v}/\lVert\vec{v}\rVert$ es unitario y determina la dirección de $\vec{v}$ con independencia de
+su magnitud.
 
 ```python
 v / np.linalg.norm(v)
 # array([0.83205029, 0.5547002])
 ```
 
-## ¿Por qué esto importa después?
+## Alcance de la definición
 
-Todo el contenido posterior se apoya en dos operaciones: la suma de vectores y el producto por un
-escalar. No hay más. Las matrices, los determinantes y los vectores propios se construyen sobre esas
-dos.
+Todo el desarrollo posterior se apoya exclusivamente en las dos operaciones de la definición. Las
+combinaciones lineales, el span, las transformaciones lineales, el determinante y los vectores
+propios se construyen sobre ellas sin requerir ninguna estructura adicional.
 
-Un espacio vectorial es, de hecho, *cualquier* conjunto en el que ambas operaciones se comporten
-como aquí. Esa generalidad explica que el álgebra lineal aparezca en contextos que no guardan
-relación aparente con la geometría: los *embeddings* de un modelo de lenguaje son vectores porque
-admiten suma y escalado, y esa condición basta para que toda la maquinaria resulte aplicable.
+De ahí la generalidad del resultado: cualquier conjunto cuyos elementos admitan suma y producto por
+escalar con los axiomas indicados hereda toda la teoría. Los polinomios de grado acotado, las
+funciones continuas sobre un intervalo y los *embeddings* de un modelo de lenguaje son espacios
+vectoriales por esa razón.
 
 ---
 
-**Ejercicio.** Con $\vec{v} = (3, 2)$ y $\vec{w} = (-2, 3)$, calcula $\vec{v} - \vec{w}$ a mano
-antes de ejecutarlo. ¿Qué desplazamiento describe el resultado? Conviene recordar que restar
-equivale a sumar el opuesto.
+**Ejercicio.** Calcular $\vec{v} - \vec{w}$ para $\vec{v} = (3,2)$ y $\vec{w} = (-2,3)$ a partir de
+la definición de suma y producto por escalar, observando que $\vec{v} - \vec{w} = \vec{v} + (-1)\vec{w}$.
+Interpretar el resultado como desplazamiento.

@@ -4,58 +4,63 @@ language: 'es'
 module: 'Matrices como funciones'
 moduleOrder: 2
 order: 2
-summary: 'El producto de matrices consiste en aplicar una transformación después de otra. En determinadas condiciones, la operación no admite vuelta atrás.'
+summary: 'El producto de matrices como composición de transformaciones, no conmutatividad, matriz inversa y caracterización de las matrices singulares.'
 ---
 
-Si una matriz representa una transformación, el producto de dos matrices ha de significar
-necesariamente **aplicar una y a continuación la otra**. El producto de matrices no es otra cosa.
+Si $A$ y $B$ representan transformaciones lineales, la composición $T_A \circ T_B$ es también lineal,
+y la matriz que la representa es el producto $AB$. El producto de matrices se define precisamente
+para que esa correspondencia se cumpla.
 
-## El orden de aplicación
+## Orden de aplicación
 
-La expresión $AB$ indica que se aplica $B$ en primer lugar y $A$ después. Se lee de derecha a
-izquierda, igual que la composición de funciones $f(g(x))$.
+La notación sigue la de la composición de funciones: en $AB\vec{v}$ se aplica primero $B$ y después
+$A$, igual que en $f(g(x))$. La lectura es de derecha a izquierda.
 
 ```python
 import numpy as np
 
-R = np.array([[0, -1], [1, 0]])   # rotación de 90°
-S = np.array([[2,  0], [0, 1]])   # dilatación del eje x al doble
+R = np.array([[0, -1], [1, 0]])   # rotación de π/2
+S = np.array([[2,  0], [0, 1]])   # dilatación de razón 2 en el primer eje
 
 R @ S     # array([[ 0, -1], [ 2,  0]])
 S @ R     # array([[ 0, -2], [ 1,  0]])
 ```
 
-Los resultados difieren. Dilatar y girar después no equivale a girar y dilatar después, una
-distinción evidente desde la interpretación geométrica y completamente opaca si se atiende
-únicamente a la regla de filas por columnas.
+En general $AB \neq BA$. El producto de matrices **no es conmutativo**, propiedad que se sigue de
+que la composición de funciones tampoco lo es. Sí es asociativo, $(AB)C = A(BC)$, porque la
+composición lo es.
 
-Esa es la razón de fondo por la que el producto de matrices **no es conmutativo**. No se trata de
-una singularidad del álgebra: la composición de funciones tampoco lo es.
+## Matriz inversa
 
-## La transformación inversa
+Una matriz cuadrada $A \in \mathbb{R}^{n\times n}$ es **invertible** si existe $A^{-1}$ tal que
 
-Si $A$ transforma el plano, cabe preguntarse si existe una matriz que lo devuelva a su estado
-original. Esa matriz es la **inversa**, $A^{-1}$, y satisface:
+$$
+A^{-1}A = AA^{-1} = I_n
+$$
 
-$$A^{-1}A = I$$
-
-donde $I$ designa la identidad, la matriz que deja el plano inalterado.
+La inversa, cuando existe, es única, y representa la transformación que deshace $T_A$. Una matriz
+invertible se denomina también **regular**, y **singular** en caso contrario.
 
 ```python
 A = np.array([[2, 1],
               [1, 1]])
 
-A_inv = np.linalg.inv(A)
+np.linalg.inv(A)
 # array([[ 1., -1.],
 #        [-1.,  2.]])
-
-A_inv @ A     # la identidad, salvo error de coma flotante
 ```
 
-## Cuando la transformación no es reversible
+## Caracterización de la singularidad
 
-Al desplazar los deslizadores hasta que la cuadrícula se aplasta sobre una recta, el indicador
-inferior señala el momento en que se produce esa condición.
+Las siguientes afirmaciones sobre $A \in \mathbb{R}^{n\times n}$ son equivalentes:
+
+$$
+\begin{aligned}
+&A \text{ es invertible} \iff \det A \neq 0 \iff \operatorname{rank}(A) = n\\
+&\iff \text{las columnas de } A \text{ son linealmente independientes}\\
+&\iff T_A \text{ es biyectiva} \iff A\vec{x} = \vec{0} \text{ solo admite } \vec{x} = \vec{0}
+\end{aligned}
+$$
 
 <MatrixPlayground
   initial={[2, 1, 1, 1]}
@@ -63,46 +68,41 @@ inferior señala el momento en que se produce esa condición.
   labels={{
     reset: 'Reiniciar',
     determinant: 'det',
-    hint: 'el plano colapsa sobre una recta: no existe inversa',
+    hint: 'la imagen degenera en una recta: A es singular',
   }}
 />
 
-Cuando el plano colapsa, la transformación **destruye información**. Dos puntos distintos del plano
-original terminan ocupando la misma posición, y ninguna matriz puede volver a separarlos, puesto que
-carecería de criterio para decidir el origen de cada punto.
-
-En esas condiciones la matriz se denomina **singular** y no admite inversa.
+Cuando $\det A = 0$, la imagen de $T_A$ tiene dimensión menor que $n$. La transformación deja de ser
+inyectiva: existen $\vec{u} \neq \vec{v}$ con $T_A(\vec{u}) = T_A(\vec{v})$, y ninguna aplicación
+puede recuperar el argumento a partir de la imagen. El conjunto de vectores que $A$ envía al origen
+es el **núcleo** de $T_A$, y tiene dimensión positiva exactamente cuando $A$ es singular.
 
 ```python
 B = np.array([[2, 4],
-              [1, 2]])       # la segunda columna es el doble de la primera
+              [1, 2]])       # segunda columna = 2 · primera columna
 
 np.linalg.inv(B)
 # LinAlgError: Singular matrix
 ```
 
-NumPy no devuelve un resultado aproximado sino un error, comportamiento preferible en la práctica:
-un sistema sin solución única debe señalarlo explícitamente en lugar de proporcionar un valor
-arbitrario.
+NumPy lanza una excepción en lugar de devolver un resultado aproximado, comportamiento preferible:
+una matriz singular no tiene inversa y cualquier valor devuelto sería espurio.
 
-## La resolución de sistemas como inversión
+## Resolución de sistemas
 
-Un sistema de ecuaciones $A\vec{x} = \vec{b}$ plantea la siguiente cuestión: *¿qué vector, al ser
-transformado por $A$, se convierte en $\vec{b}$?* Se trata de la transformación en sentido inverso.
+El sistema $A\vec{x} = \vec{b}$ pregunta qué vector tiene a $\vec{b}$ por imagen bajo $T_A$. Con $A$
+invertible la respuesta es $\vec{x} = A^{-1}\vec{b}$, única por biyectividad.
 
 ```python
 b = np.array([5, 3])
 np.linalg.solve(A, b)     # array([2., 1.])
 ```
 
-Conviene insistir en una recomendación práctica: aunque $A^{-1}b$ produce el mismo resultado en
-términos matemáticos, es preferible **emplear `solve` y no `inv`**. Calcular la inversa completa
-resulta más costoso y numéricamente menos estable que resolver el sistema de forma directa. La
-diferencia solo se aprecia con matrices de tamaño considerable, momento en el que el coste ya es
-relevante.
+La equivalencia es matemática pero no numérica: como se argumentó en la lección 1, `solve` es
+preferible a `inv` por coste y por estabilidad.
 
 ---
 
-**Ejercicio.** Comprueba que $(AB)^{-1} = B^{-1}A^{-1}$ con dos matrices cualesquiera. ¿Por qué se
-invierte el orden de los factores? Conviene pensar en el orden necesario para deshacer una secuencia
-de operaciones encadenadas.
+**Ejercicio.** Demostrar que $(AB)^{-1} = B^{-1}A^{-1}$ para $A$ y $B$ invertibles, partiendo de la
+definición de inversa. Justificar la inversión del orden en términos de composición de
+transformaciones.

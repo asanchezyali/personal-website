@@ -4,39 +4,56 @@ language: 'en'
 module: 'Matrices as functions'
 moduleOrder: 2
 order: 1
-summary: 'A matrix is not a table of numbers but the specification of a motion applied to the entire plane.'
+summary: 'Definition of a linear transformation, its correspondence with matrices through the image of a basis, and the derivation of the product rule.'
 ---
 
-This lesson articulates the rest of the course: the ideas that follow depend on the interpretation
-presented here.
+A map $T : \mathbb{R}^n \to \mathbb{R}^m$ is a **linear transformation** if for all
+$\vec{u},\vec{v} \in \mathbb{R}^n$ and all $\lambda \in \mathbb{R}$ it satisfies
 
-A $2 \times 2$ matrix is not a table of numbers but a function that takes the entire plane and
-transforms it in such a way that lines remain lines, retain their uniform spacing, and the origin
-stays fixed. A function with those properties is called a **linear transformation**.
+$$
+T(\vec{u} + \vec{v}) = T(\vec{u}) + T(\vec{v}), \qquad T(\lambda\vec{v}) = \lambda\, T(\vec{v})
+$$
 
-## The principle that simplifies everything
+Those two conditions constitute the definition. From them it follows that $T(\vec{0}) = \vec{0}$ and,
+by induction, that $T$ commutes with any linear combination:
 
-Since every vector is a linear combination of $\hat{\imath}$ and $\hat{\jmath}$ — as seen in the
-previous lesson — determining where *any* vector goes requires only knowing where those two go.
+$$
+T\!\left(\sum_i \lambda_i \vec{v}_i\right) = \sum_i \lambda_i\, T(\vec{v}_i)
+$$
 
-That is precisely the information a matrix stores: **its columns are the images of $\hat{\imath}$
-and $\hat{\jmath}$**.
+In $\mathbb{R}^2$ the geometric reading is that lines map to lines preserving uniform spacing, and
+the origin stays fixed.
 
-$$A = \begin{bmatrix} a & b \\ c & d \end{bmatrix} \quad\Longrightarrow\quad \hat{\imath} \mapsto \begin{bmatrix} a \\ c \end{bmatrix}, \qquad \hat{\jmath} \mapsto \begin{bmatrix} b \\ d \end{bmatrix}$$
+## Correspondence with matrices
 
-The rest follows. If $\hat{\imath}$ maps to $(a, c)$ and $\hat{\jmath}$ maps to $(b, d)$, then
-$(x, y) = x\hat{\imath} + y\hat{\jmath}$ must map to $x(a,c) + y(b,d)$. Expanding that expression
-yields the familiar multiplication rule:
+Let $\{\hat{\imath},\hat{\jmath}\}$ be the canonical basis. Every $\vec{v} = (x,y)$ is written
+$\vec{v} = x\hat{\imath} + y\hat{\jmath}$, and applying linearity
 
-$$A\vec{v} = \begin{bmatrix} ax + by \\ cx + dy \end{bmatrix}$$
+$$
+T(\vec{v}) = x\,T(\hat{\imath}) + y\,T(\hat{\jmath})
+$$
 
-The rule is not arbitrary: it is the only one compatible with linearity.
+The transformation is therefore determined by the images of the basis vectors. That is the
+information a matrix stores: **its columns are the images of the canonical basis**.
 
-## The transformation in detail
+$$
+A = \begin{bmatrix} a & b \\ c & d \end{bmatrix} \quad\Longleftrightarrow\quad T(\hat{\imath}) = \begin{bmatrix} a \\ c \end{bmatrix}, \qquad T(\hat{\jmath}) = \begin{bmatrix} b \\ d \end{bmatrix}
+$$
 
-The sliders in the figure correspond to the four entries of the matrix. The red arrow indicates the
-image of $\hat{\imath}$ and the green one the image of $\hat{\jmath}$. The grid reflects the effect
-on the entire plane.
+Substituting into the identity above yields
+
+$$
+A\vec{v} = x\begin{bmatrix} a \\ c \end{bmatrix} + y\begin{bmatrix} b \\ d \end{bmatrix} = \begin{bmatrix} ax + by \\ cx + dy \end{bmatrix}
+$$
+
+The matrix-vector product rule is not a convention: it is the only one compatible with linearity. The
+correspondence between linear transformations $\mathbb{R}^n \to \mathbb{R}^m$ and $m \times n$
+matrices is bijective.
+
+## Particular cases
+
+The sliders in the figure set the four entries of $A$. The red arrow marks $T(\hat{\imath})$ and the
+green one $T(\hat{\jmath})$; the grid represents the image of the plane.
 
 <MatrixPlayground
   initial={[1, 0, 0, 1]}
@@ -44,51 +61,41 @@ on the entire plane.
   labels={{ reset: 'Reset' }}
 />
 
-Several configurations are particularly illustrative:
+| Matrix | Transformation |
+| --- | --- |
+| $\begin{bmatrix}1&0\\0&1\end{bmatrix}$ | identity |
+| $\begin{bmatrix}0&-1\\1&0\end{bmatrix}$ | rotation by $\pi/2$ |
+| $\begin{bmatrix}k&0\\0&k\end{bmatrix}$ | scaling by a factor $k$ |
+| $\begin{bmatrix}1&k\\0&1\end{bmatrix}$ | horizontal shear |
+| proportional columns | projection onto a line |
 
-- With $\begin{bmatrix}1&0\\0&1\end{bmatrix}$ nothing moves. This is the **identity**.
-- With $a = 0$, $b = -1$, $c = 1$, $d = 0$ the plane rotates by 90°.
-- With $a = 2$ and $d = 2$ everything moves twice as far from the origin.
-- With $b = 1$ and the rest unchanged the result is a **shear**: vertical lines tilt.
-- If both columns become parallel, the plane flattens onto a line. That situation is taken up again
-  in the lesson on the determinant.
+The last case is degenerate: the image of $T$ is a subspace of dimension $1$ and the transformation
+is not injective. Lesson 6 characterises it through the determinant.
 
-## The operation in NumPy
+## Implementation
 
 ```python
 import numpy as np
 
 A = np.array([[0, -1],
-              [1,  0]])     # 90° rotation
+              [1,  0]])     # rotation by π/2
 
 v = np.array([3, 2])
 A @ v                       # array([-2, 3])
 ```
 
-The `@` operator corresponds to matrix multiplication. It should not be confused with `*`, which in
-NumPy multiplies element by element, an entirely different operation.
+The `@` operator implements the matrix product. The `*` operator performs the Hadamard product,
+element by element, which corresponds to no composition of transformations.
 
-The central claim can be checked directly:
+The correspondence between columns and images of the basis is checked directly:
 
 ```python
-A @ np.array([1, 0])    # array([0, 1])  — first column of A
-A @ np.array([0, 1])    # array([-1, 0]) — second column of A
+A @ np.array([1, 0])    # array([0, 1])   = first column of A
+A @ np.array([0, 1])    # array([-1, 0])  = second column of A
 ```
-
-The columns are, in a literal sense, the images of the basis vectors.
-
-## Why "linear"?
-
-The transformation satisfies two properties, from which the name of the whole discipline derives:
-
-$$A(\vec{v} + \vec{w}) = A\vec{v} + A\vec{w} \qquad A(s\vec{v}) = s(A\vec{v})$$
-
-Put in words: the order between adding and transforming is immaterial, as is the order between
-scaling and transforming. That is why knowing the image of the basis suffices — any other vector is
-built by adding and scaling, and the transformation respects both operations.
 
 ---
 
-**Exercise.** Without resorting to calculation, determine which matrix reflects the plane about the
-horizontal axis. Consider where $\hat{\imath}$ and $\hat{\jmath}$ must go, and write them as
-columns. Then verify the result in the figure above.
+**Exercise.** Determine the matrix of the reflection about the horizontal axis from the images
+$T(\hat{\imath})$ and $T(\hat{\jmath})$, without resorting to computation. Check the result in the
+figure above.

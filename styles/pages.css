@@ -411,7 +411,9 @@
   .post-body div.relative pre { margin: 0; }
   /* Math (KaTeX): scale to sit closer to the 18px body text instead of 1.21em */
   .post-body .katex { font-size: 1.05em; }
-  .post-body .katex-display { margin: 28px 0; overflow-x: auto; overflow-y: hidden; padding: 4px 0; }
+  /* clear: left stops the first display equation of a lesson from wrapping around
+     the floated drop cap when the opening paragraph is only a line or two. */
+  .post-body .katex-display { margin: 28px 0; overflow-x: auto; overflow-y: hidden; padding: 4px 0; clear: left; }
   .post-body .katex-display > .katex { font-size: 1.1em; }
   /* Equation number: muted, same scale as the equation */
   .post-body .katex-display .tag { color: var(--g-500); }

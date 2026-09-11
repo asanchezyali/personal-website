@@ -1,9 +1,9 @@
 {
   "hero": {
     "eyebrow": "Free courses",
-    "title_pre": "Learn the maths ",
+    "title_pre": "The mathematics ",
     "title_accent": "behind the code",
-    "lead": "Interactive courses in which every concept comes with a figure you can manipulate and the equivalent implementation in Python. Freely available."
+    "lead": "Study material on the mathematical foundations of computing. Each concept is presented with its geometric interpretation, its formal definition and its implementation in Python."
   },
   "empty": "No courses published yet.",
   "start": "Start the course",
@@ -23,16 +23,16 @@
   "syllabus": "See the syllabus",
   "pitch": {
     "one": {
-      "title": "Figures you can manipulate",
-      "body": "Each concept is introduced through a figure that responds to interaction, so that geometric intuition precedes the algebraic formulation."
+      "title": "Geometric interpretation",
+      "body": "Concepts are introduced through figures that can be manipulated, so that intuition precedes the algebraic formulation."
     },
     "two": {
-      "title": "Implementation in Python",
-      "body": "Each idea closes with the lines of NumPy that perform the equivalent operation, keeping the mathematics and the code together."
+      "title": "Definition and code",
+      "body": "Each lesson states the formal definition and the equivalent NumPy implementation, keeping theory and computation together."
     },
     "three": {
       "title": "Freely available",
-      "body": "The complete material is available without prior registration or access restrictions."
+      "body": "The complete material is available without prior registration or restrictions."
     }
   }
 }

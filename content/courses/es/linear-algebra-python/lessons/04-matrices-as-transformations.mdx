@@ -4,41 +4,56 @@ language: 'es'
 module: 'Matrices como funciones'
 moduleOrder: 2
 order: 1
-summary: 'Una matriz no es una tabla de números, sino la especificación del movimiento que se aplica al plano completo.'
+summary: 'Definición de transformación lineal, correspondencia con matrices a través de la imagen de la base y deducción de la regla del producto.'
 ---
 
-Esta lección articula el resto del curso: las ideas posteriores dependen de la interpretación que se
-presenta aquí.
+Una aplicación $T : \mathbb{R}^n \to \mathbb{R}^m$ es una **transformación lineal** si para todos
+$\vec{u},\vec{v} \in \mathbb{R}^n$ y todo $\lambda \in \mathbb{R}$ cumple
 
-Una matriz de $2 \times 2$ no constituye una tabla de números, sino una función que toma el plano
-completo y lo transforma de manera que las rectas siguen siendo rectas, conservan su espaciado
-uniforme y el origen permanece fijo. Una función con esas propiedades recibe el nombre de
-**transformación lineal**.
+$$
+T(\vec{u} + \vec{v}) = T(\vec{u}) + T(\vec{v}), \qquad T(\lambda\vec{v}) = \lambda\, T(\vec{v})
+$$
 
-## El principio que lo simplifica todo
+Esas dos condiciones constituyen la definición. De ellas se deduce $T(\vec{0}) = \vec{0}$ y, por
+inducción, que $T$ conmuta con cualquier combinación lineal:
 
-Puesto que cualquier vector es una combinación lineal de $\hat{\imath}$ y $\hat{\jmath}$ —como se vio
-en la lección anterior—, para determinar el destino de *cualquier* vector basta conocer el destino
-de esos dos.
+$$
+T\!\left(\sum_i \lambda_i \vec{v}_i\right) = \sum_i \lambda_i\, T(\vec{v}_i)
+$$
 
-Esa es precisamente la información que almacena una matriz: **sus columnas son las imágenes de
-$\hat{\imath}$ y $\hat{\jmath}$**.
+En $\mathbb{R}^2$ la interpretación geométrica es que las rectas se transforman en rectas
+conservando el espaciado uniforme, y el origen permanece fijo.
 
-$$A = \begin{bmatrix} a & b \\ c & d \end{bmatrix} \quad\Longrightarrow\quad \hat{\imath} \mapsto \begin{bmatrix} a \\ c \end{bmatrix}, \qquad \hat{\jmath} \mapsto \begin{bmatrix} b \\ d \end{bmatrix}$$
+## Correspondencia con matrices
 
-El resto se deduce. Si $\hat{\imath}$ se transforma en $(a, c)$ y $\hat{\jmath}$ en $(b, d)$,
-entonces $(x, y) = x\hat{\imath} + y\hat{\jmath}$ debe transformarse en $x(a,c) + y(b,d)$.
-Desarrollando esa expresión se obtiene la regla de multiplicación habitual:
+Sea $\{\hat{\imath},\hat{\jmath}\}$ la base canónica. Todo $\vec{v} = (x,y)$ se escribe
+$\vec{v} = x\hat{\imath} + y\hat{\jmath}$, y aplicando la linealidad
 
-$$A\vec{v} = \begin{bmatrix} ax + by \\ cx + dy \end{bmatrix}$$
+$$
+T(\vec{v}) = x\,T(\hat{\imath}) + y\,T(\hat{\jmath})
+$$
 
-La regla no es arbitraria: es la única compatible con la linealidad.
+La transformación queda por tanto determinada por las imágenes de los vectores de la base. Esa es la
+información que almacena una matriz: **sus columnas son las imágenes de la base canónica**.
 
-## La transformación, en detalle
+$$
+A = \begin{bmatrix} a & b \\ c & d \end{bmatrix} \quad\Longleftrightarrow\quad T(\hat{\imath}) = \begin{bmatrix} a \\ c \end{bmatrix}, \qquad T(\hat{\jmath}) = \begin{bmatrix} b \\ d \end{bmatrix}
+$$
 
-Los deslizadores de la figura corresponden a las cuatro entradas de la matriz. La flecha roja indica
-la imagen de $\hat{\imath}$ y la verde la de $\hat{\jmath}$. La cuadrícula refleja el efecto sobre
-el plano completo.
+Sustituyendo en la identidad anterior se obtiene
+
+$$
+A\vec{v} = x\begin{bmatrix} a \\ c \end{bmatrix} + y\begin{bmatrix} b \\ d \end{bmatrix} = \begin{bmatrix} ax + by \\ cx + dy \end{bmatrix}
+$$
+
+La regla del producto matriz-vector no es una convención: es la única compatible con la linealidad.
+La correspondencia entre transformaciones lineales $\mathbb{R}^n \to \mathbb{R}^m$ y matrices
+$m \times n$ es biyectiva.
+
+## Casos particulares
+
+Los deslizadores de la figura fijan las cuatro entradas de $A$. La flecha roja señala
+$T(\hat{\imath})$ y la verde $T(\hat{\jmath})$; la cuadrícula representa la imagen del plano.
 
 <MatrixPlayground
   initial={[1, 0, 0, 1]}
@@ -46,52 +61,41 @@ el plano completo.
   labels={{ reset: 'Reiniciar' }}
 />
 
-Algunas configuraciones resultan especialmente ilustrativas:
+| Matriz | Transformación |
+| --- | --- |
+| $\begin{bmatrix}1&0\\0&1\end{bmatrix}$ | identidad |
+| $\begin{bmatrix}0&-1\\1&0\end{bmatrix}$ | rotación de $\pi/2$ |
+| $\begin{bmatrix}k&0\\0&k\end{bmatrix}$ | homotecia de razón $k$ |
+| $\begin{bmatrix}1&k\\0&1\end{bmatrix}$ | cizalladura horizontal |
+| columnas proporcionales | proyección sobre una recta |
 
-- Con $\begin{bmatrix}1&0\\0&1\end{bmatrix}$ nada se desplaza. Es la **identidad**.
-- Con $a = 0$, $b = -1$, $c = 1$, $d = 0$ el plano gira 90°.
-- Con $a = 2$ y $d = 2$ todo se aleja del origen al doble de distancia.
-- Con $b = 1$ y el resto sin alterar se obtiene un **cizallamiento**: las verticales se inclinan.
-- Si ambas columnas resultan paralelas, el plano se aplasta sobre una recta. Esa situación se
-  retoma en la lección dedicada al determinante.
+El último caso es degenerado: la imagen de $T$ es un subespacio de dimensión $1$ y la transformación
+no es inyectiva. La lección 6 lo caracteriza mediante el determinante.
 
-## La operación en NumPy
+## Implementación
 
 ```python
 import numpy as np
 
 A = np.array([[0, -1],
-              [1,  0]])     # rotación de 90°
+              [1,  0]])     # rotación de π/2
 
 v = np.array([3, 2])
 A @ v                       # array([-2, 3])
 ```
 
-El operador `@` corresponde a la multiplicación de matrices. Conviene no confundirlo con `*`, que en
-NumPy multiplica elemento a elemento, una operación completamente distinta.
+El operador `@` implementa el producto matricial. El operador `*` realiza producto de Hadamard,
+elemento a elemento, que no corresponde a ninguna composición de transformaciones.
 
-La afirmación central puede comprobarse de forma directa:
+La correspondencia entre columnas e imágenes de la base se comprueba directamente:
 
 ```python
-A @ np.array([1, 0])    # array([0, 1])  — primera columna de A
-A @ np.array([0, 1])    # array([-1, 0]) — segunda columna de A
+A @ np.array([1, 0])    # array([0, 1])   = primera columna de A
+A @ np.array([0, 1])    # array([-1, 0])  = segunda columna de A
 ```
-
-Las columnas son, en sentido literal, las imágenes de los vectores de la base.
-
-## ¿Por qué se denomina «lineal»?
-
-La transformación satisface dos propiedades, de las que procede el nombre de toda la disciplina:
-
-$$A(\vec{v} + \vec{w}) = A\vec{v} + A\vec{w} \qquad A(s\vec{v}) = s(A\vec{v})$$
-
-Expresado en palabras: el orden entre sumar y transformar resulta indiferente, lo mismo que entre
-escalar y transformar. Esa es la razón por la que basta conocer la imagen de la base, dado que
-cualquier otro vector se construye sumando y escalando, y la transformación respeta ambas
-operaciones.
 
 ---
 
-**Ejercicio.** Sin recurrir al cálculo, determina qué matriz refleja el plano respecto del eje
-horizontal. Considera el destino de $\hat{\imath}$ y el de $\hat{\jmath}$, y escríbelos como
-columnas. Comprueba después el resultado en la figura anterior.
+**Ejercicio.** Determinar la matriz de la reflexión respecto del eje horizontal a partir de las
+imágenes $T(\hat{\imath})$ y $T(\hat{\jmath})$, sin recurrir al cálculo. Comprobar el resultado en
+la figura anterior.

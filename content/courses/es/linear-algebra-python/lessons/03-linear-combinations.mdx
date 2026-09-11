@@ -4,41 +4,39 @@ language: 'es'
 module: 'Sistemas y vectores'
 moduleOrder: 1
 order: 3
-summary: 'Con dos vectores y dos coeficientes puede alcanzarse casi todo el plano. El matiz de ese «casi» es el concepto de span.'
+summary: 'Combinación lineal, subespacio generado, dependencia lineal y base, con el criterio del determinante y su lectura como sistema de ecuaciones.'
 ---
 
-Disponemos ya de las dos operaciones fundamentales: sumar y escalar. Al combinarlas se obtiene la
-construcción central de todo el curso.
+Dados $\vec{v}_1,\dots,\vec{v}_k \in V$ y escalares $\lambda_1,\dots,\lambda_k \in \mathbb{R}$, el
+vector
 
-Dados dos vectores $\vec{v}$ y $\vec{w}$ y dos números $s$ y $t$, la expresión
+$$
+\sum_{i=1}^{k} \lambda_i \vec{v}_i = \lambda_1\vec{v}_1 + \cdots + \lambda_k\vec{v}_k
+$$
 
-$$s\vec{v} + t\vec{w}$$
-
-recibe el nombre de **combinación lineal**: cada vector se escala por su coeficiente y los
-resultados se suman.
-
-## La construcción, en detalle
-
-En la figura, los deslizadores controlan $s$ y $t$. Las flechas continuas representan $\vec{v}$ y
-$\vec{w}$, la discontinua muestra cómo se encadenan y la de color morado corresponde al resultado.
+es una **combinación lineal** de $\vec{v}_1,\dots,\vec{v}_k$. Para $k = 2$ en $\mathbb{R}^2$ la
+expresión se reduce a $s\vec{v} + t\vec{w}$.
 
 <LinearCombo
   v={[2, 1]}
   w={[-1, 2]}
-  labels={{ result: 'resultado', reset: 'Reiniciar', degenerate: 'Ambos vectores son paralelos: su span se reduce a una recta.' }}
+  labels={{ result: 'resultado', reset: 'Reiniciar', degenerate: 'Los vectores son linealmente dependientes: el span es una recta.' }}
 />
 
-La cuestión relevante, una vez explorados los valores, es la siguiente: **¿qué puntos del plano
-resultan alcanzables?**
+## Subespacio generado
 
-## El span
+El **span** de un conjunto de vectores es el conjunto de todas sus combinaciones lineales:
 
-El conjunto de todos los puntos alcanzables mediante combinaciones lineales se denomina **span** de
-$\vec{v}$ y $\vec{w}$.
+$$
+\operatorname{span}\{\vec{v},\vec{w}\} = \{\, s\vec{v} + t\vec{w} \;:\; s,t \in \mathbb{R} \,\}
+$$
 
-Con los valores anteriores, la respuesta es *el plano completo*. Cualquier punto admite un par
-$(s, t)$ que lo alcanza. Dos vectores que apunten en direcciones distintas bastan para generar
-$\mathbb{R}^2$ en su totalidad.
+El span es siempre un subespacio vectorial: contiene al $\vec{0}$ y es cerrado bajo suma y producto
+por escalar. En $\mathbb{R}^2$ los únicos subespacios posibles son $\{\vec{0}\}$, las rectas que
+pasan por el origen y $\mathbb{R}^2$ completo.
+
+Determinar si un vector $\vec{u}$ pertenece al span equivale a resolver un sistema lineal cuyas
+incógnitas son los coeficientes:
 
 ```python
 import numpy as np
@@ -46,38 +44,46 @@ import numpy as np
 v = np.array([2, 1])
 w = np.array([-1, 2])
 
-# ¿Qué combinación alcanza (4, 3)?
 np.linalg.solve(np.column_stack([v, w]), np.array([4, 3]))
-# array([2.2, 0.4])  →  2.2·v + 0.4·w = (4, 3)
+# array([2.2, 0.4])   →   2.2·v + 0.4·w = (4, 3)
 ```
 
-Esa llamada a `solve` refleja lo que hace en el fondo cualquier resolución de un sistema de
-ecuaciones: determinar los coeficientes de una combinación lineal.
+La equivalencia es exacta: $A\vec{x} = \vec{b}$ pregunta qué combinación lineal de las columnas de
+$A$ produce $\vec{b}$.
 
-## La degeneración del span
+## Dependencia lineal
 
-El caso relevante se presenta cuando ambos vectores apuntan en la **misma** dirección.
+Los vectores $\vec{v}_1,\dots,\vec{v}_k$ son **linealmente independientes** cuando
 
-Con $\vec{v} = (2, 1)$ y $\vec{w} = (4, 2)$ —el segundo es el doble del primero— el resultado no
-abandona en ningún momento una única recta, cualesquiera que sean los coeficientes. El span ha
-pasado de ser un plano a ser una línea.
+$$
+\sum_{i=1}^{k} \lambda_i \vec{v}_i = \vec{0} \;\Longrightarrow\; \lambda_1 = \cdots = \lambda_k = 0
+$$
 
-En esa situación los vectores se denominan **linealmente dependientes**: uno de ellos no aporta
-información nueva, por estar ya contenido en el otro. Cuando son independientes, el span abarca el
-plano completo.
+y **linealmente dependientes** en caso contrario. La dependencia significa que alguno de los
+vectores pertenece al span de los restantes y, por tanto, no amplía el subespacio generado.
+
+Para $\vec{v} = (2,1)$ y $\vec{w} = (4,2)$ se cumple $\vec{w} = 2\vec{v}$, de modo que
+$\operatorname{span}\{\vec{v},\vec{w}\} = \operatorname{span}\{\vec{v}\}$, una recta. Ninguna
+elección de coeficientes produce un punto fuera de ella.
+
+En $\mathbb{R}^2$, dos vectores son linealmente independientes si y solo si el determinante de la
+matriz que los tiene por columnas es no nulo:
 
 ```python
-# El determinante detecta exactamente esta condición (lección 6)
 np.linalg.det(np.column_stack([[2, 1], [4, 2]]))   # 0.0  → dependientes
 np.linalg.det(np.column_stack([[2, 1], [-1, 2]]))  # 5.0  → independientes
 ```
 
+La justificación geométrica de ese criterio corresponde a la lección 6.
+
 ## Base
 
-Un conjunto de vectores independientes cuyo span abarca todo el espacio constituye una **base**. Los
-dos vectores empleados más arriba forman una base de $\mathbb{R}^2$.
+Una **base** de un espacio vectorial $V$ es un conjunto de vectores linealmente independientes cuyo
+span es $V$. Toda base de $\mathbb{R}^n$ tiene exactamente $n$ elementos, número que define la
+**dimensión** del espacio.
 
-La base de referencia habitual es la formada por $\hat{\imath} = (1, 0)$ y $\hat{\jmath} = (0, 1)$:
+La base canónica de $\mathbb{R}^2$ es $\{\hat{\imath}, \hat{\jmath}\}$ con $\hat{\imath} = (1,0)$ y
+$\hat{\jmath} = (0,1)$.
 
 <VectorPlot
   vectors={[
@@ -86,18 +92,21 @@ La base de referencia habitual es la formada por $\hat{\imath} = (1, 0)$ y $\hat
     { x: 3, y: 2, label: '3î + 2ĵ', dashed: true },
   ]}
   range={4}
-  caption="La notación (3, 2) constituye ya una combinación lineal: tres veces î más dos veces ĵ."
+  caption="La notación (3, 2) es la combinación lineal 3î + 2ĵ expresada en la base canónica."
 />
 
-De ahí se desprende una observación importante: **escribir un vector como $(3, 2)$ supone ya emplear
-una combinación lineal**, aunque la base sea tan habitual que no se mencione. Las coordenadas son
-siempre coordenadas *respecto a una base determinada*.
+Si $\mathcal{B} = \{\vec{b}_1,\vec{b}_2\}$ es una base, todo $\vec{u} \in \mathbb{R}^2$ admite una
+escritura $\vec{u} = \lambda_1\vec{b}_1 + \lambda_2\vec{b}_2$, y los coeficientes
+$(\lambda_1,\lambda_2)$ son **únicos**: la unicidad se sigue de la independencia lineal.
 
-Esa observación conduce directamente al siguiente módulo: si un cambio de base modifica las
-coordenadas, una matriz puede entenderse como la especificación del destino de cada vector de la
-base.
+De ahí una consecuencia inmediata: la notación $(3,2)$ no designa un vector en
+abstracto sino sus coordenadas respecto de una base determinada. Las coordenadas son siempre
+relativas a una base, y la canónica se omite por convención.
+
+Esa observación conduce al módulo siguiente. Si un cambio de base transforma las coordenadas, una
+matriz puede interpretarse como la especificación de la imagen de cada vector de la base.
 
 ---
 
-**Ejercicio.** Con $\vec{v} = (2, 1)$ y $\vec{w} = (-1, 2)$, determina a mano los coeficientes que
-alcanzan $(0, 5)$. Comprueba después el resultado con `np.linalg.solve`.
+**Ejercicio.** Determinar los coeficientes $(s,t)$ tales que $s(2,1) + t(-1,2) = (0,5)$ resolviendo
+el sistema lineal correspondiente a mano, y verificar el resultado con `np.linalg.solve`.

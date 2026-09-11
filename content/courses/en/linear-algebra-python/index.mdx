@@ -2,38 +2,42 @@
 title: 'Linear Algebra with Python'
 language: 'en'
 level: 'Introductory'
-summary: 'Seven lessons on systems, vectors, matrices and transformations approached through their geometric behaviour, with the corresponding NumPy implementation.'
+summary: 'Seven lessons on linear systems, vector spaces, transformations, the determinant and eigenvectors, with the corresponding NumPy implementation.'
 tags: ['linear-algebra', 'python', 'numpy', 'mathematics']
 ---
 
-Linear algebra is usually taught as a sequence of procedures: multiply these rows by these columns,
-compute this determinant, solve this system. It is possible to complete an entire course that way
-without ever grasping what any of those operations mean.
+Linear algebra is customarily taught as a sequence of algorithms: multiply rows by columns, expand a
+determinant, reduce a system. The outcome is operational competence without semantic content, in
+which procedures are executed correctly without any grasp of what they represent.
 
-This course reverses the order. Each concept is introduced through a figure that can be manipulated
-and closes with the few lines of NumPy that perform the equivalent operation. The computation comes
-after the geometric intuition, not before it.
+This course reverses the order of exposition. Each concept is introduced through its geometric
+interpretation, supported by a figure that can be manipulated, and closes with the formal definition
+and its implementation in NumPy. Computation is presented as a consequence of the definition rather
+than as the starting point.
 
-## What you need
+## Prerequisites
 
-A basic command of Python and familiarity with the Cartesian plane. Nothing more. No prior study of
-linear algebra is required; those who have taken a course and retain the impression of having
-memorised procedures will find the complementary approach here.
-
-To run the examples:
+A basic command of Python and familiarity with the Cartesian plane. No prior background in linear
+algebra is assumed.
 
 ```bash
 pip install numpy
 ```
 
-## How it is organised
+## Organisation
 
-The course consists of three consecutive modules. The first begins with solving **linear systems**
-in NumPy — the problem that motivates the whole discipline — and continues with **vectors**: their
-definition and the constructions they admit. The second presents **matrices as functions** that
-transform the plane, an interpretation on which the remaining material rests. The third addresses
-**eigenvectors**, the directions a transformation cannot deflect.
+The course consists of three consecutive modules.
 
-Each lesson includes an interactive figure. It is worth manipulating it before reading the
-corresponding explanation, since the geometric intuition makes the subsequent reading considerably
-easier.
+The **first** starts from systems of linear equations, the problem that historically motivates the
+discipline, and then establishes the vector space structure: linear combination, span, linear
+dependence and basis.
+
+The **second** defines linear transformations and establishes their bijective correspondence with
+matrices through the image of a basis. From there follow the matrix product as composition, the
+inverse matrix, and the determinant as the area scale factor.
+
+The **third** addresses eigenvalues and eigenvectors, which identify the invariant directions of a
+transformation and describe its behaviour under iteration.
+
+Each lesson includes at least one interactive figure. Exploring the figure beforehand eases the
+reading of the algebraic formulation that accompanies it.

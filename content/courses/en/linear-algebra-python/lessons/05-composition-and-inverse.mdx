@@ -4,58 +4,63 @@ language: 'en'
 module: 'Matrices as functions'
 moduleOrder: 2
 order: 2
-summary: 'Matrix multiplication means applying one transformation after another. Under certain conditions, the operation cannot be undone.'
+summary: 'The matrix product as composition of transformations, non-commutativity, the inverse matrix, and the characterisation of singular matrices.'
 ---
 
-If a matrix represents a transformation, then the product of two matrices must necessarily mean
-**applying one and then the other**. Matrix multiplication is nothing else.
+If $A$ and $B$ represent linear transformations, the composition $T_A \circ T_B$ is also linear, and
+the matrix representing it is the product $AB$. The matrix product is defined precisely so that this
+correspondence holds.
 
-## The order of application
+## Order of application
 
-The expression $AB$ indicates that $B$ is applied first and $A$ afterwards. It reads from right to
-left, just as function composition $f(g(x))$ does.
+The notation follows that of function composition: in $AB\vec{v}$ the matrix $B$ is applied first
+and $A$ afterwards, as in $f(g(x))$. It reads right to left.
 
 ```python
 import numpy as np
 
-R = np.array([[0, -1], [1, 0]])   # 90° rotation
-S = np.array([[2,  0], [0, 1]])   # stretch the x axis twofold
+R = np.array([[0, -1], [1, 0]])   # rotation by π/2
+S = np.array([[2,  0], [0, 1]])   # scaling by 2 along the first axis
 
 R @ S     # array([[ 0, -1], [ 2,  0]])
 S @ R     # array([[ 0, -2], [ 1,  0]])
 ```
 
-The results differ. Stretching and then rotating is not the same as rotating and then stretching, a
-distinction that is evident from the geometric reading and entirely opaque if one attends only to
-the rows-by-columns rule.
+In general $AB \neq BA$. The matrix product **is not commutative**, a property that follows from the
+fact that function composition is not commutative either. It is associative, $(AB)C = A(BC)$,
+because composition is.
 
-That is the underlying reason why matrix multiplication **is not commutative**. It is not a quirk of
-algebra: function composition is not commutative either.
+## The inverse matrix
 
-## The inverse transformation
+A square matrix $A \in \mathbb{R}^{n\times n}$ is **invertible** if there exists $A^{-1}$ such that
 
-If $A$ transforms the plane, it is natural to ask whether a matrix exists that restores it to its
-original state. That matrix is the **inverse**, $A^{-1}$, and it satisfies:
+$$
+A^{-1}A = AA^{-1} = I_n
+$$
 
-$$A^{-1}A = I$$
-
-where $I$ denotes the identity, the matrix that leaves the plane unchanged.
+The inverse, when it exists, is unique, and represents the transformation that undoes $T_A$. An
+invertible matrix is also called **non-singular**, and **singular** otherwise.
 
 ```python
 A = np.array([[2, 1],
               [1, 1]])
 
-A_inv = np.linalg.inv(A)
+np.linalg.inv(A)
 # array([[ 1., -1.],
 #        [-1.,  2.]])
-
-A_inv @ A     # the identity, up to floating-point error
 ```
 
-## When the transformation is not reversible
+## Characterisation of singularity
 
-As the sliders are moved until the grid flattens onto a line, the indicator below marks the moment
-at which that condition occurs.
+The following statements about $A \in \mathbb{R}^{n\times n}$ are equivalent:
+
+$$
+\begin{aligned}
+&A \text{ is invertible} \iff \det A \neq 0 \iff \operatorname{rank}(A) = n\\
+&\iff \text{the columns of } A \text{ are linearly independent}\\
+&\iff T_A \text{ is bijective} \iff A\vec{x} = \vec{0} \text{ only admits } \vec{x} = \vec{0}
+\end{aligned}
+$$
 
 <MatrixPlayground
   initial={[2, 1, 1, 1]}
@@ -63,44 +68,40 @@ at which that condition occurs.
   labels={{
     reset: 'Reset',
     determinant: 'det',
-    hint: 'the plane collapses onto a line: no inverse exists',
+    hint: 'the image degenerates to a line: A is singular',
   }}
 />
 
-When the plane collapses, the transformation **destroys information**. Two distinct points of the
-original plane end up in the same position, and no matrix can separate them again, since it would
-have no criterion for deciding where each point came from.
-
-Under those conditions the matrix is called **singular** and admits no inverse.
+When $\det A = 0$, the image of $T_A$ has dimension less than $n$. The transformation ceases to be
+injective: there exist $\vec{u} \neq \vec{v}$ with $T_A(\vec{u}) = T_A(\vec{v})$, and no map can
+recover the argument from the image. The set of vectors that $A$ sends to the origin is the
+**kernel** of $T_A$, and it has positive dimension exactly when $A$ is singular.
 
 ```python
 B = np.array([[2, 4],
-              [1, 2]])       # the second column is twice the first
+              [1, 2]])       # second column = 2 · first column
 
 np.linalg.inv(B)
 # LinAlgError: Singular matrix
 ```
 
-NumPy returns an error rather than an approximate result, which is the preferable behaviour in
-practice: a system without a unique solution should signal that explicitly instead of supplying an
-arbitrary value.
+NumPy raises an exception rather than returning an approximate result, which is the preferable
+behaviour: a singular matrix has no inverse and any returned value would be spurious.
 
-## Solving systems as inversion
+## Solving systems
 
-A system of equations $A\vec{x} = \vec{b}$ poses the following question: *which vector, when
-transformed by $A$, becomes $\vec{b}$?* It is the transformation in reverse.
+The system $A\vec{x} = \vec{b}$ asks which vector has $\vec{b}$ as its image under $T_A$. With $A$
+invertible the answer is $\vec{x} = A^{-1}\vec{b}$, unique by bijectivity.
 
 ```python
 b = np.array([5, 3])
 np.linalg.solve(A, b)     # array([2., 1.])
 ```
 
-One practical recommendation bears repeating: although $A^{-1}b$ produces the same result in
-mathematical terms, it is preferable to **use `solve` rather than `inv`**. Computing the full
-inverse is costlier and numerically less stable than solving the system directly. The difference
-only becomes apparent with matrices of considerable size, by which point the cost already matters.
+The equivalence is mathematical but not numerical: as argued in lesson 1, `solve` is preferable to
+`inv` on grounds of cost and stability.
 
 ---
 
-**Exercise.** Verify that $(AB)^{-1} = B^{-1}A^{-1}$ with any two matrices. Why does the order of
-the factors reverse? Consider the order required to undo a sequence of chained operations.
+**Exercise.** Prove that $(AB)^{-1} = B^{-1}A^{-1}$ for invertible $A$ and $B$, starting from the
+definition of the inverse. Justify the reversal of order in terms of composition of transformations.

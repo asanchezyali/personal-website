@@ -4,25 +4,34 @@ language: 'en'
 module: 'The hidden structure'
 moduleOrder: 3
 order: 1
-summary: 'The directions a transformation cannot deflect, and why they are the ones that reveal its essential behaviour.'
+summary: 'Definition of eigenvalue and eigenvector, the characteristic equation, computation with np.linalg.eig, and applications in PCA, PageRank and Markov chains.'
 ---
 
-When a transformation is applied to the plane, most vectors leave their original line: they change
-direction and not merely length. Some, however, remain on it.
+Let $A \in \mathbb{R}^{n\times n}$. A vector $\vec{v} \in \mathbb{R}^n$ with $\vec{v} \neq \vec{0}$ is
+an **eigenvector** of $A$ if there exists $\lambda \in \mathbb{R}$ such that
 
-An **eigenvector** is a vector that, after the transformation, still lies on its own line. It may
-have been stretched, contracted or reversed, but it has not rotated. The factor by which it has been
-scaled is its **eigenvalue**.
+$$
+A\vec{v} = \lambda\vec{v}
+$$
 
-$$A\vec{v} = \lambda\vec{v}$$
+The scalar $\lambda$ is the associated **eigenvalue**. The condition $\vec{v} \neq \vec{0}$ is part of
+the definition: the zero vector satisfies the equality for every $\lambda$, and admitting it would
+empty the notion of content.
 
-That equation is the complete definition: applying the matrix produces the same effect as
-multiplying by a number.
+Geometrically, $\vec{v}$ generates a line that $T_A$ leaves invariant: the image remains on that
+line, scaled by $\lambda$ and with reversed sense when $\lambda < 0$.
 
-## Identifying the eigen-directions
+## The characteristic equation
 
-The dashed orange lines mark the eigen-directions. As the matrix is modified, it can be observed
-that vectors on those lines are only scaled and never rotated.
+The definition is rewritten as $(A - \lambda I)\vec{v} = \vec{0}$ with $\vec{v} \neq \vec{0}$, which
+requires $A - \lambda I$ to be singular. By the criterion of lesson 6:
+
+$$
+\det(A - \lambda I) = 0
+$$
+
+This is the **characteristic equation**. For $n = 2$ it is a polynomial of degree $2$ in $\lambda$,
+so there are at most two real eigenvalues, and there may be none.
 
 <MatrixPlayground
   initial={[2, 1, 1, 2]}
@@ -31,21 +40,20 @@ that vectors on those lines are only scaled and never rotated.
   labels={{
     reset: 'Reset',
     eigen: 'eigenvalues',
-    noEigen: 'none real — the transformation rotates',
+    noEigen: 'none real: the transformation rotates',
   }}
 />
 
-Two configurations are particularly instructive:
+The dashed lines mark the eigen-directions. Two cases delimit the behaviour:
 
-- A **diagonal** matrix such as $\begin{bmatrix}3&0\\0&2\end{bmatrix}$: the axes themselves are the
-  eigen-directions, and the eigenvalues coincide with the diagonal entries. This is why diagonal
-  matrices are straightforward to interpret: they are already expressed in their own basis.
-- A **rotation** such as $\begin{bmatrix}0&-1\\1&0\end{bmatrix}$: no line remains invariant, since a
-  rotation deflects every direction without exception. The figure will report that no real
-  eigenvalues exist. Complex ones do exist, and they describe precisely the angle of rotation, but
-  that development belongs to another lesson.
+- $A = \operatorname{diag}(3,2)$: the coordinate axes are the eigen-directions and the eigenvalues
+  are the diagonal entries. A diagonal matrix is expressed in a basis of eigenvectors, hence its
+  simplicity.
+- $A = \begin{bmatrix}0&-1\\1&0\end{bmatrix}$: no line is left invariant, since a rotation by $\pi/2$
+  deflects every direction. The characteristic equation is $\lambda^2 + 1 = 0$, with no real roots.
+  Over $\mathbb{C}$ the roots are $\pm i$ and encode the angle of rotation.
 
-## The computation in NumPy
+## Computation in NumPy
 
 ```python
 import numpy as np
@@ -56,49 +64,50 @@ A = np.array([[2, 1],
 values, vectors = np.linalg.eig(A)
 
 values       # array([3., 1.])
-vectors      # the columns are the eigenvectors, normalised
+vectors
 # array([[ 0.707, -0.707],
 #        [ 0.707,  0.707]])
 ```
 
-The convention deserves attention: `np.linalg.eig` returns the eigenvectors **as columns** and not
-as rows, a common source of error. Verification is immediate:
+`np.linalg.eig` returns the eigenvectors **as columns** of the second output, normalised to unit
+norm. Column $j$ corresponds to eigenvalue $j$:
 
 ```python
-v = vectors[:, 0]         # first eigenvector
-A @ v                     # array([2.121, 2.121])
-values[0] * v             # array([2.121, 2.121])  — they coincide
+v = vectors[:, 0]
+np.allclose(A @ v, values[0] * v)   # True
 ```
 
-## Why eigenvectors matter
+Every non-zero multiple of an eigenvector is also an eigenvector with the same eigenvalue, so the
+returned result is a representative of a line, not a distinguished vector.
 
-Eigenvectors answer the question of what a transformation does in essence. Setting aside the scaling
-along its eigen-directions, it performs no other operation.
+## Applications
 
-That property makes them a central tool in numerous contexts:
+Eigenvectors identify the invariant directions of a transformation, and therefore describe its
+asymptotic behaviour under iteration.
 
-- **Principal component analysis** seeks the eigen-directions of the covariance matrix, that is, the
-  axes along which the data exhibit the greatest variance. Reducing dimensionality consists in
-  retaining the large eigenvalues and discarding the small ones.
-- **PageRank** is the principal eigenvector of the web's link matrix.
-- Applying $A$ repeatedly to an arbitrary vector aligns it with the eigen-direction of largest
-  value, which is why Markov chains converge towards a stationary state.
+- **Principal component analysis** diagonalises the covariance matrix. Its eigenvectors are the axes
+  of maximum variance and its eigenvalues the variance explained by each. Dimensionality reduction
+  consists in retaining those of largest eigenvalue.
+- **PageRank** is the eigenvector associated with eigenvalue $1$ of the transition matrix of the link
+  graph.
+- In a **Markov chain** with transition matrix $P$, the stationary distribution $\pi$ satisfies
+  $\pi P = \pi$, that is, it is a left eigenvector with eigenvalue $1$. Convergence towards it
+  depends on the second largest eigenvalue in modulus.
 
-In all these cases the question is the same: what persists when the transformation is repeated. And
-the answer is always the dominant eigen-direction.
+The common pattern is iteration: $A^k\vec{u}$ aligns with the eigen-direction of largest modulus as
+$k$ grows, provided that eigenvalue is unique in modulus.
 
 ## Recapitulation
 
-The course began with two operations, addition and multiplication by a scalar. From them arose
-linear combinations and, from those, the span. Matrices turned out to be the functions that respect
-both operations, with their columns storing the destination of the basis vectors. The determinant
-measured the change in area and identified the irreversible transformations. Eigenvectors, finally,
-revealed the essential behaviour of the transformation.
-
-None of those results required memorising a computational rule.
+The course starts from two operations, addition and scalar multiplication, which define a vector
+space. From them follow linear combinations and the span. Linear transformations are the maps
+compatible with both operations, and are determined by the image of a basis, which establishes the
+correspondence with matrices. The determinant measures the signed area scale factor and
+characterises singularity. Eigenvectors identify the invariant directions.
 
 ---
 
-**Exercise.** Compute the eigenvectors of $\begin{bmatrix}1&1\\0&1\end{bmatrix}$, a shear. The
-result exhibits a single repeated eigenvalue and one direction only. Can it be justified, from the
-figure above, why a shear leaves exactly one line invariant?
+**Exercise.** Compute the eigenvalues and eigenvectors of the shear
+$\begin{bmatrix}1&1\\0&1\end{bmatrix}$ by solving the characteristic equation. The result exhibits a
+repeated eigenvalue with a single eigenspace of dimension $1$; justify geometrically why a shear
+leaves exactly one line invariant.

@@ -4,11 +4,25 @@ language: 'en'
 module: 'Systems and vectors'
 moduleOrder: 1
 order: 1
-summary: 'Solving A·x = b with NumPy: how the system is set up, what solve does internally, and the conditions under which no unique solution exists.'
+summary: 'Matrix form of a linear system, solution with np.linalg.solve, LU factorisation with pivoting, and the rank criterion governing existence and uniqueness.'
 ---
 
-A large part of applied linear algebra originates in a single problem: we have several equations, all
-linear, and we are looking for the values that satisfy them simultaneously.
+A **system of linear equations** in $m$ equations and $n$ unknowns has the form
+
+$$
+a_{i1}x_1 + a_{i2}x_2 + \cdots + a_{in}x_n = b_i, \qquad i = 1,\dots,m
+$$
+
+and is written compactly as
+
+$$
+A\vec{x} = \vec{b}, \qquad A \in \mathbb{R}^{m \times n},\; \vec{x} \in \mathbb{R}^n,\; \vec{b} \in \mathbb{R}^m
+$$
+
+Solving it means determining the set $\{\vec{x} \in \mathbb{R}^n : A\vec{x} = \vec{b}\}$. That set is
+empty, a single point, or an affine subspace of positive dimension; there are no other cases.
+
+The system used throughout this lesson is
 
 $$
 \begin{aligned}
@@ -18,18 +32,10 @@ $$
 \end{aligned}
 $$
 
-Presented this way, the system appears to call for a sequence of substitutions. Expressed
-differently — as a **matrix** $A$ holding the coefficients and a **vector** $\vec{b}$ holding the
-constant terms — it becomes a single question:
+## Matrix form
 
-$$A\vec{x} = \vec{b}$$
-
-That question has a direct answer in NumPy.
-
-## Setting up the system
-
-Each row of $A$ corresponds to one equation, and the vector $\vec{b}$ collects the terms on the
-other side of the equality:
+Row $i$ of $A$ holds the coefficients of equation $i$; component $i$ of $\vec{b}$ holds its constant
+term. Zero coefficients occupy a position: the third equation has no $x_1$, hence $a_{31} = 0$.
 
 ```python
 import numpy as np
@@ -40,29 +46,35 @@ A = np.array([[1,  1, 1],
 b = np.array([3, 2, 2])
 ```
 
-It is worth noting that absent coefficients still occupy a position: the third equation has no
-$x_1$, so its first entry is a `0`. A matrix admits no gaps.
+## Solution with NumPy
 
-## Solving with NumPy
+When $m = n$ and $A$ is invertible, the solution is unique and is obtained with `np.linalg.solve`:
 
 ```python
 x = np.linalg.solve(A, b)
 # array([1., 1., 1.])
 ```
 
-The result comes from a single call, but the internals deserve examination, because they explain why
-this is the appropriate instruction and why other apparently equivalent ones are not.
+The routine does not compute $A^{-1}$. It applies Gaussian elimination with **partial pivoting**,
+which yields the factorisation
 
-`solve` does not compute the inverse of $A$. It decomposes the matrix into two triangular factors,
-$A = LU$, and uses them to solve two chained systems, each immediate by virtue of being triangular.
-The cost is $O(n^3)$, and the implementation rests on LAPACK, the linear algebra library that has
-underpinned scientific computing since the nineties.
+$$
+PA = LU
+$$
 
-## Gaussian elimination, step by step
+with $P$ a permutation matrix, $L$ unit lower triangular and $U$ upper triangular. The system is
+then solved by two chained substitutions, $L\vec{y} = P\vec{b}$ and $U\vec{x} = \vec{y}$, each
+immediate by triangularity. The cost is $\Theta(n^3)$ operations. The implementation delegates to
+LAPACK.
 
-That decomposition is systematised Gaussian elimination. The figure below reproduces the process:
-each step is an elementary row operation, and the objective is to obtain the identity in the
-left-hand block. Once that point is reached, the right-hand column holds the solution.
+The permutation matrix is not a dispensable technicality: without pivoting a zero pivot halts the
+process, and a pivot of small magnitude amplifies rounding error.
+
+## Gaussian elimination
+
+The figure applies Gauss-Jordan elimination to the augmented matrix $[A \mid \vec{b}]$. Each step is
+an elementary row operation. The process terminates when the left block is the identity, at which
+point the right-hand column holds the solution.
 
 <EliminationSteps
   a={[[1, 1, 1], [1, -1, 2], [0, 1, 1]]}
@@ -71,99 +83,99 @@ left-hand block. Once that point is reached, the right-hand column holds the sol
   labels={{
     start: 'Augmented matrix [A | b]',
     done: 'Identity on the left: the last column is x',
-    singular: 'A is singular — no unique solution exists',
+    singular: 'A is singular: no unique solution exists',
     step: 'Step',
   }}
 />
 
-The underlying principle is straightforward: adding a multiple of one equation to another does not
-alter the solution set of the system. Repeating that operation leads to a formulation simple enough
-for the answer to be read off directly.
+The three elementary operations — swapping two rows, multiplying a row by a non-zero scalar, and
+adding a multiple of one row to another — are invertible, and therefore preserve the solution set.
 
-## Verifying the result
-
-Every numerical result warrants checking. Substitution is immediate:
+## Verification
 
 ```python
 np.allclose(A @ x, b)
 # True
 ```
 
-The `@` operator denotes the matrix-vector product. The check uses `allclose` rather than `==`
-deliberately: in floating-point arithmetic the exact result is rarely obtained exactly, and a strict
-comparison would return `False` over an error on the order of $10^{-16}$ that carries no meaning.
+The `@` operator denotes the matrix product. The comparison uses `allclose` rather than `==`: in
+floating-point arithmetic the computed solution satisfies $A\hat{x} \approx \vec{b}$ with a residual
+on the order of machine epsilon, and strict equality would return false.
 
-## Geometric interpretation in two dimensions
+## Geometric interpretation
 
-With two unknowns, each equation describes a **line**, and solving the system amounts to determining
-where they intersect. The figure below allows the coefficients to be modified so that the effect on
-the intersection point can be observed:
+For $n = 2$, each equation $a x_1 + b x_2 = c$ with $(a,b) \neq (0,0)$ describes a line in
+$\mathbb{R}^2$, and the solution set of the system is their intersection.
 
 <LinearSystem2D
   first={[1, 1, 1.25]}
   second={[1, -2, 0.5]}
   labels={{
     hint: 'Each equation describes a line. The sliders modify its coefficients.',
-    unique: 'Unique solution: the lines intersect at a point.',
-    none: 'No solution: the lines are parallel and never meet.',
-    infinite: 'Infinitely many solutions: both equations describe the same line.',
+    unique: 'Unique solution: the lines meet at one point.',
+    none: 'Inconsistent system: distinct parallel lines.',
+    infinite: 'Underdetermined system: both equations describe the same line.',
     solution: 'x',
     reset: 'Reset',
   }}
 />
 
-Driving the determinant to zero shows that only two configurations are possible, and that they
-correspond exactly to the two cases in which `solve` cannot provide an answer.
+Two lines in the plane meet at a point, are parallel and disjoint, or coincide. Those three cases are
+exhaustive and correspond to a unique solution, an inconsistent system, and an underdetermined
+system. For $n = 3$ each equation describes a plane, and the intersection of the three is a point, a
+line, a plane, or the empty set.
 
-With three unknowns the situation is analogous one dimension higher: each equation describes a
-**plane**, and the solution is the point at which all three intersect.
+## Existence and uniqueness
 
-## When is there no unique solution?
+The **rank** of a matrix is the number of linearly independent rows, equivalently the number of
+linearly independent columns. The governing criterion is the Rouché-Capelli theorem:
 
-`solve` requires $A$ to be invertible. If one row is a combination of the others, the matrix is
-**singular** and the function returns an error:
+$$
+\begin{aligned}
+\operatorname{rank}(A) &= \operatorname{rank}([A \mid \vec{b}]) = n &&\Rightarrow\; \text{unique solution}\\
+\operatorname{rank}(A) &= \operatorname{rank}([A \mid \vec{b}]) < n &&\Rightarrow\; \text{infinitely many solutions}\\
+\operatorname{rank}(A) &< \operatorname{rank}([A \mid \vec{b}]) &&\Rightarrow\; \text{no solution}
+\end{aligned}
+$$
+
+A square matrix with $\operatorname{rank}(A) < n$ is called **singular** and admits no inverse.
+`np.linalg.solve` requires $A$ square and non-singular; otherwise it raises an exception.
 
 ```python
 C = np.array([[1,  1, 1],
               [1, -1, 2],
-              [2,  0, 3]])
+              [2,  0, 3]])          # row 3 = row 1 + row 2
 
 np.linalg.solve(C, np.array([3, 2, 1]))
 # LinAlgError: Singular matrix
+
+np.linalg.matrix_rank(C)            # 2
 ```
 
-Here the third row is the sum of the first two, so it contributes no additional information: two
-independent equations presented as three. The criterion that settles this is the **rank**, the
-number of genuinely independent rows:
-
-```python
-np.linalg.matrix_rank(C)
-# 2
-```
-
-When $\operatorname{rank}(A) < n$, the system admits either zero or infinitely many solutions, never
-exactly one. Which of the two occurs depends on $\vec{b}$: if it is compatible with the dependency,
-the solutions are infinite; if it contradicts it, none exists.
+Here $\operatorname{rank}(C) = 2 < 3$. The constant term decides between the two remaining cases:
+with $\vec{b} = (3, 2, 5)$ the relation $b_3 = b_1 + b_2$ holds, the rank of the augmented matrix
+remains 2 and the system has infinitely many solutions; with $\vec{b} = (3, 2, 1)$ the augmented
+rank is 3 and the system is inconsistent.
 
 <EliminationSteps
   a={[[1, 1, 1], [1, -1, 2], [2, 0, 3]]}
   b={[3, 2, 1]}
   rowLetter="R"
   labels={{
-    start: 'Augmented matrix of a singular system',
+    start: 'Augmented matrix of an inconsistent system',
     done: 'Process complete',
-    singular: 'A row of zeros on the left: the rank is 2, not 3',
+    singular: 'Zero row in the A block: the rank is 2, not 3',
     step: 'Step',
   }}
 />
 
-The final state is revealing: a row of zeros appears in the block corresponding to $A$, confirming
-that the third equation carried no new information. If its constant term ends up non-zero, the
-system requires that $0 = \text{something}$, an impossible condition, and therefore admits no
-solution.
+The final state exhibits a zero row in the block corresponding to $A$ with a non-zero constant term.
+That row encodes the equation $0 = c$ with $c \neq 0$, which is how elimination exposes
+inconsistency.
 
-For these situations NumPy provides `lstsq`, which returns the least-squares solution — the one that
-minimises the residual error — even when `solve` cannot operate:
+For systems without an exact solution, `np.linalg.lstsq` returns the minimiser of
+$\lVert A\vec{x} - \vec{b} \rVert_2$; when that minimiser is not unique, it returns the one of
+minimum norm.
 
 ```python
 x, residuals, rank, sv = np.linalg.lstsq(C, np.array([3, 2, 1]), rcond=None)
@@ -171,19 +183,22 @@ x, residuals, rank, sv = np.linalg.lstsq(C, np.array([3, 2, 1]), rcond=None)
 
 ## `solve` versus `inv`
 
-To solve $A\vec{x} = \vec{b}$, `solve` is the appropriate choice and `inv(A) @ b` should be avoided.
+For solving $A\vec{x} = \vec{b}$ with $A$ invertible, both expressions are mathematically
+equivalent:
 
 ```python
 x = np.linalg.solve(A, b)      # recommended
 x = np.linalg.inv(A) @ b       # discouraged
 ```
 
-Both expressions produce practically identical results, but the second performs more work —
-computing the full inverse is costlier than solving the system — and accumulates greater numerical
-error. Moreover, the inverse itself is rarely required: what is needed is its *effect* on a vector,
-which is precisely what `solve` provides.
+Numerically they are not. Computing $A^{-1}$ requires solving $n$ systems rather than one, and the
+subsequent product introduces a second source of rounding error. The error bound for the second
+route is worse, and the gap widens with the condition number of $A$. An explicit inverse is
+warranted only when the matrix $A^{-1}$ is itself the object of interest, which in practice is
+uncommon.
 
 ---
 
-**Exercise.** Replace the `2` in the third row of `C` with a `3` and compute the rank again. Is the
-matrix still singular? What geometric change does that substitution introduce?
+**Exercise.** Replace the coefficient $a_{31} = 2$ in `C` with $3$ and recompute the rank. Determine
+whether the resulting matrix is still singular, and which configuration of the three planes
+corresponds to each case.

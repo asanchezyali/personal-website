@@ -4,20 +4,31 @@ language: 'es'
 module: 'Matrices como funciones'
 moduleOrder: 2
 order: 3
-summary: 'Un número que responde a dos preguntas concretas: en qué proporción se altera el área y si la orientación del plano se invierte.'
+summary: 'El determinante como factor de escala del área con signo, su anulación como criterio de singularidad y la multiplicatividad respecto del producto.'
 ---
 
-El determinante suele introducirse como una fórmula que conviene memorizar, $ad - bc$. Se trata, sin
-embargo, de un número con un significado geométrico preciso, y una vez comprendido ese significado
-la fórmula deja de requerir memorización.
+Para $A \in \mathbb{R}^{2\times 2}$ el determinante se define como
 
-## ¿Qué mide el determinante?
+$$
+\det A = \det\begin{bmatrix} a & b \\ c & d \end{bmatrix} = ad - bc
+$$
 
-El determinante de una matriz es **el factor por el que queda multiplicada el área** al aplicar la
-transformación.
+La fórmula admite una interpretación geométrica que la hace prescindible como objeto de
+memorización.
 
-Considérese el cuadrado unitario, el que forman $\hat{\imath}$ y $\hat{\jmath}$, de área 1. Al
-aplicarle la matriz, el área de la figura resultante *coincide* con el determinante.
+## Interpretación geométrica
+
+Sea $Q = [0,1]^2$ el cuadrado unitario, de área $1$, generado por $\hat{\imath}$ y $\hat{\jmath}$.
+Su imagen $T_A(Q)$ es el paralelogramo de lados $(a,c)$ y $(b,d)$, y su área es
+
+$$
+\operatorname{área}(T_A(Q)) = |\det A|
+$$
+
+El determinante es por tanto el **factor de escala del área con signo**: para cualquier región
+medible $S \subseteq \mathbb{R}^2$ se cumple
+$\operatorname{área}(T_A(S)) = |\det A| \cdot \operatorname{área}(S)$. El valor absoluto es
+necesario, puesto que $\det A$ puede ser negativo mientras que el área no lo es.
 
 <MatrixPlayground
   initial={[2, 0.5, 0.5, 1.5]}
@@ -25,72 +36,74 @@ aplicarle la matriz, el área de la figura resultante *coincide* con el determin
   labels={{
     reset: 'Reiniciar',
     determinant: 'det',
-    hint: 'el área es cero: el plano se ha aplastado',
+    hint: 'el área se anula: la imagen degenera',
   }}
 />
 
-La región de color morado es la imagen del cuadrado unitario, y el valor numérico la acompaña en
-todo momento:
+La región sombreada de la figura es $T_A(Q)$, y el valor mostrado es $\det A$. Con $|\det A| = 1$ el
+área se conserva, caso de las rotaciones y las cizalladuras; con $|\det A| = k$ queda multiplicada
+por $k$.
 
-- $\det = 1$ indica que el área permanece constante. Las rotaciones y los cizallamientos pertenecen
-  a este grupo.
-- $\det = 3$ indica que el área se triplica.
-- $\det = 0.5$ indica que el área se reduce a la mitad.
+## El signo
 
-## El significado del valor cero
+El signo de $\det A$ registra la **orientación**. Si $\det A > 0$, la transformación preserva el
+sentido de giro del plano; si $\det A < 0$, lo invierte, y $T_A$ incluye una reflexión.
 
-Cuando el determinante alcanza el valor cero, la región morada desaparece: el plano completo se ha
-aplastado sobre una recta.
+Para $A = \operatorname{diag}(-1, 1)$ se obtiene $\det A = -1$: el área se conserva en magnitud, pero
+el semiplano situado a la izquierda de $\hat{\imath}$ pasa a situarse a su derecha.
 
-Esa condición conecta las lecciones anteriores en una sola afirmación: **$\det A = 0$ si y solo si
-las columnas de $A$ son linealmente dependientes**, si y solo si el span degenera, si y solo si $A$
-carece de inversa. Son cuatro formulaciones equivalentes de un mismo hecho.
+## Anulación del determinante
+
+$$
+\det A = 0 \iff \operatorname{rank}(A) < 2 \iff \text{las columnas son linealmente dependientes} \iff A \text{ es singular}
+$$
+
+Las cuatro condiciones son equivalentes y ya aparecieron en las lecciones anteriores desde ángulos
+distintos: el span degenerado de la lección 3, la no invertibilidad de la lección 5 y el criterio de
+rango de la lección 1 son manifestaciones de un mismo hecho. Geométricamente, $T_A(Q)$ colapsa en un
+segmento y su área se anula.
 
 ```python
 import numpy as np
 
-np.linalg.det(np.array([[2, 1], [1, 1]]))   # 1.0  → invertible
+np.linalg.det(np.array([[2, 1], [1, 1]]))   # 1.0  → regular
 np.linalg.det(np.array([[2, 4], [1, 2]]))   # 0.0  → singular
 ```
 
-## El signo
+En aritmética de coma flotante la comparación $\det A = 0$ no es fiable. Para decidir singularidad
+numéricamente se emplea el número de condición o `np.linalg.matrix_rank`, que utiliza la
+descomposición en valores singulares con una tolerancia explícita.
 
-La fórmula no lo sugiere, pero el determinante puede tomar valores **negativos**.
+## Origen de la fórmula
 
-Fijando $a = -1$ y dejando el resto de las entradas en la identidad, el determinante pasa a valer
-$-1$. El área conserva su magnitud, pero el plano ha quedado **invertido**: lo que se situaba a la
-izquierda de $\hat{\imath}$ pasa a situarse a la derecha.
+El paralelogramo de lados $(a,c)$ y $(b,d)$ está inscrito en el rectángulo de dimensiones
+$(a+b) \times (c+d)$. Restando de ese rectángulo los dos triángulos y los dos rectángulos sobrantes
+se obtiene $ad - bc$. La expresión $ad - bc$ **es** el área con signo, no una regla de cálculo
+independiente de ella.
 
-El signo registra, por tanto, la orientación. Si es positivo, el plano conserva su sentido; si es
-negativo, se ha producido una reflexión.
+## Multiplicatividad
 
-## ¿Por qué la fórmula adopta esa forma?
+$$
+\det(AB) = \det(A)\det(B)
+$$
 
-Con la interpretación geométrica establecida, la expresión $ad - bc$ deja de resultar arbitraria.
-
-Las columnas de la matriz son los dos lados del paralelogramo en que se ha convertido el cuadrado
-unitario: $(a, c)$ y $(b, d)$. El área de un paralelogramo definido por esos lados es exactamente
-$|ad - bc|$, resultado que se obtiene restando al rectángulo que lo contiene los triángulos
-sobrantes. La fórmula *es* el área.
-
-## Una propiedad inmediata
-
-$$\det(AB) = \det(A)\det(B)$$
-
-Expresada en palabras, la propiedad resulta casi evidente: si $B$ triplica el área y $A$ la duplica,
-aplicar ambas de forma consecutiva la multiplica por seis. La demostración algebraica es laboriosa,
-mientras que la justificación geométrica es inmediata.
+La propiedad es inmediata desde la interpretación geométrica: si $T_B$ multiplica el área por
+$\det B$ y $T_A$ por $\det A$, la composición la multiplica por el producto. La demostración
+algebraica directa es considerablemente más laboriosa.
 
 ```python
 A = np.array([[2, 0], [0, 1]])
 B = np.array([[1, 1], [0, 1]])
 
-np.linalg.det(A @ B)                          # 2.0
-np.linalg.det(A) * np.linalg.det(B)           # 2.0
+np.linalg.det(A @ B)                  # 2.0
+np.linalg.det(A) * np.linalg.det(B)   # 2.0
 ```
+
+Como corolario, si $A$ es invertible entonces $\det(A^{-1}) = 1/\det(A)$, lo que exige
+$\det A \neq 0$ y recupera el criterio de singularidad.
 
 ---
 
-**Ejercicio.** ¿Cuál es el determinante de una rotación de 90°? Conviene razonarlo antes de
-calcularlo: una rotación no altera las áreas ni invierte la orientación del plano. Confírmalo
-después con `np.linalg.det(np.array([[0, -1], [1, 0]]))`.
+**Ejercicio.** Determinar $\det R$ para la rotación $R = \begin{bmatrix}0&-1\\1&0\end{bmatrix}$
+razonando a partir de la interpretación geométrica —una rotación conserva áreas y orientación— y
+confirmar el valor con `np.linalg.det`.

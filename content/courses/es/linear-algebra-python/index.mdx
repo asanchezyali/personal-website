@@ -2,37 +2,43 @@
 title: 'Álgebra Lineal con Python'
 language: 'es'
 level: 'Introductorio'
-summary: 'Siete lecciones para entender sistemas, vectores, matrices y transformaciones a partir de su comportamiento geométrico, con la implementación correspondiente en NumPy.'
+summary: 'Siete lecciones sobre sistemas lineales, espacios vectoriales, transformaciones, determinante y vectores propios, con la implementación correspondiente en NumPy.'
 tags: ['álgebra-lineal', 'python', 'numpy', 'matemáticas']
 ---
 
-El álgebra lineal suele enseñarse como una sucesión de procedimientos: multiplicar estas filas por
-estas columnas, calcular este determinante, resolver este sistema. Es posible completar un curso
-entero de ese modo sin llegar a comprender qué significa ninguna de esas operaciones.
+La enseñanza habitual del álgebra lineal presenta la materia como una sucesión de algoritmos:
+multiplicar filas por columnas, desarrollar un determinante, escalonar un sistema. El resultado es
+una competencia operativa sin contenido semántico, en la que los procedimientos se ejecutan
+correctamente sin que se sepa qué representan.
 
-Este curso invierte el orden. Cada concepto se introduce mediante una figura manipulable y se cierra
-con las pocas líneas de NumPy que realizan la operación equivalente. El cálculo llega después de la
-intuición geométrica, no antes.
+Este curso invierte el orden de exposición. Cada concepto se introduce mediante su interpretación
+geométrica, sostenida en una figura manipulable, y se cierra con la definición formal y su
+implementación en NumPy. El cálculo se presenta como consecuencia de la definición, no como punto de
+partida.
 
-## ¿Qué necesitas?
+## Requisitos
 
-Conocimientos básicos de Python y familiaridad con el plano cartesiano. Nada más. No se requiere
-haber estudiado álgebra lineal previamente; quienes la hayan cursado y conserven la impresión de
-haber memorizado procedimientos encontrarán aquí el enfoque complementario.
-
-Para ejecutar los ejemplos:
+Conocimientos básicos de Python y familiaridad con el plano cartesiano. No se presupone formación
+previa en álgebra lineal.
 
 ```bash
 pip install numpy
 ```
 
-## ¿Cómo está organizado?
+## Organización
 
-El curso consta de tres módulos consecutivos. El primero parte de la resolución de **sistemas
-lineales** con NumPy —el problema que motiva toda la disciplina— y continúa con los **vectores**: su
-definición y las construcciones que admiten. El segundo presenta las **matrices como funciones** que
-transforman el plano, interpretación sobre la que se apoya el resto del material. El tercero aborda
-los **vectores propios**, las direcciones que una transformación no consigue desviar.
+El curso consta de tres módulos consecutivos.
 
-Cada lección incorpora una figura interactiva. Conviene manipularla antes de leer la explicación
-correspondiente, ya que la intuición geométrica facilita considerablemente la lectura posterior.
+El **primero** parte de los sistemas de ecuaciones lineales, problema que motiva históricamente la
+disciplina, y establece a continuación la estructura de espacio vectorial: combinación lineal, span,
+dependencia lineal y base.
+
+El **segundo** define las transformaciones lineales y establece su correspondencia biyectiva con las
+matrices a través de la imagen de una base. De ahí se derivan el producto de matrices como
+composición, la matriz inversa y el determinante como factor de escala del área.
+
+El **tercero** aborda los valores y vectores propios, que identifican las direcciones invariantes de
+una transformación y describen su comportamiento bajo iteración.
+
+Cada lección incorpora al menos una figura interactiva. La exploración previa de la figura facilita
+la lectura de la formulación algebraica que la acompaña.
