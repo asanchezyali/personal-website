@@ -1,7 +1,7 @@
 ---
 title: 'Matrices with Python'
 language: 'en'
-module: 'Systems, matrices and vectors'
+module: 'Systems and matrices'
 moduleOrder: 1
 order: 2
 summary: 'The matrix as a data structure: shape, memory layout, broadcasting and the matrix product, with a neural network linear layer as the worked application.'
@@ -19,9 +19,9 @@ a_{m1} & a_{m2} & \cdots & a_{mn}
 \end{bmatrix}
 $$
 
-The previous lesson used matrices as a container for the coefficients of a system. The lesson on
-transformations will establish their geometric meaning. Between the two lies the layer that
-underpins all the computation: what a matrix is as a data structure and which operations it admits.
+The previous lesson used matrices as a container for the coefficients of a system. This one covers
+the layer underpinning all the computation that follows: what a matrix is as a data structure and
+which operations it admits.
 
 ## Shape and indexing
 
@@ -43,8 +43,8 @@ Indexing starts at $0$, so the entry $a_{ij}$ of mathematical notation is read a
 offset is a frequent source of error when transcribing a formula into code.
 
 The set $\mathbb{R}^{m\times n}$ is itself a vector space of dimension $mn$: matrices add and scale
-entry by entry, and those operations satisfy the axioms stated in the lesson on vectors. A matrix
-is, in that sense, a vector with a shape imposed on it.
+entry by entry, and those two operations are enough to give the set the structure of a vector
+space. A matrix is, in that sense, a vector with a shape imposed on it.
 
 ## Memory layout
 

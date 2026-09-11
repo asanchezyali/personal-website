@@ -46,11 +46,13 @@ export default function CourseToc({
               key={m.order}
               className={holdsActive ? 'course-toc-module is-current' : 'course-toc-module'}
             >
-              <p className="course-toc-module-title">
-                <span className="course-toc-module-num">{String(m.order).padStart(2, '0')}</span>
-                <span className="course-toc-module-name">{m.title}</span>
-                <span className="course-toc-module-count">{m.lessons.length}</span>
-              </p>
+              {/* A single module adds a heading with nothing to distinguish it from. */}
+              {modules.length > 1 && (
+                <p className="course-toc-module-title">
+                  <span className="course-toc-module-num">{String(m.order).padStart(2, '0')}</span>
+                  <span className="course-toc-module-name">{m.title}</span>
+                </p>
+              )}
               <TocLessons
                 lessons={entries}
                 activeSlug={activeSlug}

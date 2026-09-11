@@ -1,7 +1,7 @@
 ---
 title: 'Matrices con Python'
 language: 'es'
-module: 'Sistemas, matrices y vectores'
+module: 'Sistemas y matrices'
 moduleOrder: 1
 order: 2
 summary: 'La matriz como estructura de datos: forma, disposición en memoria, broadcasting y producto matricial, con la capa lineal de una red neuronal como caso de aplicación.'
@@ -19,9 +19,9 @@ a_{m1} & a_{m2} & \cdots & a_{mn}
 \end{bmatrix}
 $$
 
-La lección anterior utilizó matrices como recipiente de los coeficientes de un sistema. La lección
-sobre transformaciones establecerá su significado geométrico. Entre ambas queda la capa que sostiene
-todo el cómputo: qué es una matriz como estructura de datos y qué operaciones admite.
+La lección anterior utilizó matrices como recipiente de los coeficientes de un sistema. Esta se
+ocupa de la capa que sostiene todo el cómputo posterior: qué es una matriz como estructura de datos
+y qué operaciones admite.
 
 ## Forma e indexación
 
@@ -43,8 +43,8 @@ La indexación comienza en $0$, de modo que la entrada $a_{ij}$ de la notación 
 `A[i-1, j-1]`. El desfase es una fuente frecuente de errores al trasladar una fórmula a código.
 
 El conjunto $\mathbb{R}^{m\times n}$ es a su vez un espacio vectorial de dimensión $mn$: las
-matrices se suman y se escalan entrada a entrada, y esas operaciones satisfacen los axiomas
-enunciados en la lección sobre vectores. Una matriz es, en ese sentido, un vector con una forma
+matrices se suman y se escalan entrada a entrada, y esas dos operaciones bastan para dotar al
+conjunto de estructura de espacio vectorial. Una matriz es, en ese sentido, un vector con una forma
 impuesta.
 
 ## Disposición en memoria

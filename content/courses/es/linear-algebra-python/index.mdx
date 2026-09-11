@@ -2,7 +2,7 @@
 title: 'Álgebra Lineal con Python'
 language: 'es'
 level: 'Introductorio'
-summary: 'Ocho lecciones sobre sistemas lineales, matrices, espacios vectoriales, transformaciones, determinante y vectores propios, con la implementación correspondiente en NumPy.'
+summary: 'Los sistemas lineales y la matriz como estructura de datos, con su interpretación geométrica y la implementación correspondiente en NumPy.'
 tags: ['álgebra-lineal', 'python', 'numpy', 'matemáticas']
 ---
 
@@ -27,19 +27,13 @@ pip install numpy
 
 ## Organización
 
-El curso consta de tres módulos consecutivos.
+La primera lección parte de los sistemas de ecuaciones lineales, el problema que motiva
+históricamente la disciplina: su forma matricial, la resolución con `np.linalg.solve`, la
+factorización LU con pivoteo y el criterio de rango que determina existencia y unicidad.
 
-El **primero** parte de los sistemas de ecuaciones lineales, problema que motiva históricamente la
-disciplina, continúa con la matriz como estructura de datos —forma, disposición en memoria,
-broadcasting y producto— y establece después la estructura de espacio vectorial: combinación lineal,
-span, dependencia lineal y base.
+La segunda trata la matriz como estructura de datos —forma, disposición en memoria, broadcasting,
+producto matricial, transpuesta e identidad— y cierra en la capa lineal de una red neuronal, donde
+esas operaciones aparecen reunidas en una sola expresión.
 
-El **segundo** define las transformaciones lineales y establece su correspondencia biyectiva con las
-matrices a través de la imagen de una base. De ahí se derivan el producto de matrices como
-composición, la matriz inversa y el determinante como factor de escala del área.
-
-El **tercero** aborda los valores y vectores propios, que identifican las direcciones invariantes de
-una transformación y describen su comportamiento bajo iteración.
-
-Cada lección incorpora al menos una figura interactiva. La exploración previa de la figura facilita
-la lectura de la formulación algebraica que la acompaña.
+La serie continúa. Cada lección incorpora al menos una figura interactiva; la exploración previa de
+la figura facilita la lectura de la formulación algebraica que la acompaña.

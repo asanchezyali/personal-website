@@ -2,7 +2,7 @@
 title: 'Linear Algebra with Python'
 language: 'en'
 level: 'Introductory'
-summary: 'Eight lessons on linear systems, matrices, vector spaces, transformations, the determinant and eigenvectors, with the corresponding NumPy implementation.'
+summary: 'Linear systems and the matrix as a data structure, with their geometric interpretation and the corresponding NumPy implementation.'
 tags: ['linear-algebra', 'python', 'numpy', 'mathematics']
 ---
 
@@ -26,19 +26,13 @@ pip install numpy
 
 ## Organisation
 
-The course consists of three consecutive modules.
+The first lesson starts from systems of linear equations, the problem that historically motivates
+the discipline: their matrix form, the solution with `np.linalg.solve`, LU factorisation with
+pivoting, and the rank criterion governing existence and uniqueness.
 
-The **first** starts from systems of linear equations, the problem that historically motivates the
-discipline, continues with the matrix as a data structure — shape, memory layout, broadcasting and
-the product — and then establishes the vector space structure: linear combination, span, linear
-dependence and basis.
+The second treats the matrix as a data structure — shape, memory layout, broadcasting, the matrix
+product, transpose and identity — and closes on the linear layer of a neural network, where those
+operations appear together in a single expression.
 
-The **second** defines linear transformations and establishes their bijective correspondence with
-matrices through the image of a basis. From there follow the matrix product as composition, the
-inverse matrix, and the determinant as the area scale factor.
-
-The **third** addresses eigenvalues and eigenvectors, which identify the invariant directions of a
-transformation and describe its behaviour under iteration.
-
-Each lesson includes at least one interactive figure. Exploring the figure beforehand eases the
-reading of the algebraic formulation that accompanies it.
+The series continues. Each lesson includes at least one interactive figure; exploring it beforehand
+eases the reading of the algebraic formulation that accompanies it.

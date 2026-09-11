@@ -30,7 +30,8 @@ export default async function CourseOverview({ locale, courseSlug }: CourseOverv
         <h1>{course.title}</h1>
         <p className="lead">{course.summary}</p>
         <p className="course-head-meta">
-          {t('meta.modules', { count: modules.length })} ·{' '}
+          {/* "1 module" says nothing; only worth stating once there are several. */}
+          {modules.length > 1 && <>{t('meta.modules', { count: modules.length })} · </>}
           {t('meta.lessons', { count: lessons.length })} · {t('meta.free')}
         </p>
         {first && (
