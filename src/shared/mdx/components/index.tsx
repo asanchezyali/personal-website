@@ -25,6 +25,8 @@ import CosineSimilarity from './CosineSimilarity'
 import SolutionSet from './SolutionSet'
 import LUFactors from './LUFactors'
 import SolveCost from './SolveCost'
+import MinusOneTrick from './MinusOneTrick'
+import NumericalRank from './NumericalRank'
 import { PseudoCodeLine, PseudoCode } from './PseudoCode'
 
 export const components: MDXComponents = {
@@ -48,6 +50,8 @@ export const components: MDXComponents = {
   SolutionSet,
   LUFactors,
   SolveCost,
+  MinusOneTrick,
+  NumericalRank,
   TOCInline,
   a: CustomLink,
   pre: CodeBlock,
