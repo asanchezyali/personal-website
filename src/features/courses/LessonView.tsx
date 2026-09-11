@@ -20,7 +20,6 @@ export default async function LessonView({ locale, courseSlug, lessonSlug }: Les
   const { t } = await createTranslation(locale, 'courses')
   const modules = getModules(locale, courseSlug)
   const { prev, next, index, total } = getNeighbours(locale, courseSlug, lessonSlug)
-  const progress = total > 0 ? Math.round(((index + 1) / total) * 100) : 0
 
   return (
     <div className="wrap lesson-shell">
@@ -28,9 +27,6 @@ export default async function LessonView({ locale, courseSlug, lessonSlug }: Les
         <Link href={`/${locale}/courses/${courseSlug}`} className="course-back">
           {course.title}
         </Link>
-        <div className="lesson-progress" aria-hidden="true">
-          <span style={{ width: `${progress}%` }} />
-        </div>
         <p className="lesson-progress-label">
           {t('progress', { current: index + 1, total })}
         </p>

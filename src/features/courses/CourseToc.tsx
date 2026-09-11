@@ -28,7 +28,7 @@ export default function CourseToc({
   let counter = 0
   return (
     <nav className={compact ? 'course-toc course-toc--compact' : 'course-toc'} aria-label={title}>
-      {title && <p className="course-toc-title">{title}</p>}
+      {/* title stays on aria-label: a nav in the sidebar needs no visible heading. */}
       <ol className="course-toc-modules">
         {modules.map((m) => {
           const entries = m.lessons.map((l) => {
