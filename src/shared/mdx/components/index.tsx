@@ -16,6 +16,8 @@ import LinearCombo from './LinearCombo'
 import DragVector from './DragVector'
 import LinearSystem2D from './LinearSystem2D'
 import EliminationSteps from './EliminationSteps'
+import MatMulGrid from './MatMulGrid'
+import Broadcasting from './Broadcasting'
 import { PseudoCodeLine, PseudoCode } from './PseudoCode'
 
 export const components: MDXComponents = {
@@ -30,6 +32,8 @@ export const components: MDXComponents = {
   DragVector,
   LinearSystem2D,
   EliminationSteps,
+  MatMulGrid,
+  Broadcasting,
   TOCInline,
   a: CustomLink,
   pre: CodeBlock,

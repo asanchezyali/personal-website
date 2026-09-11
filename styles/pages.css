@@ -497,9 +497,9 @@
   .vplot-axis { stroke: var(--g-400); stroke-width: 1.4; }
   .vplot-label { font-size: 13px; font-weight: 700; font-family: var(--f-ubuntu); }
 
-  .mplay, .lcombo, .dvec, .lsys, .elim { margin: 30px 0; border: 1px solid var(--g-200); border-radius: 16px; overflow: hidden; background: color-mix(in oklab, var(--g-50) 60%, transparent); display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
-  html.dark .mplay, html.dark .lcombo, html.dark .dvec, html.dark .lsys, html.dark .elim { border-color: var(--g-300); background: color-mix(in oklab, var(--g-100) 45%, transparent); }
-  .mplay-canvas, .lcombo-canvas, .dvec-canvas, .lsys-canvas, .elim-stage { padding: 18px; display: flex; align-items: center; justify-content: center; }
+  .mplay, .lcombo, .dvec, .lsys, .elim, .mmul, .bc { margin: 30px 0; border: 1px solid var(--g-200); border-radius: 16px; overflow: hidden; background: color-mix(in oklab, var(--g-50) 60%, transparent); display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  html.dark .mplay, html.dark .lcombo, html.dark .dvec, html.dark .lsys, html.dark .elim, html.dark .mmul, html.dark .bc { border-color: var(--g-300); background: color-mix(in oklab, var(--g-100) 45%, transparent); }
+  .mplay-canvas, .lcombo-canvas, .dvec-canvas, .lsys-canvas, .elim-stage, .mmul-stage, .bc-stage { padding: 18px; display: flex; align-items: center; justify-content: center; }
   .mplay-canvas svg, .lcombo-canvas svg, .dvec-canvas svg, .lsys-canvas svg { width: 100%; height: auto; }
   .mplay-grid { stroke: var(--g-300); stroke-width: 0.9; }
   html.dark .mplay-grid { stroke: var(--g-300); }
@@ -507,8 +507,8 @@
   .mplay-area { fill: color-mix(in oklab, var(--vp-c) 22%, transparent); stroke: var(--vp-c); stroke-width: 1.4; }
   .mplay-eigen { stroke: var(--vp-d); stroke-width: 1.6; stroke-dasharray: 6 5; }
 
-  .mplay-controls, .lcombo-controls, .dvec-controls, .lsys-controls, .elim-controls { padding: 20px 22px; border-left: 1px solid var(--g-200); display: flex; flex-direction: column; gap: 10px; justify-content: center; }
-  html.dark .mplay-controls, html.dark .lcombo-controls, html.dark .dvec-controls, html.dark .lsys-controls, html.dark .elim-controls { border-left-color: var(--g-300); }
+  .mplay-controls, .lcombo-controls, .dvec-controls, .lsys-controls, .elim-controls, .mmul-controls, .bc-controls { padding: 20px 22px; border-left: 1px solid var(--g-200); display: flex; flex-direction: column; gap: 10px; justify-content: center; }
+  html.dark .mplay-controls, html.dark .lcombo-controls, html.dark .dvec-controls, html.dark .lsys-controls, html.dark .elim-controls, html.dark .mmul-controls, html.dark .bc-controls { border-left-color: var(--g-300); }
   .mplay-matrix { display: flex; align-items: center; gap: 4px; margin-bottom: 6px; }
   .mplay-bracket { font-size: 44px; line-height: 1; color: var(--g-400); font-weight: 300; }
   .mplay-cells { display: grid; grid-template-columns: repeat(2, 46px); gap: 2px 10px; font-family: var(--f-ubuntu); font-weight: 700; font-size: 15px; color: var(--fg); text-align: center; }
@@ -569,15 +569,64 @@
   .elim-track { height: 4px; border-radius: 999px; background: var(--g-200); overflow: hidden; margin-top: 12px; }
   .elim-track span { display: block; height: 100%; background: var(--s-500); transition: width .3s var(--ease); }
   .post-body .elim-count { margin: 6px 0 0; font-size: 12px; color: var(--g-500); }
+
+  /* Matrix product, cell by cell */
+  .mmul-stage { flex-direction: column; gap: 18px; }
+  .mmul-row { display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap; }
+  .mmul-block { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .mmul-name { font-family: var(--f-ubuntu); font-size: 12px; font-weight: 700; color: var(--g-600); }
+  .mmul-name em { font-style: normal; font-weight: 500; color: var(--g-500); }
+  .mmul-bracket { border: 2px solid var(--g-400); border-radius: 4px; padding: 6px 4px; }
+  .mmul-cells { display: grid; gap: 3px; }
+  .mmul-cell { font-family: var(--f-ubuntu); font-size: 14px; font-variant-numeric: tabular-nums; text-align: center; padding: 4px 7px; border-radius: 5px; color: var(--fg); transition: background .18s var(--ease), color .18s var(--ease); }
+  .mmul-cell.is-source { background: color-mix(in oklab, var(--vp-a) 22%, transparent); }
+  .mmul-cell.is-target { background: var(--s-500); color: #fff; font-weight: 700; }
+  .mmul-cell.is-pending { color: var(--g-400); }
+  .mmul-op { font-family: var(--f-ubuntu); font-size: 18px; font-weight: 700; color: var(--g-500); }
+  .post-body .mmul-formula { margin: 0; text-align: center; font-family: var(--f-ubuntu); font-size: 14px; color: var(--g-600); }
+  .mmul-formula strong { color: var(--s-500); font-size: 15px; }
+  html.dark .mmul-formula strong { color: var(--s-400); }
+  .mmul-lhs { color: var(--fg); font-weight: 700; }
+
+  /* Broadcasting: shape alignment */
+  .bc-stage { flex-direction: column; gap: 14px; justify-content: center; }
+  .bc-presets { display: flex; gap: 8px; flex-wrap: wrap; }
+  .bc-preset { font-family: var(--f-ubuntu); font-size: 11.5px; padding: 5px 11px; border-radius: 999px; border: 1px solid var(--g-300); background: transparent; color: var(--g-600); cursor: pointer; transition: background .18s var(--ease); }
+  .bc-preset:hover { background: var(--g-100); color: var(--fg); }
+  .post-body .bc-table { margin: 0; width: auto; border: none; font-family: var(--f-ubuntu); }
+  .post-body .bc-table th { text-align: right; font-size: 11.5px; font-weight: 600; color: var(--g-500); padding: 4px 12px 4px 0; border: none; text-transform: none; letter-spacing: 0; white-space: nowrap; }
+  .post-body .bc-table td { padding: 0; border: none; }
+  .post-body .bc-table { border-spacing: 5px 4px; border-collapse: separate; }
+  .bc-pill { display: block; min-width: 46px; padding: 6px 9px; border-radius: 7px; text-align: center; font-size: 14px; font-variant-numeric: tabular-nums; background: var(--g-100); color: var(--fg); }
+  html.dark .bc-pill { background: var(--g-200); }
+  /* These need the html.dark prefix too: html.dark .bc-pill outranks .bc-pill.is-stretch. */
+  .bc-pill.is-stretch, html.dark .bc-pill.is-stretch { background: color-mix(in oklab, var(--vp-c) 40%, transparent); }
+  .bc-pill.is-clash, html.dark .bc-pill.is-clash { background: color-mix(in oklab, var(--vp-a) 45%, transparent); }
+  .bc-pill.is-pad { opacity: .45; }
+  .bc-pad { color: var(--g-400); }
+  .bc-out .bc-pill { font-weight: 700; }
+  .post-body .bc-verdict { margin: 0; font-family: var(--f-ubuntu); font-size: 13.5px; font-weight: 700; }
+  .bc-verdict.is-ok { color: var(--vp-b); }
+  .bc-verdict.is-error { color: var(--vp-a); font-weight: 600; font-size: 12.5px; }
+  .bc-field { display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px; }
+  .bc-field span { font-family: var(--f-ubuntu); font-size: 11.5px; color: var(--g-500); }
+  .bc-field input { font-family: var(--f-ubuntu); font-size: 14px; padding: 7px 10px; border-radius: 8px; border: 1px solid var(--g-300); background: transparent; color: var(--fg); }
+  .bc-field input:focus { outline: none; border-color: var(--s-500); }
+  .bc-legend { list-style: none; margin: 4px 0 0; padding: 0; display: flex; flex-direction: column; gap: 5px; }
+  .bc-legend li { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--g-500); }
+  .bc-legend i { width: 14px; height: 14px; border-radius: 4px; background: var(--g-100); flex-shrink: 0; }
+  html.dark .bc-legend i { background: var(--g-200); }
+  .bc-legend i.is-stretch, html.dark .bc-legend i.is-stretch { background: color-mix(in oklab, var(--vp-c) 40%, transparent); }
+  .bc-legend i.is-clash, html.dark .bc-legend i.is-clash { background: color-mix(in oklab, var(--vp-a) 45%, transparent); }
   @media (prefers-reduced-motion: reduce) {
     .elim-cell.is-changed { animation: none; }
     .lsys-dot { transition: none; }
   }
 
   @media (max-width: 720px) {
-    .mplay, .lcombo, .dvec, .lsys, .elim { grid-template-columns: 1fr; }
-    .mplay-controls, .lcombo-controls, .dvec-controls, .lsys-controls, .elim-controls { border-left: none; border-top: 1px solid var(--g-200); }
-    html.dark .mplay-controls, html.dark .lcombo-controls, html.dark .dvec-controls, html.dark .lsys-controls, html.dark .elim-controls { border-top-color: var(--g-300); }
+    .mplay, .lcombo, .dvec, .lsys, .elim, .mmul, .bc { grid-template-columns: 1fr; }
+    .mplay-controls, .lcombo-controls, .dvec-controls, .lsys-controls, .elim-controls, .mmul-controls, .bc-controls { border-left: none; border-top: 1px solid var(--g-200); }
+    html.dark .mplay-controls, html.dark .lcombo-controls, html.dark .dvec-controls, html.dark .lsys-controls, html.dark .elim-controls, html.dark .mmul-controls, html.dark .bc-controls { border-top-color: var(--g-300); }
   }
 
   /* ---- Courses: index, overview and lesson shell ---- */
