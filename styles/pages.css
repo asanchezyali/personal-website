@@ -393,7 +393,9 @@
   .post-body li { margin-bottom: 8px; }
   .post-body figcaption { margin-top: 16px; font-size: 14px; color: var(--g-500); text-align: center; line-height: 1.5; }
   .post-body figure { margin: 28px 0; }
-  .post-body > p:first-of-type::first-letter { font-family: var(--f-ubuntu); font-weight: 700; font-size: 4em; float: left; line-height: .9; margin: 6px 10px 0 0; background: linear-gradient(135deg, var(--p-500), var(--s-500)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  /* margin-top measured, not guessed: with Lato at 18px/1.75 against Ubuntu bold
+     at 4em/.9, the cap's ink starts 2px below the first line's. 6px put it 4px low. */
+  .post-body > p:first-of-type::first-letter { font-family: var(--f-ubuntu); font-weight: 700; font-size: 4em; float: left; line-height: .9; margin: 2px 10px 0 0; background: linear-gradient(135deg, var(--p-500), var(--s-500)); -webkit-background-clip: text; background-clip: text; color: transparent; }
 
   .callout { border-left: 3px solid var(--p-500); background: color-mix(in oklab, var(--p-50) 80%, transparent); padding: 18px 20px; border-radius: 0 12px 12px 0; margin: 28px 0; font-size: 16px; line-height: 1.6; display: flex; gap: 14px; align-items: flex-start; }
   html.dark .callout { background: color-mix(in oklab, var(--p-900) 20%, transparent); }
