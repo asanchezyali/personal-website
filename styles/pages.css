@@ -668,6 +668,7 @@
   .nrank-legend em { font-style: normal; color: var(--vp-a); font-weight: 700; }
   .post-body .nrank-verdict { margin: 0; font-family: var(--f-ubuntu); font-size: 14px; font-weight: 700; color: var(--fg); text-align: center; }
   .nrank-verdict.is-deficient { color: var(--vp-d); }
+  .cond-readout dd.is-ok { color: var(--vp-b); }
   @media (prefers-reduced-motion: reduce) { .nrank-sigma { transition: none; } }
 
   /* Broadcasting: shape alignment */

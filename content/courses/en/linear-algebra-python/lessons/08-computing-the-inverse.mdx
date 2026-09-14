@@ -1,0 +1,150 @@
+---
+title: 'Computing the inverse with Python'
+language: 'en'
+module: 'Systems and matrices'
+moduleOrder: 1
+order: 8
+summary: 'The inverse as n simultaneous systems, the Gauss-Jordan construction on [A | I], why the A·Â⁻¹ ≈ I check cannot detect a wrong result, and the cases where the inverse matrix is genuinely the object sought.'
+---
+
+The lesson on the inverse and the transpose defined $A^{-1}$ and established when it exists. This
+one is about how it is computed, what that computation costs, and a detail that usually goes
+unnoticed: the customary check cannot detect that the result is wrong.
+
+## The inverse is a set of systems
+
+By definition, $A^{-1}$ is the matrix $X$ satisfying $AX = I$. Writing that equality column by
+column, with $\vec{e}_j$ the $j$-th column of the identity:
+
+$$
+A\vec{x}_j = \vec{e}_j, \qquad j = 1,\dots,n
+$$
+
+Computing an inverse means solving $n$ linear systems sharing the same matrix. This is exactly the
+situation described in the lesson on Gaussian elimination: one factorisation, $n$ right-hand sides.
+
+```python
+import numpy as np
+
+A = np.array([[1., 2., 1.],
+              [4., 4., 5.],
+              [6., 7., 7.]])
+
+np.allclose(np.linalg.inv(A), np.linalg.solve(A, np.eye(3)))    # True
+```
+
+The two expressions agree because they compute the same thing. `inv` has no privileged method
+available to it: it factorises and solves against the identity, just as the second line does.
+
+The cost follows. An LU factorisation is $\tfrac{2}{3}n^3$ operations and each triangular
+substitution $2n^2$; with $n$ right-hand sides the total comes to about $2n^3$, roughly **three
+times** the cost of solving a single system. That is the quantifiable part of the recommendation to
+use `solve`.
+
+## The Gauss-Jordan construction
+
+The manual procedure consists of forming the augmented matrix $[A \mid I]$ and applying row
+operations until the left block is the identity. The right block then holds $A^{-1}$.
+
+<GaussJordanInverse
+  a={[[1, 2, 1], [4, 4, 5], [6, 7, 7]]}
+  rowLetter="R"
+  labels={{
+    start: '[ A | I ]',
+    done: '[ I | A⁻¹ ]',
+    singular: 'A is singular: no inverse exists',
+    step: 'Step',
+  }}
+/>
+
+The justification is the same one used in the lesson on particular and general solutions. Each row
+operation amounts to left-multiplication by an elementary matrix $E_k$. If the complete sequence
+transforms $A$ into $I$, then
+
+$$
+E_m \cdots E_1 A = I \quad\Longrightarrow\quad E_m \cdots E_1 = A^{-1}
+$$
+
+and applying those same operations to the right block, which starts at $I$, produces precisely
+$E_m \cdots E_1 I = A^{-1}$. The right block is not a bookkeeping device: it accumulates the product
+of the operations, which is the inverse.
+
+For the example matrix, whose determinant is $1$, the result has integer entries:
+
+```python
+np.linalg.inv(A)
+# array([[-7., -7.,  6.],
+#        [ 2.,  1., -1.],
+#        [ 4.,  5., -4.]])
+```
+
+## The check that does not check
+
+The next step looks obvious:
+
+```python
+np.allclose(A @ np.linalg.inv(A), np.eye(3))    # True
+```
+
+That check passes always, even when the computed inverse is useless. The reason lies in the
+distinction between two measures of error.
+
+The **residual** $\lVert A\hat{A}^{-1} - I \rVert$ measures how well the result satisfies the
+equation. The **forward error** $\lVert \hat{A}^{-1} - A^{-1} \rVert$ measures how close it is to
+the true answer. LAPACK's routines are *backward stable*: they guarantee a residual on the order of
+machine epsilon, and they do not bound the forward error, which is limited only by
+$\kappa(A)\,\varepsilon$.
+
+The figure uses a family whose exact inverse is known, so both quantities are measurable:
+
+<InverseAccuracy
+  labels={{
+    hint: 'A = [[1, 1], [1, 1 + δ]]. Its exact inverse is known, so the true error is measurable.',
+    cond: 'cond(A) ≈',
+    residual: '‖A·Â⁻¹ − I‖',
+    error: 'true error of Â⁻¹',
+    passes: 'the A·Â⁻¹ ≈ I check passes in every case',
+    note: 'The residual stays at machine precision while the error grows like κ·ε: the check cannot detect it.',
+    reset: 'Reset',
+  }}
+/>
+
+At $\delta = 10^{-12}$ the residual is still zero in floating point, while the computed inverse
+differs from the true one in the fifth significant digit. The check does not separate the two cases
+because it does not measure what it is assumed to measure.
+
+The correct diagnostic is the condition number, covered in the lesson on the inverse and the
+transpose. A small residual says the computation was carried out correctly; it says nothing about
+whether the problem was well posed.
+
+## When the inverse is the object
+
+The recommendation to solve rather than invert presupposes that what is wanted is $A^{-1}\vec{b}$.
+There are situations in which the entries of the inverse matrix are themselves the object of
+interest.
+
+The **precision matrix** $\Sigma^{-1}$ of a multivariate Gaussian is the clearest case. Its entries
+are not a means to a computation: they encode conditional independence. If
+$(\Sigma^{-1})_{ij} = 0$, variables $i$ and $j$ are conditionally independent given the rest. That
+reading is the basis of Gaussian graphical models, and it requires the complete matrix.
+
+The second case is the **standard errors** of a regression. The covariance matrix of the estimated
+coefficients is $\sigma^2 (X^\top X)^{-1}$, and its diagonal gives the variance of each coefficient
+separately.
+
+```python
+XtX_inv = np.linalg.inv(X.T @ X)
+errors = np.sqrt(sigma2 * np.diag(XtX_inv))
+```
+
+Even in these cases the direct route is rarely the best one. For a symmetric positive definite
+matrix, the Cholesky factorisation yields the inverse with half the work and better stability, and
+`scipy.linalg.cho_solve` obtains it without forming intermediate products. When only the diagonal is
+needed, as in the standard error computation, computing the full inverse in order to discard
+$n^2 - n$ entries is a waste that grows with the square of the size.
+
+---
+
+**Exercise.** Check that `np.linalg.inv(A)` and `np.linalg.solve(A, np.eye(n))` produce the same
+result, and time both against `np.linalg.solve(A, b)` with a single $\vec{b}$, for $n = 500$.
+Compare the observed ratio with the $2n^3$ against $\tfrac{2}{3}n^3$ prediction.

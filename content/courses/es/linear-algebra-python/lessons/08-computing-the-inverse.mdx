@@ -1,0 +1,151 @@
+---
+title: 'Calcular la inversa con Python'
+language: 'es'
+module: 'Sistemas y matrices'
+moduleOrder: 1
+order: 8
+summary: 'La inversa como n sistemas simultáneos, la construcción de Gauss-Jordan sobre [A | I], por qué la comprobación A·Â⁻¹ ≈ I no detecta un resultado erróneo, y los casos en que la matriz inversa es realmente el objeto buscado.'
+---
+
+La lección sobre la inversa y la transpuesta definió $A^{-1}$ y estableció cuándo existe. Esta se
+ocupa de cómo se calcula, de lo que ese cálculo cuesta y de un detalle que suele pasar inadvertido:
+la comprobación habitual no sirve para detectar que el resultado es incorrecto.
+
+## La inversa es un conjunto de sistemas
+
+Por definición, $A^{-1}$ es la matriz $X$ que satisface $AX = I$. Escribiendo esa igualdad por
+columnas, con $\vec{e}_j$ la columna $j$-ésima de la identidad:
+
+$$
+A\vec{x}_j = \vec{e}_j, \qquad j = 1,\dots,n
+$$
+
+Calcular una inversa es resolver $n$ sistemas lineales que comparten la misma matriz. Es exactamente
+la situación descrita en la lección sobre eliminación gaussiana: una factorización, $n$ términos
+independientes.
+
+```python
+import numpy as np
+
+A = np.array([[1., 2., 1.],
+              [4., 4., 5.],
+              [6., 7., 7.]])
+
+np.allclose(np.linalg.inv(A), np.linalg.solve(A, np.eye(3)))    # True
+```
+
+Las dos expresiones coinciden porque calculan lo mismo. `inv` no dispone de un método privilegiado:
+factoriza y resuelve contra la identidad, igual que la segunda línea.
+
+De ahí se sigue el coste. Una factorización LU son $\tfrac{2}{3}n^3$ operaciones y cada sustitución
+triangular $2n^2$; con $n$ términos independientes el total ronda $2n^3$, aproximadamente **el triple**
+que resolver un único sistema. Esa es la parte cuantificable de la recomendación de emplear `solve`.
+
+## La construcción de Gauss-Jordan
+
+El procedimiento manual consiste en formar la matriz ampliada $[A \mid I]$ y aplicar operaciones de
+fila hasta que el bloque izquierdo sea la identidad. El bloque derecho contiene entonces $A^{-1}$.
+
+<GaussJordanInverse
+  a={[[1, 2, 1], [4, 4, 5], [6, 7, 7]]}
+  rowLetter="F"
+  labels={{
+    start: '[ A | I ]',
+    done: '[ I | A⁻¹ ]',
+    singular: 'A es singular: no existe inversa',
+    step: 'Paso',
+  }}
+/>
+
+La justificación es la misma que en la lección sobre solución particular y general. Cada operación
+de fila equivale a multiplicar por la izquierda por una matriz elemental $E_k$. Si la sucesión
+completa transforma $A$ en $I$, entonces
+
+$$
+E_m \cdots E_1 A = I \quad\Longrightarrow\quad E_m \cdots E_1 = A^{-1}
+$$
+
+y aplicar esas mismas operaciones al bloque derecho, que parte de $I$, produce precisamente
+$E_m \cdots E_1 I = A^{-1}$. El bloque derecho no es un registro auxiliar: acumula el producto de las
+operaciones, que es la inversa.
+
+Para la matriz del ejemplo, cuyo determinante vale $1$, el resultado tiene entradas enteras:
+
+```python
+np.linalg.inv(A)
+# array([[-7., -7.,  6.],
+#        [ 2.,  1., -1.],
+#        [ 4.,  5., -4.]])
+```
+
+## La comprobación que no comprueba
+
+El paso siguiente parece evidente:
+
+```python
+np.allclose(A @ np.linalg.inv(A), np.eye(3))    # True
+```
+
+Esa comprobación se supera siempre, incluso cuando la inversa calculada es inservible. La razón está
+en la distinción entre dos medidas del error.
+
+El **residuo** $\lVert A\hat{A}^{-1} - I \rVert$ mide en qué medida el resultado satisface la
+ecuación. El **error directo** $\lVert \hat{A}^{-1} - A^{-1} \rVert$ mide en qué medida se aproxima
+a la respuesta verdadera. Las rutinas de LAPACK son *retroactivamente estables*: garantizan un
+residuo del orden del épsilon de máquina, y no acotan el error directo, que queda limitado por
+$\kappa(A)\,\varepsilon$.
+
+La figura emplea una familia cuya inversa exacta se conoce, de modo que ambas cantidades son
+medibles:
+
+<InverseAccuracy
+  labels={{
+    hint: 'A = [[1, 1], [1, 1 + δ]]. Su inversa exacta se conoce, así que el error real es medible.',
+    cond: 'cond(A) ≈',
+    residual: '‖A·Â⁻¹ − I‖',
+    error: 'error real de Â⁻¹',
+    passes: 'la comprobación A·Â⁻¹ ≈ I pasa en todos los casos',
+    note: 'El residuo permanece en la precisión de la máquina mientras el error crece como κ·ε: la comprobación no puede detectarlo.',
+    reset: 'Reiniciar',
+  }}
+/>
+
+Con $\delta = 10^{-12}$ el residuo sigue siendo cero en coma flotante, mientras que la inversa
+calculada difiere de la verdadera en la quinta cifra significativa. La comprobación no distingue
+ambos casos porque no mide lo que se le supone.
+
+El diagnóstico correcto es el número de condición, tratado en la lección sobre la inversa y la
+transpuesta. Un residuo pequeño indica que el cálculo se ejecutó correctamente; no indica que el
+problema estuviera bien planteado.
+
+## Cuándo la inversa es el objeto
+
+La recomendación de resolver en lugar de invertir presupone que lo que se busca es $A^{-1}\vec{b}$.
+Existen situaciones en las que el objeto de interés son las entradas de la matriz inversa.
+
+La **matriz de precisión** $\Sigma^{-1}$ de una distribución gaussiana multivariante es el caso más
+claro. Sus entradas no son un medio para un cálculo: codifican independencia condicional. Si
+$(\Sigma^{-1})_{ij} = 0$, las variables $i$ y $j$ son condicionalmente independientes dadas las
+restantes. Esa lectura es el fundamento de los modelos gráficos gaussianos, y requiere la matriz
+completa.
+
+El segundo caso son los **errores estándar** de una regresión. La matriz de covarianza de los
+coeficientes estimados es $\sigma^2 (X^\top X)^{-1}$, y su diagonal proporciona la varianza de cada
+coeficiente por separado.
+
+```python
+XtX_inv = np.linalg.inv(X.T @ X)
+errores = np.sqrt(sigma2 * np.diag(XtX_inv))
+```
+
+Incluso en estos casos la vía directa rara vez es la mejor. Para una matriz simétrica definida
+positiva, la factorización de Cholesky proporciona la inversa con la mitad del trabajo y mejor
+estabilidad, y `scipy.linalg.cho_solve` permite obtenerla sin formar productos intermedios. Cuando
+solo se necesita la diagonal, como en el cálculo de errores estándar, calcular la inversa completa
+para descartar $n^2 - n$ entradas es un desperdicio que crece con el cuadrado del tamaño.
+
+---
+
+**Ejercicio.** Comprobar que `np.linalg.inv(A)` y `np.linalg.solve(A, np.eye(n))` producen el mismo
+resultado y medir el tiempo de ambas frente a `np.linalg.solve(A, b)` con un único $\vec{b}$, para
+$n = 500$. Contrastar la razón observada con la predicción de $2n^3$ frente a $\tfrac{2}{3}n^3$.

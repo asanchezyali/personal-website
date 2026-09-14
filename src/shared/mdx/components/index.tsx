@@ -27,6 +27,8 @@ import LUFactors from './LUFactors'
 import SolveCost from './SolveCost'
 import MinusOneTrick from './MinusOneTrick'
 import NumericalRank from './NumericalRank'
+import GaussJordanInverse from './GaussJordanInverse'
+import InverseAccuracy from './InverseAccuracy'
 import { PseudoCodeLine, PseudoCode } from './PseudoCode'
 
 export const components: MDXComponents = {
@@ -52,6 +54,8 @@ export const components: MDXComponents = {
   SolveCost,
   MinusOneTrick,
   NumericalRank,
+  GaussJordanInverse,
+  InverseAccuracy,
   TOCInline,
   a: CustomLink,
   pre: CodeBlock,
