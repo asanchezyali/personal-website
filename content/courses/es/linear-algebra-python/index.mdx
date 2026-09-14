@@ -2,7 +2,7 @@
 title: 'Álgebra Lineal con Python'
 language: 'es'
 level: 'Introductorio'
-summary: 'Nueve lecciones sobre sistemas lineales y matrices, desde la forma matricial hasta el criterio para elegir entre solve, lstsq y los métodos iterativos, implementado en NumPy.'
+summary: 'Sistemas lineales y matrices, y la estructura de espacio vectorial que los sostiene, implementado en NumPy.'
 tags: ['álgebra-lineal', 'python', 'numpy', 'matemáticas']
 ---
 
@@ -27,7 +27,7 @@ pip install numpy
 
 ## Organización
 
-La primera lección parte de los sistemas de ecuaciones lineales, el problema que motiva
+El **primer módulo** parte de los sistemas de ecuaciones lineales, el problema que motiva
 históricamente la disciplina: su forma matricial, la resolución con `np.linalg.solve`, la
 factorización LU con pivoteo y el criterio de rango que determina existencia y unicidad.
 
@@ -62,6 +62,10 @@ resultado erróneo, y los casos en que la matriz inversa es de verdad el objeto 
 La novena cierra el bloque reuniendo lo anterior: la pseudoinversa como caso general, el relleno que
 impide factorizar matrices dispersas de gran tamaño, los métodos iterativos que lo evitan, y un
 criterio para elegir el algoritmo a partir de la forma, el rango y la estructura de la matriz.
+
+El **segundo módulo** parte de la definición axiomática de espacio vectorial, que es lo que explica
+por qué las mismas técnicas se aplican a listas de números, a polinomios y a las representaciones
+internas de un modelo. Introduce los subespacios, el span y el espacio columna.
 
 La serie continúa. Cada lección incorpora al menos una figura interactiva; la exploración previa de
 la figura facilita la lectura de la formulación algebraica que la acompaña.

@@ -2,7 +2,7 @@
 title: 'Linear Algebra with Python'
 language: 'en'
 level: 'Introductory'
-summary: 'Nine lessons on linear systems and matrices, from the matrix form to the criterion for choosing between solve, lstsq and the iterative methods, implemented in NumPy.'
+summary: 'Linear systems and matrices, and the vector space structure underlying them, implemented in NumPy.'
 tags: ['linear-algebra', 'python', 'numpy', 'mathematics']
 ---
 
@@ -26,7 +26,7 @@ pip install numpy
 
 ## Organisation
 
-The first lesson starts from systems of linear equations, the problem that historically motivates
+The **first module** starts from systems of linear equations, the problem that historically motivates
 the discipline: their matrix form, the solution with `np.linalg.solve`, LU factorisation with
 pivoting, and the rank criterion governing existence and uniqueness.
 
@@ -61,6 +61,10 @@ and the cases where the inverse matrix really is the object sought.
 The ninth closes the block by drawing the rest together: the pseudoinverse as the general case, the
 fill-in that prevents factorising large sparse matrices, the iterative methods that avoid it, and a
 criterion for choosing the algorithm from the shape, rank and structure of the matrix.
+
+The **second module** starts from the axiomatic definition of a vector space, which is what explains
+why the same techniques apply to lists of numbers, to polynomials and to the internal
+representations of a model. It introduces subspaces, the span and the column space.
 
 The series continues. Each lesson includes at least one interactive figure; exploring it beforehand
 eases the reading of the algebraic formulation that accompanies it.

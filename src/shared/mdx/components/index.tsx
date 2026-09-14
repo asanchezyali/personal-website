@@ -31,6 +31,8 @@ import GaussJordanInverse from './GaussJordanInverse'
 import InverseAccuracy from './InverseAccuracy'
 import FillIn from './FillIn'
 import SolverChooser from './SolverChooser'
+import SubspaceTest from './SubspaceTest'
+import ShapeOrientation from './ShapeOrientation'
 import { PseudoCodeLine, PseudoCode } from './PseudoCode'
 
 export const components: MDXComponents = {
@@ -60,6 +62,8 @@ export const components: MDXComponents = {
   InverseAccuracy,
   FillIn,
   SolverChooser,
+  SubspaceTest,
+  ShapeOrientation,
   TOCInline,
   a: CustomLink,
   pre: CodeBlock,

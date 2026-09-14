@@ -1,0 +1,206 @@
+---
+title: 'Espacios vectoriales con Python'
+language: 'es'
+module: 'Espacios vectoriales'
+moduleOrder: 2
+order: 1
+summary: 'Los ocho axiomas que definen un espacio vectorial, los subespacios y su criterio de verificación, el span, y la distinción entre las tres orientaciones de un array unidimensional.'
+---
+
+Las lecciones anteriores operaron sobre vectores y matrices dando por supuesto qué son. Este módulo
+establece la definición. No es un formalismo prescindible: es lo que explica por qué las mismas
+técnicas se aplican a listas de números, a polinomios y a las representaciones internas de un
+modelo de lenguaje.
+
+## La definición
+
+Un **espacio vectorial** sobre $\mathbb{R}$ es un conjunto $V$ con dos operaciones, una suma
+$V \times V \to V$ y un producto por escalar $\mathbb{R} \times V \to V$, que satisfacen ocho
+condiciones. Para todos $\vec{u},\vec{v},\vec{w} \in V$ y $\lambda,\mu \in \mathbb{R}$:
+
+$$
+\begin{aligned}
+&\vec{u} + \vec{v} = \vec{v} + \vec{u} && \text{conmutativa}\\
+&(\vec{u} + \vec{v}) + \vec{w} = \vec{u} + (\vec{v} + \vec{w}) && \text{asociativa}\\
+&\exists\, \vec{0} : \vec{v} + \vec{0} = \vec{v} && \text{elemento neutro}\\
+&\exists\, (-\vec{v}) : \vec{v} + (-\vec{v}) = \vec{0} && \text{elemento opuesto}\\
+&\lambda(\vec{u} + \vec{v}) = \lambda\vec{u} + \lambda\vec{v} && \text{distributiva sobre vectores}\\
+&(\lambda + \mu)\vec{v} = \lambda\vec{v} + \mu\vec{v} && \text{distributiva sobre escalares}\\
+&\lambda(\mu\vec{v}) = (\lambda\mu)\vec{v} && \text{asociativa del escalar}\\
+&1 \cdot \vec{v} = \vec{v} && \text{escalar neutro}
+\end{aligned}
+$$
+
+Los elementos de $V$ se llaman **vectores**, con independencia de su naturaleza. La definición no
+menciona flechas, listas ni coordenadas.
+
+En $V = \mathbb{R}^n$, realizado en NumPy como un `ndarray` unidimensional, las ocho se heredan de
+las propiedades de los números reales y son comprobables directamente:
+
+```python
+import numpy as np
+
+u = np.array([1., 2., 3.])
+v = np.array([4., 5., 6.])
+
+np.allclose(u + v, v + u)                  # conmutativa
+np.allclose(3 * (u + v), 3 * u + 3 * v)    # distributiva
+np.allclose(u + np.zeros(3), u)            # elemento neutro
+```
+
+## Cerradura y vectorización
+
+Las dos primeras condiciones de la definición, antes de los axiomas, son que la suma y el producto
+por escalar devuelvan elementos de $V$. Esa propiedad se denomina **cerradura**, y en NumPy se
+manifiesta en la forma del resultado:
+
+```python
+(u + v).shape == (3 * u).shape == u.shape    # True
+```
+
+La consecuencia es de implementación, no solo de notación. Como el resultado pertenece al mismo
+espacio y tiene el mismo tipo y la misma forma, la operación puede compilarse en un único bucle
+tipado sobre un bloque contiguo de memoria, sin decidir nada en cada elemento. Eso es lo que se
+denomina **vectorización**, y es la razón de que `u + v` sea entre uno y dos órdenes de magnitud más
+rápido que el bucle equivalente en Python.
+
+La cerradura algebraica y la eficiencia de la biblioteca no son hechos independientes: la segunda es
+posible porque se cumple la primera.
+
+## Combinaciones lineales y span
+
+La operación central del álgebra lineal combina ambas: escalar varios vectores y sumarlos.
+
+$$
+\vec{w} = \lambda_1\vec{v}_1 + \cdots + \lambda_k\vec{v}_k
+$$
+
+Disponiendo los vectores como columnas de una matriz, la combinación es un producto matriz-vector:
+
+```python
+V = np.column_stack([u, v])    # (3, 2)
+c = np.array([2., -1.])
+
+V @ c                          # array([-2., -1.,  0.])  =  2u − v
+```
+
+La identificación merece enunciarse con claridad: **el producto $V\vec{c}$ es la combinación lineal
+de las columnas de $V$ con coeficientes $\vec{c}$**. Es la lectura que convierte $A\vec{x} = \vec{b}$
+en la pregunta de qué combinación de las columnas de $A$ produce $\vec{b}$.
+
+El conjunto de todas las combinaciones lineales posibles se denomina **span**:
+
+$$
+\operatorname{span}\{\vec{v}_1,\dots,\vec{v}_k\} = \Big\{\, \textstyle\sum_i \lambda_i\vec{v}_i \;:\; \lambda_i \in \mathbb{R} \,\Big\}
+$$
+
+Aplicado a las columnas de una matriz, recibe el nombre de **espacio columna**, y es exactamente el
+conjunto de vectores $\vec{b}$ para los que $A\vec{x} = \vec{b}$ tiene solución.
+
+## Subespacios
+
+Un subconjunto $U \subseteq V$ es un **subespacio** si es a su vez un espacio vectorial con las
+mismas operaciones. No hace falta verificar los ocho axiomas: se heredan de $V$. Basta comprobar
+tres condiciones:
+
+1. $\vec{0} \in U$
+2. $\vec{u},\vec{v} \in U \Rightarrow \vec{u} + \vec{v} \in U$
+3. $\vec{u} \in U,\ \lambda \in \mathbb{R} \Rightarrow \lambda\vec{u} \in U$
+
+La figura aplica el criterio a varios subconjuntos de $\mathbb{R}^2$:
+
+<SubspaceTest
+  labels={{
+    zero: 'contiene al 0',
+    addition: 'cerrado bajo la suma',
+    scaling: 'cerrado bajo el producto por escalar',
+    isSubspace: 'es un subespacio',
+    isNot: 'no es un subespacio',
+  }}
+  sets={[
+    { value: 'line0', label: 'y = x/2' },
+    { value: 'line1', label: 'y = x/2 + 1' },
+    { value: 'quadrant', label: 'x ≥ 0, y ≥ 0' },
+    { value: 'parabola', label: 'y = x²' },
+    { value: 'plane', label: 'ℝ²' },
+    { value: 'origin', label: '{0}' },
+  ]}
+/>
+
+Cada fallo ilustra una condición distinta. La recta desplazada no contiene al origen. El primer
+cuadrante lo contiene y es cerrado bajo la suma, pero multiplicar por $-1$ lo abandona. La parábola
+contiene al origen y falla en las otras dos: $(1,1)$ y $(2,4)$ pertenecen a ella y su suma $(3,5)$
+no, y duplicar $(1,1)$ produce $(2,2)$, que tampoco.
+
+Los subespacios de $\mathbb{R}^2$ son, en consecuencia, únicamente $\{\vec{0}\}$, las rectas que
+pasan por el origen y $\mathbb{R}^2$ completo. Un subespacio contiene siempre al origen, y esa es la
+diferencia con el conjunto solución de $A\vec{x} = \vec{b}$ descrito en la lección sobre solución
+particular y general, que es afín salvo que $\vec{b} = \vec{0}$.
+
+Los subespacios ya aparecidos en el curso son instancias de esta definición: el **núcleo** de una
+matriz, su **espacio columna** y el **espacio fila**.
+
+## Las tres orientaciones de un array
+
+En NumPy, un vector unidimensional de forma `(n,)` carece de orientación: no es ni fila ni columna.
+Para el álgebra matricial se le da forma explícita:
+
+```python
+u.shape                  # (3,)   sin orientación
+u.reshape(-1, 1).shape   # (3, 1) columna
+u.reshape(1, -1).shape   # (1, 3) fila
+```
+
+La distinción no es cosmética. Bajo las reglas de broadcasting descritas en la lección sobre
+matrices, combinar dos orientaciones distintas produce una matriz en lugar de un vector:
+
+<ShapeOrientation
+  v={[1, 2, 3]}
+  labels={{
+    left: 'operando izquierdo',
+    right: 'operando derecho',
+    result: 'resultado',
+    elementwise: 'elemento a elemento',
+    outer: 'todas las parejas, no elemento a elemento',
+    warning: 'Silencioso: no se lanza ningún error.',
+  }}
+  names={{ flat: '1-D', col: 'columna', row: 'fila' }}
+/>
+
+Sumar una columna `(3, 1)` con una fila `(1, 3)` alinea las formas por la derecha, encuentra un $1$
+en cada posición y extiende ambas: el resultado es de forma `(3, 3)` y contiene todas las sumas
+cruzadas. La operación es legal y no produce ningún aviso, de modo que el error se manifiesta más
+adelante, en una dimensión que no encaja o en una pérdida silenciosamente mal calculada.
+
+La comprobación de `.shape` antes de operar es el hábito que lo evita.
+
+## Espacios que no son ℝⁿ
+
+La generalidad de la definición no es un detalle técnico. Cualquier conjunto cuyas operaciones
+satisfagan los ocho axiomas hereda toda la teoría posterior: independencia lineal, base, dimensión,
+transformaciones lineales.
+
+| Espacio | Elementos | Dimensión |
+| --- | --- | --- |
+| $\mathbb{R}^{m\times n}$ | matrices reales | $mn$ |
+| $\mathcal{P}_k$ | polinomios de grado $\le k$ | $k+1$ |
+| $\mathcal{C}[a,b]$ | funciones continuas en $[a,b]$ | infinita |
+| $\{\vec{x} : A\vec{x} = \vec{0}\}$ | el núcleo de $A$ | $n - \operatorname{rank}(A)$ |
+
+En aprendizaje automático el espacio relevante es casi siempre $\mathbb{R}^d$, pero la elección de
+$d$ y de la aplicación que lleva los datos hasta allí es donde se concentra el diseño. Un texto se
+representa como un punto de $\mathbb{R}^{768}$, una imagen como uno de $\mathbb{R}^{d}$ tras aplanar
+sus píxeles, un usuario como un vector de factores latentes.
+
+Que esas representaciones vivan en un espacio vectorial es lo que autoriza las operaciones
+habituales sobre ellas. Promediar *embeddings* para representar un documento tiene sentido porque la
+suma y el producto por escalar están definidos y el resultado sigue perteneciendo al espacio. La
+lección sobre el producto por un escalar mostró la otra cara: la métrica que se emplee sobre ese
+espacio decide qué significa que dos representaciones sean próximas.
+
+---
+
+**Ejercicio.** Determinar cuáles de los siguientes subconjuntos de $\mathbb{R}^3$ son subespacios,
+aplicando las tres condiciones: los vectores con $x_1 + x_2 + x_3 = 0$; los vectores con
+$x_1 + x_2 + x_3 = 1$; los vectores con $x_1 x_2 = 0$. Verificar después la primera respuesta
+comprobando que `null_space(np.ones((1, 3)))` tiene la dimensión esperada.
