@@ -1,0 +1,203 @@
+---
+title: 'Cómo resuelve NumPy'
+language: 'es'
+module: 'Sistemas y matrices'
+moduleOrder: 1
+order: 9
+summary: 'La pseudoinversa de Moore-Penrose como caso general, los métodos iterativos y el relleno que los hace necesarios, y un criterio para elegir entre solve, lstsq, pinv y los solvers dispersos.'
+---
+
+Las lecciones anteriores resolvieron sistemas caso por caso: cuadrado e invertible con `solve`,
+rectangular con `lstsq`, subdeterminado con la solución de norma mínima. Esta los reúne. Hay un
+objeto que cubre todos los casos a la vez, y hay un régimen —matrices grandes y dispersas— en el que
+ninguna de las herramientas vistas es aplicable.
+
+## La pseudoinversa
+
+La **pseudoinversa de Moore-Penrose** $A^{+}$ de una matriz cualquiera $A \in \mathbb{R}^{m\times n}$
+es la única matriz que satisface estas cuatro condiciones:
+
+$$
+AA^{+}A = A, \qquad A^{+}AA^{+} = A^{+}, \qquad (AA^{+})^\top = AA^{+}, \qquad (A^{+}A)^\top = A^{+}A
+$$
+
+Existe siempre, sin exigir que $A$ sea cuadrada ni de rango completo. Se construye a partir de la
+descomposición en valores singulares $A = U\Sigma V^\top$:
+
+$$
+A^{+} = V\Sigma^{+}U^\top
+$$
+
+donde $\Sigma^{+}$ se obtiene invirtiendo los valores singulares no nulos y transponiendo. Los
+valores singulares nulos se dejan en cero en lugar de invertirse, que es lo que permite tratar
+matrices singulares sin que la construcción falle.
+
+Su propiedad operativa resume las lecciones anteriores en una frase: **$A^{+}\vec{b}$ es siempre la
+solución de mínimos cuadrados de norma mínima**. Los casos particulares ya conocidos se recuperan
+sustituyendo:
+
+| Caso | $A^{+}$ se reduce a | Lo devuelve |
+| --- | --- | --- |
+| cuadrada, no singular | $A^{-1}$ | la solución única |
+| $m > n$, rango completo | $(A^\top A)^{-1}A^\top$ | el minimizador de $\lVert A\vec{x}-\vec{b}\rVert$ |
+| $m < n$, rango completo | $A^\top(AA^\top)^{-1}$ | la solución de norma mínima |
+| rango deficiente | solo vía SVD | ambas condiciones a la vez |
+
+```python
+import numpy as np
+
+x = np.linalg.pinv(A) @ b
+```
+
+La construcción es conceptualmente limpia y, en la práctica, desaconsejable por la misma razón que
+`inv`: calcula una matriz completa de $n\times m$ para después multiplicarla por un vector, cuando
+lo que se quiere es el producto. `np.linalg.lstsq` obtiene el mismo resultado sin formar $A^{+}$.
+
+```python
+x, residuos, rango, sv = np.linalg.lstsq(A, b, rcond=None)
+```
+
+El parámetro `rcond` es el umbral por debajo del cual un valor singular se considera nulo, expresado
+como fracción de $\sigma_1$. Es la misma decisión que la lección sobre el núcleo describía para
+`matrix_rank`, y con las mismas consecuencias: fija qué direcciones se consideran parte del núcleo
+numérico y, por tanto, la solución que se devuelve.
+
+## El relleno
+
+Todo lo anterior presupone que la matriz cabe en memoria y que factorizarla es viable. Ninguna de
+las dos cosas se cumple en los sistemas que aparecen en discretización de ecuaciones en derivadas
+parciales, grafos o mallas, donde $A$ tiene millones de filas pero apenas unas pocas entradas no
+nulas por fila.
+
+El obstáculo no es almacenar $A$. Una matriz de $10^6 \times 10^6$ con $10^7$ entradas no nulas
+ocupa unos 120 MB en formato disperso. El obstáculo es que **los factores no heredan la dispersión**:
+la eliminación crea entradas donde la matriz original tenía ceros. Ese fenómeno se llama **relleno**.
+
+<FillIn
+  n={8}
+  labels={{
+    hint: 'La misma matriz, con sus filas y columnas en otro orden.',
+    arrowFirst: 'flecha al principio',
+    arrowLast: 'flecha al final',
+    original: 'A',
+    factors: 'L + U',
+    nnz: 'no nulos',
+    fill: 'entradas creadas por la eliminación',
+    none: 'sin relleno: los factores conservan la dispersión de A',
+  }}
+/>
+
+La figura muestra una matriz *flecha*: diagonal más una fila y una columna densas. Con la flecha en
+la primera posición, eliminar la primera columna toca todas las filas y todas las columnas, y los
+factores resultan completamente densos. Con la flecha en la última, el mismo sistema no genera una
+sola entrada nueva.
+
+Es la misma matriz salvo una permutación de filas y columnas. El orden de eliminación no cambia la
+solución, pero decide si los factores caben en memoria. Las bibliotecas dispersas dedican una fase
+previa a elegir esa permutación, con heurísticas como *minimum degree* o *nested dissection*.
+
+Cuando ni siquiera el mejor orden basta, la factorización se abandona.
+
+## Métodos iterativos
+
+Un método iterativo no construye factores. Parte de una estimación y la refina, y en cada paso solo
+necesita calcular productos $A\vec{v}$. Nunca se modifica $A$, de modo que no hay relleno posible.
+
+```python
+from scipy.sparse.linalg import cg, gmres, lsqr
+
+x, info = cg(A, b)        # simétrica definida positiva
+x, info = gmres(A, b)     # cuadrada, no simétrica
+x = lsqr(A, b)[0]         # rectangular o de rango deficiente
+```
+
+El **gradiente conjugado** exige que $A$ sea simétrica definida positiva, la clase que la lección
+sobre la transpuesta identificó con los productos $A^\top A$ y las matrices de covarianza. Su
+velocidad de convergencia depende de $\sqrt{\kappa(A)}$, de modo que el número de condición vuelve a
+aparecer, ahora determinando el número de iteraciones en lugar de la exactitud.
+
+De ahí la importancia del **precondicionamiento**: resolver $M^{-1}A\vec{x} = M^{-1}\vec{b}$ con una
+$M$ fácil de invertir y parecida a $A$ reduce el número de condición y con él las iteraciones. En
+sistemas grandes, elegir el precondicionador importa más que elegir el método.
+
+Una consecuencia de esto: estos métodos no necesitan la matriz, solo la función que
+multiplica por ella. `scipy.sparse.linalg.LinearOperator` permite pasar esa función directamente, lo
+que hace posible resolver sistemas cuya matriz nunca llega a existir en memoria.
+
+## El criterio
+
+La elección depende de tres características: la forma, el rango y la estructura.
+
+<SolverChooser
+  labels={{
+    shape: 'forma',
+    rank: 'rango',
+    kind: 'estructura',
+    recommends: 'usar',
+    why: 'por qué',
+  }}
+  options={{
+    shape: [
+      { value: 'square', label: 'm = n' },
+      { value: 'tall', label: 'm > n' },
+      { value: 'wide', label: 'm < n' },
+    ],
+    rank: [
+      { value: 'full', label: 'completo' },
+      { value: 'deficient', label: 'deficiente' },
+    ],
+    kind: [
+      { value: 'dense', label: 'densa' },
+      { value: 'sparse-spd', label: 'dispersa, SDP' },
+      { value: 'sparse-general', label: 'dispersa, general' },
+    ],
+  }}
+  answers={{
+    'square|full|dense': { call: 'np.linalg.solve(A, b)', why: 'Solución única; LU con pivoteo parcial.' },
+    'square|deficient|dense': { call: 'np.linalg.lstsq(A, b, rcond=None)', why: 'Singular: solve lanza excepción. lstsq devuelve la solución de mínimos cuadrados de norma mínima.' },
+    'tall|full|dense': { call: 'np.linalg.lstsq(A, b, rcond=None)', why: 'Sobredeterminado: no hay solución exacta. Emplea QR, sin formar AᵀA.' },
+    'tall|deficient|dense': { call: 'np.linalg.lstsq(A, b, rcond=None)', why: 'Mínimos cuadrados con rango deficiente: la vía SVD elige el minimizador de norma mínima.' },
+    'wide|full|dense': { call: 'np.linalg.lstsq(A, b, rcond=None)', why: 'Subdeterminado: infinitas soluciones, y lstsq devuelve la de menor norma.' },
+    'wide|deficient|dense': { call: 'np.linalg.lstsq(A, b, rcond=None)', why: 'Igual que el anterior; rcond decide qué valores singulares cuentan como nulos.' },
+    'square|full|sparse-spd': { call: 'scipy.sparse.linalg.cg(A, b)', why: 'Gradiente conjugado: solo necesita productos A·v, y exige simétrica definida positiva.' },
+    'square|deficient|sparse-spd': { call: 'scipy.sparse.linalg.lsqr(A, b)', why: 'Singular o casi: lsqr es el método iterativo de mínimos cuadrados.' },
+    'square|full|sparse-general': { call: 'scipy.sparse.linalg.gmres(A, b)', why: 'No simétrica: GMRES, dado que el gradiente conjugado no es aplicable.' },
+    'square|deficient|sparse-general': { call: 'scipy.sparse.linalg.lsqr(A, b)', why: 'Rango deficiente y dispersa: lsqr lo tolera.' },
+    'tall|full|sparse-spd': { call: 'scipy.sparse.linalg.lsqr(A, b)', why: 'Mínimos cuadrados dispersos sin formar AᵀA.' },
+    'tall|deficient|sparse-spd': { call: 'scipy.sparse.linalg.lsqr(A, b)', why: 'Mínimos cuadrados dispersos sin formar AᵀA.' },
+    'tall|full|sparse-general': { call: 'scipy.sparse.linalg.lsqr(A, b)', why: 'Mínimos cuadrados dispersos sin formar AᵀA.' },
+    'tall|deficient|sparse-general': { call: 'scipy.sparse.linalg.lsqr(A, b)', why: 'Mínimos cuadrados dispersos sin formar AᵀA.' },
+    'wide|full|sparse-spd': { call: 'scipy.sparse.linalg.lsqr(A, b)', why: 'Subdeterminado y disperso: lsqr converge a la solución de norma mínima.' },
+    'wide|deficient|sparse-spd': { call: 'scipy.sparse.linalg.lsqr(A, b)', why: 'Subdeterminado y disperso: lsqr converge a la solución de norma mínima.' },
+    'wide|full|sparse-general': { call: 'scipy.sparse.linalg.lsqr(A, b)', why: 'Subdeterminado y disperso: lsqr converge a la solución de norma mínima.' },
+    'wide|deficient|sparse-general': { call: 'scipy.sparse.linalg.lsqr(A, b)', why: 'Subdeterminado y disperso: lsqr converge a la solución de norma mínima.' },
+  }}
+/>
+
+Dos observaciones recorren toda la tabla. La primera es que `lstsq` cubre todos los casos densos: no
+falla cuando `solve` lo haría, y devuelve la respuesta correcta en cada régimen. Emplear `solve` está
+justificado por velocidad cuando la matriz es cuadrada y no singular, no porque `lstsq` resulte
+inadecuado.
+
+La segunda es que la inversa explícita no aparece en ninguna fila. Su lugar, discutido en la lección
+anterior, es el caso en que las entradas de la matriz son el objeto buscado, no un paso intermedio
+hacia $A^{-1}\vec{b}$.
+
+## Recapitulación
+
+El módulo partió de un sistema de ecuaciones y terminó en un criterio para elegir entre los
+algoritmos que lo resuelven. La estructura del recorrido es la misma en cada paso: una operación
+definida con precisión, su interpretación geométrica, y la implementación que la ejecuta sin
+reproducir literalmente la fórmula.
+
+Tres ideas atraviesan todas las lecciones. El **rango** decide cuántas soluciones hay. El **número de
+condición** decide cuánto se puede confiar en la que se obtiene. Y la distinción entre lo que una
+fórmula enuncia y lo que se calcula en la práctica —`solve` frente a `inv`, `lstsq` frente a las ecuaciones
+normales, iterar frente a factorizar— recorre el módulo de principio a fin.
+
+---
+
+**Ejercicio.** Verificar sobre una matriz de rango deficiente que `np.linalg.pinv(A) @ b` y
+`np.linalg.lstsq(A, b, rcond=None)[0]` coinciden, y que ambos vectores tienen norma menor que
+cualquier otra solución obtenida sumando un elemento del núcleo. Comprobar después cómo cambia el
+resultado al elevar `rcond`.

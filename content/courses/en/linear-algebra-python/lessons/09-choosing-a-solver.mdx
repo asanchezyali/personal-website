@@ -1,0 +1,166 @@
+---
+title: 'How NumPy solves'
+language: 'en'
+module: 'Systems and matrices'
+moduleOrder: 1
+order: 9
+summary: 'The Moore-Penrose pseudoinverse as the general case, iterative methods and the fill-in that makes them necessary, and a criterion for choosing between solve, lstsq, pinv and the sparse solvers.'
+---
+
+The previous lessons solved systems case by case: square and invertible with `solve`, rectangular
+with `lstsq`, underdetermined with the minimum-norm solution. This one draws them together. There is
+one object covering every case at once, and there is a regime — large sparse matrices — in which none
+of the tools seen so far applies.
+
+## The pseudoinverse
+
+The **Moore-Penrose pseudoinverse** $A^{+}$ of any matrix $A \in \mathbb{R}^{m\times n}$ is the
+unique matrix satisfying these four conditions:
+
+$$
+AA^{+}A = A, \qquad A^{+}AA^{+} = A^{+}, \qquad (AA^{+})^\top = AA^{+}, \qquad (A^{+}A)^\top = A^{+}A
+$$
+
+It always exists, requiring neither that $A$ be square nor of full rank. It is built from the
+singular value decomposition $A = U\Sigma V^\top$:
+
+$$
+A^{+} = V\Sigma^{+}U^\top
+$$
+
+where $\Sigma^{+}$ is obtained by inverting the non-zero singular values and transposing. Zero
+singular values are left at zero rather than inverted, which is what allows singular matrices to be
+handled without the construction breaking down.
+
+Its operative property summarises the previous lessons in one sentence: **$A^{+}\vec{b}$ is always
+the minimum-norm least-squares solution**. The familiar special cases are recovered by substitution:
+
+| Case | $A^{+}$ reduces to | What it returns |
+| --- | --- | --- |
+| square, non-singular | $A^{-1}$ | the unique solution |
+| $m > n$, full rank | $(A^\top A)^{-1}A^\top$ | the minimiser of $\lVert A\vec{x}-\vec{b}\rVert$ |
+| $m < n$, full rank | $A^\top(AA^\top)^{-1}$ | the minimum-norm solution |
+| rank deficient | only via the SVD | both conditions at once |
+
+```python
+import numpy as np
+
+x = np.linalg.pinv(A) @ b
+```
+
+The construction is conceptually clean and, in practice, inadvisable for the same reason as `inv`:
+it computes a full $n\times m$ matrix in order to multiply it by a vector, when the product is what
+was wanted. `np.linalg.lstsq` obtains the same result without forming $A^{+}$.
+
+```python
+x, residuals, rank, sv = np.linalg.lstsq(A, b, rcond=None)
+```
+
+The `rcond` parameter is the threshold below which a singular value counts as zero, expressed as a
+fraction of $\sigma_1$. It is the same decision the lesson on the null space described for
+`matrix_rank`, with the same consequences: it fixes which directions count as part of the numerical
+null space and therefore which solution comes back.
+
+## Fill-in
+
+Everything above assumes the matrix fits in memory and that factorising it is feasible. Neither
+holds for the systems arising in the discretisation of partial differential equations, in graphs or
+in meshes, where $A$ has millions of rows but only a handful of non-zero entries per row.
+
+The obstacle is not storing $A$. A $10^6 \times 10^6$ matrix with $10^7$ non-zero entries takes
+about 120 MB in sparse format. The obstacle is that **the factors do not inherit the sparsity**:
+elimination creates entries where the original matrix had zeros. That phenomenon is called
+**fill-in**.
+
+<FillIn
+  n={8}
+  labels={{
+    hint: 'The same matrix, with its rows and columns in a different order.',
+    arrowFirst: 'arrow first',
+    arrowLast: 'arrow last',
+    original: 'A',
+    factors: 'L + U',
+    nnz: 'non-zeros',
+    fill: 'entries created by elimination',
+    none: 'no fill-in: the factors keep the sparsity of A',
+  }}
+/>
+
+The figure shows an *arrowhead* matrix: a diagonal plus one dense row and column. With the arrow in
+the first position, eliminating the first column touches every row and every column, and the factors
+come out completely dense. With the arrow last, the same system creates not a single new entry.
+
+It is the same matrix up to a permutation of rows and columns. The elimination order does not change
+the solution, but it decides whether the factors fit in memory. Sparse libraries devote a
+preliminary phase to choosing that permutation, with heuristics such as *minimum degree* or *nested
+dissection*.
+
+When even the best ordering is not enough, factorisation is abandoned.
+
+## Iterative methods
+
+An iterative method builds no factors. It starts from an estimate and refines it, and at each step
+it needs only to compute products $A\vec{v}$. $A$ is never modified, so no fill-in is possible.
+
+```python
+from scipy.sparse.linalg import cg, gmres, lsqr
+
+x, info = cg(A, b)        # symmetric positive definite
+x, info = gmres(A, b)     # square, non-symmetric
+x = lsqr(A, b)[0]         # rectangular or rank deficient
+```
+
+The **conjugate gradient** requires $A$ to be symmetric positive definite, the class the lesson on
+the transpose identified with the products $A^\top A$ and with covariance matrices. Its rate of
+convergence depends on $\sqrt{\kappa(A)}$, so the condition number appears once more, now governing
+the number of iterations rather than the accuracy.
+
+Hence the importance of **preconditioning**: solving $M^{-1}A\vec{x} = M^{-1}\vec{b}$ with an $M$
+that is easy to invert and close to $A$ reduces the condition number and with it the iteration
+count. In large systems, choosing the preconditioner matters more than choosing the method.
+
+One consequence of this: these methods do not need the matrix, only the function that multiplies by
+it. `scipy.sparse.linalg.LinearOperator` takes that function directly, which makes it possible to
+solve systems whose matrix never exists in memory at all.
+
+## The criterion
+
+The choice depends on three characteristics: the shape, the rank and the structure.
+
+<SolverChooser
+  labels={{
+    shape: 'shape',
+    rank: 'rank',
+    kind: 'structure',
+    recommends: 'use',
+    why: 'why',
+  }}
+/>
+
+Two observations run through the whole table. The first is that `lstsq` covers every dense case: it
+does not fail where `solve` would, and it returns the right answer in each regime. Using `solve` is
+justified by speed when the matrix is square and non-singular, not because `lstsq` would be
+unsuitable.
+
+The second is that the explicit inverse appears in no row at all. Its place, discussed in the
+previous lesson, is the case where the entries of the matrix are the object sought, not an
+intermediate step towards $A^{-1}\vec{b}$.
+
+## Recapitulation
+
+The module began with a system of equations and ended with a criterion for choosing among the
+algorithms that solve it. The structure of the route is the same at every step: an operation defined
+precisely, its geometric interpretation, and the implementation that carries it out without
+transcribing the formula literally.
+
+Three ideas run through every lesson. **Rank** decides how many solutions there are. The **condition
+number** decides how far the one obtained can be trusted. And the distinction between what a formula
+states and what is actually computed — `solve` against `inv`, `lstsq` against the normal equations,
+iterating against factorising — runs from the first lesson to the last.
+
+---
+
+**Exercise.** Verify on a rank-deficient matrix that `np.linalg.pinv(A) @ b` and
+`np.linalg.lstsq(A, b, rcond=None)[0]` agree, and that both vectors have smaller norm than any other
+solution obtained by adding an element of the null space. Then check how the result changes as
+`rcond` is raised.

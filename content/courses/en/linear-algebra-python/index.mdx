@@ -2,7 +2,7 @@
 title: 'Linear Algebra with Python'
 language: 'en'
 level: 'Introductory'
-summary: 'Linear systems, matrices, inverse and transpose, multiplication by a scalar, the structure of the solution set, and the factorisations that solve, in NumPy.'
+summary: 'Nine lessons on linear systems and matrices, from the matrix form to the criterion for choosing between solve, lstsq and the iterative methods, implemented in NumPy.'
 tags: ['linear-algebra', 'python', 'numpy', 'mathematics']
 ---
 
@@ -57,6 +57,10 @@ space of the design matrix leaves a model's coefficients unidentified.
 The eighth closes the block by returning to the inverse from the computational side: the $n$ systems
 behind it, the Gauss-Jordan construction, why the customary check fails to detect a wrong result,
 and the cases where the inverse matrix really is the object sought.
+
+The ninth closes the block by drawing the rest together: the pseudoinverse as the general case, the
+fill-in that prevents factorising large sparse matrices, the iterative methods that avoid it, and a
+criterion for choosing the algorithm from the shape, rank and structure of the matrix.
 
 The series continues. Each lesson includes at least one interactive figure; exploring it beforehand
 eases the reading of the algebraic formulation that accompanies it.
