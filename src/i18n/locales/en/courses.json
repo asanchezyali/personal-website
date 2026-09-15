@@ -1,9 +1,9 @@
 {
   "hero": {
     "eyebrow": "Free courses",
-    "title_pre": "The mathematics ",
+    "title_pre": "The foundations ",
     "title_accent": "behind the code",
-    "lead": "Study material on the mathematical foundations of computing. Each concept is presented with its geometric interpretation, its formal definition and its implementation in Python."
+    "lead": "Study material on the foundations of computing and machine learning. Each concept is presented with its formal definition, its geometric reading where it has one, and its implementation."
   },
   "empty": "No courses published yet.",
   "start": "Start the course",
@@ -23,12 +23,12 @@
   "syllabus": "See the syllabus",
   "pitch": {
     "one": {
-      "title": "Geometric interpretation",
+      "title": "Manipulable figures",
       "body": "Concepts are introduced through figures that can be manipulated, so that intuition precedes the algebraic formulation."
     },
     "two": {
       "title": "Definition and code",
-      "body": "Each lesson states the formal definition and the equivalent NumPy implementation, keeping theory and computation together."
+      "body": "Each lesson states the formal definition alongside its corresponding implementation, keeping theory and computation together."
     },
     "three": {
       "title": "Freely available",
