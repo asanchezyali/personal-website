@@ -49,6 +49,8 @@ import Diagonalise from './Diagonalise'
 import SimilarityInvariants from './SimilarityInvariants'
 import FourSubspaces from './FourSubspaces'
 import MinimumNorm from './MinimumNorm'
+import AffineHyperplane from './AffineHyperplane'
+import AffineCombination from './AffineCombination'
 import { PseudoCodeLine, PseudoCode } from './PseudoCode'
 
 export const components: MDXComponents = {
@@ -96,6 +98,8 @@ export const components: MDXComponents = {
   SimilarityInvariants,
   FourSubspaces,
   MinimumNorm,
+  AffineHyperplane,
+  AffineCombination,
   TOCInline,
   a: CustomLink,
   pre: CodeBlock,

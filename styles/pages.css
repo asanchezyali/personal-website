@@ -1336,3 +1336,17 @@
   .mn-right { fill: none; stroke: var(--g-500); stroke-width: 1.2; }
   .mn-tag { font-family: var(--f-ubuntu); font-size: 12px; font-weight: 700; fill: var(--g-600); }
   .mn-tag.is-min, .mn-tag.is-row { fill: var(--vp-c); }
+
+  /* Affine hyperplane */
+  .ah-side { fill: color-mix(in oklab, var(--vp-b) 7%, transparent); }
+  .ah-unit { stroke: var(--vp-c); stroke-width: 1.4; stroke-dasharray: 3 3; opacity: .8; }
+  .ah-plane { stroke: var(--vp-b); stroke-width: 2.4; }
+  .ah-normal { stroke: var(--vp-c); stroke-width: 2; }
+  .ah-drop { stroke: var(--g-500); stroke-width: 1.4; stroke-dasharray: 4 4; }
+  .ah-foot { fill: var(--g-500); }
+
+  /* Affine and convex combinations */
+  .ac-hull { fill: color-mix(in oklab, var(--vp-b) 16%, transparent); stroke: var(--vp-b); stroke-width: 1.6; }
+  .ac-vertex { fill: var(--vp-c); }
+  .ac-point { fill: var(--vp-b); stroke: var(--bg); stroke-width: 2; }
+  .ac-point.is-out { fill: var(--vp-a); }

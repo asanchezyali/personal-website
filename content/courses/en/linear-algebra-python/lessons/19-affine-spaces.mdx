@@ -1,0 +1,231 @@
+---
+title: 'Affine spaces with Python'
+language: 'en'
+module: 'Vector spaces'
+moduleOrder: 2
+order: 10
+summary: 'Translated subspaces, the affine combination and its convex restriction, the hyperplane as a decision boundary and the margin it defines, and the affine map as an exact description of a dense layer with bias.'
+---
+
+Every construction in this course shares a requirement that has gone undiscussed: it passes through
+the origin. A subspace contains $\vec{0}$ by definition, a linear map satisfies
+$\Phi(\vec{0}) = \vec{0}$, and the column space of a matrix is the set of outputs reachable from a
+starting $\vec{0}$. This lesson lifts that restriction, which is what separates the framework built
+so far from an actual dense layer.
+
+## Translated subspaces
+
+Let $V$ be a vector space, $U \subseteq V$ a subspace and $\vec{x}_0 \in V$ a point. The set
+
+$$
+L = \vec{x}_0 + U = \{\,\vec{x}_0 + \vec{u} : \vec{u} \in U\,\}
+$$
+
+is an **affine space** with **direction space** $U$ and **support point** $\vec{x}_0$. Its dimension
+is that of $U$. An affine line corresponds to $\dim U = 1$ and an affine **hyperplane** to
+$\dim U = \dim V - 1$.
+
+```python
+import numpy as np
+
+x0 = np.array([1., 2.])
+d  = np.array([2., 1.])
+L  = x0 + np.outer(np.linspace(0, 1, 5), d)
+```
+
+Two observations delimit the object. The first is that $L$ is **not** a subspace except in one case:
+it contains $\vec{0}$ if and only if $-\vec{x}_0 \in U$, that is, if and only if $\vec{x}_0 \in U$,
+and then $L = U$. An affine space not passing through the origin is closed under neither addition
+nor scalar multiplication, so none of the tools of the preceding lessons applies to it directly.
+
+The second is that the support point is not determined by $L$. If $\vec{x}_1 \in L$, then
+$\vec{x}_1 = \vec{x}_0 + \vec{u}_1$ with $\vec{u}_1 \in U$, and
+
+$$
+\vec{x}_1 + U = \vec{x}_0 + \vec{u}_1 + U = \vec{x}_0 + U = L
+$$
+
+because $\vec{u}_1 + U = U$. Any point of $L$ serves as support; the direction space, by contrast, is
+unique. The support is a choice of representation, not a property of the set.
+
+## The affine combination
+
+The description above depends on a point chosen by hand. An intrinsic characterisation exists. Given
+$\vec{v}_1,\dots,\vec{v}_k$ and scalars $\lambda_1,\dots,\lambda_k$, the expression
+$\sum_i \lambda_i \vec{v}_i$ is an **affine combination** when
+
+$$
+\sum_{i=1}^{k} \lambda_i = 1
+$$
+
+The restriction is exactly what is required for the result not to depend on the origin. Translating
+every point by the same $\vec{c}$ translates the combination by
+$\left(\sum_i \lambda_i\right)\vec{c} = \vec{c}$: it moves with the data instead of deforming.
+Without the restriction, translation introduces an arbitrary factor $\sum_i \lambda_i$.
+
+If in addition all weights are non-negative, the combination is called **convex** and the set of all
+of them is the **convex hull** of the points.
+
+<AffineCombination
+  labels={{
+    hint: 'Two weights are free; the third is fixed by the sum. A vertex is reached at weight 1.',
+    sum: 'λ₁ + λ₂ + λ₃',
+    convex: 'convex combination: inside the hull',
+    affineOnly: 'a weight is negative: affine, but not convex',
+    note: 'Softmax weights are non-negative and sum to one: the attention output never leaves the hull.',
+    reset: 'Reset',
+  }}
+/>
+
+The distinction is not a technicality. The attention mechanism computes
+$\sum_i \alpha_i \vec{v}_i$ with weights $\alpha_i$ produced by a softmax, which are positive and
+sum to one by construction. The output of an attention head is therefore a convex combination of the
+value vectors, and is confined to their convex hull: it cannot produce anything outside the hull the
+available values form. The interpolation between examples used by the *mixup* augmentation technique
+is likewise a convex combination of two points, and moving to negative weights —permitted by the
+affine definition, forbidden by the convex one— is exactly what would take it off the segment
+joining the examples.
+
+## The solution set, once more
+
+The lesson on the particular and general solution established that the solution set of
+$A\vec{x} = \vec{b}$ is $\vec{x}_p + \ker(A)$, and the lesson on the image and the kernel placed it
+inside the orthogonal decomposition of the domain. The object now has a name: it is an affine space
+with direction $\ker(A)$ and dimension $n - \operatorname{rank}(A)$.
+
+```python
+from scipy.linalg import null_space
+
+A = np.array([[1., 1., 1.]])
+b = np.array([6.])
+
+x0, *_ = np.linalg.lstsq(A, b, rcond=None)   # one concrete support
+U = null_space(A)                             # the direction, 3 × 2
+```
+
+The support `lstsq` returns is the minimum-norm one, as seen in the lesson on the image and the
+kernel, but any other solution describes the same set. That the homogeneous system yields a subspace
+and the inhomogeneous one an affine space is the same distinction this lesson opens with:
+$\vec{b} = \vec{0}$ is what anchors the set to the origin.
+
+## The hyperplane and the margin
+
+An affine hyperplane in $\mathbb{R}^n$ admits a description by a single equation:
+
+$$
+H = \{\,\vec{x} \in \mathbb{R}^n : \vec{w}^\top\vec{x} + b = 0\,\}
+$$
+
+with $\vec{w} \neq \vec{0}$. The vector $\vec{w}$ is normal to the hyperplane —if $\vec{x}$ and
+$\vec{y}$ belong to $H$, subtracting the two equations gives
+$\vec{w}^\top(\vec{x}-\vec{y}) = 0$— and $b$ controls the displacement from the origin.
+
+<AffineHyperplane
+  w={[2, 1]}
+  b={-2}
+  point={[2, 2]}
+  labels={{
+    hint: 'Drag the normal w or the point x; slide the offset b.',
+    score: 'wᵀx + b',
+    distance: 'distance',
+    positive: 'positive side',
+    negative: 'negative side',
+    onPlane: 'on the hyperplane',
+    throughOrigin: 'With b = 0 the hyperplane passes through the origin.',
+    reset: 'Reset',
+  }}
+/>
+
+The quantity $\vec{w}^\top\vec{x} + b$ is not a distance, and the difference matters. For any
+$\vec{y} \in H$, the component of $\vec{x} - \vec{y}$ along the unit normal is
+
+$$
+\frac{\vec{w}^\top}{\lVert\vec{w}\rVert}(\vec{x} - \vec{y}) = \frac{\vec{w}^\top\vec{x} - \vec{w}^\top\vec{y}}{\lVert\vec{w}\rVert} = \frac{\vec{w}^\top\vec{x} + b}{\lVert\vec{w}\rVert}
+$$
+
+where the last equality uses $\vec{w}^\top\vec{y} = -b$. The result does not depend on the $\vec{y}$
+chosen, and its absolute value is the distance from $\vec{x}$ to $H$. The sign gives the half-space.
+
+The practical consequence runs as follows: replacing $(\vec{w}, b)$ by $(2\vec{w}, 2b)$ leaves the
+hyperplane untouched —the equation defines the same set— but doubles every score. In a logistic
+regression, where the probability is $\sigma(\vec{w}^\top\vec{x} + b)$, this means the confidence of
+the model can grow without the decision boundary moving at all. The magnitude of the logit conflates
+two different things: how far from the boundary the point lies, and how large
+$\lVert\vec{w}\rVert$ has been allowed to become. Only the first is a property of the geometry of
+the problem, and it is the reason a penalty on the norm of the weights affects the calibration of
+the probabilities without necessarily altering the predictions.
+
+The same scaling explains the formulation of the support vector machine. Fixing the normalisation
+$\vec{w}^\top\vec{x} + b = \pm 1$ on the closest examples, the separation between the two resulting
+hyperplanes is
+
+$$
+\frac{2}{\lVert\vec{w}\rVert}
+$$
+
+so that maximising the margin is equivalent to minimising $\lVert\vec{w}\rVert$. The geometric
+problem and the optimisation problem are the same one written twice.
+
+## The affine map and the bias
+
+An **affine map** between vector spaces is the composition of a linear one with a translation:
+
+$$
+\phi(\vec{x}) = A\vec{x} + \vec{a}
+$$
+
+This is the exact definition of a dense layer. The term $\vec{a}$ is the bias, and its geometric role
+is that of a support point: without it, $\phi(\vec{0}) = \vec{0}$ and every decision boundary would
+be forced through the origin of feature space.
+
+```python
+A = np.random.randn(3, 2)
+a = np.random.randn(3)
+
+def layer(x):
+    return A @ x + a           # exactly nn.Linear(2, 3)
+```
+
+An affine map does not preserve arbitrary linear combinations, but it does preserve affine ones. The
+verification is immediate, and the restriction $\sum_i \lambda_i = 1$ is precisely what makes it
+work:
+
+$$
+\phi\!\left(\sum_i \lambda_i \vec{x}_i\right) = A\sum_i \lambda_i \vec{x}_i + \vec{a} = \sum_i \lambda_i A\vec{x}_i + \left(\sum_i \lambda_i\right)\vec{a} = \sum_i \lambda_i \phi(\vec{x}_i)
+$$
+
+As a corollary, a dense layer maps convex hulls to convex hulls: the image of the hull is the hull of
+the images.
+
+One consequence remains, and it qualifies an earlier result. The composition of two affine maps is
+affine:
+
+$$
+\phi_2(\phi_1(\vec{x})) = A_2(A_1\vec{x} + \vec{a}_1) + \vec{a}_2 = (A_2A_1)\vec{x} + (A_2\vec{a}_1 + \vec{a}_2)
+$$
+
+The lesson on linear maps showed that a network without activation functions collapses into a single
+matrix. The identity above closes the one loophole that remained: adding biases does not prevent it.
+A stack of dense layers without activations collapses into a single dense layer, with matrix
+$A_k \cdots A_1$ and an accumulated bias. The bias supplies the displacement from the origin, which
+is indispensable, but it supplies no expressive power: the non-linearity has to come from somewhere
+else.
+
+## The route taken
+
+The course began by solving $A\vec{x} = \vec{b}$ and ends by describing precisely what a dense layer
+is. Between those two points the objects appeared out of necessity: elimination in order to solve,
+the factors in order not to repeat the work, rank in order to know how much information a matrix
+really holds, the basis in order to choose the representation, eigenvalues in order to find the best
+one, and the kernel in order to know what is lost along the way. The layer
+$\vec{x} \mapsto \sigma(W\vec{x} + \vec{b})$ contains all of it except $\sigma$, and what sits
+inside the parentheses is no longer opaque.
+
+---
+
+**Exercise.** Generate two separable point clouds in $\mathbb{R}^2$ and fit a logistic regression
+with `scikit-learn`. Extract `coef_` and `intercept_`, draw the hyperplane
+$\vec{w}^\top\vec{x} + b = 0$ and check that the signed distances
+$(\vec{w}^\top\vec{x}+b)/\lVert\vec{w}\rVert$ carry the correct sign in each class. Repeat the fit
+with `C` ten times larger and verify that $\lVert\vec{w}\rVert$ grows while the boundary barely
+moves.
