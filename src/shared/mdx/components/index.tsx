@@ -33,6 +33,8 @@ import FillIn from './FillIn'
 import SolverChooser from './SolverChooser'
 import SubspaceTest from './SubspaceTest'
 import ShapeOrientation from './ShapeOrientation'
+import ProjectionOnto from './ProjectionOnto'
+import BestSubspace from './BestSubspace'
 import { PseudoCodeLine, PseudoCode } from './PseudoCode'
 
 export const components: MDXComponents = {
@@ -64,6 +66,8 @@ export const components: MDXComponents = {
   SolverChooser,
   SubspaceTest,
   ShapeOrientation,
+  ProjectionOnto,
+  BestSubspace,
   TOCInline,
   a: CustomLink,
   pre: CodeBlock,

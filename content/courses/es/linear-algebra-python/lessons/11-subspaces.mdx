@@ -1,0 +1,196 @@
+---
+title: 'Subespacios con Python'
+language: 'es'
+module: 'Espacios vectoriales'
+moduleOrder: 2
+order: 2
+summary: 'Pertenencia a un subespacio, la proyección ortogonal y su matriz, los cuatro subespacios fundamentales de una matriz, y el análisis de componentes principales como elección del mejor subespacio.'
+---
+
+La lección anterior definió los subespacios y estableció el criterio para reconocerlos. Esta se
+ocupa de operar con ellos: decidir si un vector pertenece a uno, encontrar el punto más próximo
+cuando no pertenece, y elegir el subespacio que mejor representa un conjunto de datos.
+
+## Pertenencia
+
+La pregunta de si $\vec{b}$ pertenece al espacio columna de $A$ no requiere maquinaria nueva. Por
+definición, $\operatorname{col}(A)$ es el conjunto de combinaciones lineales de las columnas, de
+modo que
+
+$$
+\vec{b} \in \operatorname{col}(A) \iff \exists\,\vec{x} : A\vec{x} = \vec{b}
+$$
+
+Resolver un sistema y preguntar por pertenencia son la misma operación enunciada de dos maneras.
+
+```python
+import numpy as np
+
+V = np.column_stack([[1., 0., 0.],
+                     [0., 1., 0.]])        # span = plano xy
+w = np.array([3., 2., 0.])
+
+c, *_ = np.linalg.lstsq(V, w, rcond=None)
+np.allclose(V @ c, w)                      # True: pertenece
+```
+
+El criterio de rango de la primera lección se reformula en este lenguaje. El sistema es compatible
+cuando añadir $\vec{b}$ a las columnas de $A$ no amplía el subespacio que generan:
+
+$$
+\operatorname{rank}(A) = \operatorname{rank}([A \mid \vec{b}]) \iff \vec{b} \in \operatorname{col}(A)
+$$
+
+Es el teorema de Rouché-Frobenius, que la lección sobre sistemas lineales enunció en términos de
+rangos y que aquí resulta ser una afirmación sobre pertenencia.
+
+## Proyección ortogonal
+
+Cuando $\vec{b}$ no pertenece al subespacio, la pregunta útil deja de ser si existe solución y pasa a
+ser cuál es el punto del subespacio más próximo a $\vec{b}$. Ese punto es la **proyección
+ortogonal**.
+
+Para el subespacio generado por un único vector $\vec{v}$, la proyección viene dada por una matriz:
+
+$$
+P = \frac{\vec{v}\vec{v}^\top}{\vec{v}^\top\vec{v}}, \qquad P\vec{w} = \frac{\vec{v}^\top\vec{w}}{\vec{v}^\top\vec{v}}\,\vec{v}
+$$
+
+<ProjectionOnto
+  v={[3, 1]}
+  w={[1, 2.5]}
+  labels={{
+    hint: 'Arrastra la dirección de la recta, o el punto que se proyecta.',
+    proj: 'Pw',
+    residual: '‖w − Pw‖',
+    idempotent: 'P² = P: proyectar un punto ya proyectado no lo mueve.',
+    reset: 'Reiniciar',
+  }}
+/>
+
+El segmento discontinuo es el **residuo** $\vec{w} - P\vec{w}$, y es perpendicular a la recta
+cualquiera que sea la posición del punto. Esa perpendicularidad no es una observación visual sino la
+condición que define la proyección: el residuo pertenece al complemento ortogonal del subespacio.
+
+De ahí se sigue directamente la ecuación normal de la lección sobre la inversa y la transpuesta.
+Exigir que el residuo sea ortogonal a todas las columnas de $A$ es escribir
+
+$$
+A^\top(\vec{b} - A\vec{x}) = \vec{0} \quad\Longrightarrow\quad A^\top A\,\vec{x} = A^\top\vec{b}
+$$
+
+Las ecuaciones normales no son una receta de cálculo: son la condición de ortogonalidad del residuo.
+
+Para un subespacio de dimensión mayor generado por las columnas de $V$, la matriz de proyección
+generaliza la expresión anterior:
+
+$$
+P = V(V^\top V)^{-1}V^\top
+$$
+
+y se reduce a $P = QQ^\top$ cuando las columnas de $Q$ son ortonormales, que es la forma que devuelve
+la factorización QR o `null_space`. Tres propiedades la caracterizan:
+
+```python
+Q, _ = np.linalg.qr(V)
+P = Q @ Q.T
+
+np.allclose(P @ P, P)          # idempotente: proyectar dos veces es proyectar una
+np.allclose(P, P.T)            # simétrica
+np.trace(P)                    # la dimensión del subespacio
+```
+
+La traza merece atención: para una proyección, coincide con el rango, de modo que proporciona la
+dimensión del subespacio sin calcularla por otra vía.
+
+## Los cuatro subespacios fundamentales
+
+Una matriz $A \in \mathbb{R}^{m\times n}$ determina cuatro subespacios, dos en cada espacio:
+
+| Subespacio | Vive en | Dimensión |
+| --- | --- | --- |
+| espacio columna, $\operatorname{col}(A)$ | $\mathbb{R}^m$ | $r$ |
+| núcleo, $\ker(A)$ | $\mathbb{R}^n$ | $n - r$ |
+| espacio fila, $\operatorname{col}(A^\top)$ | $\mathbb{R}^n$ | $r$ |
+| núcleo por la izquierda, $\ker(A^\top)$ | $\mathbb{R}^m$ | $m - r$ |
+
+donde $r = \operatorname{rank}(A)$. Las dos parejas son complementos ortogonales:
+
+$$
+\ker(A) \perp \operatorname{col}(A^\top) \quad\text{en } \mathbb{R}^n, \qquad
+\ker(A^\top) \perp \operatorname{col}(A) \quad\text{en } \mathbb{R}^m
+$$
+
+La primera relación ya se empleó en la lección sobre solución particular y general: la solución de
+norma mínima es la componente en el espacio fila, precisamente por ser este el complemento ortogonal
+del núcleo.
+
+La segunda explica qué ocurre cuando un sistema es incompatible. El vector $\vec{b}$ se descompone
+de forma única en una parte dentro de $\operatorname{col}(A)$, que es lo que el sistema puede
+alcanzar, y otra en $\ker(A^\top)$, que es el residuo que ninguna elección de $\vec{x}$ elimina.
+
+## Aplicación: el mejor subespacio
+
+El análisis de componentes principales resuelve un problema que ya puede enunciarse con precisión:
+dado un conjunto de puntos centrados, encontrar el subespacio de dimensión $k$ que minimiza la suma
+de las distancias al cuadrado de los puntos a él.
+
+<BestSubspace
+  labels={{
+    hint: 'La recta gira; los segmentos son las distancias que se elevan al cuadrado y se suman.',
+    angle: 'ángulo',
+    residual: 'residuo',
+    best: 'mínimo en',
+    variance: 'explicado',
+    snap: 'Ir al mínimo',
+  }}
+/>
+
+Para $k = 1$ el subespacio es una recta por el origen y el problema se reduce a elegir un ángulo. El
+residuo total varía entre $9.25$ a $0°$ y $24.68$ a $90°$, y alcanza su mínimo, $0.76$, en
+$30.8°$. Esa dirección retiene el $97.8\,\%$ de la varianza de los datos.
+
+La equivalencia que hace tratable el problema aparece en la figura: como el residuo y la proyección
+son ortogonales, el teorema de Pitágoras da
+
+$$
+\lVert \vec{x} \rVert^2 = \lVert P\vec{x} \rVert^2 + \lVert \vec{x} - P\vec{x} \rVert^2
+$$
+
+y la suma sobre todos los puntos es constante. Minimizar el residuo y maximizar la varianza
+proyectada son, por tanto, el mismo problema. La primera formulación es geométrica y la segunda
+estadística, y coinciden por ortogonalidad.
+
+La solución no requiere búsqueda. La dirección óptima es el vector propio de mayor valor propio de
+la matriz de covarianza $\tfrac{1}{n}X^\top X$, que la lección sobre la inversa y la transpuesta
+identificó como simétrica y semidefinida positiva. Esa propiedad es la que garantiza que los valores
+propios sean reales y exista una base ortogonal de vectores propios, sin la cual el problema no
+estaría bien planteado.
+
+```python
+X = X - X.mean(axis=0)                       # centrar
+C = X.T @ X / len(X)
+valores, vectores = np.linalg.eigh(C)        # eigh: aprovecha la simetría
+direccion = vectores[:, -1]                  # mayor valor propio
+```
+
+`np.linalg.eigh` se emplea en lugar de `eig` porque explota la simetría: es más rápido y devuelve
+valores propios reales por construcción, en lugar de reales salvo error de redondeo.
+
+## Qué puede representar un modelo
+
+El vocabulario de esta lección describe con precisión las limitaciones de un modelo lineal. El
+**espacio columna** de la matriz de diseño es el conjunto de predicciones alcanzables: si el vector
+objetivo no pertenece a él, ningún ajuste de los pesos lo alcanzará, y lo mejor disponible es su
+proyección. El **núcleo** es el conjunto de direcciones que el modelo no distingue, que es la
+colinealidad descrita en la lección sobre el núcleo.
+
+Aumentar la capacidad de un modelo lineal consiste en ampliar su espacio columna añadiendo columnas
+—interacciones, transformaciones no lineales de las características— hasta que el objetivo quede
+dentro o suficientemente cerca.
+
+---
+
+**Ejercicio.** Construir la matriz de proyección sobre el plano generado por $(1,0,0)$ y $(0,1,0)$ y
+comprobar que su traza vale $2$. Verificar después que $P$ y $I - P$ son ambas idempotentes, que su
+suma es la identidad, y explicar sobre qué subespacio proyecta $I - P$.
