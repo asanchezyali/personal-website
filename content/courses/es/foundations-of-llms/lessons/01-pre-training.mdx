@@ -1,0 +1,288 @@
+---
+title: 'El preentrenamiento'
+language: 'es'
+module: 'Preentrenamiento'
+moduleOrder: 1
+order: 1
+summary: 'Por qué la autosupervisión desplazó al aprendizaje supervisado por tarea, qué prometen exactamente las leyes de escalado y en qué se equivocó su primera formulación, y la razón estructural de que un modelo que rellena huecos no pueda generar texto.'
+---
+
+Durante la mayor parte de la historia del procesamiento del lenguaje natural, cada tarea recibió su
+propio modelo, entrenado desde cero sobre su propio conjunto etiquetado. El análisis de sentimiento,
+la traducción y la respuesta a preguntas eran problemas separados, con anotaciones separadas y
+esfuerzos separados. El coste de la anotación fijaba un techo: ninguna tarea podía disponer de más
+datos de los que alguien hubiera etiquetado a mano para ella.
+
+El preentrenamiento invierte el orden. Se entrena primero un modelo grande sobre texto **sin
+etiquetar**, mediante un objetivo que el propio texto proporciona, y solo después se adapta a tareas
+concretas. Esta lección examina qué se gana con esa inversión, qué cuesta, y cuáles son sus dos
+límites reales.
+
+## El modelo como función
+
+Conviene fijar la notación antes de discutir el entrenamiento. Todo modelo de los que trata este
+curso es una función de una secuencia de tokens:
+
+$$
+\mathbf{o} = g(x_0, x_1, \dots, x_m;\, \theta) = g_\theta(x_0, \dots, x_m)
+$$
+
+donde $x_0$ es un símbolo inicial convencional —`[CLS]` o `<s>`—, $\theta$ son los parámetros y
+$\mathbf{o}$ es la salida. Qué sea $\mathbf{o}$ depende del uso: una distribución sobre el
+vocabulario si el modelo predice tokens, o una representación vectorial de la secuencia si el modelo
+la codifica. El preentrenamiento consiste en estimar $\theta$ una sola vez, sobre un corpus general,
+para reutilizar $g_{\hat\theta}$ en muchos problemas.
+
+Un modelo entrenado sobre datos amplios a gran escala y adaptado después a tareas diversas es lo que
+Bommasani y coautores denominaron **modelo fundacional**. El término describe una relación
+económica más que una arquitectura: el coste se traslada de *por tarea* a *una vez*.
+
+## Tres formas de preentrenar
+
+La palabra preentrenamiento es anterior al aprendizaje profundo y designa tres procedimientos
+distintos, que se diferencian en qué datos consume la primera etapa.
+
+El **preentrenamiento no supervisado** optimiza un criterio ajeno a cualquier tarea —reconstruir la
+entrada, por ejemplo— y entrena después sobre datos etiquetados. Proporciona un punto de partida
+mejor y actúa como regularizador.
+
+El **preentrenamiento supervisado** entrena sobre una tarea etiquetada y transfiere a otra. Es la
+receta que popularizó la visión por computador con ImageNet, y presupone que ambas tareas guardan
+relación.
+
+El **preentrenamiento autosupervisado** construye las etiquetas a partir del propio texto. Predecir
+una palabra oculta produce un objetivo supervisado cuya etiqueta es la palabra que estaba allí desde
+el principio; no interviene ningún anotador.
+
+La diferencia decisiva es de disponibilidad. Los dos primeros procedimientos necesitan etiquetas en
+algún punto, y por tanto heredan el techo que se pretendía eliminar. El tercero no necesita
+ninguna, y convierte cualquier texto en señal de entrenamiento. Es la razón por la que los corpus
+pasaron de millones a billones de tokens.
+
+## Lo que prometen las leyes de escalado
+
+Eliminar el techo de las etiquetas solo resulta útil si añadir datos y cómputo sigue mejorando el
+modelo. Kaplan y coautores establecieron en 2020 que la pérdida de un modelo de lenguaje decrece
+como una **ley de potencias** en tres magnitudes: el número de parámetros $N$, el volumen de datos
+$D$ y el cómputo invertido $C$.
+
+$$
+L(N) \propto N^{-\alpha_N}, \qquad L(D) \propto D^{-\alpha_D}, \qquad L(C) \propto C^{-\alpha_C}
+$$
+
+Los exponentes que ajustaron son pequeños: $\alpha_N \approx 0{,}076$, $\alpha_D \approx 0{,}095$ y
+$\alpha_C \approx 0{,}050$. Conviene detenerse en lo que significa esa magnitud. Con
+$\alpha_C = 0{,}050$, multiplicar el presupuesto de cómputo por diez reduce la pérdida en un factor
+$10^{-0{,}050} = 0{,}891$, es decir, alrededor de un **11 %**. Multiplicarlo por cien la reduce un
+21 %.
+
+La ley de potencias no promete, por tanto, mejoras espectaculares por orden de magnitud. Promete
+algo distinto y más valioso para quien planifica: **regularidad**. El rendimiento del siguiente
+orden de magnitud es estimable antes de gastarlo. Eso es lo que convirtió el escalado en una
+decisión de ingeniería en lugar de una apuesta.
+
+## Dónde se equivocó la primera formulación
+
+Las leyes de Kaplan describen cómo mejora la pérdida al aumentar cada factor por separado. La
+pregunta que un presupuesto real plantea es otra: dado un cómputo fijo $C$, ¿cómo conviene
+repartirlo entre parámetros y datos? Kaplan y coautores concluyeron que debía priorizarse el tamaño
+del modelo. Hoffmann y coautores demostraron en 2022 que esa conclusión era incorrecta.
+
+El punto de partida es la estimación estándar del coste de entrenar un transformador denso:
+
+$$
+C \approx 6ND
+$$
+
+El factor $6$ recoge las operaciones por token y por parámetro en el paso hacia adelante y hacia
+atrás. Fijado $C$, la expresión define una familia de repartos posibles: modelos grandes con pocos
+datos o modelos pequeños con muchos. El resultado de Hoffmann es que el óptimo escala **ambos
+factores por igual**, lo que en su rango de estudio equivale aproximadamente a
+
+$$
+D \approx 20N
+$$
+
+Combinando las dos expresiones se obtiene $C \approx 120N^2$, de donde el reparto óptimo para un
+presupuesto dado queda determinado:
+
+$$
+N_{\text{opt}} = \sqrt{\frac{C}{120}}, \qquad D_{\text{opt}} = 20\,N_{\text{opt}}
+$$
+
+<ScalingLaw
+  labels={{
+    hint: 'Ambos ejes son logarítmicos, de modo que las dos familias de rectas son rectas.',
+    frontier: 'frontera óptima, D = 20N',
+    isoCompute: 'mismo cómputo, C = 6ND',
+    optimum: 'óptimo',
+    params: 'parámetros N',
+    tokens: 'tokens D',
+    ratio: 'tokens',
+    gain: 'Multiplicar el presupuesto por diez reduce la pérdida alrededor de un 11 %.',
+    reset: 'Reiniciar',
+  }}
+/>
+
+La figura sitúa tres modelos reales frente a esa frontera. La recta discontinua recorre los repartos
+de igual cómputo; la continua, los repartos óptimos. Donde se cruzan está el modelo que conviene
+entrenar con ese presupuesto.
+
+La comprobación es que la fórmula reproduce las decisiones de los propios autores. Chinchilla se
+entrenó con $C \approx 5{,}76\times10^{23}$ operaciones, y la expresión anterior devuelve
+$N_{\text{opt}} \approx 69{,}3$ mil millones de parámetros y $D_{\text{opt}} \approx 1{,}39$
+billones de tokens: las cifras publicadas son 70 mil millones y 1,4 billones.
+
+Aplicada a GPT-3 la conclusión es incómoda. Con 175 mil millones de parámetros y 300 mil millones de
+tokens, su presupuesto fue $C \approx 3{,}15\times10^{23}$; el reparto óptimo para ese mismo
+presupuesto habría sido un modelo de unos 51 mil millones de parámetros entrenado sobre 1,02
+billones de tokens. Es decir, un modelo **tres veces menor** alimentado con **tres veces más texto**.
+Gopher, con 280 mil millones de parámetros sobre los mismos 300 mil millones de tokens, quedó aún
+más lejos de la frontera, y Chinchilla —de 70 mil millones— lo superó en la práctica totalidad de
+las evaluaciones con un cómputo comparable.
+
+La lección metodológica trasciende el caso. Una ley empírica ajustada en un rango describe ese
+rango; la conclusión operativa que se extrae de ella depende de qué se mantuvo fijo al ajustarla.
+Kaplan y coautores emplearon un mismo calendario de tasa de aprendizaje para todos los tamaños, lo
+que penaliza sistemáticamente a los modelos entrenados durante más tiempo y sesga el óptimo hacia
+modelos grandes.
+
+## Los dos objetivos autosupervisados
+
+Queda por concretar qué objetivo se optimiza. Las dos respuestas principales dan lugar a las dos
+familias de modelos.
+
+El **modelado de lenguaje enmascarado**, introducido con BERT, oculta alrededor del 15 % de los
+tokens y entrena al modelo para reconstruirlos a partir del contexto por ambos lados:
+
+$$
+\mathcal{L}_{\text{MLM}} = -\sum_{i \in \mathcal{M}} \log P_\theta\!\left(x_i \mid \mathbf{x}_{\setminus\mathcal{M}}\right)
+$$
+
+donde $\mathcal{M}$ es el conjunto de posiciones ocultas. El procedimiento real incorpora un detalle
+que suele omitirse y que no es cosmético: de ese 15 %, solo el 80 % se sustituye por `[MASK]`,
+mientras que un 10 % se reemplaza por un token aleatorio y el 10 % restante se deja intacto. El
+motivo es que `[MASK]` no aparece en ningún texto real, de modo que un modelo entrenado únicamente
+sobre esa marca condicionaría sus representaciones a un símbolo que nunca volverá a ver. La mezcla
+obliga a construir una representación útil en toda posición, no solo donde hay una marca.
+
+El **modelado de lenguaje causal** predice cada token a partir de los anteriores, lo que por la regla
+de la cadena factoriza la probabilidad de la secuencia completa:
+
+$$
+P_\theta(\mathbf{x}) = \prod_{t=1}^{m} P_\theta\!\left(x_t \mid x_0, x_1, \dots, x_{t-1}\right)
+$$
+
+Tomando logaritmos, maximizar esta probabilidad sobre un corpus es exactamente estimar $\theta$ por
+máxima verosimilitud. No hay ningún objetivo auxiliar: el modelo ajusta la distribución del lenguaje
+observado.
+
+## Por qué la máscara decide todo lo demás
+
+La diferencia entre ambos objetivos no está en la arquitectura sino en qué posiciones puede leer
+cada posición. Esa restricción se expresa como una máscara sobre la matriz de atención.
+
+<AttentionMask
+  n={8}
+  labels={{
+    hint: 'Una celda encendida significa que la consulta i puede leer la clave j.',
+    bidirectional: 'bidireccional',
+    causal: 'causal',
+    prefix: 'prefijo',
+    visible: 'pares visibles',
+    query: 'consulta i',
+    key: 'clave j',
+    whyBi: 'Cada posición ve la secuencia entera, de modo que ninguna puede predecirse sin filtrar su propia respuesta. Representa; no genera.',
+    whyCausal: 'La posición i solo ve lo que la precede, de modo que todas las posiciones son objetivo de predicción a la vez.',
+    whyPrefix: 'El prefijo se lee entero; la continuación se genera token a token.',
+    reset: 'Reiniciar',
+  }}
+/>
+
+De la figura se siguen dos consecuencias que explican la historia reciente del campo.
+
+La primera es que un modelo bidireccional **no puede generar** de izquierda a derecha. Si toda
+posición ve la secuencia completa, predecir la posición $i$ equivale a leerla: la respuesta forma
+parte de la entrada. Por eso el enmascaramiento es necesario en BERT, y por eso su objetivo se
+define únicamente sobre las posiciones ocultas. Un modelo causal no tiene ese problema, porque la
+máscara triangular garantiza que la posición $i$ nunca observa su propio objetivo.
+
+La segunda es una diferencia de eficiencia que la figura cuantifica. Con $n$ posiciones, la máscara
+causal deja visibles $n(n+1)/2$ pares y produce señal de entrenamiento en **todas** las posiciones de
+cada secuencia. El enmascaramiento aporta gradiente solo en el 15 % de las posiciones, de modo que
+cada secuencia rinde aproximadamente una séptima parte. Clark y coautores señalaron este punto al
+presentar ELECTRA, y es una de las razones por las que la familia causal resultó más favorable al
+escalado, con independencia de la calidad de sus representaciones.
+
+## Adaptación mediante ajuste fino
+
+Un codificador preentrenado transforma una secuencia en vectores:
+
+$$
+\mathbf{H} = \text{Codifica}_{\hat\theta}(\mathbf{x}), \qquad \mathbf{H} = (\mathbf{h}_0, \mathbf{h}_1, \dots, \mathbf{h}_m)
+$$
+
+No constituye por sí mismo un sistema. Para clasificar se le añade una cabeza, y el modelo compuesto
+se entrena sobre un conjunto etiquetado:
+
+$$
+(\tilde\omega, \tilde\theta) = \operatorname*{arg\,min}_{\omega,\theta} \sum_{(\mathbf{x},y)} \text{Pérdida}\!\left(F_{\omega,\theta}(\mathbf{x}),\, y\right)
+$$
+
+Como el punto de partida no es aleatorio, el conjunto etiquetado puede ser pequeño y el ajuste
+resulta barato. El resultado, sin embargo, es un modelo por tarea: $\tilde\theta$ ya no sirve para
+otra cosa.
+
+## Adaptación mediante el contexto
+
+Un modelo causal suficientemente bueno continuando texto admite una alternativa. Si la tarea se
+reformula como un texto que el modelo debe completar, se resuelve **sin modificar ningún parámetro**.
+
+```text
+Polaridad ∈ {positiva, negativa, neutra}.
+
+Entrada: El clima aquí es estupendo.
+Polaridad: positiva
+
+Entrada: La comida de este sitio me encanta.
+Polaridad:
+```
+
+Incluir ejemplos resueltos dentro del propio contexto permite al modelo inferir el patrón sin
+actualización de pesos. El fenómeno se denomina **aprendizaje en contexto**, y los ejemplos,
+demostraciones. Con demostraciones se habla de régimen de pocos ejemplos; con solo una instrucción,
+de régimen de cero ejemplos.
+
+El contraste con el ajuste fino es de naturaleza, no de grado. El ajuste fino produce un modelo por
+tarea; el contexto produce un modelo que sirve para todas. Esa diferencia explica buena parte del
+desplazamiento del campo.
+
+## El desplazamiento
+
+Las dos formas de adaptación corresponden a dos épocas. Los codificadores al estilo de BERT,
+entrenados con enmascaramiento y adaptados por ajuste fino, dominaron entre 2018 y 2020. Los
+decodificadores al estilo de GPT, entrenados con predicción del siguiente token y adaptados
+mediante el contexto, ocupan hoy ese lugar. El fundamento es el mismo —preentrenamiento
+autosupervisado a gran escala— y lo que cambió fue el mecanismo de adaptación, que a su vez estaba
+determinado por la máscara.
+
+La siguiente lección desarrolla el objetivo causal en detalle: la pérdida de entropía cruzada que se
+minimiza en la práctica, su relación con la perplejidad y por qué la factorización anterior es
+máxima verosimilitud sin ningún término añadido.
+
+---
+
+**Ejercicio.** Con la relación $C \approx 6ND$, calcular el presupuesto de cómputo de LLaMA-65B
+(65 mil millones de parámetros, 1,4 billones de tokens) y situarlo respecto de la frontera
+$D = 20N$. Comparar el resultado con el de Gopher y explicar por qué dos modelos de cómputo
+semejante pueden diferir tanto en rendimiento.
+
+## Referencias
+
+- Xiao y Zhu, *Foundations of Large Language Models* (2025): [arXiv:2501.09223](https://arxiv.org/abs/2501.09223).
+- Devlin y coautores, *BERT* (2019): [arXiv:1810.04805](https://arxiv.org/abs/1810.04805).
+- Brown y coautores, *Language Models are Few-Shot Learners* (2020): [arXiv:2005.14165](https://arxiv.org/abs/2005.14165).
+- Kaplan y coautores, *Scaling Laws for Neural Language Models* (2020): [arXiv:2001.08361](https://arxiv.org/abs/2001.08361).
+- Hoffmann y coautores, *Training Compute-Optimal Large Language Models* (2022): [arXiv:2203.15556](https://arxiv.org/abs/2203.15556).
+- Clark y coautores, *ELECTRA* (2020): [arXiv:2003.10555](https://arxiv.org/abs/2003.10555).
+- Bommasani y coautores, *On the Opportunities and Risks of Foundation Models* (2021): [arXiv:2108.07258](https://arxiv.org/abs/2108.07258).

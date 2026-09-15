@@ -1,0 +1,30 @@
+---
+title: 'Foundations of LLMs'
+language: 'en'
+level: 'Intermediate'
+order: 2
+summary: 'What exactly is optimised when a language model is trained: self-supervised pre-training, the scaling laws and their correction, and the objectives that separate one architecture family from another.'
+tags: ['llm', 'pre-training', 'transformers', 'machine-learning']
+---
+
+Popular accounts of language models tend to stop at the metaphor: the model "predicts the next
+word", "has read the whole internet", "learns like a child". None of those sentences answers the
+questions that matter when building a system. How much text is required for a given compute budget.
+Why a model that fills in blanks cannot generate. What is actually being optimised when a loss is
+minimised over billions of tokens.
+
+This course develops those answers from the original formulations. Each lesson starts from an
+explicitly written objective, derives it where the derivation is short, and checks its quantitative
+claims against the published figures of real models. The interactive figures allow the parameters of
+each expression to be manipulated before its analysis is read.
+
+The **first module** treats pre-training as a paradigm: why self-supervision displaced per-task
+supervised learning, what the scaling laws promise and where their first formulation was wrong, and
+the two ways of adapting an already trained model.
+
+The series continues with the objective of each architecture family: the causal decoder and its
+equivalence with maximum likelihood, the bidirectional encoder and masked language modelling, and
+the encoder-decoder variants.
+
+The contents follow Xiao and Zhu, *Foundations of Large Language Models*
+([arXiv:2501.09223](https://arxiv.org/abs/2501.09223)), with primary references cited in each lesson.
