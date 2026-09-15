@@ -1,0 +1,190 @@
+---
+title: 'Basis and dimension with Python'
+language: 'en'
+module: 'Vector spaces'
+moduleOrder: 2
+order: 4
+summary: 'The definition of a basis, the uniqueness of coordinates, dimension as an invariant, the advantages of an orthonormal basis, and change of basis as a choice of representation.'
+---
+
+The previous lessons used the words *basis* and *dimension* without defining them. The lesson on
+linear independence built an orthonormal basis with Gram-Schmidt, and the table of vector spaces
+assigned a dimension to each. This lesson establishes both concepts and reaches what makes them
+useful: the choice of basis determines how many numbers are needed to describe an object.
+
+## The definition
+
+A set $\mathcal{B} = \{\vec{b}_1,\dots,\vec{b}_n\}$ is a **basis** of a vector space $V$ if it
+satisfies two conditions:
+
+1. it is linearly independent,
+2. $\operatorname{span}(\mathcal{B}) = V$.
+
+The first condition prevents redundancy; the second prevents omission. A basis is therefore a minimal
+spanning set and also a maximal independent set.
+
+From this follows the property that gives everything else its meaning. If $\vec{v} \in V$ admits two
+representations,
+
+$$
+\vec{v} = \sum_i a_i \vec{b}_i = \sum_i c_i \vec{b}_i \quad\Longrightarrow\quad \sum_i (a_i - c_i)\vec{b}_i = \vec{0}
+$$
+
+and independence forces $a_i = c_i$ for every $i$. **Coordinates with respect to a basis are
+unique**, and that uniqueness is what allows an abstract vector to be identified with a list of
+numbers.
+
+## Dimension
+
+A vector space admits infinitely many bases, but all of them have the same number of elements. That
+result, a consequence of the Steinitz exchange lemma, is what makes it possible to define the
+**dimension** of $V$ as the cardinality of any of its bases.
+
+For the subspace spanned by the columns of a matrix, the dimension is the rank:
+
+$$
+\dim\operatorname{col}(A) = \operatorname{rank}(A)
+$$
+
+```python
+import numpy as np
+
+np.eye(3)                                    # canonical basis of R³, as columns
+
+A = np.array([[1., 0., 1.],
+              [0., 1., 1.]])                 # third column = sum of the first two
+np.linalg.matrix_rank(A)                     # 2: the dimension of the column space
+```
+
+The three columns of $A$ span a plane, not the whole space: they are a spanning set, but not a basis,
+because independence fails. Removing any one of the three yields a basis of that same plane.
+
+## Coordinates
+
+Given a basis $\mathcal{B}$, the coordinates of $\vec{v}$ are the solution of the system that
+reconstructs the vector. Arranging the basis as the columns of a matrix $B$:
+
+$$
+B\,[\vec{v}]_\mathcal{B} = \vec{v} \quad\Longrightarrow\quad [\vec{v}]_\mathcal{B} = B^{-1}\vec{v}
+$$
+
+<CoordinatesInBasis
+  b1={[2, 0.5]}
+  b2={[-0.5, 1.5]}
+  v={[3, 2]}
+  labels={{
+    hint: 'Drag the two basis vectors, or the vector being expressed.',
+    canonical: '[v] canonical',
+    inBasis: '[v]_B',
+    degenerate: 'b₁ and b₂ are dependent: not a basis.',
+    reconstruct: 'v = c₁b₁ + c₂b₂',
+    reset: 'Reset',
+  }}
+/>
+
+The lattice in the background is what the basis defines: its lines are the integer multiples of
+$\vec{b}_1$ and $\vec{b}_2$. The dashed segment traces the construction $c_1\vec{b}_1$ followed by
+$c_2\vec{b}_2$.
+
+Moving the basis vectors changes the coordinates while the vector stays where it is. That is the
+central observation: **coordinates describe the relation between a vector and a basis, not the
+vector**. And when $\vec{b}_1$ and $\vec{b}_2$ become parallel, the determinant vanishes, the set
+stops being a basis and the coordinates cease to exist.
+
+In practice the inverse is not computed, for the reasons given in the lesson on computing the
+inverse:
+
+```python
+B = np.array([[1., 1.],
+              [0., 2.]])
+v = np.array([3., 4.])
+
+np.linalg.solve(B, v)          # array([1., 2.])
+```
+
+## Why an orthonormal basis
+
+A basis is **orthonormal** when its vectors are unit length and mutually orthogonal, which in matrix
+form is written $Q^\top Q = I$. Three advantages distinguish it.
+
+The first is that the coordinates are obtained without solving anything. Since $Q^{-1} = Q^\top$, one
+dot product per coordinate suffices:
+
+$$
+[\vec{v}]_\mathcal{Q} = Q^\top \vec{v}, \qquad c_k = \langle \vec{v}, \vec{q}_k \rangle
+$$
+
+The second is numerical. The condition number of an orthogonal matrix is exactly $1$, the smallest
+possible, so computing coordinates amplifies no error. A very oblique basis can have an arbitrarily
+large condition number, with the consequences described in the lesson on the inverse and the
+transpose.
+
+The third is that the norm is preserved: $\lVert Q\vec{c} \rVert = \lVert \vec{c} \rVert$, so
+distances in coordinates match distances in the space.
+
+```python
+M = np.random.randn(4, 3)
+Q, R = np.linalg.qr(M)
+
+np.allclose(Q.T @ Q, np.eye(3))      # True: orthonormal basis of the column space
+np.linalg.cond(Q)                    # 1.0
+```
+
+The QR factorisation of the lesson on Gaussian elimination therefore provides more than a solution
+method: it turns any spanning set into an orthonormal basis of the same subspace.
+
+## Change of basis
+
+If $\mathcal{B}$ and $\mathcal{C}$ are two bases of the same space, the coordinates of a vector in
+each are related by a matrix:
+
+$$
+[\vec{v}]_\mathcal{C} = C^{-1}B\,[\vec{v}]_\mathcal{B}
+$$
+
+The reading is direct: $B[\vec{v}]_\mathcal{B}$ reconstructs the vector in canonical coordinates, and
+$C^{-1}$ re-expresses it in the second basis. When $\mathcal{C}$ is orthonormal, the expression
+reduces to $C^\top B$ and requires no inversion.
+
+## Application: the basis that compresses
+
+The practical question is which basis to choose. The answer depends on the data, and the criterion is
+how many coordinates are needed to describe them to the required precision.
+
+<EnergyCompaction
+  n={16}
+  labels={{
+    hint: 'The same vector, with its coordinates in two bases.',
+    keep: 'coefficients',
+    canonical: 'canonical basis',
+    cosine: 'cosine basis',
+    error: 'relative error',
+    energy: 'energy retained',
+    note: 'In the canonical basis every coordinate matters; in the cosine basis a few carry almost all the energy.',
+  }}
+/>
+
+The figure takes a smooth 16-sample signal and expresses it in two orthonormal bases. In the
+canonical one, the 16 coordinates are the 16 samples and all have comparable magnitude. In a cosine
+basis the magnitudes decay quickly: keeping the **3 largest out of 16** retains $98.9\,\%$ of the
+energy, with a relative error of $10.4\,\%$; with 4 coefficients, $99.7\,\%$ and an error of
+$5.2\,\%$.
+
+The vector has not changed, and both bases describe it exactly. What changes is the
+**concentration** of the information: in a suitable basis, few coordinates suffice.
+
+That is the basis of lossy compression — JPEG uses exactly this cosine basis — and also of
+dimensionality reduction. The principal component analysis of the lesson on subspaces solves the same
+problem without fixing the basis in advance: it derives it from the data, as the eigenvectors of the
+covariance matrix, so that the concentration is maximal for that particular set.
+
+In the terms of this lesson, PCA is a **change to the basis in which the data are described with
+fewest coordinates**, and the error of truncating to $k$ components is the sum of the discarded
+eigenvalues.
+
+---
+
+**Exercise.** Check with `np.linalg.qr` that the columns of $Q$ form a basis of the same subspace as
+those of $M$, by verifying that `matrix_rank(np.column_stack([Q, M]))` equals `matrix_rank(M)`. Then
+compute the coordinates of one column of $M$ in the basis $Q$ two ways, with `Q.T @ m` and with
+`np.linalg.lstsq`, and check that they agree.

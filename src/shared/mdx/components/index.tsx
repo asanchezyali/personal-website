@@ -37,6 +37,8 @@ import ProjectionOnto from './ProjectionOnto'
 import BestSubspace from './BestSubspace'
 import GramSchmidt from './GramSchmidt'
 import DependenceDegree from './DependenceDegree'
+import CoordinatesInBasis from './CoordinatesInBasis'
+import EnergyCompaction from './EnergyCompaction'
 import { PseudoCodeLine, PseudoCode } from './PseudoCode'
 
 export const components: MDXComponents = {
@@ -72,6 +74,8 @@ export const components: MDXComponents = {
   BestSubspace,
   GramSchmidt,
   DependenceDegree,
+  CoordinatesInBasis,
+  EnergyCompaction,
   TOCInline,
   a: CustomLink,
   pre: CodeBlock,

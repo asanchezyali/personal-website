@@ -1,0 +1,191 @@
+---
+title: 'Base y dimensión con Python'
+language: 'es'
+module: 'Espacios vectoriales'
+moduleOrder: 2
+order: 4
+summary: 'La definición de base, la unicidad de las coordenadas, la dimensión como invariante, las ventajas de una base ortonormal y el cambio de base como elección de representación.'
+---
+
+Las lecciones anteriores emplearon la palabra *base* y la palabra *dimensión* sin definirlas. La
+lección sobre independencia lineal construyó una base ortonormal con Gram-Schmidt, y la tabla de
+espacios vectoriales asignó una dimensión a cada uno. Esta lección establece ambos conceptos y llega
+a lo que los hace útiles: la elección de la base determina cuántos números hacen falta para
+describir un objeto.
+
+## La definición
+
+Un conjunto $\mathcal{B} = \{\vec{b}_1,\dots,\vec{b}_n\}$ es una **base** de un espacio vectorial
+$V$ si cumple dos condiciones:
+
+1. es linealmente independiente,
+2. $\operatorname{span}(\mathcal{B}) = V$.
+
+La primera condición impide que sobren vectores; la segunda, que falten. Una base es, por tanto, un
+conjunto generador minimal y también un conjunto independiente maximal.
+
+De ahí se sigue la propiedad que da sentido a todo lo demás. Si $\vec{v} \in V$ admite dos
+representaciones,
+
+$$
+\vec{v} = \sum_i a_i \vec{b}_i = \sum_i c_i \vec{b}_i \quad\Longrightarrow\quad \sum_i (a_i - c_i)\vec{b}_i = \vec{0}
+$$
+
+y la independencia obliga a que $a_i = c_i$ para todo $i$. **Las coordenadas respecto de una base son
+únicas**, y esa unicidad es la que permite identificar un vector abstracto con una lista de números.
+
+## La dimensión
+
+Un espacio vectorial admite infinitas bases, pero todas tienen el mismo número de elementos. Ese
+resultado, consecuencia del lema de intercambio de Steinitz, es lo que permite definir la
+**dimensión** de $V$ como el cardinal de cualquiera de sus bases.
+
+Para el subespacio generado por las columnas de una matriz, la dimensión es el rango:
+
+$$
+\dim\operatorname{col}(A) = \operatorname{rank}(A)
+$$
+
+```python
+import numpy as np
+
+np.eye(3)                                    # base canónica de R³, por columnas
+
+A = np.array([[1., 0., 1.],
+              [0., 1., 1.]])                 # tercera columna = suma de las dos primeras
+np.linalg.matrix_rank(A)                     # 2: la dimensión del espacio columna
+```
+
+Las tres columnas de $A$ generan un plano, no el espacio entero: son un conjunto generador, pero no
+una base, porque falla la independencia. Quitar cualquiera de las tres produce una base de ese mismo
+plano.
+
+## Coordenadas
+
+Fijada una base $\mathcal{B}$, las coordenadas de $\vec{v}$ son la solución del sistema que
+reconstruye el vector. Disponiendo la base como columnas de una matriz $B$:
+
+$$
+B\,[\vec{v}]_\mathcal{B} = \vec{v} \quad\Longrightarrow\quad [\vec{v}]_\mathcal{B} = B^{-1}\vec{v}
+$$
+
+<CoordinatesInBasis
+  b1={[2, 0.5]}
+  b2={[-0.5, 1.5]}
+  v={[3, 2]}
+  labels={{
+    hint: 'Arrastra los dos vectores de la base, o el vector que se expresa.',
+    canonical: '[v] canónicas',
+    inBasis: '[v]_B',
+    degenerate: 'b₁ y b₂ son dependientes: no forman base.',
+    reconstruct: 'v = c₁b₁ + c₂b₂',
+    reset: 'Reiniciar',
+  }}
+/>
+
+La retícula del fondo es la que define la base: sus líneas son los múltiplos enteros de $\vec{b}_1$ y
+$\vec{b}_2$. El segmento discontinuo recorre la construcción $c_1\vec{b}_1$ seguido de
+$c_2\vec{b}_2$.
+
+Al mover los vectores de la base, las coordenadas cambian mientras el vector permanece en su sitio.
+Esa es la observación central: **las coordenadas describen la relación entre un vector y una base,
+no el vector**. Y cuando $\vec{b}_1$ y $\vec{b}_2$ se vuelven paralelos, el determinante se anula, el
+conjunto deja de ser base y las coordenadas dejan de existir.
+
+En la práctica no se calcula la inversa, por las razones de la lección sobre cálculo de la inversa:
+
+```python
+B = np.array([[1., 1.],
+              [0., 2.]])
+v = np.array([3., 4.])
+
+np.linalg.solve(B, v)          # array([1., 2.])
+```
+
+## Por qué una base ortonormal
+
+Una base es **ortonormal** cuando sus vectores son unitarios y mutuamente ortogonales, lo que en
+forma matricial se escribe $Q^\top Q = I$. Tres ventajas la distinguen.
+
+La primera es que las coordenadas se obtienen sin resolver nada. Como $Q^{-1} = Q^\top$, basta un
+producto escalar por cada coordenada:
+
+$$
+[\vec{v}]_\mathcal{Q} = Q^\top \vec{v}, \qquad c_k = \langle \vec{v}, \vec{q}_k \rangle
+$$
+
+La segunda es numérica. El número de condición de una matriz ortogonal es exactamente $1$, el mínimo
+posible, de modo que el cálculo de coordenadas no amplifica el error. Una base muy oblicua puede
+tener un número de condición arbitrariamente grande, con las consecuencias descritas en la lección
+sobre la inversa y la transpuesta.
+
+La tercera es que la norma se conserva: $\lVert Q\vec{c} \rVert = \lVert \vec{c} \rVert$, de modo que
+las distancias en coordenadas coinciden con las distancias en el espacio.
+
+```python
+M = np.random.randn(4, 3)
+Q, R = np.linalg.qr(M)
+
+np.allclose(Q.T @ Q, np.eye(3))      # True: base ortonormal del espacio columna
+np.linalg.cond(Q)                    # 1.0
+```
+
+La factorización QR de la lección sobre eliminación gaussiana proporciona, por tanto, algo más que
+un método de resolución: convierte un conjunto generador cualquiera en una base ortonormal del mismo
+subespacio.
+
+## Cambio de base
+
+Si $\mathcal{B}$ y $\mathcal{C}$ son dos bases del mismo espacio, las coordenadas de un vector en una
+y otra se relacionan mediante una matriz:
+
+$$
+[\vec{v}]_\mathcal{C} = C^{-1}B\,[\vec{v}]_\mathcal{B}
+$$
+
+La lectura es directa: $B[\vec{v}]_\mathcal{B}$ reconstruye el vector en coordenadas canónicas, y
+$C^{-1}$ lo reexpresa en la segunda base. Cuando $\mathcal{C}$ es ortonormal, la expresión se reduce
+a $C^\top B$ y no requiere invertir nada.
+
+## Aplicación: la base que comprime
+
+La pregunta práctica es qué base elegir. La respuesta depende de los datos, y el criterio es cuántas
+coordenadas hacen falta para describirlos con la precisión requerida.
+
+<EnergyCompaction
+  n={16}
+  labels={{
+    hint: 'El mismo vector, con sus coordenadas en dos bases.',
+    keep: 'coeficientes',
+    canonical: 'base canónica',
+    cosine: 'base coseno',
+    error: 'error relativo',
+    energy: 'energía retenida',
+    note: 'En la base canónica todas las coordenadas importan; en la base coseno unas pocas concentran casi toda la energía.',
+  }}
+/>
+
+La figura toma una señal suave de 16 muestras y la expresa en dos bases ortonormales. En la canónica,
+las 16 coordenadas son las 16 muestras y todas tienen magnitud comparable. En una base de cosenos,
+las magnitudes decaen con rapidez: conservando las **3 mayores de 16** se retiene el $98.9\,\%$ de la
+energía, con un error relativo del $10.4\,\%$; con 4 coeficientes, el $99.7\,\%$ y un error del
+$5.2\,\%$.
+
+El vector no ha cambiado, y ambas bases lo describen exactamente. Lo que cambia es la
+**concentración** de la información: en una base adecuada, pocas coordenadas bastan.
+
+Ese es el fundamento de la compresión con pérdida —JPEG emplea exactamente esta base de cosenos— y
+también el de la reducción de dimensionalidad. El análisis de componentes principales de la lección
+sobre subespacios resuelve el mismo problema sin fijar la base de antemano: la obtiene de los datos,
+como los vectores propios de la matriz de covarianza, de modo que la concentración sea máxima para
+ese conjunto concreto.
+
+En términos de esta lección, PCA es un **cambio a la base en la que los datos se describen con menos
+coordenadas**, y el error de truncar a $k$ componentes es la suma de los valores propios descartados.
+
+---
+
+**Ejercicio.** Comprobar con `np.linalg.qr` que las columnas de $Q$ forman una base del mismo
+subespacio que las de $M$, verificando que `matrix_rank(np.column_stack([Q, M]))` coincide con
+`matrix_rank(M)`. Calcular después las coordenadas de una columna de $M$ en la base $Q$ de dos
+maneras, con `Q.T @ m` y con `np.linalg.lstsq`, y comprobar que coinciden.
