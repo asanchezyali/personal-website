@@ -47,6 +47,8 @@ import TransformGallery from './TransformGallery'
 import HomogeneousCompose from './HomogeneousCompose'
 import Diagonalise from './Diagonalise'
 import SimilarityInvariants from './SimilarityInvariants'
+import FourSubspaces from './FourSubspaces'
+import MinimumNorm from './MinimumNorm'
 import { PseudoCodeLine, PseudoCode } from './PseudoCode'
 
 export const components: MDXComponents = {
@@ -92,6 +94,8 @@ export const components: MDXComponents = {
   HomogeneousCompose,
   Diagonalise,
   SimilarityInvariants,
+  FourSubspaces,
+  MinimumNorm,
   TOCInline,
   a: CustomLink,
   pre: CodeBlock,

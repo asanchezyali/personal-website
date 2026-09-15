@@ -1,0 +1,275 @@
+---
+title: 'Image and kernel with Python'
+language: 'en'
+module: 'Vector spaces'
+moduleOrder: 2
+order: 9
+summary: 'The kernel as a relation of ambiguity, rank-nullity as a conservation law, the two orthogonal decompositions that explain it, the four bases delivered by the singular value decomposition, and the minimum-norm solution.'
+---
+
+The course has already used the image and the kernel under other names. The column space appeared
+in the treatment of subspaces; the solution set of $A\vec{x} = \vec{0}$, in the description of the
+general solution of a system. This lesson gathers them under the point of view of the linear map,
+where they cease to be two independent constructions and become the two halves of a single identity.
+
+## The two questions
+
+Let $\Phi : V \to W$ be a linear map. Two subspaces describe it completely.
+
+The **image** is what $\Phi$ reaches:
+
+$$
+\operatorname{Im}(\Phi) = \{\,\Phi(\vec{v}) : \vec{v} \in V\,\} \subseteq W
+$$
+
+The **kernel** is what $\Phi$ annihilates:
+
+$$
+\ker(\Phi) = \{\,\vec{v} \in V : \Phi(\vec{v}) = \vec{0}_W\,\} \subseteq V
+$$
+
+Both are subspaces, and the verification follows immediately from linearity. The kernel always
+contains $\vec{0}_V$, since $\Phi(\vec{0}) = \vec{0}$; if $\Phi(\vec{u}) = \Phi(\vec{v}) = \vec{0}$
+then $\Phi(\alpha\vec{u} + \vec{v}) = \alpha\vec{0} + \vec{0} = \vec{0}$. The image contains
+$\vec{0}_W$ for the same reason, and is closed under combinations because
+$\alpha\Phi(\vec{u}) + \Phi(\vec{v}) = \Phi(\alpha\vec{u} + \vec{v})$.
+
+For a matrix $A \in \mathbb{R}^{m\times n}$, which represents a map $\mathbb{R}^n \to \mathbb{R}^m$,
+the image is the span of the columns and the kernel is the solution set of the homogeneous system.
+They live in different spaces: the kernel in the domain, the image in the codomain.
+
+## The kernel measures ambiguity
+
+Defining the kernel as the set of vectors sent to zero is correct but deceptively narrow. Its actual
+content is the following. If $\Phi(\vec{x}) = \Phi(\vec{y})$, then
+
+$$
+\Phi(\vec{x} - \vec{y}) = \Phi(\vec{x}) - \Phi(\vec{y}) = \vec{0}
+$$
+
+and therefore $\vec{x} - \vec{y} \in \ker(\Phi)$. The converse is equally direct. The conclusion is
+an equivalence:
+
+$$
+\Phi(\vec{x}) = \Phi(\vec{y}) \iff \vec{x} - \vec{y} \in \ker(\Phi)
+$$
+
+The kernel is not a set of special vectors: it is the complete list of the confusions the map
+commits. Two inputs become indistinguishable at the output exactly when their difference falls in
+the kernel. Hence the familiar criterion, which now appears as a particular case: $\Phi$ is
+injective if and only if $\ker(\Phi) = \{\vec{0}\}$, because only then can two inputs agree at the
+output solely by having been equal to begin with.
+
+This reading is the one that matters in machine learning. A linear layer $W\vec{x}$ with a
+non-trivial kernel discards information irreversibly, and does so by a precise rule: it discards
+exactly the directions of the kernel. No later layer can recover them, because they never arrived.
+
+## The rank-nullity theorem
+
+The dimensions of these two subspaces are not independent. They are bound by an exact identity.
+
+$$
+\dim\ker(\Phi) + \dim\operatorname{Im}(\Phi) = \dim V
+$$
+
+The proof explains why. Let $\{\vec{b}_1,\dots,\vec{b}_k\}$ be a basis of the kernel, with
+$k = \dim\ker(\Phi)$. Being an independent set in $V$, it extends to a full basis
+$\{\vec{b}_1,\dots,\vec{b}_k,\vec{c}_1,\dots,\vec{c}_{n-k}\}$ of $V$. The images
+$\Phi(\vec{c}_1),\dots,\Phi(\vec{c}_{n-k})$ then span the image —since the $\vec{b}_i$ contribute
+zero— and are independent: a vanishing combination $\sum \alpha_j \Phi(\vec{c}_j) = \vec{0}$ places
+$\sum \alpha_j \vec{c}_j$ in the kernel, which forces it to be a combination of the $\vec{b}_i$, and
+independence of the full basis forces $\alpha_j = 0$. There are therefore exactly $n - k$ of them.
+
+The statement is a conservation law. The domain contributes $n$ dimensions and none of them is lost
+from view: each is either transmitted to the image or crushed against the kernel. Raising the rank
+requires shrinking the kernel by the same amount.
+
+<FourSubspaces
+  labels={{
+    hint: 'The blocks are sized by the dimension they hold. The rank can exceed neither n nor m.',
+    domain: 'domain ℝⁿ',
+    codomain: 'codomain ℝᵐ',
+    row: 'rows',
+    bijection: 'row space → image, one to one',
+    toZero: 'kernel → 0',
+    unreachable: 'left null space: never reached',
+    identity: 'rank(A) + dim ker(A) = n',
+    reset: 'Reset',
+  }}
+/>
+
+The figure records two consequences the statement leaves implicit. The first is that the rank is
+bounded by both dimensions, $\operatorname{rank}(A) \le \min(m, n)$: a wide matrix necessarily has a
+kernel, and a tall matrix necessarily leaves part of the codomain unreached. The second is that the
+two lower blocks are of different natures. The kernel describes information that goes in and does
+not come out; the lower right block describes outputs the system never produces, and is the reason
+$A\vec{x} = \vec{b}$ may fail to have a solution.
+
+## The two orthogonal decompositions
+
+The theorem admits a finer reading, which additionally explains why it holds. Consider the condition
+$A\vec{x} = \vec{0}$ written row by row: the product of each row of $A$ with $\vec{x}$ is zero. That
+is, $\vec{x}$ is orthogonal to every row, and hence to the whole subspace they span:
+
+$$
+\ker(A) = \operatorname{row}(A)^{\perp}
+$$
+
+This is not an approximate relation nor an analogy: it is the definition of the matrix product read
+another way. Since a subspace and its orthogonal complement add up to the whole space,
+
+$$
+\mathbb{R}^n = \operatorname{row}(A) \oplus \ker(A)
+$$
+
+Applying the same to $A^\top$, whose row space is the column space of $A$, yields the decomposition
+of the codomain:
+
+$$
+\mathbb{R}^m = \operatorname{col}(A) \oplus \ker(A^\top)
+$$
+
+Rank-nullity is now a corollary. The first decomposition gives
+$\dim\operatorname{row}(A) + \dim\ker(A) = n$, and the theorem equating row rank with column rank
+—treated in the lesson on rank— identifies the first summand with $\dim\operatorname{Im}(A)$.
+
+The structure of the map is also now clear: restricted to the row space, $A$ is a bijection onto its
+image. That is the solid arrow in the figure above. Everything $A$ does of interest happens between
+two subspaces of dimension $r$; the rest is annihilation on one side and inaccessibility on the
+other.
+
+## The four bases
+
+The singular value decomposition delivers orthonormal bases of all four subspaces at once. If
+$A = U\Sigma V^\top$ has rank $r$, the first $r$ columns of $V$ span the row space and the remaining
+$n - r$ span the kernel; the first $r$ columns of $U$ span the image and the remaining $m - r$ span
+$\ker(A^\top)$.
+
+A concrete example. Let
+
+$$
+A = \begin{bmatrix} 1 & 2 & 3 & 4 \\ 2 & 4 & 7 & 10 \\ 1 & 2 & 4 & 6 \end{bmatrix}
+$$
+
+whose third row is the first plus $(0,0,1,2)$, and whose second is twice the first plus the same
+vector. The relation $\vec{f}_1 - \vec{f}_2 + \vec{f}_3 = \vec{0}$ leaves the rank at $2$.
+
+```python
+import numpy as np
+
+A = np.array([[1, 2, 3, 4],
+              [2, 4, 7, 10],
+              [1, 2, 4, 6]], dtype=float)
+
+U, s, Vt = np.linalg.svd(A)
+r = np.linalg.matrix_rank(A)          # 2
+
+kernel = Vt[r:].T                     # 4 × 2
+left   = U[:, r:]                     # 3 × 1
+
+print(np.abs(A @ kernel).max())        # ≈ 1e-15
+print(np.abs(left.T @ A).max())        # ≈ 1e-15
+```
+
+The non-zero singular values are $\sigma_1 \approx 15.989$ and $\sigma_2 \approx 0.583$; an
+independent check: $\sigma_1^2 + \sigma_2^2 = 256 = \lVert A \rVert_F^2$. The count matches on both
+sides: $2 + 2 = 4$ in the domain and $2 + 1 = 3$ in the codomain.
+
+The bases returned by the decomposition are orthonormal but are not the only possible ones. Solving
+the homogeneous system by hand gives the integer basis
+
+$$
+\ker(A) = \operatorname{span}\left\{ \begin{bmatrix} -2 \\ 1 \\ 0 \\ 0 \end{bmatrix},\ \begin{bmatrix} 2 \\ 0 \\ -2 \\ 1 \end{bmatrix} \right\}
+$$
+
+and the relation among the rows identifies $\ker(A^\top) = \operatorname{span}\{(1,-1,1)\}$. These
+span the same subspaces; what the decomposition adds is orthonormality and numerical stability.
+
+On that last point a warning already stated in the lesson on linear independence applies. Obtaining
+the singular values through $A^\top A$ squares the conditioning: in this very example that route
+returns $\sigma_3 \approx 4.8\times10^{-8}$ instead of zero, large enough that a poorly chosen
+threshold would count a rank of $3$ that does not exist. `np.linalg.svd` operates directly on $A$
+and does not incur that loss.
+
+## The minimum-norm solution
+
+The lesson on the particular and general solution established that the solution set of
+$A\vec{x} = \vec{b}$ is $\vec{x}_p + \ker(A)$. The orthogonal decomposition pins down which of those
+infinitely many solutions is distinguished: exactly one of them belongs to the row space.
+
+<MinimumNorm
+  a={[2, 1]}
+  b={2}
+  labels={{
+    hint: 'The dashed line is the kernel; the solid one, the solution set. Drag the row of A or slide t.',
+    current: '‖x‖',
+    minimal: '‖x†‖',
+    decomposition: '‖x‖² = ‖x†‖² + t²',
+    note: 'Every point on the line solves Ax = b; only one lies in the row space.',
+    reset: 'Reset',
+  }}
+/>
+
+The argument is the Pythagorean theorem. Written as $\vec{x} = \vec{x}^{\dagger} + \vec{k}$ with
+$\vec{x}^{\dagger} \in \operatorname{row}(A)$ and $\vec{k} \in \ker(A)$, orthogonality of the two
+summands gives
+
+$$
+\lVert \vec{x} \rVert^2 = \lVert \vec{x}^{\dagger} \rVert^2 + \lVert \vec{k} \rVert^2
+$$
+
+so the norm is minimal precisely when $\vec{k} = \vec{0}$. The minimum-norm solution is the row-space
+component, and it is what the pseudoinverse returns.
+
+For $A = \begin{bmatrix}1&1&1&1\\1&2&3&4\end{bmatrix}$ and $\vec{b} = (4, 10)$, the computation
+$\vec{x}^{\dagger} = A^\top(AA^\top)^{-1}\vec{b}$ gives $(1,1,1,1)$, with norm $2$. The alternative
+solution $(0,2,2,0)$ satisfies the same system and has norm $2\sqrt{2} \approx 2.83$.
+
+```python
+A = np.array([[1, 1, 1, 1],
+              [1, 2, 3, 4]], dtype=float)
+b = np.array([4.0, 10.0])
+
+x = np.linalg.pinv(A) @ b       # [1. 1. 1. 1.]
+```
+
+The relevance to machine learning is the following. A model with more parameters than data poses an
+underdetermined system, and the set of parameters that fit the training set is an entire affine
+subspace. Which element of that set is obtained depends on the algorithm, not on the problem.
+Gradient descent initialised at zero on a linear least-squares problem converges to the minimum-norm
+solution, because every update is a combination of rows of $A$ and the iterate never leaves the row
+space. It is an implicit bias towards the smallest solution, imposed by the geometry of the
+optimiser rather than by an explicit regularisation term.
+
+## What a layer loses
+
+Rank-nullity turns architecture design into arithmetic. A projection from $768$ to $64$ dimensions
+has rank at most $64$, so its kernel has dimension at least $704$: seven hundred and four
+independent directions of the input space become indistinguishable on passing through it.
+
+```python
+W = np.random.randn(64, 768)
+r = np.linalg.matrix_rank(W)      # 64
+print(W.shape[1] - r)             # 704
+```
+
+Two qualifications prevent extracting more from this than it says. The first is that a network with
+non-linear activations is not a linear map, and the count applies layer by layer, not to the
+composition: the bound it produces is necessary, not sufficient, and the lesson on linear maps
+already showed that without activations the composition collapses into a single matrix. The second
+is that numerical rank is a binary answer to a continuous question, as treated in the lesson on
+linear independence: a direction with singular value $10^{-6}$ formally counts inside the image and
+survives the passage, but lies buried under the noise of the floating-point representation and under
+the noise of the data themselves.
+
+With those reservations, the claim that does hold is structural in character. Information loss in a
+linear layer is neither diffuse nor gradual: it has a direction, a subspace and an exact dimension,
+and all three are computable before anything is trained.
+
+---
+
+**Exercise.** Build a $5\times 8$ matrix of rank $3$ as the product of random $5\times 3$ and
+$3\times 8$ matrices. Obtain bases of the four subspaces with `np.linalg.svd` and verify numerically
+the four orthogonality and annihilation relations. Then check that `np.linalg.lstsq` returns, for a
+$\vec{b}$ in the image, the smallest-norm solution among several obtained by adding kernel vectors
+to it.
