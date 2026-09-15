@@ -1,0 +1,218 @@
+---
+title: 'Valores singulares con Python'
+language: 'es'
+module: 'Espacios vectoriales'
+moduleOrder: 2
+order: 11
+summary: 'La descomposición que el curso llevaba usando sin definir: su construcción a partir del teorema espectral, la elipse como lectura geométrica, el determinante entendido como volumen y la razón de que exista donde la diagonalización fracasa.'
+---
+
+La descomposición en valores singulares ha aparecido en siete lecciones de este curso. Produjo la
+base del núcleo, decidió el rango numérico, sostuvo la aproximación de rango bajo, devolvió la
+pseudoinversa y entregó las bases de los cuatro subespacios. En ninguna quedó definida: se invocó
+como una herramienta prestada. Esta lección salda la deuda.
+
+## El enunciado
+
+Toda matriz $A \in \mathbb{R}^{m\times n}$ admite una factorización
+
+$$
+A = U\Sigma V^\top
+$$
+
+con $U \in \mathbb{R}^{m\times m}$ y $V \in \mathbb{R}^{n\times n}$ **ortogonales**
+—$U^\top U = I$, $V^\top V = I$— y $\Sigma \in \mathbb{R}^{m\times n}$ diagonal con entradas
+
+$$
+\sigma_1 \ge \sigma_2 \ge \cdots \ge \sigma_{\min(m,n)} \ge 0
+$$
+
+Las $\sigma_i$ son los **valores singulares**, las columnas de $U$ los vectores singulares por la
+izquierda y las de $V$ los de la derecha. El adjetivo importante del enunciado es *toda*: sin
+hipótesis de simetría, de invertibilidad ni siquiera de que la matriz sea cuadrada.
+
+## De dónde sale
+
+La construcción no requiere maquinaria nueva. Parte del teorema espectral de la lección sobre el
+cambio de base y de una observación de la lección sobre la inversa y la transpuesta: $A^\top A$ es
+simétrica y semidefinida positiva, porque para todo $\vec{v}$
+
+$$
+\vec{v}^\top A^\top A\vec{v} = \lVert A\vec{v} \rVert^2 \ge 0
+$$
+
+El teorema espectral proporciona entonces una base ortonormal $\vec{v}_1,\dots,\vec{v}_n$ de
+vectores propios de $A^\top A$ con valores propios $\lambda_i \ge 0$. Defínase
+$\sigma_i = \sqrt{\lambda_i}$ y, para los $\sigma_i$ no nulos,
+
+$$
+\vec{u}_i = \frac{A\vec{v}_i}{\sigma_i}
+$$
+
+Queda comprobar que estos $\vec{u}_i$ son ortonormales, y el cálculo es de una línea:
+
+$$
+\vec{u}_i^\top\vec{u}_j = \frac{\vec{v}_i^\top A^\top A\vec{v}_j}{\sigma_i\sigma_j} = \frac{\lambda_j\,\vec{v}_i^\top\vec{v}_j}{\sigma_i\sigma_j} = \delta_{ij}
+$$
+
+Completando los $\vec{u}_i$ hasta una base ortonormal de $\mathbb{R}^m$ se obtiene $U$, y
+$A\vec{v}_i = \sigma_i\vec{u}_i$ para todo $i$ es exactamente $AV = U\Sigma$. La existencia queda
+demostrada, y de paso queda claro el origen del problema numérico señalado en la lección sobre la
+independencia lineal: formar $A^\top A$ sirve para *demostrar* el teorema, no para *calcularlo*,
+porque eleva al cuadrado el condicionamiento. Los algoritmos reales trabajan sobre $A$.
+
+## La imagen de la circunferencia
+
+La lectura geométrica es la que conviene retener. Como $V^\top$ es ortogonal, no deforma; $\Sigma$
+estira cada eje por su factor; $U$ vuelve a no deformar. Toda aplicación lineal es, por tanto, una
+rotación, seguida de un estiramiento según ejes perpendiculares, seguida de otra rotación.
+
+<SVDEllipse
+  a={[2, 1, 0, 1.5]}
+  labels={{
+    hint: 'La circunferencia unidad se convierte en una elipse. Editar las entradas de A.',
+    singular: 'σ₁, σ₂',
+    volume: 'σ₁σ₂',
+    conditioning: 'κ = σ₁/σ₂',
+    note: 'Los dos ejes de la elipse son perpendiculares para cualquier matriz, por asimétrica que sea.',
+    reset: 'Reiniciar',
+  }}
+/>
+
+La consecuencia visible en la figura es menos evidente de lo que parece. Una matriz arbitraria
+tuerce, cizalla y refleja, y aun así la imagen de la circunferencia unidad es siempre una elipse, y
+sus dos ejes son siempre perpendiculares entre sí. Los vectores $\vec{v}_i$ son las direcciones
+ortogonales del dominio que la matriz mantiene ortogonales al transformarlas; el teorema afirma que
+tales direcciones existen para toda matriz.
+
+De aquí sale también la interpretación de $\sigma_1$. Como $V^\top$ conserva la norma, el mayor
+estiramiento posible es el mayor factor de $\Sigma$:
+
+$$
+\sigma_1 = \max_{\lVert\vec{x}\rVert = 1} \lVert A\vec{x} \rVert
+$$
+
+que es la definición de la norma espectral $\lVert A \rVert_2$. Para
+$A = \begin{bmatrix}2&1\\0&1{,}5\end{bmatrix}$ vale $2{,}379$, y un barrido numérico sobre la
+circunferencia lo confirma. El menor valor singular es, simétricamente, el menor estiramiento.
+
+## El determinante es un volumen
+
+La lección sobre la inversa y la transpuesta introdujo el determinante como criterio de
+invertibilidad y dejó sin explicar qué mide. La factorización lo responde. Tomando determinantes en
+$A = U\Sigma V^\top$ para $A$ cuadrada, y usando que una matriz ortogonal tiene determinante
+$\pm 1$,
+
+$$
+\lvert\det A\rvert = \lvert\det U\rvert \cdot \det\Sigma \cdot \lvert\det V^\top\rvert = \prod_{i=1}^{n}\sigma_i
+$$
+
+El producto de los valores singulares es el volumen de la imagen del cubo unidad: cada eje se estira
+por su $\sigma_i$ y el volumen es el producto de los factores. La figura anterior lo muestra en
+dimensión dos, donde $\sigma_1\sigma_2$ es el área de la elipse dividida por $\pi$ y coincide con
+$\lvert\det A\rvert$ para cualquier matriz que se introduzca.
+
+El criterio de la lección 3 queda así explicado en lugar de enunciado. Que $\det A = 0$ equivale a
+que algún $\sigma_i$ sea nulo, y eso significa que la imagen del cubo tiene volumen cero: la
+aplicación aplasta el espacio contra un subespacio de dimensión menor, que es precisamente el
+núcleo no trivial de la lección sobre la imagen y el núcleo. Invertibilidad, determinante, rango y
+valores singulares son cuatro formas de decir lo mismo.
+
+La lectura del determinante como factor de volumen es también la que emplean los modelos
+generativos de flujo normalizado, donde el cambio de variable exige corregir la densidad por el
+determinante del jacobiano, y donde las arquitecturas se diseñan para que ese determinante sea
+barato de calcular.
+
+## ¿Por qué no basta con diagonalizar?
+
+La lección sobre el cambio de base mostró que la diagonalización falla de tres maneras distintas:
+valores propios repetidos con una sola dirección propia, ausencia de valores propios reales, y la
+imposibilidad de plantearla siquiera para una matriz rectangular. La descomposición en valores
+singulares no falla en ninguno de esos casos.
+
+<EigenVsSingular
+  labels={{
+    hint: 'Un solo parámetro recorre todos los regímenes propios. A(t) = [[1, 1], [t, 1]].',
+    eigen: 'valores propios',
+    singular: 'valores singulares',
+    none: 'sin valores propios reales',
+    defective: 'valor propio doble, una sola dirección: defectuosa',
+    distinct: 'dos valores propios reales',
+    scalar: 'múltiplo escalar de la identidad',
+    note: 'El relato de los valores propios cambia de naturaleza tres veces a lo largo del deslizador. Los valores singulares no se inmutan.',
+    reset: 'Reiniciar',
+  }}
+/>
+
+El caso $t = 0$ es la cizalladura $\begin{bmatrix}1&1\\0&1\end{bmatrix}$ que la lección sobre el
+cambio de base utilizó como ejemplo de matriz defectuosa: tiene un único valor propio doble y una
+sola dirección invariante, de modo que no admite base de vectores propios. Sus valores singulares
+son $\varphi$ y $1/\varphi$, donde $\varphi$ es la razón áurea, con producto $1$ igual a su
+determinante y $\kappa = \varphi^2 \approx 2{,}62$. La matriz que resiste la diagonalización se deja
+describir sin dificultad por la otra factorización.
+
+Las tres diferencias que lo explican son las siguientes. La descomposición espectral exige una
+matriz cuadrada y diagonalizable, y la de valores singulares no exige nada. La primera produce una
+matriz de paso $S$ que solo se pide invertible y que puede estar arbitrariamente mal condicionada;
+la segunda produce factores ortogonales, que preservan normas y ángulos y son por tanto los mejor
+condicionados posibles. La tercera es que los valores propios de una matriz no simétrica pueden ser
+complejos, mientras que los valores singulares son reales y no negativos por construcción.
+
+La relación entre ambas existe y conviene enunciarla para evitar confusiones: cuando $A$ es
+simétrica, sus valores singulares son los valores absolutos de sus valores propios. El signo es la
+información que la descomposición en valores singulares descarta.
+
+## El número de condición
+
+La lección sobre la inversa y la transpuesta introdujo `np.linalg.cond` para medir la amplificación
+del error y no explicó de dónde sale el número. Es el cociente
+
+$$
+\kappa(A) = \frac{\sigma_1}{\sigma_n}
+$$
+
+es decir, la excentricidad de la elipse: cuánto estira la matriz en la dirección más favorable
+frente a la menos favorable. Una matriz con $\kappa$ grande aplasta la circunferencia hasta dejarla
+casi plana, y recuperar la dirección aplastada amplifica cualquier perturbación por ese factor. Con
+$\sigma_n = 0$ el cociente es infinito y la matriz es singular, que es el mismo hecho enunciado
+desde la otra punta.
+
+```python
+import numpy as np
+
+A = np.array([[2., 1.], [0., 1.5]])
+U, s, Vt = np.linalg.svd(A)
+
+s[0] / s[-1]                 # 1.8866...  == np.linalg.cond(A)
+np.prod(s)                   # 3.0        == abs(np.linalg.det(A))
+```
+
+## Lo que ya se venía usando
+
+Con la factorización definida, las apariciones anteriores dejan de ser recetas. La base ortonormal
+del núcleo que devuelve `scipy.linalg.null_space` son las últimas columnas de $V$. El rango
+numérico es el recuento de valores singulares por encima de un umbral, y el umbral existe porque la
+alternativa es una respuesta binaria a una pregunta continua. La aproximación óptima de rango $k$
+consiste en conservar los $k$ primeros términos de
+
+$$
+A = \sum_{i=1}^{r} \sigma_i\,\vec{u}_i\vec{v}_i^\top
+$$
+
+que es la forma en que el teorema de Eckart-Young se enunció en la lección sobre el rango. La
+pseudoinversa invierte los valores singulares no nulos y deja el resto en cero, lo que produce la
+solución de norma mínima de la lección sobre la imagen y el núcleo. Y los cuatro subespacios
+fundamentales son los dos bloques de columnas de $U$ y los dos de $V$.
+
+El coste es $O(mn^2)$ para $m \ge n$, varias veces el de una factorización LU, según los órdenes de
+magnitud reunidos en la lección sobre la elección del método. Es la razón de que no se emplee para
+resolver un sistema cuadrado bien condicionado, y de que sea sin embargo la herramienta indicada
+cuando la pregunta no es *cuál es la solución* sino *cuánta información contiene esta matriz*.
+
+---
+
+**Ejercicio.** Tomar una matriz $2\times 2$ cualquiera, calcular su descomposición con
+`np.linalg.svd` y verificar las tres identidades de esta lección: que `U` y `Vt` son ortogonales
+hasta precisión de máquina, que $\prod\sigma_i$ coincide con $\lvert\det A\rvert$, y que
+$\sigma_1$ iguala el máximo de $\lVert A\vec{x}\rVert$ sobre un muestreo fino de la circunferencia
+unidad. Repetir con una matriz $3\times 5$ y comprobar que $\sigma_4$ y $\sigma_5$ no existen.

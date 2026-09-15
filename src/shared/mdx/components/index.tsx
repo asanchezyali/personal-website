@@ -51,6 +51,8 @@ import FourSubspaces from './FourSubspaces'
 import MinimumNorm from './MinimumNorm'
 import AffineHyperplane from './AffineHyperplane'
 import AffineCombination from './AffineCombination'
+import SVDEllipse from './SVDEllipse'
+import EigenVsSingular from './EigenVsSingular'
 import { PseudoCodeLine, PseudoCode } from './PseudoCode'
 
 export const components: MDXComponents = {
@@ -100,6 +102,8 @@ export const components: MDXComponents = {
   MinimumNorm,
   AffineHyperplane,
   AffineCombination,
+  SVDEllipse,
+  EigenVsSingular,
   TOCInline,
   a: CustomLink,
   pre: CodeBlock,
