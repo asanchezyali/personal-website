@@ -12,8 +12,8 @@ export interface CourseModule {
 const published = <T extends { draft?: boolean }>(items: T[]) => items.filter((i) => !i.draft)
 
 export function getCourses(locale: string): Course[] {
-  return published(courses.filter((c) => c.language === locale)).sort((a, b) =>
-    a.title.localeCompare(b.title)
+  return published(courses.filter((c) => c.language === locale)).sort(
+    (a, b) => a.order - b.order || a.title.localeCompare(b.title)
   )
 }
 
