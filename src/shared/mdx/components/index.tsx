@@ -35,6 +35,8 @@ import SubspaceTest from './SubspaceTest'
 import ShapeOrientation from './ShapeOrientation'
 import ProjectionOnto from './ProjectionOnto'
 import BestSubspace from './BestSubspace'
+import GramSchmidt from './GramSchmidt'
+import DependenceDegree from './DependenceDegree'
 import { PseudoCodeLine, PseudoCode } from './PseudoCode'
 
 export const components: MDXComponents = {
@@ -68,6 +70,8 @@ export const components: MDXComponents = {
   ShapeOrientation,
   ProjectionOnto,
   BestSubspace,
+  GramSchmidt,
+  DependenceDegree,
   TOCInline,
   a: CustomLink,
   pre: CodeBlock,

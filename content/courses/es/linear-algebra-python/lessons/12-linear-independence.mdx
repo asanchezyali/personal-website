@@ -1,0 +1,191 @@
+---
+title: 'Independencia lineal con Python'
+language: 'es'
+module: 'Espacios vectoriales'
+moduleOrder: 2
+order: 3
+summary: 'La definición de independencia lineal y sus caracterizaciones equivalentes, el proceso de Gram-Schmidt como prueba constructiva, y el factor de inflación de la varianza para medir la dependencia aproximada de datos reales.'
+---
+
+El curso ha empleado la expresión *columnas linealmente independientes* como criterio en varias
+ocasiones: al caracterizar las matrices invertibles, al describir el núcleo y al hablar de
+colinealidad. Esta lección establece la definición y, sobre todo, se ocupa de un problema que la
+definición no resuelve: con datos reales, la independencia exacta es la norma y resulta poco
+informativa.
+
+## La definición
+
+Los vectores $\vec{v}_1,\dots,\vec{v}_k$ de un espacio vectorial son **linealmente independientes**
+si la única combinación lineal que produce el vector nulo es la trivial:
+
+$$
+\sum_{i=1}^{k} \lambda_i \vec{v}_i = \vec{0} \quad\Longrightarrow\quad \lambda_1 = \cdots = \lambda_k = 0
+$$
+
+En caso contrario son **linealmente dependientes**, y existe al menos un $\lambda_j \neq 0$. Despejando
+ese término,
+
+$$
+\vec{v}_j = -\frac{1}{\lambda_j}\sum_{i \neq j} \lambda_i \vec{v}_i
+$$
+
+de modo que $\vec{v}_j$ pertenece al span de los restantes y no amplía el subespacio generado.
+
+Disponiendo los vectores como columnas de una matriz $X$, la condición se traduce en afirmaciones ya
+conocidas, todas equivalentes entre sí:
+
+| Formulación | Condición |
+| --- | --- |
+| definición | $X\vec{\lambda} = \vec{0}$ solo con $\vec{\lambda} = \vec{0}$ |
+| núcleo | $\ker(X) = \{\vec{0}\}$ |
+| rango | $\operatorname{rank}(X) = k$ |
+| matriz de Gram | $X^\top X$ no singular |
+| determinante, si $X$ es cuadrada | $\det X \neq 0$ |
+
+```python
+import numpy as np
+
+X = np.column_stack([[1., 0., 0.],
+                     [0., 1., 0.],
+                     [1., 1., 0.]])          # v₃ = v₁ + v₂
+
+np.linalg.matrix_rank(X)                     # 2 < 3: dependientes
+```
+
+Las tres primeras filas de la tabla ya aparecieron por separado en lecciones anteriores. La
+equivalencia entre ellas es lo que hace intercambiables las herramientas: `matrix_rank`,
+`null_space` y `det` responden a la misma pregunta desde ángulos distintos.
+
+## Gram-Schmidt como prueba constructiva
+
+Verificar el rango responde *si* hay dependencia. El proceso de **Gram-Schmidt** responde además
+*dónde* está, y lo hace construyendo una base ortonormal del span.
+
+El procedimiento es la proyección de la lección anterior aplicada repetidamente. Para cada vector, se
+le resta su proyección sobre el subespacio ya construido y se normaliza el residuo:
+
+$$
+\vec{v}_k' = \vec{v}_k - \sum_{j<k} \langle \vec{v}_k, \vec{q}_j\rangle\, \vec{q}_j, \qquad \vec{q}_k = \frac{\vec{v}_k'}{\lVert \vec{v}_k' \rVert}
+$$
+
+<GramSchmidt
+  vectors={[[1, 0, 0], [0, 1, 0], [1, 1, 0]]}
+  alternative={[0, 0, 1]}
+  labels={{
+    step: 'Paso',
+    subtract: 'restar',
+    residual: 'norma del residuo',
+    dependent: 'residuo nulo: dependiente',
+    independent: 'independientes',
+    swap: 'sustituir v₃',
+    restore: 'restaurar v₃',
+  }}
+/>
+
+El criterio aparece en la norma del residuo. Si $\lVert\vec{v}_k'\rVert = 0$, el vector estaba
+enteramente contenido en el span de los anteriores y no aporta una dirección nueva. El botón sustituye
+$\vec{v}_3 = (1,1,0)$, que es la suma de los dos primeros, por $(0,0,1)$: el residuo pasa de $0$ a
+$1$ y el conjunto se vuelve independiente.
+
+Esa es la conexión con la factorización QR de la lección sobre eliminación gaussiana: los vectores
+$\vec{q}_j$ son las columnas de $Q$ y los coeficientes $\langle\vec{v}_k,\vec{q}_j\rangle$ las
+entradas de $R$. Gram-Schmidt es QR expuesto paso a paso, aunque la implementación de LAPACK emplea
+reflexiones de Householder, numéricamente más estables.
+
+## La pregunta binaria y los datos reales
+
+Con datos medidos, la dependencia exacta prácticamente no ocurre: basta el ruido de la última cifra
+para que el rango salga completo. La lección sobre el núcleo describió la consecuencia inmediata —el
+rango numérico depende de una tolerancia—, pero hay una segunda, más de fondo.
+
+El rango responde con un número entero a una pregunta que es continua. Dos columnas casi paralelas y
+dos columnas ortogonales reciben la misma respuesta, *independientes*, mientras que el modelo que se
+ajuste sobre ellas se comportará de forma radicalmente distinta.
+
+<DependenceDegree
+  labels={{
+    hint: 'x₃ = (1 − α)·d + α·(x₁ + x₂). En α = 1 es exactamente la suma de las otras dos.',
+    singular: 'valores singulares',
+    cond: 'cond(X)',
+    vif: 'VIF de x₃',
+    rank: 'matrix_rank',
+    note: 'El rango solo cambia en el extremo; el número de condición y el VIF crecen en todo el recorrido.',
+    reset: 'Reiniciar',
+  }}
+/>
+
+La figura interpola la tercera columna entre una dirección independiente y la suma de las dos
+primeras. El comportamiento de los tres indicadores difiere por completo:
+
+| $\alpha$ | $\sigma_3$ | $\operatorname{cond}(X)$ | VIF | rango |
+| --- | --- | --- | --- | --- |
+| 0 | 1.97 | 11.8 | 1.3 | 3 |
+| 0.5 | 1.93 | 14.7 | 7.3 | 3 |
+| 0.75 | 1.06 | 29.7 | 42.8 | 3 |
+| 0.9 | 0.40 | 83.6 | 338 | 3 |
+| 0.99 | 0.039 | 898 | 38 712 | 3 |
+| 1 | 0 | ∞ | ∞ | 2 |
+
+El rango permanece en $3$ hasta el último instante y entonces salta. El número de condición y el VIF
+crecen de forma continua y ya señalan un problema grave en $\alpha = 0.9$, donde el rango aún
+declara independencia.
+
+La propia figura ilustra de paso un detalle numérico. Obtiene los valores singulares a partir de los
+autovalores de $X^\top X$, y formar esa matriz eleva al cuadrado el número de condición, de modo que
+$\sigma_3$ conserva aproximadamente la mitad de las cifras significativas. El umbral aplicable es
+entonces $\sqrt{\varepsilon}\,\sigma_1$ y no $\varepsilon\,\sigma_1$; con el umbral habitual, la
+columna dependiente de $\alpha = 1$ se declararía independiente. Es el mismo argumento que desaconseja
+las ecuaciones normales en la lección sobre la inversa y la transpuesta.
+
+## El factor de inflación de la varianza
+
+El **VIF** de la columna $j$ mide cuánto de ella explican las demás. Se obtiene regresando esa columna
+sobre el resto y leyendo el coeficiente de determinación:
+
+$$
+\mathrm{VIF}_j = \frac{1}{1 - R_j^2}
+$$
+
+Su interpretación es directa: la varianza del coeficiente estimado $\hat{\beta}_j$ queda multiplicada
+por $\mathrm{VIF}_j$ respecto de la que tendría si esa columna fuese ortogonal a las demás. Un
+$\mathrm{VIF}$ de $42.8$ significa un intervalo de confianza $\sqrt{42.8} \approx 6.5$ veces más
+ancho.
+
+```python
+def vif(X, j):
+    otras = np.delete(X, j, axis=1)
+    A = np.column_stack([np.ones(len(X)), otras])
+    beta, *_ = np.linalg.lstsq(A, X[:, j], rcond=None)
+    residuo = X[:, j] - A @ beta
+    r2 = 1 - residuo @ residuo / ((X[:, j] - X[:, j].mean()) ** 2).sum()
+    return 1 / (1 - r2)
+```
+
+Las convenciones habituales sitúan el umbral de preocupación en $\mathrm{VIF} > 5$ o
+$\mathrm{VIF} > 10$, según la fuente. Son reglas prácticas sin fundamento teórico: lo que importa es
+la comparación con la magnitud del efecto que se pretende estimar.
+
+## Qué hacer con la dependencia
+
+Detectada la colinealidad, las respuestas dependen del objetivo.
+
+Si el interés está en **predecir**, la colinealidad no impide un buen ajuste: el modelo alcanza la
+misma proyección sobre el espacio columna, como estableció la lección anterior. La regularización L2
+estabiliza los coeficientes al seleccionar el representante de norma mínima, y las predicciones
+apenas se resienten.
+
+Si el interés está en **interpretar** los coeficientes, la colinealidad es un obstáculo real y no
+hay técnica que lo elimine: los datos no contienen la información necesaria para separar los efectos.
+Las alternativas son eliminar columnas redundantes, combinarlas en un índice, o recoger datos en los
+que las variables varíen de forma independiente.
+
+La reducción de dimensionalidad por componentes principales resuelve el problema numérico por
+construcción, ya que sus direcciones son ortogonales, pero a costa de la interpretabilidad: cada
+componente es una combinación de todas las variables originales.
+
+---
+
+**Ejercicio.** Construir una matriz $8\times 3$ cuya tercera columna sea la suma de las dos primeras
+más un ruido de escala $\varepsilon$, y representar $\mathrm{VIF}_3$ frente a $\varepsilon$ para
+$\varepsilon \in \{1, 10^{-1}, 10^{-2}, 10^{-3}\}$. Comprobar que `matrix_rank` devuelve $3$ en los
+cuatro casos y explicar por qué ese resultado no contradice lo observado.
