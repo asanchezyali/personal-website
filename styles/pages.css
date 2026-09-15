@@ -1163,7 +1163,7 @@
 
   /* ---- Talks / Elsewhere ---- */
   .elsewhere { padding: 0 0 96px; }
-  .el-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .el-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 16px; }
   .el-card { display: block; padding: 22px; border: 1px solid var(--g-200); border-radius: 16px; transition: all .2s var(--ease); }
   html.dark .el-card { border-color: var(--g-200); }
   .el-card:hover { border-color: var(--p-500); transform: translateY(-2px); }

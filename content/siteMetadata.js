@@ -19,7 +19,7 @@ const siteMetadata = {
   youtube: 'https://youtube.com',
   linkedin: 'https://www.linkedin.com/in/asanchezyali/',
   threads: 'https://www.threads.net',
-  instagram: 'https://www.instagram.com/asanchezyali/',
+  instagram: 'https://www.instagram.com/yalixyz/',
   locale: 'en',
   multiauthors: true,
   analytics: {

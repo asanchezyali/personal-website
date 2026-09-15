@@ -14,7 +14,7 @@ const siteMetadata = {
   github: 'https://github.com/asanchezyali',
   x: 'https://x.com/asanchezyali',
   linkedin: 'https://www.linkedin.com/in/asanchezyali/',
-  instagram: 'https://www.instagram.com/asanchezyali/',
+  instagram: 'https://www.instagram.com/yalixyz/',
   discord: 'https://discord.gg/cBSw4bKZDj',
   locale: 'en',
   analytics: {
