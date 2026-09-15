@@ -2,16 +2,16 @@
   "hero": {
     "title": "Colaborar",
     "description": "Soy un desarrollador de software con formación matemática, apasionado por la IA, el código abierto y el intercambio de conocimiento. Construyamos algo juntos.",
-    "status_pill": "Abierto a proyectos · Q2 2026",
-    "title_1": "Construyamos algo",
-    "title_2": "que valga la pena.",
-    "cta_call": "Agendar llamada",
+    "status_pill": "Código abierto · comunidad de estudio · buenas conversaciones",
+    "title_1": "Hablemos de cosas",
+    "title_2": "que vale la pena construir.",
+    "cta_call": "Agendar una charla",
     "cta_email": "Escríbeme"
   },
   "offers": {
     "offer_1": {
       "title": "Web & desarrollo de producto",
-      "description": "De \"tenemos una idea\" a un producto funcional. Diseño la arquitectura, construyo las primeras iteraciones y entrego un código que tu equipo puede mantener.",
+      "description": "Llevar productos de una idea a algo en lo que la gente pueda iniciar sesión: la arquitectura, las primeras iteraciones y un código que un equipo pueda mantener.",
       "bullets": [
         "Next.js · TypeScript · Postgres",
         "Design systems & UI desde cero",
@@ -20,7 +20,7 @@
     },
     "offer_2": {
       "title": "Funcionalidades & sistemas de IA",
-      "description": "Integraciones prácticas: RAG, agentes, visión, voz. Te ayudo a elegir el modelo correcto y medir qué funciona.",
+      "description": "Integraciones prácticas: RAG, agentes, visión y voz, con el modelo adecuado para cada caso y evaluaciones que muestran qué funciona de verdad.",
       "bullets": [
         "RAG pipelines, embeddings, evals",
         "Modelos self-hosted & API",
@@ -38,15 +38,15 @@
     }
   },
   "process": {
-    "title": "Cómo trabajaremos",
-    "subtitle": "Los mismos cuatro pasos, siempre.",
+    "title": "Cómo abordo un proyecto",
+    "subtitle": "Los mismos cuatro pasos, de un experimento de fin de semana a un proyecto largo.",
     "steps": [
       {
         "title": "Conversación",
         "desc": "Una llamada de 30 min para entender qué quieres construir."
       },
       {
-        "title": "Propuesta",
+        "title": "Alcance",
         "desc": "Alcance con hitos y trade-offs honestos."
       },
       {
@@ -72,7 +72,7 @@
       },
       {
         "year": "2024 – Presente",
-        "role": "Consultor Freelance",
+        "role": "Proyectos independientes",
         "company": "Independiente",
         "description": "Consultoría en IA y desarrollo full-stack para startups — desde agentes conversacionales hasta plataformas de generación de imágenes."
       },

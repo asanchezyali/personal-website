@@ -7,10 +7,10 @@
     "lead": "I'm Alejandro — a software developer, mathematician, and AI specialist based in Medellín, Colombia. I work on the intersection of machine learning, Web3, and everyday web software.",
     "quick": {
       "location": "Medellín, Colombia",
-      "available": "Available for projects",
+      "available": "Teaching & building in public",
       "experience": "8+ years shipping"
     },
-    "cta_primary": "Work with me →",
+    "cta_primary": "Say hello →",
     "cta_github": "GitHub",
     "tag": "Medellín · 2026"
   },
@@ -25,8 +25,8 @@
         "desc": "Building intelligent learning systems powered by LLMs, RAG pipelines, and agentic workflows."
       },
       {
-        "title": "Freelance Consultant",
-        "desc": "AI consulting and full-stack development for startups — from conversational agents to image generation platforms."
+        "title": "Independent projects",
+        "desc": "Independent engineering work, from conversational agents to image generation platforms."
       },
       {
         "title": "Full Stack Developer",

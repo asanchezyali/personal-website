@@ -2,16 +2,16 @@
   "hero": {
     "title": "Collaborate",
     "description": "I'm a software developer with a mathematical background, passionate about AI, open source, and knowledge sharing. Let's build something together.",
-    "status_pill": "Currently open for projects · Q2 2026",
-    "title_1": "Let's build something",
-    "title_2": "worth shipping.",
-    "cta_call": "Book an intro call",
+    "status_pill": "Open source · study community · good conversations",
+    "title_1": "Let's talk about things",
+    "title_2": "worth building.",
+    "cta_call": "Book a chat",
     "cta_email": "Email me"
   },
   "offers": {
     "offer_1": {
       "title": "Web & product builds",
-      "description": "From \"we have an idea\" to a product customers can log into. I design the architecture, build the first few iterations, and hand you a codebase your team can own.",
+      "description": "Taking products from an idea to something people can log into: the architecture, the first iterations, and a codebase a team can own.",
       "bullets": [
         "Next.js · TypeScript · Postgres",
         "Design systems & UI from scratch",
@@ -20,7 +20,7 @@
     },
     "offer_2": {
       "title": "AI features & systems",
-      "description": "Practical, production-grade integrations: retrieval, agents, vision, speech. I'll help you pick the right model and measure what's actually working.",
+      "description": "Practical integrations: retrieval, agents, vision and speech, with the right model for the job and evals that show what actually works.",
       "bullets": [
         "RAG pipelines, embeddings, evals",
         "Self-hosted & API-based models",
@@ -38,15 +38,15 @@
     }
   },
   "process": {
-    "title": "How we'll work",
-    "subtitle": "Same four steps whether it's a weekend spike or a six-month engagement.",
+    "title": "How I approach a build",
+    "subtitle": "The same four steps, from a weekend spike to a long build.",
     "steps": [
       {
         "title": "Conversation",
         "desc": "A 30-minute call to understand what you're trying to build and what success looks like."
       },
       {
-        "title": "Proposal",
+        "title": "Scope",
         "desc": "A short written scope with milestones, assumptions, and honest trade-offs. No fluff."
       },
       {
@@ -72,7 +72,7 @@
       },
       {
         "year": "2024 – Present",
-        "role": "Freelance Consultant",
+        "role": "Independent projects",
         "company": "Independent",
         "description": "AI consulting and full-stack development for startups — from conversational agents to image generation platforms."
       },

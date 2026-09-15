@@ -7,10 +7,10 @@
     "lead": "Soy Alejandro — desarrollador de software, matemático y especialista en IA radicado en Medellín, Colombia. Trabajo en la intersección entre el aprendizaje automático, la Web3 y el software web de todos los días.",
     "quick": {
       "location": "Medellín, Colombia",
-      "available": "Disponible para proyectos",
+      "available": "Enseñando y construyendo en público",
       "experience": "8+ años construyendo"
     },
-    "cta_primary": "Trabaja conmigo →",
+    "cta_primary": "Conversemos →",
     "cta_github": "GitHub",
     "tag": "Medellín · 2026"
   },
@@ -25,8 +25,8 @@
         "desc": "Construyo sistemas de aprendizaje inteligentes impulsados por LLMs, pipelines de RAG y flujos de trabajo con agentes."
       },
       {
-        "title": "Consultor independiente",
-        "desc": "Consultoría en IA y desarrollo full-stack para startups — desde agentes conversacionales hasta plataformas de generación de imágenes."
+        "title": "Proyectos independientes",
+        "desc": "Trabajo de ingeniería independiente, desde agentes conversacionales hasta plataformas de generación de imágenes."
       },
       {
         "title": "Desarrollador Full Stack",
