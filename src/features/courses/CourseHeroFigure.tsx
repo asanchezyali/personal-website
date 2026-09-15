@@ -29,7 +29,10 @@ export default function CourseHeroFigure() {
         <line className="chero-axis" x1={half} y1={0} x2={half} y2={SIZE} />
 
         <g className="chero-vecs">
-          <polygon className="chero-area" points={`${to(0)},${to(0)} ${to(1)},${to(0)} ${to(1)},${to(1)} ${to(0)},${to(1)}`} />
+          <polygon
+            className="chero-area"
+            points={`${to(0)},${to(0)} ${to(1)},${to(0)} ${to(1)},${to(1)} ${to(0)},${to(1)}`}
+          />
           <line className="chero-i" x1={to(0)} y1={to(0)} x2={to(2.4)} y2={to(0)} />
           <line className="chero-j" x1={to(0)} y1={to(0)} x2={to(0)} y2={to(2.4)} />
           <circle className="chero-dot-i" cx={to(2.4)} cy={to(0)} r={5} />

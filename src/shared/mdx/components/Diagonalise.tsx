@@ -43,7 +43,16 @@ function analyse(a: number, b: number, c: number, d: number) {
 
   if (Math.abs(disc) <= 1e-9) {
     if (isScalar) {
-      return { kind: 'scalar' as const, tr, det, values: [l1, l1], vectors: [[1, 0], [0, 1]] as [number, number][] }
+      return {
+        kind: 'scalar' as const,
+        tr,
+        det,
+        values: [l1, l1],
+        vectors: [
+          [1, 0],
+          [0, 1],
+        ] as [number, number][],
+      }
     }
     const v = vecFor(l1)
     return { kind: 'defective' as const, tr, det, values: [l1, l1], vectors: v ? [v] : [] }
@@ -53,16 +62,14 @@ function analyse(a: number, b: number, c: number, d: number) {
   const v2 = vecFor(l2)
   return {
     kind: 'distinct' as const,
-    tr, det,
+    tr,
+    det,
     values: [l1, l2],
     vectors: [v1, v2].filter(Boolean) as [number, number][],
   }
 }
 
-export default function Diagonalise({
-  initial = [2, 1, 0, 3],
-  labels = {},
-}: DiagonaliseProps) {
+export default function Diagonalise({ initial = [2, 1, 0, 3], labels = {} }: DiagonaliseProps) {
   const [m, setM] = useState<[number, number, number, number]>(initial)
   const [a, b, c, d] = m
   const r = analyse(a, b, c, d)
@@ -79,10 +86,13 @@ export default function Diagonalise({
   }
 
   const verdict =
-    r.kind === 'distinct' ? (labels.distinct ?? 'two independent eigen-directions: diagonalisable')
-    : r.kind === 'scalar' ? (labels.scalar ?? 'a multiple of the identity: already diagonal')
-    : r.kind === 'defective' ? (labels.defective ?? 'one eigen-direction only: not diagonalisable')
-    : (labels.complex ?? 'no real eigenvalues: the map rotates')
+    r.kind === 'distinct'
+      ? (labels.distinct ?? 'two independent eigen-directions: diagonalisable')
+      : r.kind === 'scalar'
+        ? (labels.scalar ?? 'a multiple of the identity: already diagonal')
+        : r.kind === 'defective'
+          ? (labels.defective ?? 'one eigen-direction only: not diagonalisable')
+          : (labels.complex ?? 'no real eigenvalues: the map rotates')
 
   const ok = r.kind === 'distinct' || r.kind === 'scalar'
   const f = (n: number) => (Math.abs(n) < 5e-3 ? '0' : n.toFixed(2))
@@ -95,7 +105,9 @@ export default function Diagonalise({
     <div className="dg">
       <div className="dg-canvas">
         <svg viewBox={`0 0 ${SIZE} ${SIZE}`} role="img" aria-label={verdict}>
-          <clipPath id="dg-clip"><rect x={0} y={0} width={SIZE} height={SIZE} /></clipPath>
+          <clipPath id="dg-clip">
+            <rect x={0} y={0} width={SIZE} height={SIZE} />
+          </clipPath>
           {grid.map((k) => (
             <g key={k}>
               <line className="vplot-grid" x1={toX(k)} y1={0} x2={toX(k)} y2={SIZE} />
@@ -111,12 +123,21 @@ export default function Diagonalise({
               const u: [number, number] = [v[0] / n, v[1] / n]
               return (
                 <g key={i}>
-                  <line className="dg-axis" x1={toX(-far * u[0])} y1={toY(-far * u[1])}
-                        x2={toX(far * u[0])} y2={toY(far * u[1])} />
-                  <line className="dg-vec" x1={toX(0)} y1={toY(0)}
-                        x2={toX(u[0])} y2={toY(u[1])} />
-                  <line className="dg-img" x1={toX(0)} y1={toY(0)}
-                        x2={toX(r.values[i] * u[0])} y2={toY(r.values[i] * u[1])} />
+                  <line
+                    className="dg-axis"
+                    x1={toX(-far * u[0])}
+                    y1={toY(-far * u[1])}
+                    x2={toX(far * u[0])}
+                    y2={toY(far * u[1])}
+                  />
+                  <line className="dg-vec" x1={toX(0)} y1={toY(0)} x2={toX(u[0])} y2={toY(u[1])} />
+                  <line
+                    className="dg-img"
+                    x1={toX(0)}
+                    y1={toY(0)}
+                    x2={toX(r.values[i] * u[0])}
+                    y2={toY(r.values[i] * u[1])}
+                  />
                 </g>
               )
             })}
@@ -125,24 +146,34 @@ export default function Diagonalise({
       </div>
 
       <div className="dg-controls">
-        <p className="dvec-hint">{labels.hint ?? 'The lines are the directions the map leaves invariant.'}</p>
+        <p className="dvec-hint">
+          {labels.hint ?? 'The lines are the directions the map leaves invariant.'}
+        </p>
 
         <div className="dg-sliders">
           {(['a', 'b', 'c', 'd'] as const).map((name, i) => (
             <label key={name} className="mplay-slider">
               <span className="mplay-name">{name}</span>
-              <input type="range" min={-3} max={4} step={0.25} value={m[i]}
-                     onChange={(e) => set(i, Number(e.target.value))} aria-label={name} />
+              <input
+                type="range"
+                min={-3}
+                max={4}
+                step={0.25}
+                value={m[i]}
+                onChange={(e) => set(i, Number(e.target.value))}
+                aria-label={name}
+              />
               <span className="mplay-val">{m[i]}</span>
             </label>
           ))}
         </div>
 
-        <p className={`dg-verdict ${ok ? 'is-ok' : 'is-bad'}`} aria-live="polite">{verdict}</p>
+        <p className={`dg-verdict ${ok ? 'is-ok' : 'is-bad'}`} aria-live="polite">
+          {verdict}
+        </p>
 
         <p className="mplay-readout" aria-live="polite">
-          {labels.eigen ?? 'λ'} ={' '}
-          {r.kind === 'complex' ? '—' : r.values.map(f).join(' , ')}
+          {labels.eigen ?? 'λ'} = {r.kind === 'complex' ? '—' : r.values.map(f).join(' , ')}
         </p>
         <p className="mplay-readout">
           tr = {f(r.tr)} · det = {f(r.det)}

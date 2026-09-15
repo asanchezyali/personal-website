@@ -102,7 +102,13 @@ export default function DragVector({
     >
       {/* generous invisible hit target */}
       <circle cx={toX(vec[0])} cy={toY(vec[1])} r={18} fill="transparent" />
-      <circle className="dvec-grip" cx={toX(vec[0])} cy={toY(vec[1])} r={7} style={{ fill: color }} />
+      <circle
+        className="dvec-grip"
+        cx={toX(vec[0])}
+        cy={toY(vec[1])}
+        r={7}
+        style={{ fill: color }}
+      />
     </g>
   )
 
@@ -185,11 +191,13 @@ export default function DragVector({
       </div>
 
       <div className="dvec-controls">
-        <p className="dvec-hint">{labels.hint ?? 'Drag either tip — or focus it and use the arrow keys.'}</p>
+        <p className="dvec-hint">
+          {labels.hint ?? 'Drag either tip — or focus it and use the arrow keys.'}
+        </p>
 
         <p className="mplay-readout" aria-live="polite">
-          <strong style={{ color: 'var(--vp-a)' }}>v</strong> = ({v[0].toFixed(1)}, {v[1].toFixed(1)})
-          {'  ·  '}
+          <strong style={{ color: 'var(--vp-a)' }}>v</strong> = ({v[0].toFixed(1)},{' '}
+          {v[1].toFixed(1)}){'  ·  '}
           {labels.length ?? '‖v‖'} = {norm.toFixed(2)}
         </p>
         {second && (

@@ -47,7 +47,13 @@ function rref(src: number[][]) {
   return { R, pivots }
 }
 
-export default function MinusOneTrick({ a = [[1, 2, -1], [2, 4, -2]], labels = {} }: MinusOneTrickProps) {
+export default function MinusOneTrick({
+  a = [
+    [1, 2, -1],
+    [2, 4, -2],
+  ],
+  labels = {},
+}: MinusOneTrickProps) {
   const n = a[0].length
 
   const { R, pivots, square, free } = useMemo(() => {
@@ -110,7 +116,10 @@ export default function MinusOneTrick({ a = [[1, 2, -1], [2, 4, -2]], labels = {
           <div className="mmul-block">
             <span className="mmul-name">{step === 0 ? 'A' : 'RREF'}</span>
             <div className="mmul-bracket">
-              <div className="mmul-cells" style={{ gridTemplateColumns: `repeat(${n}, minmax(32px, auto))` }}>
+              <div
+                className="mmul-cells"
+                style={{ gridTemplateColumns: `repeat(${n}, minmax(32px, auto))` }}
+              >
                 {rows.map((r, i) =>
                   r.cells.map((v, j) => (
                     <span
@@ -120,7 +129,9 @@ export default function MinusOneTrick({ a = [[1, 2, -1], [2, 4, -2]], labels = {
                         r.kind === 'hidden' ? 'is-pending' : '',
                         r.kind === 'minus' && j === i ? 'is-target' : '',
                         showBasis && free.includes(j) ? 'is-source' : '',
-                      ].filter(Boolean).join(' ')}
+                      ]
+                        .filter(Boolean)
+                        .join(' ')}
                     >
                       {r.kind === 'hidden' ? '·' : fmt(v)}
                     </span>
@@ -135,11 +146,18 @@ export default function MinusOneTrick({ a = [[1, 2, -1], [2, 4, -2]], labels = {
               <span className="mmul-op">→</span>
               {basis.map((vec, k) => (
                 <div className="mmul-block" key={k}>
-                  <span className="mmul-name">n<em>{k + 1}</em></span>
+                  <span className="mmul-name">
+                    n<em>{k + 1}</em>
+                  </span>
                   <div className="mmul-bracket">
-                    <div className="mmul-cells" style={{ gridTemplateColumns: 'minmax(32px, auto)' }}>
+                    <div
+                      className="mmul-cells"
+                      style={{ gridTemplateColumns: 'minmax(32px, auto)' }}
+                    >
                       {vec.map((v, i) => (
-                        <span key={i} className="mmul-cell">{fmt(v)}</span>
+                        <span key={i} className="mmul-cell">
+                          {fmt(v)}
+                        </span>
                       ))}
                     </div>
                   </div>
@@ -149,24 +167,54 @@ export default function MinusOneTrick({ a = [[1, 2, -1], [2, 4, -2]], labels = {
           )}
         </div>
 
-        <p className="mmul-formula" aria-live="polite">{note}</p>
+        <p className="mmul-formula" aria-live="polite">
+          {note}
+        </p>
       </div>
 
       <div className="mmul-controls">
         <div className="elim-buttons">
-          <button type="button" className="elim-btn" disabled={step === 0}
-                  onClick={() => { setPlaying(false); setStep((s) => Math.max(0, s - 1)) }} aria-label="−1">◀</button>
-          <button type="button" className="elim-btn is-play"
-                  onClick={() => { if (step >= total - 1) setStep(0); setPlaying((p) => !p) }}>
+          <button
+            type="button"
+            className="elim-btn"
+            disabled={step === 0}
+            onClick={() => {
+              setPlaying(false)
+              setStep((s) => Math.max(0, s - 1))
+            }}
+            aria-label="−1"
+          >
+            ◀
+          </button>
+          <button
+            type="button"
+            className="elim-btn is-play"
+            onClick={() => {
+              if (step >= total - 1) setStep(0)
+              setPlaying((p) => !p)
+            }}
+          >
             {playing ? (labels.pause ?? '❚❚') : '▶'}
           </button>
-          <button type="button" className="elim-btn" disabled={step === total - 1}
-                  onClick={() => { setPlaying(false); setStep((s) => Math.min(total - 1, s + 1)) }} aria-label="+1">▶</button>
+          <button
+            type="button"
+            className="elim-btn"
+            disabled={step === total - 1}
+            onClick={() => {
+              setPlaying(false)
+              setStep((s) => Math.min(total - 1, s + 1))
+            }}
+            aria-label="+1"
+          >
+            ▶
+          </button>
         </div>
         <div className="elim-track" aria-hidden="true">
           <span style={{ width: `${(step / (total - 1)) * 100}%` }} />
         </div>
-        <p className="elim-count">{labels.step ?? 'Step'} {step + 1} / {total}</p>
+        <p className="elim-count">
+          {labels.step ?? 'Step'} {step + 1} / {total}
+        </p>
       </div>
     </div>
   )

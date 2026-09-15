@@ -33,24 +33,53 @@ interface Spec {
 
 const EPS = 1e-9
 const SPECS: Record<SetId, Spec> = {
-  line0: { has: (x, y) => Math.abs(y - 0.5 * x) < EPS, draw: 'line', p: [2, 1], q: [-2, -1], lambda: -1.5 },
-  line1: { has: (x, y) => Math.abs(y - (0.5 * x + 1)) < EPS, draw: 'lineOff', p: [2, 2], q: [-2, 0], lambda: 2 },
-  quadrant: { has: (x, y) => x >= -EPS && y >= -EPS, draw: 'quadrant', p: [2, 1], q: [1, 3], lambda: -1 },
-  parabola: { has: (x, y) => Math.abs(y - x * x) < EPS, draw: 'parabola', p: [1, 1], q: [2, 4], lambda: 2 },
+  line0: {
+    has: (x, y) => Math.abs(y - 0.5 * x) < EPS,
+    draw: 'line',
+    p: [2, 1],
+    q: [-2, -1],
+    lambda: -1.5,
+  },
+  line1: {
+    has: (x, y) => Math.abs(y - (0.5 * x + 1)) < EPS,
+    draw: 'lineOff',
+    p: [2, 2],
+    q: [-2, 0],
+    lambda: 2,
+  },
+  quadrant: {
+    has: (x, y) => x >= -EPS && y >= -EPS,
+    draw: 'quadrant',
+    p: [2, 1],
+    q: [1, 3],
+    lambda: -1,
+  },
+  parabola: {
+    has: (x, y) => Math.abs(y - x * x) < EPS,
+    draw: 'parabola',
+    p: [1, 1],
+    q: [2, 4],
+    lambda: 2,
+  },
   plane: { has: () => true, draw: 'plane', p: [2, 1], q: [-1, 2], lambda: -1.5 },
-  origin: { has: (x, y) => Math.abs(x) < EPS && Math.abs(y) < EPS, draw: 'origin', p: [0, 0], q: [0, 0], lambda: 3 },
+  origin: {
+    has: (x, y) => Math.abs(x) < EPS && Math.abs(y) < EPS,
+    draw: 'origin',
+    p: [0, 0],
+    q: [0, 0],
+    lambda: 3,
+  },
 }
 
 export default function SubspaceTest({ labels = {}, sets }: SubspaceTestProps) {
-  const options =
-    sets ?? [
-      { value: 'line0' as SetId, label: 'y = x/2' },
-      { value: 'line1' as SetId, label: 'y = x/2 + 1' },
-      { value: 'quadrant' as SetId, label: 'x ≥ 0, y ≥ 0' },
-      { value: 'parabola' as SetId, label: 'y = x²' },
-      { value: 'plane' as SetId, label: 'ℝ²' },
-      { value: 'origin' as SetId, label: '{0}' },
-    ]
+  const options = sets ?? [
+    { value: 'line0' as SetId, label: 'y = x/2' },
+    { value: 'line1' as SetId, label: 'y = x/2 + 1' },
+    { value: 'quadrant' as SetId, label: 'x ≥ 0, y ≥ 0' },
+    { value: 'parabola' as SetId, label: 'y = x²' },
+    { value: 'plane' as SetId, label: 'ℝ²' },
+    { value: 'origin' as SetId, label: '{0}' },
+  ]
 
   const [id, setId] = useState<SetId>('line0')
   const s = SPECS[id]
@@ -94,17 +123,33 @@ export default function SubspaceTest({ labels = {}, sets }: SubspaceTestProps) {
           <line className="vplot-axis" x1={half} y1={0} x2={half} y2={SIZE} />
 
           <g clipPath="url(#sub-clip)">
-            {s.draw === 'plane' && <rect className="sub-region" x={0} y={0} width={SIZE} height={SIZE} />}
+            {s.draw === 'plane' && (
+              <rect className="sub-region" x={0} y={0} width={SIZE} height={SIZE} />
+            )}
             {s.draw === 'quadrant' && (
               <rect className="sub-region" x={half} y={0} width={half} height={half} />
             )}
             {s.draw === 'line' && (
-              <line className="sub-set" x1={toX(-RANGE)} y1={toY(-RANGE / 2)} x2={toX(RANGE)} y2={toY(RANGE / 2)} />
+              <line
+                className="sub-set"
+                x1={toX(-RANGE)}
+                y1={toY(-RANGE / 2)}
+                x2={toX(RANGE)}
+                y2={toY(RANGE / 2)}
+              />
             )}
             {s.draw === 'lineOff' && (
-              <line className="sub-set" x1={toX(-RANGE)} y1={toY(-RANGE / 2 + 1)} x2={toX(RANGE)} y2={toY(RANGE / 2 + 1)} />
+              <line
+                className="sub-set"
+                x1={toX(-RANGE)}
+                y1={toY(-RANGE / 2 + 1)}
+                x2={toX(RANGE)}
+                y2={toY(RANGE / 2 + 1)}
+              />
             )}
-            {s.draw === 'parabola' && <polyline className="sub-set" points={parabolaPts} fill="none" />}
+            {s.draw === 'parabola' && (
+              <polyline className="sub-set" points={parabolaPts} fill="none" />
+            )}
           </g>
 
           {s.draw === 'origin' && <circle className="sub-pt" cx={toX(0)} cy={toY(0)} r={6} />}
@@ -120,7 +165,12 @@ export default function SubspaceTest({ labels = {}, sets }: SubspaceTestProps) {
               />
             </>
           )}
-          <circle className={hasZero ? 'sub-zero is-in' : 'sub-zero is-out'} cx={toX(0)} cy={toY(0)} r={4} />
+          <circle
+            className={hasZero ? 'sub-zero is-in' : 'sub-zero is-out'}
+            cx={toX(0)}
+            cy={toY(0)}
+            r={4}
+          />
         </svg>
       </div>
 
@@ -144,12 +194,16 @@ export default function SubspaceTest({ labels = {}, sets }: SubspaceTestProps) {
           {check(
             closedAdd,
             labels.addition ?? 'closed under addition',
-            id === 'origin' ? undefined : `(${s.p.join(', ')}) + (${s.q.join(', ')}) = (${sum.join(', ')})`
+            id === 'origin'
+              ? undefined
+              : `(${s.p.join(', ')}) + (${s.q.join(', ')}) = (${sum.join(', ')})`
           )}
           {check(
             closedScale,
             labels.scaling ?? 'closed under scaling',
-            id === 'origin' ? undefined : `${s.lambda} · (${s.p.join(', ')}) = (${scaled.join(', ')})`
+            id === 'origin'
+              ? undefined
+              : `${s.lambda} · (${s.p.join(', ')}) = (${scaled.join(', ')})`
           )}
         </ul>
 

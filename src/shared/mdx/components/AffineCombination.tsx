@@ -46,8 +46,11 @@ export default function AffineCombination({ labels = {} }: AffineCombinationProp
   return (
     <div className="dvec">
       <div className="dvec-canvas">
-        <svg viewBox={`0 0 ${SIZE} ${SIZE}`} role="img"
-             aria-label={labels.hint ?? 'Affine and convex combinations of three points'}>
+        <svg
+          viewBox={`0 0 ${SIZE} ${SIZE}`}
+          role="img"
+          aria-label={labels.hint ?? 'Affine and convex combinations of three points'}
+        >
           <line className="vplot-axis" x1={0} y1={half} x2={SIZE} y2={half} />
           <line className="vplot-axis" x1={half} y1={0} x2={half} y2={SIZE} />
 
@@ -59,18 +62,37 @@ export default function AffineCombination({ labels = {} }: AffineCombinationProp
             </g>
           ))}
 
-          <circle className={convex ? 'ac-point' : 'ac-point is-out'} cx={toX(x[0])} cy={toY(x[1])} r={7} />
+          <circle
+            className={convex ? 'ac-point' : 'ac-point is-out'}
+            cx={toX(x[0])}
+            cy={toY(x[1])}
+            r={7}
+          />
         </svg>
       </div>
 
       <div className="dvec-controls">
-        <p className="dvec-hint">{labels.hint ?? 'Two weights are free; the third is fixed by the sum.'}</p>
+        <p className="dvec-hint">
+          {labels.hint ?? 'Two weights are free; the third is fixed by the sum.'}
+        </p>
 
-        {([['λ₁', l1, setL1], ['λ₂', l2, setL2]] as const).map(([name, val, set]) => (
+        {(
+          [
+            ['λ₁', l1, setL1],
+            ['λ₂', l2, setL2],
+          ] as const
+        ).map(([name, val, set]) => (
           <label key={name} className="mplay-slider">
             <span className="mplay-name">{name}</span>
-            <input type="range" min={-1} max={2} step={0.05} value={val}
-                   onChange={(e) => set(Number(e.target.value))} aria-label={name} />
+            <input
+              type="range"
+              min={-1}
+              max={2}
+              step={0.05}
+              value={val}
+              onChange={(e) => set(Number(e.target.value))}
+              aria-label={name}
+            />
             <span className="mplay-val">{val.toFixed(2)}</span>
           </label>
         ))}
@@ -82,14 +104,23 @@ export default function AffineCombination({ labels = {} }: AffineCombinationProp
           {labels.sum ?? 'λ₁ + λ₂ + λ₃'} = <strong>{f(lam[0] + lam[1] + lam[2])}</strong>
         </p>
         <p className={`lyr-verdict ${convex ? 'is-ok' : 'is-bad'}`} aria-live="polite">
-          {convex ? (labels.convex ?? 'convex combination: inside the hull')
-                  : (labels.affineOnly ?? 'a weight is negative: affine but not convex')}
+          {convex
+            ? (labels.convex ?? 'convex combination: inside the hull')
+            : (labels.affineOnly ?? 'a weight is negative: affine but not convex')}
         </p>
         <p className="cs-note">
-          {labels.note ?? 'Softmax weights are non-negative and sum to one: attention output never leaves the hull.'}
+          {labels.note ??
+            'Softmax weights are non-negative and sum to one: attention output never leaves the hull.'}
         </p>
 
-        <button className="mplay-reset" type="button" onClick={() => { setL1(0.5); setL2(0.2) }}>
+        <button
+          className="mplay-reset"
+          type="button"
+          onClick={() => {
+            setL1(0.5)
+            setL2(0.2)
+          }}
+        >
           {labels.reset ?? 'Reset'}
         </button>
       </div>

@@ -72,11 +72,9 @@ export default function FillIn({ n = 8, labels = {} }: FillInProps) {
           row.map((on, j) => (
             <span
               key={`${i}-${j}`}
-              className={[
-                'fill-cell',
-                on ? 'is-on' : '',
-                marks?.[i][j] ? 'is-fill' : '',
-              ].filter(Boolean).join(' ')}
+              className={['fill-cell', on ? 'is-on' : '', marks?.[i][j] ? 'is-fill' : '']
+                .filter(Boolean)
+                .join(' ')}
             />
           ))
         )}
@@ -104,7 +102,9 @@ export default function FillIn({ n = 8, labels = {} }: FillInProps) {
       </div>
 
       <div className="fill-controls">
-        <p className="dvec-hint">{labels.hint ?? 'The same matrix, with its rows and columns in a different order.'}</p>
+        <p className="dvec-hint">
+          {labels.hint ?? 'The same matrix, with its rows and columns in a different order.'}
+        </p>
         <div className="fill-toggle">
           <button
             type="button"

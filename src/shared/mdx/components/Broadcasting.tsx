@@ -22,7 +22,10 @@ interface BroadcastingProps {
 }
 
 const parseShape = (s: string): number[] | null => {
-  const parts = s.split(',').map((p) => p.trim()).filter(Boolean)
+  const parts = s
+    .split(',')
+    .map((p) => p.trim())
+    .filter(Boolean)
   if (parts.length === 0 || parts.length > 4) return null
   const nums = parts.map(Number)
   if (nums.some((n) => !Number.isInteger(n) || n < 1 || n > 4096)) return null
@@ -132,8 +135,7 @@ export default function Broadcasting({ presets = [], labels = {} }: Broadcasting
             ? '—'
             : ok
               ? `(${result})`
-              : (labels.error ??
-                'ValueError: operands could not be broadcast together')}
+              : (labels.error ?? 'ValueError: operands could not be broadcast together')}
         </p>
       </div>
 

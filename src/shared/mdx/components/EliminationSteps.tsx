@@ -32,9 +32,14 @@ const fmt = (v: number) => {
   return Number.isInteger(n) ? String(n) : String(Math.round(n * 100) / 100)
 }
 
-function buildSteps(a: number[][], b: number[], L: string, labels: EliminationStepsProps['labels'] = {}): Step[] {
+function buildSteps(
+  a: number[][],
+  b: number[],
+  L: string,
+  labels: EliminationStepsProps['labels'] = {}
+): Step[] {
   const n = a.length
-  let m = a.map((row, i) => [...row.map(clean), clean(b[i])])
+  const m = a.map((row, i) => [...row.map(clean), clean(b[i])])
   const snap = () => m.map((r) => [...r])
   const steps: Step[] = [{ m: snap(), note: labels.start ?? 'Augmented matrix [A | b]', hi: null }]
   let singular = false
@@ -77,7 +82,9 @@ function buildSteps(a: number[][], b: number[], L: string, labels: EliminationSt
 
   steps.push({
     m: snap(),
-    note: singular ? (labels.singular ?? 'A is singular') : (labels.done ?? 'Done — the last column is x'),
+    note: singular
+      ? (labels.singular ?? 'A is singular')
+      : (labels.done ?? 'Done — the last column is x'),
     hi: null,
   })
   return steps

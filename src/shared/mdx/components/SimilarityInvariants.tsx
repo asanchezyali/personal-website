@@ -17,8 +17,10 @@ interface SimilarityInvariantsProps {
 type M2 = [number, number, number, number]
 
 const mul = (X: M2, Y: M2): M2 => [
-  X[0] * Y[0] + X[1] * Y[2], X[0] * Y[1] + X[1] * Y[3],
-  X[2] * Y[0] + X[3] * Y[2], X[2] * Y[1] + X[3] * Y[3],
+  X[0] * Y[0] + X[1] * Y[2],
+  X[0] * Y[1] + X[1] * Y[3],
+  X[2] * Y[0] + X[3] * Y[2],
+  X[2] * Y[1] + X[3] * Y[3],
 ]
 
 const inv = (X: M2): M2 | null => {
@@ -53,8 +55,15 @@ export default function SimilarityInvariants({
     <div className="mmul-block">
       <span className="mmul-name">{title}</span>
       <div className="mmul-bracket">
-        <div className="mmul-cells" style={{ gridTemplateColumns: 'repeat(2, minmax(48px, auto))' }}>
-          {M.map((x, i) => <span key={i} className="mmul-cell">{f(x)}</span>)}
+        <div
+          className="mmul-cells"
+          style={{ gridTemplateColumns: 'repeat(2, minmax(48px, auto))' }}
+        >
+          {M.map((x, i) => (
+            <span key={i} className="mmul-cell">
+              {f(x)}
+            </span>
+          ))}
         </div>
       </div>
     </div>
@@ -74,14 +83,22 @@ export default function SimilarityInvariants({
         <div className="mmul-row">
           {grid(a, labels.original ?? 'A')}
           <span className="mmul-op">→</span>
-          {tilde ? grid(tilde, labels.changed ?? 'S⁻¹AS') : <p className="cond-warning">{labels.singular ?? 'S is singular'}</p>}
+          {tilde ? (
+            grid(tilde, labels.changed ?? 'S⁻¹AS')
+          ) : (
+            <p className="cond-warning">{labels.singular ?? 'S is singular'}</p>
+          )}
         </div>
 
         {tilde && eA && eT && (
           <table className="si-table">
             <tbody>
               {row('tr', f(a[0] + a[3]), f(tilde[0] + tilde[3]))}
-              {row('det', f(a[0] * a[3] - a[1] * a[2]), f(tilde[0] * tilde[3] - tilde[1] * tilde[2]))}
+              {row(
+                'det',
+                f(a[0] * a[3] - a[1] * a[2]),
+                f(tilde[0] * tilde[3] - tilde[1] * tilde[2])
+              )}
               {row('λ', eA.map(f).join(' , '), eT.map(f).join(' , '))}
             </tbody>
           </table>
@@ -94,17 +111,27 @@ export default function SimilarityInvariants({
           {(['s₁₁', 's₁₂', 's₂₁', 's₂₂'] as const).map((name, i) => (
             <label key={name} className="mplay-slider">
               <span className="mplay-name">{name}</span>
-              <input type="range" min={-3} max={3} step={0.25} value={s[i]}
-                     onChange={(e) => {
-                       const next = [...s] as M2
-                       next[i] = Number(e.target.value)
-                       setS(next)
-                     }} aria-label={name} />
+              <input
+                type="range"
+                min={-3}
+                max={3}
+                step={0.25}
+                value={s[i]}
+                onChange={(e) => {
+                  const next = [...s] as M2
+                  next[i] = Number(e.target.value)
+                  setS(next)
+                }}
+                aria-label={name}
+              />
               <span className="mplay-val">{s[i]}</span>
             </label>
           ))}
         </div>
-        <p className="cs-note">{labels.invariant ?? 'The entries change; the trace, the determinant and the eigenvalues do not.'}</p>
+        <p className="cs-note">
+          {labels.invariant ??
+            'The entries change; the trace, the determinant and the eigenvalues do not.'}
+        </p>
         <button className="mplay-reset" type="button" onClick={() => setS([2, -1, 1, 3])}>
           {labels.reset ?? 'Reset'}
         </button>

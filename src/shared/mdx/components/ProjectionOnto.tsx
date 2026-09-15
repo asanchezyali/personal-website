@@ -97,7 +97,10 @@ export default function ProjectionOnto({
       }}
       onKeyDown={(e) => {
         const d: Record<string, [number, number]> = {
-          ArrowRight: [STEP, 0], ArrowLeft: [-STEP, 0], ArrowUp: [0, STEP], ArrowDown: [0, -STEP],
+          ArrowRight: [STEP, 0],
+          ArrowLeft: [-STEP, 0],
+          ArrowUp: [0, STEP],
+          ArrowDown: [0, -STEP],
         }
         const m = d[e.key]
         if (!m) return
@@ -106,7 +109,13 @@ export default function ProjectionOnto({
       }}
     >
       <circle cx={toX(vec[0])} cy={toY(vec[1])} r={18} fill="transparent" />
-      <circle className="dvec-grip" cx={toX(vec[0])} cy={toY(vec[1])} r={7} style={{ fill: color }} />
+      <circle
+        className="dvec-grip"
+        cx={toX(vec[0])}
+        cy={toY(vec[1])}
+        r={7}
+        style={{ fill: color }}
+      />
     </g>
   )
 
@@ -115,15 +124,33 @@ export default function ProjectionOnto({
   return (
     <div className="dvec">
       <div className="dvec-canvas">
-        <svg ref={svgRef} viewBox={`0 0 ${SIZE} ${SIZE}`} role="img" aria-label={labels.hint ?? 'Projection onto a line'}>
-          <clipPath id="proj-clip"><rect x={0} y={0} width={SIZE} height={SIZE} /></clipPath>
+        <svg
+          ref={svgRef}
+          viewBox={`0 0 ${SIZE} ${SIZE}`}
+          role="img"
+          aria-label={labels.hint ?? 'Projection onto a line'}
+        >
+          <clipPath id="proj-clip">
+            <rect x={0} y={0} width={SIZE} height={SIZE} />
+          </clipPath>
           <line className="vplot-axis" x1={0} y1={half} x2={SIZE} y2={half} />
           <line className="vplot-axis" x1={half} y1={0} x2={half} y2={SIZE} />
 
           <g clipPath="url(#proj-clip)">
-            <line className="sub-set" x1={toX(-far * u[0])} y1={toY(-far * u[1])}
-                  x2={toX(far * u[0])} y2={toY(far * u[1])} />
-            <line className="proj-res" x1={toX(pt[0])} y1={toY(pt[1])} x2={toX(proj[0])} y2={toY(proj[1])} />
+            <line
+              className="sub-set"
+              x1={toX(-far * u[0])}
+              y1={toY(-far * u[1])}
+              x2={toX(far * u[0])}
+              y2={toY(far * u[1])}
+            />
+            <line
+              className="proj-res"
+              x1={toX(pt[0])}
+              y1={toY(pt[1])}
+              x2={toX(proj[0])}
+              y2={toY(proj[1])}
+            />
           </g>
 
           <circle className="proj-dot" cx={toX(proj[0])} cy={toY(proj[1])} r={6} />
@@ -133,19 +160,27 @@ export default function ProjectionOnto({
       </div>
 
       <div className="dvec-controls">
-        <p className="dvec-hint">{labels.hint ?? 'Drag the direction of the line, or the point being projected.'}</p>
+        <p className="dvec-hint">
+          {labels.hint ?? 'Drag the direction of the line, or the point being projected.'}
+        </p>
 
         <p className="mplay-readout" aria-live="polite">
-          <strong style={{ color: 'var(--vp-b)' }}>{labels.proj ?? 'Pw'}</strong> = ({f(proj[0])}, {f(proj[1])})
+          <strong style={{ color: 'var(--vp-b)' }}>{labels.proj ?? 'Pw'}</strong> = ({f(proj[0])},{' '}
+          {f(proj[1])})
         </p>
         <p className="mplay-readout" aria-live="polite">
           {labels.residual ?? '‖w − Pw‖'} = {f(normRes)}
         </p>
 
         <div className="mmul-bracket proj-matrix">
-          <div className="mmul-cells" style={{ gridTemplateColumns: 'repeat(2, minmax(44px, auto))' }}>
+          <div
+            className="mmul-cells"
+            style={{ gridTemplateColumns: 'repeat(2, minmax(44px, auto))' }}
+          >
             {P.flat().map((x, i) => (
-              <span key={i} className="mmul-cell">{f(x)}</span>
+              <span key={i} className="mmul-cell">
+                {f(x)}
+              </span>
             ))}
           </div>
         </div>
@@ -155,7 +190,14 @@ export default function ProjectionOnto({
           {idem ? ' ✓' : ''}
         </p>
 
-        <button className="mplay-reset" type="button" onClick={() => { setDir(v); setPt(w) }}>
+        <button
+          className="mplay-reset"
+          type="button"
+          onClick={() => {
+            setDir(v)
+            setPt(w)
+          }}
+        >
           {labels.reset ?? 'Reset'}
         </button>
       </div>

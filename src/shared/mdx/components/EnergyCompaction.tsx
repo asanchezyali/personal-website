@@ -38,9 +38,7 @@ export default function EnergyCompaction({ n = 16, labels = {} }: EnergyCompacti
     // Orthonormal basis: coordinates are dot products, no system to solve.
     const coefDct = basis.map((b) => b.reduce((s, v, i) => s + v * x[i], 0))
 
-    const order = coefDct
-      .map((c, k) => ({ c: Math.abs(c), k }))
-      .sort((a, b) => b.c - a.c)
+    const order = coefDct.map((c, k) => ({ c: Math.abs(c), k })).sort((a, b) => b.c - a.c)
     const keepSet = new Set(order.slice(0, keep).map((o) => o.k))
     const recon = Array.from({ length: n }, (_, i) =>
       basis.reduce((s, b, k) => (keepSet.has(k) ? s + coefDct[k] * b[i] : s), 0)
@@ -77,8 +75,11 @@ export default function EnergyCompaction({ n = 16, labels = {} }: EnergyCompacti
   const keepSet = new Set(order.slice(0, keep).map((o) => o.k))
 
   const plot = (a: number[], cls: string) => {
-    const mx = Math.max(...a), mn = Math.min(...a)
-    const pts = a.map((v, i) => `${(i / (a.length - 1)) * 100},${30 - ((v - mn) / (mx - mn || 1)) * 28}`)
+    const mx = Math.max(...a),
+      mn = Math.min(...a)
+    const pts = a.map(
+      (v, i) => `${(i / (a.length - 1)) * 100},${30 - ((v - mn) / (mx - mn || 1)) * 28}`
+    )
     return <polyline className={cls} points={pts.join(' ')} />
   }
 
@@ -93,19 +94,33 @@ export default function EnergyCompaction({ n = 16, labels = {} }: EnergyCompacti
           <span className="mmul-name">{labels.cosine ?? 'base coseno'}</span>
           {bars(coefDct, md, 'is-dct', keepSet)}
         </div>
-        <svg className="ec-signal" viewBox="0 0 100 32" preserveAspectRatio="none" aria-hidden="true">
+        <svg
+          className="ec-signal"
+          viewBox="0 0 100 32"
+          preserveAspectRatio="none"
+          aria-hidden="true"
+        >
           {plot(x, 'ec-orig')}
           {plot(recon, 'ec-recon')}
         </svg>
       </div>
 
       <div className="ec-controls">
-        <p className="dvec-hint">{labels.hint ?? 'The same vector, its coordinates in two bases.'}</p>
+        <p className="dvec-hint">
+          {labels.hint ?? 'The same vector, its coordinates in two bases.'}
+        </p>
 
         <label className="mplay-slider">
           <span className="mplay-name">k</span>
-          <input type="range" min={1} max={n} step={1} value={keep}
-                 onChange={(e) => setKeep(Number(e.target.value))} aria-label="coefficients kept" />
+          <input
+            type="range"
+            min={1}
+            max={n}
+            step={1}
+            value={keep}
+            onChange={(e) => setKeep(Number(e.target.value))}
+            aria-label="coefficients kept"
+          />
           <span className="mplay-val">{keep}</span>
         </label>
 
@@ -116,7 +131,10 @@ export default function EnergyCompaction({ n = 16, labels = {} }: EnergyCompacti
         <p className="mplay-readout">
           {labels.error ?? 'error relativo'} = {(err * 100).toFixed(2)} %
         </p>
-        <p className="cs-note">{labels.note ?? 'In the canonical basis every coordinate matters; in the cosine basis a few carry almost all the energy.'}</p>
+        <p className="cs-note">
+          {labels.note ??
+            'In the canonical basis every coordinate matters; in the cosine basis a few carry almost all the energy.'}
+        </p>
       </div>
     </div>
   )

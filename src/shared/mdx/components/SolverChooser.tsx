@@ -28,24 +28,78 @@ interface SolverChooserProps {
 }
 
 const DEFAULT_ANSWERS: Record<string, { call: string; why: string }> = {
-  'square|full|dense': { call: 'np.linalg.solve(A, b)', why: 'Unique solution; LU with partial pivoting.' },
-  'square|deficient|dense': { call: 'np.linalg.lstsq(A, b, rcond=None)', why: 'Singular: solve raises. lstsq returns the minimum-norm least-squares solution.' },
-  'tall|full|dense': { call: 'np.linalg.lstsq(A, b, rcond=None)', why: 'Overdetermined: no exact solution. QR, without forming AᵀA.' },
-  'tall|deficient|dense': { call: 'np.linalg.lstsq(A, b, rcond=None)', why: 'Rank-deficient least squares: the SVD path picks the minimum-norm minimiser.' },
-  'wide|full|dense': { call: 'np.linalg.lstsq(A, b, rcond=None)', why: 'Underdetermined: infinitely many solutions, and lstsq returns the one of least norm.' },
-  'wide|deficient|dense': { call: 'np.linalg.lstsq(A, b, rcond=None)', why: 'Same as above; rcond decides which singular values count as zero.' },
-  'square|full|sparse-spd': { call: 'scipy.sparse.linalg.cg(A, b)', why: 'Conjugate gradient: needs only products A·v, and requires symmetric positive definite.' },
-  'square|deficient|sparse-spd': { call: 'scipy.sparse.linalg.lsqr(A, b)', why: 'Singular or near-singular: lsqr is the least-squares iterative method.' },
-  'square|full|sparse-general': { call: 'scipy.sparse.linalg.gmres(A, b)', why: 'Non-symmetric: GMRES, since CG does not apply.' },
-  'square|deficient|sparse-general': { call: 'scipy.sparse.linalg.lsqr(A, b)', why: 'Rank-deficient and sparse: lsqr tolerates it.' },
-  'tall|full|sparse-spd': { call: 'scipy.sparse.linalg.lsqr(A, b)', why: 'Sparse least squares without forming AᵀA.' },
-  'tall|deficient|sparse-spd': { call: 'scipy.sparse.linalg.lsqr(A, b)', why: 'Sparse least squares without forming AᵀA.' },
-  'tall|full|sparse-general': { call: 'scipy.sparse.linalg.lsqr(A, b)', why: 'Sparse least squares without forming AᵀA.' },
-  'tall|deficient|sparse-general': { call: 'scipy.sparse.linalg.lsqr(A, b)', why: 'Sparse least squares without forming AᵀA.' },
-  'wide|full|sparse-spd': { call: 'scipy.sparse.linalg.lsqr(A, b)', why: 'Underdetermined and sparse: lsqr converges to the minimum-norm solution.' },
-  'wide|deficient|sparse-spd': { call: 'scipy.sparse.linalg.lsqr(A, b)', why: 'Underdetermined and sparse: lsqr converges to the minimum-norm solution.' },
-  'wide|full|sparse-general': { call: 'scipy.sparse.linalg.lsqr(A, b)', why: 'Underdetermined and sparse: lsqr converges to the minimum-norm solution.' },
-  'wide|deficient|sparse-general': { call: 'scipy.sparse.linalg.lsqr(A, b)', why: 'Underdetermined and sparse: lsqr converges to the minimum-norm solution.' },
+  'square|full|dense': {
+    call: 'np.linalg.solve(A, b)',
+    why: 'Unique solution; LU with partial pivoting.',
+  },
+  'square|deficient|dense': {
+    call: 'np.linalg.lstsq(A, b, rcond=None)',
+    why: 'Singular: solve raises. lstsq returns the minimum-norm least-squares solution.',
+  },
+  'tall|full|dense': {
+    call: 'np.linalg.lstsq(A, b, rcond=None)',
+    why: 'Overdetermined: no exact solution. QR, without forming AᵀA.',
+  },
+  'tall|deficient|dense': {
+    call: 'np.linalg.lstsq(A, b, rcond=None)',
+    why: 'Rank-deficient least squares: the SVD path picks the minimum-norm minimiser.',
+  },
+  'wide|full|dense': {
+    call: 'np.linalg.lstsq(A, b, rcond=None)',
+    why: 'Underdetermined: infinitely many solutions, and lstsq returns the one of least norm.',
+  },
+  'wide|deficient|dense': {
+    call: 'np.linalg.lstsq(A, b, rcond=None)',
+    why: 'Same as above; rcond decides which singular values count as zero.',
+  },
+  'square|full|sparse-spd': {
+    call: 'scipy.sparse.linalg.cg(A, b)',
+    why: 'Conjugate gradient: needs only products A·v, and requires symmetric positive definite.',
+  },
+  'square|deficient|sparse-spd': {
+    call: 'scipy.sparse.linalg.lsqr(A, b)',
+    why: 'Singular or near-singular: lsqr is the least-squares iterative method.',
+  },
+  'square|full|sparse-general': {
+    call: 'scipy.sparse.linalg.gmres(A, b)',
+    why: 'Non-symmetric: GMRES, since CG does not apply.',
+  },
+  'square|deficient|sparse-general': {
+    call: 'scipy.sparse.linalg.lsqr(A, b)',
+    why: 'Rank-deficient and sparse: lsqr tolerates it.',
+  },
+  'tall|full|sparse-spd': {
+    call: 'scipy.sparse.linalg.lsqr(A, b)',
+    why: 'Sparse least squares without forming AᵀA.',
+  },
+  'tall|deficient|sparse-spd': {
+    call: 'scipy.sparse.linalg.lsqr(A, b)',
+    why: 'Sparse least squares without forming AᵀA.',
+  },
+  'tall|full|sparse-general': {
+    call: 'scipy.sparse.linalg.lsqr(A, b)',
+    why: 'Sparse least squares without forming AᵀA.',
+  },
+  'tall|deficient|sparse-general': {
+    call: 'scipy.sparse.linalg.lsqr(A, b)',
+    why: 'Sparse least squares without forming AᵀA.',
+  },
+  'wide|full|sparse-spd': {
+    call: 'scipy.sparse.linalg.lsqr(A, b)',
+    why: 'Underdetermined and sparse: lsqr converges to the minimum-norm solution.',
+  },
+  'wide|deficient|sparse-spd': {
+    call: 'scipy.sparse.linalg.lsqr(A, b)',
+    why: 'Underdetermined and sparse: lsqr converges to the minimum-norm solution.',
+  },
+  'wide|full|sparse-general': {
+    call: 'scipy.sparse.linalg.lsqr(A, b)',
+    why: 'Underdetermined and sparse: lsqr converges to the minimum-norm solution.',
+  },
+  'wide|deficient|sparse-general': {
+    call: 'scipy.sparse.linalg.lsqr(A, b)',
+    why: 'Underdetermined and sparse: lsqr converges to the minimum-norm solution.',
+  },
 }
 
 export default function SolverChooser({ labels = {}, options = {}, answers }: SolverChooserProps) {

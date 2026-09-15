@@ -11,11 +11,7 @@ interface LinearComboProps {
 const RANGE = 5
 const SIZE = 320
 
-export default function LinearCombo({
-  v = [2, 1],
-  w = [-1, 2],
-  labels = {},
-}: LinearComboProps) {
+export default function LinearCombo({ v = [2, 1], w = [-1, 2], labels = {} }: LinearComboProps) {
   const [s, setS] = useState(1)
   const [t, setT] = useState(1)
 
@@ -36,7 +32,11 @@ export default function LinearCombo({
   return (
     <div className="lcombo">
       <div className="lcombo-canvas">
-        <svg viewBox={`0 0 ${SIZE} ${SIZE}`} role="img" aria-label="Linear combination of two vectors">
+        <svg
+          viewBox={`0 0 ${SIZE} ${SIZE}`}
+          role="img"
+          aria-label="Linear combination of two vectors"
+        >
           <defs>
             <marker id="lc-v" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
               <path d="M0,0 L7,3.5 L0,7 z" fill="var(--vp-a)" />

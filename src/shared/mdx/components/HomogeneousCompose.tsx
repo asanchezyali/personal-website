@@ -18,8 +18,16 @@ const SIZE = 260
 const RANGE = 5
 
 const SHAPE: [number, number][] = [
-  [0, 0], [0, 3], [2, 3], [2, 2.4], [0.7, 2.4],
-  [0.7, 1.8], [1.7, 1.8], [1.7, 1.2], [0.7, 1.2], [0.7, 0],
+  [0, 0],
+  [0, 3],
+  [2, 3],
+  [2, 2.4],
+  [0.7, 2.4],
+  [0.7, 1.8],
+  [1.7, 1.8],
+  [1.7, 1.2],
+  [0.7, 1.2],
+  [0.7, 0],
 ].map(([x, y]) => [x - 0.85, y - 1.5] as [number, number])
 
 type M3 = number[][]
@@ -73,8 +81,14 @@ export default function HomogeneousCompose({ labels = {} }: HomogeneousComposePr
   return (
     <div className="tg">
       <div className="tg-canvas">
-        <svg viewBox={`0 0 ${SIZE} ${SIZE}`} role="img" aria-label={labels.hint ?? 'Composing in homogeneous coordinates'}>
-          <clipPath id="hc-clip"><rect x={0} y={0} width={SIZE} height={SIZE} /></clipPath>
+        <svg
+          viewBox={`0 0 ${SIZE} ${SIZE}`}
+          role="img"
+          aria-label={labels.hint ?? 'Composing in homogeneous coordinates'}
+        >
+          <clipPath id="hc-clip">
+            <rect x={0} y={0} width={SIZE} height={SIZE} />
+          </clipPath>
           <line className="vplot-axis" x1={0} y1={half} x2={SIZE} y2={half} />
           <line className="vplot-axis" x1={half} y1={0} x2={half} y2={SIZE} />
           <g clipPath="url(#hc-clip)">
@@ -87,39 +101,69 @@ export default function HomogeneousCompose({ labels = {} }: HomogeneousComposePr
 
       <div className="tg-controls">
         <div className="chooser-opts">
-          <button type="button" className={rotFirst ? 'bc-preset is-active' : 'bc-preset'}
-                  onClick={() => setRotFirst(true)} aria-pressed={rotFirst}>
+          <button
+            type="button"
+            className={rotFirst ? 'bc-preset is-active' : 'bc-preset'}
+            onClick={() => setRotFirst(true)}
+            aria-pressed={rotFirst}
+          >
             {labels.rotateFirst ?? 'T · R'}
           </button>
-          <button type="button" className={!rotFirst ? 'bc-preset is-active' : 'bc-preset'}
-                  onClick={() => setRotFirst(false)} aria-pressed={!rotFirst}>
+          <button
+            type="button"
+            className={!rotFirst ? 'bc-preset is-active' : 'bc-preset'}
+            onClick={() => setRotFirst(false)}
+            aria-pressed={!rotFirst}
+          >
             {labels.translateFirst ?? 'R · T'}
           </button>
         </div>
 
         <label className="mplay-slider">
           <span className="mplay-name">{labels.angle ?? 'θ'}</span>
-          <input type="range" min={-180} max={180} step={5} value={deg}
-                 onChange={(e) => setDeg(Number(e.target.value))} aria-label="angle" />
+          <input
+            type="range"
+            min={-180}
+            max={180}
+            step={5}
+            value={deg}
+            onChange={(e) => setDeg(Number(e.target.value))}
+            aria-label="angle"
+          />
           <span className="mplay-val">{deg}°</span>
         </label>
         <label className="mplay-slider">
           <span className="mplay-name">{labels.shift ?? 'tx'}</span>
-          <input type="range" min={-4} max={4} step={0.5} value={tx}
-                 onChange={(e) => setTx(Number(e.target.value))} aria-label="translation" />
+          <input
+            type="range"
+            min={-4}
+            max={4}
+            step={0.5}
+            value={tx}
+            onChange={(e) => setTx(Number(e.target.value))}
+            aria-label="translation"
+          />
           <span className="mplay-val">{tx.toFixed(1)}</span>
         </label>
 
         <span className="mmul-name">{labels.composed ?? (rotFirst ? 'T · R' : 'R · T')}</span>
         <div className="mmul-bracket tg-matrix">
-          <div className="mmul-cells" style={{ gridTemplateColumns: 'repeat(3, minmax(44px, auto))' }}>
+          <div
+            className="mmul-cells"
+            style={{ gridTemplateColumns: 'repeat(3, minmax(44px, auto))' }}
+          >
             {M.flat().map((x, i) => (
-              <span key={i} className={`mmul-cell ${i % 3 === 2 && i < 6 ? 'is-source' : ''}`}>{f(x)}</span>
+              <span key={i} className={`mmul-cell ${i % 3 === 2 && i < 6 ? 'is-source' : ''}`}>
+                {f(x)}
+              </span>
             ))}
           </div>
         </div>
 
-        <p className="cs-note">{labels.note ?? 'The third column holds the translation; the third row keeps the block a matrix.'}</p>
+        <p className="cs-note">
+          {labels.note ??
+            'The third column holds the translation; the third row keeps the block a matrix.'}
+        </p>
       </div>
     </div>
   )

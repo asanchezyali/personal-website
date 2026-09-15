@@ -116,7 +116,11 @@ export default function LinearSystem2D({
   return (
     <div className="lsys">
       <div className="lsys-canvas">
-        <svg viewBox={`0 0 ${SIZE} ${SIZE}`} role="img" aria-label={labels.hint ?? 'Two lines in the plane'}>
+        <svg
+          viewBox={`0 0 ${SIZE} ${SIZE}`}
+          role="img"
+          aria-label={labels.hint ?? 'Two lines in the plane'}
+        >
           <clipPath id="lsys-clip">
             <rect x={0} y={0} width={SIZE} height={SIZE} />
           </clipPath>
@@ -154,12 +158,7 @@ export default function LinearSystem2D({
           </g>
 
           {solution && Math.abs(solution[0]) <= range && Math.abs(solution[1]) <= range && (
-            <circle
-              className="lsys-dot"
-              cx={toX(solution[0])}
-              cy={toY(solution[1])}
-              r={6}
-            />
+            <circle className="lsys-dot" cx={toX(solution[0])} cy={toY(solution[1])} r={6} />
           )}
         </svg>
       </div>
@@ -167,14 +166,18 @@ export default function LinearSystem2D({
       <div className="lsys-controls">
         <p className="dvec-hint">{labels.hint ?? 'Move the coefficients and watch the lines.'}</p>
 
-        <p className="lsys-eq" style={{ color: 'var(--vp-a)' }}>{eq(a1, b1, c1)}</p>
+        <p className="lsys-eq" style={{ color: 'var(--vp-a)' }}>
+          {eq(a1, b1, c1)}
+        </p>
         <div className="lsys-row">
           {slider(0, 0, 'a₁', a1)}
           {slider(0, 1, 'b₁', b1)}
           {slider(0, 2, 'c₁', c1)}
         </div>
 
-        <p className="lsys-eq" style={{ color: 'var(--vp-b)' }}>{eq(a2, b2, c2)}</p>
+        <p className="lsys-eq" style={{ color: 'var(--vp-b)' }}>
+          {eq(a2, b2, c2)}
+        </p>
         <div className="lsys-row">
           {slider(1, 0, 'a₂', a2)}
           {slider(1, 1, 'b₂', b2)}

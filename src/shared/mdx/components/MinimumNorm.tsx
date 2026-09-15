@@ -80,43 +80,70 @@ export default function MinimumNorm({ a = [2, 1], b = 2, labels = {} }: MinimumN
 
           <g clipPath="url(#mn-clip)">
             {/* the kernel, through the origin */}
-            <line className="mn-ker" x1={toX(-far * ku[0])} y1={toY(-far * ku[1])}
-                  x2={toX(far * ku[0])} y2={toY(far * ku[1])} />
+            <line
+              className="mn-ker"
+              x1={toX(-far * ku[0])}
+              y1={toY(-far * ku[1])}
+              x2={toX(far * ku[0])}
+              y2={toY(far * ku[1])}
+            />
             {/* the solution set, parallel to it */}
-            <line className="mn-sol"
-                  x1={toX(xmin[0] - far * ku[0])} y1={toY(xmin[1] - far * ku[1])}
-                  x2={toX(xmin[0] + far * ku[0])} y2={toY(xmin[1] + far * ku[1])} />
+            <line
+              className="mn-sol"
+              x1={toX(xmin[0] - far * ku[0])}
+              y1={toY(xmin[1] - far * ku[1])}
+              x2={toX(xmin[0] + far * ku[0])}
+              y2={toY(xmin[1] + far * ku[1])}
+            />
             {/* the row space: the direction x† lives on */}
-            <line className="mn-row" x1={toX(-far * row[0])} y1={toY(-far * row[1])}
-                  x2={toX(far * row[0])} y2={toY(far * row[1])} />
+            <line
+              className="mn-row"
+              x1={toX(-far * row[0])}
+              y1={toY(-far * row[1])}
+              x2={toX(far * row[0])}
+              y2={toY(far * row[1])}
+            />
             {/* radius to the current solution, and to the shortest one */}
             <line className="mn-reach" x1={toX(0)} y1={toY(0)} x2={toX(x[0])} y2={toY(x[1])} />
-            <line className="mn-reach is-min" x1={toX(0)} y1={toY(0)} x2={toX(xmin[0])} y2={toY(xmin[1])} />
+            <line
+              className="mn-reach is-min"
+              x1={toX(0)}
+              y1={toY(0)}
+              x2={toX(xmin[0])}
+              y2={toY(xmin[1])}
+            />
             <circle className="mn-ring" cx={half} cy={half} r={ncur * unit} />
           </g>
 
           {/* x† is the foot of the perpendicular from the origin: mark the right angle */}
-          {nmin > 0.3 && (() => {
-            const u: [number, number] = [xmin[0] / nmin, xmin[1] / nmin]
-            const s = 9 / unit
-            const pts = [
-              [xmin[0] - s * u[0], xmin[1] - s * u[1]],
-              [xmin[0] - s * u[0] + s * ku[0], xmin[1] - s * u[1] + s * ku[1]],
-              [xmin[0] + s * ku[0], xmin[1] + s * ku[1]],
-            ]
-            return (
-              <polyline
-                className="mn-right"
-                points={pts.map(([px, py]) => `${toX(px)},${toY(py)}`).join(' ')}
-              />
-            )
-          })()}
+          {nmin > 0.3 &&
+            (() => {
+              const u: [number, number] = [xmin[0] / nmin, xmin[1] / nmin]
+              const s = 9 / unit
+              const pts = [
+                [xmin[0] - s * u[0], xmin[1] - s * u[1]],
+                [xmin[0] - s * u[0] + s * ku[0], xmin[1] - s * u[1] + s * ku[1]],
+                [xmin[0] + s * ku[0], xmin[1] + s * ku[1]],
+              ]
+              return (
+                <polyline
+                  className="mn-right"
+                  points={pts.map(([px, py]) => `${toX(px)},${toY(py)}`).join(' ')}
+                />
+              )
+            })()}
 
           <circle className="mn-dot is-min" cx={toX(xmin[0])} cy={toY(xmin[1])} r={6} />
           <circle className="mn-dot" cx={toX(x[0])} cy={toY(x[1])} r={6} />
-          <text className="mn-tag is-min" x={toX(xmin[0]) + 10} y={toY(xmin[1]) + 15}>x†</text>
-          <text className="mn-tag" x={toX(x[0]) + 10} y={toY(x[1]) - 8}>x</text>
-          <text className="mn-tag is-row" x={toX(row[0]) + 12} y={toY(row[1]) - 10}>a</text>
+          <text className="mn-tag is-min" x={toX(xmin[0]) + 10} y={toY(xmin[1]) + 15}>
+            x†
+          </text>
+          <text className="mn-tag" x={toX(x[0]) + 10} y={toY(x[1]) - 8}>
+            x
+          </text>
+          <text className="mn-tag is-row" x={toX(row[0]) + 12} y={toY(row[1]) - 10}>
+            a
+          </text>
 
           <g
             className="dvec-handle"
@@ -135,8 +162,10 @@ export default function MinimumNorm({ a = [2, 1], b = 2, labels = {} }: MinimumN
             }}
             onKeyDown={(e) => {
               const d: Record<string, [number, number]> = {
-                ArrowRight: [STEP, 0], ArrowLeft: [-STEP, 0],
-                ArrowUp: [0, STEP], ArrowDown: [0, -STEP],
+                ArrowRight: [STEP, 0],
+                ArrowLeft: [-STEP, 0],
+                ArrowUp: [0, STEP],
+                ArrowDown: [0, -STEP],
               }
               const m = d[e.key]
               if (!m) return
@@ -145,8 +174,13 @@ export default function MinimumNorm({ a = [2, 1], b = 2, labels = {} }: MinimumN
             }}
           >
             <circle cx={toX(row[0])} cy={toY(row[1])} r={18} fill="transparent" />
-            <circle className="dvec-grip" cx={toX(row[0])} cy={toY(row[1])} r={7}
-                    style={{ fill: 'var(--vp-c)' }} />
+            <circle
+              className="dvec-grip"
+              cx={toX(row[0])}
+              cy={toY(row[1])}
+              r={7}
+              style={{ fill: 'var(--vp-c)' }}
+            />
           </g>
         </svg>
       </div>
@@ -156,8 +190,15 @@ export default function MinimumNorm({ a = [2, 1], b = 2, labels = {} }: MinimumN
 
         <label className="mplay-slider">
           <span className="mplay-name">t</span>
-          <input type="range" min={-3} max={3} step={0.05} value={t}
-                 onChange={(e) => setT(Number(e.target.value))} aria-label="t" />
+          <input
+            type="range"
+            min={-3}
+            max={3}
+            step={0.05}
+            value={t}
+            onChange={(e) => setT(Number(e.target.value))}
+            aria-label="t"
+          />
           <span className="mplay-val">{t.toFixed(2)}</span>
         </label>
 
@@ -166,8 +207,8 @@ export default function MinimumNorm({ a = [2, 1], b = 2, labels = {} }: MinimumN
           <strong style={{ color: 'var(--vp-c)' }}>{f(nmin)}</strong>
         </p>
         <p className="mplay-readout">
-          {labels.decomposition ?? '‖x‖² = ‖x†‖² + t²'} · {f(ncur * ncur)} ={' '}
-          {f(nmin * nmin)} + {f(t * t)}
+          {labels.decomposition ?? '‖x‖² = ‖x†‖² + t²'} · {f(ncur * ncur)} = {f(nmin * nmin)} +{' '}
+          {f(t * t)}
         </p>
         <p className="cs-note">
           {labels.note ??
@@ -175,7 +216,14 @@ export default function MinimumNorm({ a = [2, 1], b = 2, labels = {} }: MinimumN
           {residual < 1e-9 ? ' ✓' : ''}
         </p>
 
-        <button className="mplay-reset" type="button" onClick={() => { setRow(a); setT(1.4) }}>
+        <button
+          className="mplay-reset"
+          type="button"
+          onClick={() => {
+            setRow(a)
+            setT(1.4)
+          }}
+        >
           {labels.reset ?? 'Reset'}
         </button>
       </div>

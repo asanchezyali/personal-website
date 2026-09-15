@@ -97,7 +97,9 @@ export default function NumericalRank({ labels = {} }: NumericalRankProps) {
       </div>
 
       <div className="nrank-controls">
-        <p className="dvec-hint">{labels.hint ?? 'ε perturbs a single entry of a rank-deficient matrix.'}</p>
+        <p className="dvec-hint">
+          {labels.hint ?? 'ε perturbs a single entry of a rank-deficient matrix.'}
+        </p>
 
         <label className="mplay-slider">
           <span className="mplay-name">ε</span>
@@ -113,7 +115,10 @@ export default function NumericalRank({ labels = {} }: NumericalRankProps) {
           <span className="mplay-val">{exact ? '0' : `1e${exp}`}</span>
         </label>
 
-        <p className="cs-note">{labels.note ?? 'Rank in floating point is a decision about a threshold, not a property read off the matrix.'}</p>
+        <p className="cs-note">
+          {labels.note ??
+            'Rank in floating point is a decision about a threshold, not a property read off the matrix.'}
+        </p>
 
         <button className="mplay-reset" type="button" onClick={() => setExp(-6)}>
           {labels.reset ?? 'Reiniciar'}

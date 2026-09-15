@@ -69,7 +69,12 @@ export default function AffineHyperplane({
   const far = RANGE * 2.4
   const A: [number, number] = [anchor[0] - far * dir[0], anchor[1] - far * dir[1]]
   const B: [number, number] = [anchor[0] + far * dir[0], anchor[1] + far * dir[1]]
-  const poly = [A, B, [B[0] + far * wh[0], B[1] + far * wh[1]], [A[0] + far * wh[0], A[1] + far * wh[1]]]
+  const poly = [
+    A,
+    B,
+    [B[0] + far * wh[0], B[1] + far * wh[1]],
+    [A[0] + far * wh[0], A[1] + far * wh[1]],
+  ]
     .map(([x, y]) => `${toX(x)},${toY(y)}`)
     .join(' ')
 
@@ -104,7 +109,10 @@ export default function AffineHyperplane({
       }}
       onKeyDown={(e) => {
         const d: Record<string, [number, number]> = {
-          ArrowRight: [STEP, 0], ArrowLeft: [-STEP, 0], ArrowUp: [0, STEP], ArrowDown: [0, -STEP],
+          ArrowRight: [STEP, 0],
+          ArrowLeft: [-STEP, 0],
+          ArrowUp: [0, STEP],
+          ArrowDown: [0, -STEP],
         }
         const m = d[e.key]
         if (!m) return
@@ -113,16 +121,28 @@ export default function AffineHyperplane({
       }}
     >
       <circle cx={toX(vec[0])} cy={toY(vec[1])} r={18} fill="transparent" />
-      <circle className="dvec-grip" cx={toX(vec[0])} cy={toY(vec[1])} r={7} style={{ fill: color }} />
+      <circle
+        className="dvec-grip"
+        cx={toX(vec[0])}
+        cy={toY(vec[1])}
+        r={7}
+        style={{ fill: color }}
+      />
     </g>
   )
 
   return (
     <div className="dvec">
       <div className="dvec-canvas">
-        <svg ref={svgRef} viewBox={`0 0 ${SIZE} ${SIZE}`} role="img"
-             aria-label={labels.hint ?? 'An affine hyperplane and the signed distance to it'}>
-          <clipPath id="ah-clip"><rect x={0} y={0} width={SIZE} height={SIZE} /></clipPath>
+        <svg
+          ref={svgRef}
+          viewBox={`0 0 ${SIZE} ${SIZE}`}
+          role="img"
+          aria-label={labels.hint ?? 'An affine hyperplane and the signed distance to it'}
+        >
+          <clipPath id="ah-clip">
+            <rect x={0} y={0} width={SIZE} height={SIZE} />
+          </clipPath>
           <g clipPath="url(#ah-clip)">
             <polygon className="ah-side" points={poly} />
           </g>
@@ -131,22 +151,49 @@ export default function AffineHyperplane({
           <line className="vplot-axis" x1={half} y1={0} x2={half} y2={SIZE} />
 
           <g clipPath="url(#ah-clip)">
-            <line className="ah-plane" x1={toX(A[0])} y1={toY(A[1])} x2={toX(B[0])} y2={toY(B[1])} />
+            <line
+              className="ah-plane"
+              x1={toX(A[0])}
+              y1={toY(A[1])}
+              x2={toX(B[0])}
+              y2={toY(B[1])}
+            />
             {/* the unit normal, anchored on the hyperplane */}
-            <line className="ah-unit" x1={toX(anchor[0])} y1={toY(anchor[1])}
-                  x2={toX(anchor[0] + wh[0])} y2={toY(anchor[1] + wh[1])} />
+            <line
+              className="ah-unit"
+              x1={toX(anchor[0])}
+              y1={toY(anchor[1])}
+              x2={toX(anchor[0] + wh[0])}
+              y2={toY(anchor[1] + wh[1])}
+            />
             {/* w itself, drawn from the origin like every other vector in the course */}
-            <line className="ah-normal" x1={half} y1={half} x2={toX(nrm[0])} y2={toY(nrm[1])}
-                  markerEnd="url(#ah-head)" />
+            <line
+              className="ah-normal"
+              x1={half}
+              y1={half}
+              x2={toX(nrm[0])}
+              y2={toY(nrm[1])}
+              markerEnd="url(#ah-head)"
+            />
             {/* the perpendicular that realises the distance */}
-            <line className="ah-drop" x1={toX(pt[0])} y1={toY(pt[1])} x2={toX(foot[0])} y2={toY(foot[1])} />
+            <line
+              className="ah-drop"
+              x1={toX(pt[0])}
+              y1={toY(pt[1])}
+              x2={toX(foot[0])}
+              y2={toY(foot[1])}
+            />
           </g>
 
           <circle className="ah-foot" cx={toX(foot[0])} cy={toY(foot[1])} r={4} />
           {drag(nrm, setNrm, 'var(--vp-c)', 'w')}
           {drag(pt, setPt, score >= 0 ? 'var(--vp-b)' : 'var(--vp-a)', 'x')}
-          <text className="mn-tag is-row" x={toX(nrm[0]) + 12} y={toY(nrm[1]) - 10}>w</text>
-          <text className="mn-tag" x={toX(pt[0]) + 12} y={toY(pt[1]) - 10}>x</text>
+          <text className="mn-tag is-row" x={toX(nrm[0]) + 12} y={toY(nrm[1]) - 10}>
+            w
+          </text>
+          <text className="mn-tag" x={toX(pt[0]) + 12} y={toY(pt[1]) - 10}>
+            x
+          </text>
 
           <defs>
             <marker id="ah-head" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
@@ -157,12 +204,21 @@ export default function AffineHyperplane({
       </div>
 
       <div className="dvec-controls">
-        <p className="dvec-hint">{labels.hint ?? 'Drag the normal w or the point x; slide the offset b.'}</p>
+        <p className="dvec-hint">
+          {labels.hint ?? 'Drag the normal w or the point x; slide the offset b.'}
+        </p>
 
         <label className="mplay-slider">
           <span className="mplay-name">b</span>
-          <input type="range" min={-4} max={4} step={0.25} value={off}
-                 onChange={(e) => setOff(Number(e.target.value))} aria-label="b" />
+          <input
+            type="range"
+            min={-4}
+            max={4}
+            step={0.25}
+            value={off}
+            onChange={(e) => setOff(Number(e.target.value))}
+            aria-label="b"
+          />
           <span className="mplay-val">{off.toFixed(2)}</span>
         </label>
 
@@ -173,11 +229,20 @@ export default function AffineHyperplane({
           {labels.distance ?? 'distance'} = |wᵀx + b| / ‖w‖ = <strong>{f(Math.abs(dist))}</strong>
         </p>
         <p className="cs-note">
-          {off === 0 ? (labels.throughOrigin ?? 'With b = 0 the hyperplane passes through the origin.') : ''}
+          {off === 0
+            ? (labels.throughOrigin ?? 'With b = 0 the hyperplane passes through the origin.')
+            : ''}
         </p>
 
-        <button className="mplay-reset" type="button"
-                onClick={() => { setNrm(w); setOff(b); setPt(point) }}>
+        <button
+          className="mplay-reset"
+          type="button"
+          onClick={() => {
+            setNrm(w)
+            setOff(b)
+            setPt(point)
+          }}
+        >
           {labels.reset ?? 'Reset'}
         </button>
       </div>

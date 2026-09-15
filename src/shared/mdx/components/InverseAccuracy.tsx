@@ -94,18 +94,27 @@ export default function InverseAccuracy({ labels = {} }: InverseAccuracyProps) {
 
       <div className="nrank-controls">
         <p className="dvec-hint">
-          {labels.hint ?? 'A = [[1, 1], [1, 1 + δ]]. Its exact inverse is known, so the true error is measurable.'}
+          {labels.hint ??
+            'A = [[1, 1], [1, 1 + δ]]. Its exact inverse is known, so the true error is measurable.'}
         </p>
 
         <label className="mplay-slider">
           <span className="mplay-name">δ</span>
-          <input type="range" min={-12} max={-1} step={1} value={exp}
-                 onChange={(e) => setExp(Number(e.target.value))} aria-label="delta exponent" />
+          <input
+            type="range"
+            min={-12}
+            max={-1}
+            step={1}
+            value={exp}
+            onChange={(e) => setExp(Number(e.target.value))}
+            aria-label="delta exponent"
+          />
           <span className="mplay-val">1e{exp}</span>
         </label>
 
         <p className="cs-note">
-          {labels.note ?? 'The residual stays at machine precision while the error grows like κ·ε: the check cannot detect it.'}
+          {labels.note ??
+            'The residual stays at machine precision while the error grows like κ·ε: the check cannot detect it.'}
         </p>
 
         <button className="mplay-reset" type="button" onClick={() => setExp(-6)}>

@@ -105,11 +105,7 @@ export default function TocLessons({
           <li key={l.slug} className={active ? 'is-current' : undefined}>
             <Link
               href={l.href}
-              className={[
-                'course-toc-link',
-                active ? 'is-active' : '',
-                read ? 'is-read' : '',
-              ]
+              className={['course-toc-link', active ? 'is-active' : '', read ? 'is-read' : '']
                 .filter(Boolean)
                 .join(' ')}
               aria-current={active ? 'page' : undefined}

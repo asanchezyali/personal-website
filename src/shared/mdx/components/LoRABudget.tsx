@@ -55,27 +55,52 @@ export default function LoRABudget({ labels = {} }: LoRABudgetProps) {
       </div>
 
       <div className="scost-controls">
-        <p className="dvec-hint">{labels.hint ?? 'ΔW is d×d; B is d×r and A is r×d, so rank(BA) ≤ r by construction.'}</p>
+        <p className="dvec-hint">
+          {labels.hint ?? 'ΔW is d×d; B is d×r and A is r×d, so rank(BA) ≤ r by construction.'}
+        </p>
 
         <label className="mplay-slider">
           <span className="mplay-name">d</span>
-          <input type="range" min={512} max={8192} step={512} value={d}
-                 onChange={(e) => setD(Number(e.target.value))} aria-label="d" />
+          <input
+            type="range"
+            min={512}
+            max={8192}
+            step={512}
+            value={d}
+            onChange={(e) => setD(Number(e.target.value))}
+            aria-label="d"
+          />
           <span className="mplay-val">{d}</span>
         </label>
         <label className="mplay-slider">
           <span className="mplay-name">r</span>
-          <input type="range" min={1} max={128} step={1} value={r}
-                 onChange={(e) => setR(Number(e.target.value))} aria-label="r" />
+          <input
+            type="range"
+            min={1}
+            max={128}
+            step={1}
+            value={r}
+            onChange={(e) => setR(Number(e.target.value))}
+            aria-label="r"
+          />
           <span className="mplay-val">{r}</span>
         </label>
 
         <p className="mplay-readout">
           {labels.rank ?? 'factor de reducción'} ×{ratio.toFixed(0)}
         </p>
-        <p className="cs-note">{labels.note ?? 'The saving is d²/(2dr) = d/(2r), and grows with the size of the layer.'}</p>
+        <p className="cs-note">
+          {labels.note ?? 'The saving is d²/(2dr) = d/(2r), and grows with the size of the layer.'}
+        </p>
 
-        <button className="mplay-reset" type="button" onClick={() => { setD(4096); setR(8) }}>
+        <button
+          className="mplay-reset"
+          type="button"
+          onClick={() => {
+            setD(4096)
+            setR(8)
+          }}
+        >
           {labels.reset ?? 'Reiniciar'}
         </button>
       </div>

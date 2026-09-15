@@ -205,7 +205,9 @@ export default function MatrixPlayground({
         {showEigen && (
           <p className="mplay-readout">
             <strong>{labels.eigen ?? 'eigenvalues'}</strong>{' '}
-            {eigs ? eigs.map((e) => e.value.toFixed(2)).join(' , ') : (labels.noEigen ?? 'none real')}
+            {eigs
+              ? eigs.map((e) => e.value.toFixed(2)).join(' , ')
+              : (labels.noEigen ?? 'none real')}
           </p>
         )}
 

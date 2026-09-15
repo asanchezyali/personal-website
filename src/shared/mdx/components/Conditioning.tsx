@@ -61,8 +61,7 @@ export default function Conditioning({
   const xPert = solve2(...A, bPert[0], bPert[1])
 
   const relB = norm([0, nudge]) / norm(b)
-  const relX =
-    x && xPert ? norm([xPert[0] - x[0], xPert[1] - x[1]]) / norm(x) : Infinity
+  const relX = x && xPert ? norm([xPert[0] - x[0], xPert[1] - x[1]]) / norm(x) : Infinity
   const amp = relX / relB
 
   // log scale: 1x fills nothing, 10000x fills the bar

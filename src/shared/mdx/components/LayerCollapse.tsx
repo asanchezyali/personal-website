@@ -47,29 +47,57 @@ export default function LayerCollapse({ labels = {} }: LayerCollapseProps) {
           <strong>{bound}</strong>
         </p>
         <p className={`lyr-verdict ${injective ? 'is-ok' : 'is-bad'}`}>
-          {injective ? (labels.injective ?? 'no information is lost') : (labels.lossy ?? 'the map is not injective: information is lost')}
+          {injective
+            ? (labels.injective ?? 'no information is lost')
+            : (labels.lossy ?? 'the map is not injective: information is lost')}
         </p>
       </div>
 
       <div className="lyr-controls">
-        <p className="dvec-hint">{labels.hint ?? 'A chain of linear layers, one of them narrow.'}</p>
+        <p className="dvec-hint">
+          {labels.hint ?? 'A chain of linear layers, one of them narrow.'}
+        </p>
 
         <label className="mplay-slider">
           <span className="mplay-name">d</span>
-          <input type="range" min={8} max={128} step={8} value={d}
-                 onChange={(e) => setD(Number(e.target.value))} aria-label="width" />
+          <input
+            type="range"
+            min={8}
+            max={128}
+            step={8}
+            value={d}
+            onChange={(e) => setD(Number(e.target.value))}
+            aria-label="width"
+          />
           <span className="mplay-val">{d}</span>
         </label>
         <label className="mplay-slider">
           <span className="mplay-name">r</span>
-          <input type="range" min={1} max={128} step={1} value={r}
-                 onChange={(e) => setR(Number(e.target.value))} aria-label="bottleneck" />
+          <input
+            type="range"
+            min={1}
+            max={128}
+            step={1}
+            value={r}
+            onChange={(e) => setR(Number(e.target.value))}
+            aria-label="bottleneck"
+          />
           <span className="mplay-val">{r}</span>
         </label>
 
-        <p className="cs-note">{labels.note ?? 'Without non-linearities the chain is one matrix, and the narrowest layer caps its rank.'}</p>
+        <p className="cs-note">
+          {labels.note ??
+            'Without non-linearities the chain is one matrix, and the narrowest layer caps its rank.'}
+        </p>
 
-        <button className="mplay-reset" type="button" onClick={() => { setD(64); setR(8) }}>
+        <button
+          className="mplay-reset"
+          type="button"
+          onClick={() => {
+            setD(64)
+            setR(8)
+          }}
+        >
           {labels.reset ?? 'Reset'}
         </button>
       </div>

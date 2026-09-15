@@ -15,12 +15,7 @@ interface VectorPlotProps {
 
 const PALETTE = ['var(--vp-a)', 'var(--vp-b)', 'var(--vp-c)', 'var(--vp-d)']
 
-export default function VectorPlot({
-  vectors,
-  range = 5,
-  caption,
-  height = 340,
-}: VectorPlotProps) {
+export default function VectorPlot({ vectors, range = 5, caption, height = 340 }: VectorPlotProps) {
   const size = 320
   const half = size / 2
   const unit = half / range

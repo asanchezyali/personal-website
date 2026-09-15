@@ -108,9 +108,13 @@ export default function ShapeOrientation({
 
         <p className={`shp-verdict ${isOuter ? 'is-bad' : 'is-ok'}`} aria-live="polite">
           {labels.result ?? 'result'} ({out.join(', ')}) ·{' '}
-          {isOuter ? (labels.outer ?? 'every pair, not element by element') : (labels.elementwise ?? 'element by element')}
+          {isOuter
+            ? (labels.outer ?? 'every pair, not element by element')
+            : (labels.elementwise ?? 'element by element')}
         </p>
-        {isOuter && <p className="shp-warning">{labels.warning ?? 'Silent: no error is raised.'}</p>}
+        {isOuter && (
+          <p className="shp-warning">{labels.warning ?? 'Silent: no error is raised.'}</p>
+        )}
       </div>
 
       <div className="shp-controls">

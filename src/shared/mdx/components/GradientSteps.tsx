@@ -46,7 +46,8 @@ export default function GradientSteps({
     for (let k = 0; k < maxSteps; k++) {
       x = x * (1 - lr * a)
       y = y * (1 - lr * b)
-      if (!Number.isFinite(x) || !Number.isFinite(y) || Math.abs(x) > 1e6 || Math.abs(y) > 1e6) break
+      if (!Number.isFinite(x) || !Number.isFinite(y) || Math.abs(x) > 1e6 || Math.abs(y) > 1e6)
+        break
       pts.push([x, y])
     }
     return pts
@@ -79,7 +80,11 @@ export default function GradientSteps({
   return (
     <div className="gstep">
       <div className="gstep-canvas">
-        <svg viewBox={`0 0 ${SIZE} ${SIZE}`} role="img" aria-label={labels.hint ?? 'Gradient descent path'}>
+        <svg
+          viewBox={`0 0 ${SIZE} ${SIZE}`}
+          role="img"
+          aria-label={labels.hint ?? 'Gradient descent path'}
+        >
           {ellipses.map((e, i) => (
             <ellipse key={i} className="gstep-level" cx={half} cy={half} rx={e.rx} ry={e.ry} />
           ))}
@@ -104,7 +109,9 @@ export default function GradientSteps({
       </div>
 
       <div className="gstep-controls">
-        <p className="dvec-hint">{labels.hint ?? 'The learning rate is the only thing changing.'}</p>
+        <p className="dvec-hint">
+          {labels.hint ?? 'The learning rate is the only thing changing.'}
+        </p>
 
         <label className="mplay-slider">
           <span className="mplay-name">α</span>

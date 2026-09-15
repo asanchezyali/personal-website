@@ -53,14 +53,19 @@ function build(a: number[][], L: string, labels: GaussJordanInverseProps['labels
       if (Math.abs(f) < 1e-12) continue
       m[r] = m[r].map((v, j) => clean(v - f * m[col][j]))
       frames.push(
-        snap(`${L}${r + 1} ← ${L}${r + 1} ${f < 0 ? '+' : '−'} ${fmt(Math.abs(f))}·${L}${col + 1}`, {
-          row: r,
-          pivot: col,
-        })
+        snap(
+          `${L}${r + 1} ← ${L}${r + 1} ${f < 0 ? '+' : '−'} ${fmt(Math.abs(f))}·${L}${col + 1}`,
+          {
+            row: r,
+            pivot: col,
+          }
+        )
       )
     }
   }
-  frames.push(snap(singular ? (labels.singular ?? 'A is singular') : (labels.done ?? '[ I | A⁻¹ ]'), null))
+  frames.push(
+    snap(singular ? (labels.singular ?? 'A is singular') : (labels.done ?? '[ I | A⁻¹ ]'), null)
+  )
   return frames
 }
 
@@ -110,7 +115,9 @@ export default function GaussJordanInverse({
                       prev && clean(prev.m[r][c]) !== clean(v) ? 'is-changed' : '',
                       f.hi?.pivot === r ? 'is-pivot' : '',
                       f.hi?.row === r ? 'is-target' : '',
-                    ].filter(Boolean).join(' ')}
+                    ]
+                      .filter(Boolean)
+                      .join(' ')}
                   >
                     {fmt(v)}
                   </span>
@@ -124,7 +131,9 @@ export default function GaussJordanInverse({
                       prev && clean(prev.m[r][n + c]) !== clean(v) ? 'is-changed' : '',
                       f.hi?.pivot === r ? 'is-pivot' : '',
                       f.hi?.row === r ? 'is-target' : '',
-                    ].filter(Boolean).join(' ')}
+                    ]
+                      .filter(Boolean)
+                      .join(' ')}
                   >
                     {fmt(v)}
                   </span>
@@ -134,24 +143,54 @@ export default function GaussJordanInverse({
           </div>
           <span className="elim-bracket is-right" aria-hidden="true" />
         </div>
-        <p className="elim-note" aria-live="polite">{f.note}</p>
+        <p className="elim-note" aria-live="polite">
+          {f.note}
+        </p>
       </div>
 
       <div className="elim-controls">
         <div className="elim-buttons">
-          <button type="button" className="elim-btn" disabled={i === 0}
-                  onClick={() => { setPlaying(false); setI((k) => Math.max(0, k - 1)) }} aria-label="−1">◀</button>
-          <button type="button" className="elim-btn is-play"
-                  onClick={() => { if (i >= last) setI(0); setPlaying((p) => !p) }}>
+          <button
+            type="button"
+            className="elim-btn"
+            disabled={i === 0}
+            onClick={() => {
+              setPlaying(false)
+              setI((k) => Math.max(0, k - 1))
+            }}
+            aria-label="−1"
+          >
+            ◀
+          </button>
+          <button
+            type="button"
+            className="elim-btn is-play"
+            onClick={() => {
+              if (i >= last) setI(0)
+              setPlaying((p) => !p)
+            }}
+          >
             {playing ? (labels.pause ?? '❚❚') : '▶'}
           </button>
-          <button type="button" className="elim-btn" disabled={i === last}
-                  onClick={() => { setPlaying(false); setI((k) => Math.min(last, k + 1)) }} aria-label="+1">▶</button>
+          <button
+            type="button"
+            className="elim-btn"
+            disabled={i === last}
+            onClick={() => {
+              setPlaying(false)
+              setI((k) => Math.min(last, k + 1))
+            }}
+            aria-label="+1"
+          >
+            ▶
+          </button>
         </div>
         <div className="elim-track" aria-hidden="true">
           <span style={{ width: `${(i / last) * 100}%` }} />
         </div>
-        <p className="elim-count">{labels.step ?? 'Step'} {i + 1} / {frames.length}</p>
+        <p className="elim-count">
+          {labels.step ?? 'Step'} {i + 1} / {frames.length}
+        </p>
       </div>
     </div>
   )

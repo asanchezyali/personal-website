@@ -34,7 +34,9 @@ function svd(input: number[][]) {
     let off = 0
     for (let p = 0; p < n - 1; p++) {
       for (let q = p + 1; q < n; q++) {
-        let alpha = 0, beta = 0, gamma = 0
+        let alpha = 0,
+          beta = 0,
+          gamma = 0
         for (let i = 0; i < m; i++) {
           alpha += A[i][p] * A[i][p]
           beta += A[i][q] * A[i][q]
@@ -47,12 +49,14 @@ function svd(input: number[][]) {
         const c = 1 / Math.sqrt(1 + t * t)
         const s = c * t
         for (let i = 0; i < m; i++) {
-          const ap = A[i][p], aq = A[i][q]
+          const ap = A[i][p],
+            aq = A[i][q]
           A[i][p] = c * ap - s * aq
           A[i][q] = s * ap + c * aq
         }
         for (let i = 0; i < n; i++) {
-          const vp = V[i][p], vq = V[i][q]
+          const vp = V[i][p],
+            vq = V[i][q]
           V[i][p] = c * vp - s * vq
           V[i][q] = s * vp + c * vq
         }
@@ -67,7 +71,9 @@ function svd(input: number[][]) {
   }).sort((a, b) => b.s - a.s)
 
   const sigma = order.map((o) => o.s)
-  const U = order.map((o) => (o.s > 1e-14 ? col(A, o.j).map((v) => v / o.s) : col(A, o.j).map(() => 0)))
+  const U = order.map((o) =>
+    o.s > 1e-14 ? col(A, o.j).map((v) => v / o.s) : col(A, o.j).map(() => 0)
+  )
   const Vt = order.map((o) => col(V, o.j))
   return { sigma, U, Vt } // U[k] and Vt[k] are the k-th left/right singular vectors
 }
@@ -80,14 +86,19 @@ function svd(input: number[][]) {
 function picture(n: number) {
   return Array.from({ length: n }, (_, i) =>
     Array.from({ length: n }, (_, j) => {
-      const x = i / (n - 1), y = j / (n - 1)
+      const x = i / (n - 1),
+        y = j / (n - 1)
       const blob = (cx: number, cy: number, r: number) =>
         Math.exp(-((x - cx) ** 2 + (y - cy) ** 2) / (2 * r * r))
       const ridge = Math.exp(-((x - y) ** 2) / (2 * 0.06 ** 2))
       const ring = Math.exp(-((Math.hypot(x - 0.5, y - 0.5) - 0.32) ** 2) / (2 * 0.05 ** 2))
       return (
-        0.35 * x + 0.9 * blob(0.25, 0.3, 0.13) - 0.7 * blob(0.72, 0.7, 0.1) +
-        0.8 * ridge + 0.6 * ring + 0.04 * Math.sin(29 * i + 13 * j)
+        0.35 * x +
+        0.9 * blob(0.25, 0.3, 0.13) -
+        0.7 * blob(0.72, 0.7, 0.1) +
+        0.8 * ridge +
+        0.6 * ring +
+        0.04 * Math.sin(29 * i + 13 * j)
       )
     })
   )
@@ -116,7 +127,8 @@ export default function LowRankImage({ n = 32, labels = {} }: LowRankImageProps)
   }, [n, k, sigma, U, Vt])
 
   const flat = X.flat()
-  const lo = Math.min(...flat), hi = Math.max(...flat)
+  const lo = Math.min(...flat),
+    hi = Math.max(...flat)
   const shade = (v: number) => {
     const t = Math.max(0, Math.min(1, (v - lo) / (hi - lo)))
     const g = Math.round(t * 255)
@@ -126,7 +138,11 @@ export default function LowRankImage({ n = 32, labels = {} }: LowRankImageProps)
   const grid = (M: number[][], title: string) => (
     <div className="lr-block">
       <span className="mmul-name">{title}</span>
-      <div className="lr-grid" style={{ gridTemplateColumns: `repeat(${n}, 1fr)` }} aria-hidden="true">
+      <div
+        className="lr-grid"
+        style={{ gridTemplateColumns: `repeat(${n}, 1fr)` }}
+        aria-hidden="true"
+      >
         {M.flat().map((v, i) => (
           <span key={i} className="lr-cell" style={{ background: shade(v) }} />
         ))}
@@ -156,18 +172,27 @@ export default function LowRankImage({ n = 32, labels = {} }: LowRankImageProps)
       </div>
 
       <div className="lr-controls">
-        <p className="dvec-hint">{labels.hint ?? 'The bars are the singular values; the kept ones are highlighted.'}</p>
+        <p className="dvec-hint">
+          {labels.hint ?? 'The bars are the singular values; the kept ones are highlighted.'}
+        </p>
 
         <label className="mplay-slider">
           <span className="mplay-name">k</span>
-          <input type="range" min={1} max={n} step={1} value={k}
-                 onChange={(e) => setK(Number(e.target.value))} aria-label="rank" />
+          <input
+            type="range"
+            min={1}
+            max={n}
+            step={1}
+            value={k}
+            onChange={(e) => setK(Number(e.target.value))}
+            aria-label="rank"
+          />
           <span className="mplay-val">{k}</span>
         </label>
 
         <p className="mplay-readout" aria-live="polite">
-          {labels.energy ?? 'energía'} {(energy * 100).toFixed(2)} % ·{' '}
-          {labels.error ?? 'error'} {(relErr * 100).toFixed(2)} %
+          {labels.energy ?? 'energía'} {(energy * 100).toFixed(2)} % · {labels.error ?? 'error'}{' '}
+          {(relErr * 100).toFixed(2)} %
         </p>
         <p className="mplay-readout">
           {labels.storage ?? 'almacenamiento'} {stored} / {full} ={' '}

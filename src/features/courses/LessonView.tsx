@@ -27,9 +27,7 @@ export default async function LessonView({ locale, courseSlug, lessonSlug }: Les
         <Link href={`/${locale}/courses/${courseSlug}`} className="course-back">
           {course.title}
         </Link>
-        <p className="lesson-progress-label">
-          {t('progress', { current: index + 1, total })}
-        </p>
+        <p className="lesson-progress-label">{t('progress', { current: index + 1, total })}</p>
         <CourseToc
           locale={locale}
           courseSlug={courseSlug}
@@ -55,7 +53,10 @@ export default async function LessonView({ locale, courseSlug, lessonSlug }: Les
 
         <nav className="lesson-nav" aria-label={t('toc_title')}>
           {prev ? (
-            <Link href={lessonPath(locale, courseSlug, prev.lessonSlug)} className="lesson-nav-prev">
+            <Link
+              href={lessonPath(locale, courseSlug, prev.lessonSlug)}
+              className="lesson-nav-prev"
+            >
               <span>← {t('previous')}</span>
               <strong>{prev.title}</strong>
             </Link>
@@ -63,7 +64,10 @@ export default async function LessonView({ locale, courseSlug, lessonSlug }: Les
             <span />
           )}
           {next ? (
-            <Link href={lessonPath(locale, courseSlug, next.lessonSlug)} className="lesson-nav-next">
+            <Link
+              href={lessonPath(locale, courseSlug, next.lessonSlug)}
+              className="lesson-nav-next"
+            >
               <span>{t('next')} →</span>
               <strong>{next.title}</strong>
             </Link>

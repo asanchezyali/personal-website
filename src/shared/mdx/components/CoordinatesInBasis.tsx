@@ -60,12 +60,16 @@ export default function CoordinatesInBasis({
   if (!degenerate) {
     for (let k = -6; k <= 6; k++) {
       lattice.push([
-        k * u1[0] - 8 * u2[0], k * u1[1] - 8 * u2[1],
-        k * u1[0] + 8 * u2[0], k * u1[1] + 8 * u2[1],
+        k * u1[0] - 8 * u2[0],
+        k * u1[1] - 8 * u2[1],
+        k * u1[0] + 8 * u2[0],
+        k * u1[1] + 8 * u2[1],
       ])
       lattice.push([
-        k * u2[0] - 8 * u1[0], k * u2[1] - 8 * u1[1],
-        k * u2[0] + 8 * u1[0], k * u2[1] + 8 * u1[1],
+        k * u2[0] - 8 * u1[0],
+        k * u2[1] - 8 * u1[1],
+        k * u2[0] + 8 * u1[0],
+        k * u2[1] + 8 * u1[1],
       ])
     }
   }
@@ -76,21 +80,42 @@ export default function CoordinatesInBasis({
     color: string,
     name: string
   ) => (
-    <g className="dvec-handle" tabIndex={0} role="button"
-       aria-label={`${name} = (${vec[0]}, ${vec[1]})`}
-       onPointerDown={(e) => { e.currentTarget.setPointerCapture(e.pointerId); const p = fromPointer(e); if (p) set(p) }}
-       onPointerMove={(e) => { if (!e.currentTarget.hasPointerCapture(e.pointerId)) return; const p = fromPointer(e); if (p) set(p) }}
-       onKeyDown={(e) => {
-         const d: Record<string, [number, number]> = {
-           ArrowRight: [STEP, 0], ArrowLeft: [-STEP, 0], ArrowUp: [0, STEP], ArrowDown: [0, -STEP],
-         }
-         const m = d[e.key]
-         if (!m) return
-         e.preventDefault()
-         set([clamp(vec[0] + m[0]), clamp(vec[1] + m[1])])
-       }}>
+    <g
+      className="dvec-handle"
+      tabIndex={0}
+      role="button"
+      aria-label={`${name} = (${vec[0]}, ${vec[1]})`}
+      onPointerDown={(e) => {
+        e.currentTarget.setPointerCapture(e.pointerId)
+        const p = fromPointer(e)
+        if (p) set(p)
+      }}
+      onPointerMove={(e) => {
+        if (!e.currentTarget.hasPointerCapture(e.pointerId)) return
+        const p = fromPointer(e)
+        if (p) set(p)
+      }}
+      onKeyDown={(e) => {
+        const d: Record<string, [number, number]> = {
+          ArrowRight: [STEP, 0],
+          ArrowLeft: [-STEP, 0],
+          ArrowUp: [0, STEP],
+          ArrowDown: [0, -STEP],
+        }
+        const m = d[e.key]
+        if (!m) return
+        e.preventDefault()
+        set([clamp(vec[0] + m[0]), clamp(vec[1] + m[1])])
+      }}
+    >
       <circle cx={toX(vec[0])} cy={toY(vec[1])} r={18} fill="transparent" />
-      <circle className="dvec-grip" cx={toX(vec[0])} cy={toY(vec[1])} r={7} style={{ fill: color }} />
+      <circle
+        className="dvec-grip"
+        cx={toX(vec[0])}
+        cy={toY(vec[1])}
+        r={7}
+        style={{ fill: color }}
+      />
     </g>
   )
 
@@ -99,11 +124,25 @@ export default function CoordinatesInBasis({
   return (
     <div className="dvec">
       <div className="dvec-canvas">
-        <svg ref={svgRef} viewBox={`0 0 ${SIZE} ${SIZE}`} role="img" aria-label={labels.hint ?? 'Coordinates in a basis'}>
-          <clipPath id="cib-clip"><rect x={0} y={0} width={SIZE} height={SIZE} /></clipPath>
+        <svg
+          ref={svgRef}
+          viewBox={`0 0 ${SIZE} ${SIZE}`}
+          role="img"
+          aria-label={labels.hint ?? 'Coordinates in a basis'}
+        >
+          <clipPath id="cib-clip">
+            <rect x={0} y={0} width={SIZE} height={SIZE} />
+          </clipPath>
           <g clipPath="url(#cib-clip)">
             {lattice.map((l, i) => (
-              <line key={i} className="cib-lattice" x1={toX(l[0])} y1={toY(l[1])} x2={toX(l[2])} y2={toY(l[3])} />
+              <line
+                key={i}
+                className="cib-lattice"
+                x1={toX(l[0])}
+                y1={toY(l[1])}
+                x2={toX(l[2])}
+                y2={toY(l[3])}
+              />
             ))}
           </g>
           <line className="vplot-axis" x1={0} y1={half} x2={SIZE} y2={half} />
@@ -111,16 +150,47 @@ export default function CoordinatesInBasis({
 
           {!degenerate && (
             <g clipPath="url(#cib-clip)">
-              <line className="cib-step" x1={toX(0)} y1={toY(0)}
-                    x2={toX(c[0] * u1[0])} y2={toY(c[0] * u1[1])} />
-              <line className="cib-step" x1={toX(c[0] * u1[0])} y1={toY(c[0] * u1[1])}
-                    x2={toX(pt[0])} y2={toY(pt[1])} />
+              <line
+                className="cib-step"
+                x1={toX(0)}
+                y1={toY(0)}
+                x2={toX(c[0] * u1[0])}
+                y2={toY(c[0] * u1[1])}
+              />
+              <line
+                className="cib-step"
+                x1={toX(c[0] * u1[0])}
+                y1={toY(c[0] * u1[1])}
+                x2={toX(pt[0])}
+                y2={toY(pt[1])}
+              />
             </g>
           )}
 
-          <line x1={toX(0)} y1={toY(0)} x2={toX(u1[0])} y2={toY(u1[1])} stroke="var(--vp-a)" strokeWidth={2.6} />
-          <line x1={toX(0)} y1={toY(0)} x2={toX(u2[0])} y2={toY(u2[1])} stroke="var(--vp-b)" strokeWidth={2.6} />
-          <line x1={toX(0)} y1={toY(0)} x2={toX(pt[0])} y2={toY(pt[1])} stroke="var(--vp-c)" strokeWidth={2.6} />
+          <line
+            x1={toX(0)}
+            y1={toY(0)}
+            x2={toX(u1[0])}
+            y2={toY(u1[1])}
+            stroke="var(--vp-a)"
+            strokeWidth={2.6}
+          />
+          <line
+            x1={toX(0)}
+            y1={toY(0)}
+            x2={toX(u2[0])}
+            y2={toY(u2[1])}
+            stroke="var(--vp-b)"
+            strokeWidth={2.6}
+          />
+          <line
+            x1={toX(0)}
+            y1={toY(0)}
+            x2={toX(pt[0])}
+            y2={toY(pt[1])}
+            stroke="var(--vp-c)"
+            strokeWidth={2.6}
+          />
 
           {handle(u1, setU1, 'var(--vp-a)', 'b1')}
           {handle(u2, setU2, 'var(--vp-b)', 'b2')}
@@ -129,7 +199,9 @@ export default function CoordinatesInBasis({
       </div>
 
       <div className="dvec-controls">
-        <p className="dvec-hint">{labels.hint ?? 'Drag the two basis vectors, or the vector being expressed.'}</p>
+        <p className="dvec-hint">
+          {labels.hint ?? 'Drag the two basis vectors, or the vector being expressed.'}
+        </p>
 
         <p className="mplay-readout" aria-live="polite">
           <strong>{labels.canonical ?? '[v]ₑ'}</strong> = ({f(pt[0])}, {f(pt[1])})
@@ -139,15 +211,24 @@ export default function CoordinatesInBasis({
           {degenerate ? '—' : `(${f(c[0])}, ${f(c[1])})`}
         </p>
         {degenerate ? (
-          <p className="cond-warning">{labels.degenerate ?? 'b₁ and b₂ are dependent: not a basis.'}</p>
+          <p className="cond-warning">
+            {labels.degenerate ?? 'b₁ and b₂ are dependent: not a basis.'}
+          </p>
         ) : (
           <p className="cs-note">
             {labels.reconstruct ?? 'v = c₁b₁ + c₂b₂'} = {f(c[0])}·b₁ + {f(c[1])}·b₂
           </p>
         )}
 
-        <button className="mplay-reset" type="button"
-                onClick={() => { setU1(b1); setU2(b2); setPt(v) }}>
+        <button
+          className="mplay-reset"
+          type="button"
+          onClick={() => {
+            setU1(b1)
+            setU2(b2)
+            setPt(v)
+          }}
+        >
           {labels.reset ?? 'Reset'}
         </button>
       </div>

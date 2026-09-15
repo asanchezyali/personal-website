@@ -81,13 +81,7 @@ export default function SolutionSet({ a = [1, 2], b = 4, labels = {} }: Solution
               x2={toX(xStar[0])}
               y2={toY(xStar[1])}
             />
-            <line
-              className="sset-current"
-              x1={toX(0)}
-              y1={toY(0)}
-              x2={toX(x[0])}
-              y2={toY(x[1])}
-            />
+            <line className="sset-current" x1={toX(0)} y1={toY(0)} x2={toX(x[0])} y2={toY(x[1])} />
           </g>
 
           <circle className="sset-star" cx={toX(xStar[0])} cy={toY(xStar[1])} r={5.5} />
@@ -129,7 +123,8 @@ export default function SolutionSet({ a = [1, 2], b = 4, labels = {} }: Solution
           />
         </div>
         <p className="cs-note">
-          {labels.particular ?? '‖x‖² = ‖x*‖² + c², so the minimum sits where x is orthogonal to the null space.'}
+          {labels.particular ??
+            '‖x‖² = ‖x*‖² + c², so the minimum sits where x is orthogonal to the null space.'}
         </p>
 
         <button className="mplay-reset" type="button" onClick={() => setC(1.2)}>

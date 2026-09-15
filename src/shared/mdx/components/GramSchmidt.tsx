@@ -66,7 +66,9 @@ function run(vs: number[][], L: GramSchmidtProps['labels'] = {}): Frame[] {
       q: q.map((x) => [...x]),
       current: [...r],
       norm: n,
-      note: dep ? (L.dependent ?? 'residual zero: dependent') : `q${k + 1} = v${k + 1}′ / ‖v${k + 1}′‖`,
+      note: dep
+        ? (L.dependent ?? 'residual zero: dependent')
+        : `q${k + 1} = v${k + 1}′ / ‖v${k + 1}′‖`,
       index: k,
       dependent: dep,
     })
@@ -115,7 +117,9 @@ export default function GramSchmidt({
       <div className="mmul-bracket">
         <div className="mmul-cells" style={{ gridTemplateColumns: 'minmax(46px, auto)' }}>
           {v.map((x, k) => (
-            <span key={k} className={`mmul-cell ${cls}`}>{fmt(x)}</span>
+            <span key={k} className={`mmul-cell ${cls}`}>
+              {fmt(x)}
+            </span>
           ))}
         </div>
       </div>
@@ -136,11 +140,7 @@ export default function GramSchmidt({
       </div>
 
       <div className="mmul-controls">
-        <button
-          type="button"
-          className="bc-preset"
-          onClick={() => setAlt((a) => !a)}
-        >
+        <button type="button" className="bc-preset" onClick={() => setAlt((a) => !a)}>
           {alt ? (labels.restore ?? 'restore v3') : (labels.swap ?? 'replace v3')}
         </button>
 
@@ -149,19 +149,47 @@ export default function GramSchmidt({
         </p>
 
         <div className="elim-buttons">
-          <button type="button" className="elim-btn" disabled={i === 0}
-                  onClick={() => { setPlaying(false); setI((k) => Math.max(0, k - 1)) }} aria-label="−1">◀</button>
-          <button type="button" className="elim-btn is-play"
-                  onClick={() => { if (i >= last) setI(0); setPlaying((p) => !p) }}>
+          <button
+            type="button"
+            className="elim-btn"
+            disabled={i === 0}
+            onClick={() => {
+              setPlaying(false)
+              setI((k) => Math.max(0, k - 1))
+            }}
+            aria-label="−1"
+          >
+            ◀
+          </button>
+          <button
+            type="button"
+            className="elim-btn is-play"
+            onClick={() => {
+              if (i >= last) setI(0)
+              setPlaying((p) => !p)
+            }}
+          >
             {playing ? (labels.pause ?? '❚❚') : '▶'}
           </button>
-          <button type="button" className="elim-btn" disabled={i === last}
-                  onClick={() => { setPlaying(false); setI((k) => Math.min(last, k + 1)) }} aria-label="+1">▶</button>
+          <button
+            type="button"
+            className="elim-btn"
+            disabled={i === last}
+            onClick={() => {
+              setPlaying(false)
+              setI((k) => Math.min(last, k + 1))
+            }}
+            aria-label="+1"
+          >
+            ▶
+          </button>
         </div>
         <div className="elim-track" aria-hidden="true">
           <span style={{ width: `${(i / last) * 100}%` }} />
         </div>
-        <p className="elim-count">{labels.step ?? 'Step'} {i + 1} / {frames.length}</p>
+        <p className="elim-count">
+          {labels.step ?? 'Step'} {i + 1} / {frames.length}
+        </p>
       </div>
     </div>
   )

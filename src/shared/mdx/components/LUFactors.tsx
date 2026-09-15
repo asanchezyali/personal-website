@@ -91,13 +91,14 @@ export default function LUFactors({
     <div className="mmul-block">
       <span className="mmul-name">{label}</span>
       <div className="mmul-bracket">
-        <div className="mmul-cells" style={{ gridTemplateColumns: `repeat(${n}, minmax(30px, auto))` }}>
+        <div
+          className="mmul-cells"
+          style={{ gridTemplateColumns: `repeat(${n}, minmax(30px, auto))` }}
+        >
           {rows.map((row, r) =>
             row.map((v, c) => {
               const active =
-                f.hi?.grid === kind &&
-                f.hi.row === r &&
-                (f.hi.col === undefined || f.hi.col === c)
+                f.hi?.grid === kind && f.hi.row === r && (f.hi.col === undefined || f.hi.col === c)
               return (
                 <span
                   key={`${r}-${c}`}
@@ -105,7 +106,9 @@ export default function LUFactors({
                     'mmul-cell',
                     active ? 'is-target' : '',
                     kind === 'L' && r === c ? 'is-diagonal' : '',
-                  ].filter(Boolean).join(' ')}
+                  ]
+                    .filter(Boolean)
+                    .join(' ')}
                 >
                   {fmt(v)}
                 </span>
@@ -118,7 +121,9 @@ export default function LUFactors({
   )
 
   // P as a matrix: row i of P A is row perm[i] of A.
-  const P: number[][] = f.perm.map((src) => Array.from({ length: n }, (_, j) => (j === src ? 1 : 0)))
+  const P: number[][] = f.perm.map((src) =>
+    Array.from({ length: n }, (_, j) => (j === src ? 1 : 0))
+  )
 
   return (
     <div className="mmul">
@@ -135,19 +140,47 @@ export default function LUFactors({
 
       <div className="mmul-controls">
         <div className="elim-buttons">
-          <button type="button" className="elim-btn" disabled={i === 0}
-                  onClick={() => { setPlaying(false); setI((k) => Math.max(0, k - 1)) }} aria-label="−1">◀</button>
-          <button type="button" className="elim-btn is-play"
-                  onClick={() => { if (i >= last) setI(0); setPlaying((p) => !p) }}>
+          <button
+            type="button"
+            className="elim-btn"
+            disabled={i === 0}
+            onClick={() => {
+              setPlaying(false)
+              setI((k) => Math.max(0, k - 1))
+            }}
+            aria-label="−1"
+          >
+            ◀
+          </button>
+          <button
+            type="button"
+            className="elim-btn is-play"
+            onClick={() => {
+              if (i >= last) setI(0)
+              setPlaying((p) => !p)
+            }}
+          >
             {playing ? (labels.pause ?? '❚❚') : '▶'}
           </button>
-          <button type="button" className="elim-btn" disabled={i === last}
-                  onClick={() => { setPlaying(false); setI((k) => Math.min(last, k + 1)) }} aria-label="+1">▶</button>
+          <button
+            type="button"
+            className="elim-btn"
+            disabled={i === last}
+            onClick={() => {
+              setPlaying(false)
+              setI((k) => Math.min(last, k + 1))
+            }}
+            aria-label="+1"
+          >
+            ▶
+          </button>
         </div>
         <div className="elim-track" aria-hidden="true">
           <span style={{ width: `${(i / last) * 100}%` }} />
         </div>
-        <p className="elim-count">{labels.step ?? 'Step'} {i + 1} / {frames.length}</p>
+        <p className="elim-count">
+          {labels.step ?? 'Step'} {i + 1} / {frames.length}
+        </p>
       </div>
     </div>
   )

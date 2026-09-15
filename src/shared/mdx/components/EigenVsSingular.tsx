@@ -37,7 +37,8 @@ export default function EigenVsSingular({ labels = {} }: EigenVsSingularProps) {
 
   let kind: 'none' | 'defective' | 'scalar' | 'distinct'
   if (disc < -1e-12) kind = 'none'
-  else if (Math.abs(disc) < 1e-12) kind = Math.abs(m[1]) < 1e-12 && Math.abs(m[2]) < 1e-12 ? 'scalar' : 'defective'
+  else if (Math.abs(disc) < 1e-12)
+    kind = Math.abs(m[1]) < 1e-12 && Math.abs(m[2]) < 1e-12 ? 'scalar' : 'defective'
   else kind = 'distinct'
 
   const f = (n: number) => n.toFixed(2)
@@ -57,16 +58,25 @@ export default function EigenVsSingular({ labels = {} }: EigenVsSingularProps) {
     <div className="evs">
       <div className="evs-stage">
         <div className="mmul-bracket">
-          <div className="mmul-cells" style={{ gridTemplateColumns: 'repeat(2, minmax(48px, auto))' }}>
+          <div
+            className="mmul-cells"
+            style={{ gridTemplateColumns: 'repeat(2, minmax(48px, auto))' }}
+          >
             {m.map((x, i) => (
-              <span key={i} className={i === 2 ? 'mmul-cell is-live' : 'mmul-cell'}>{f(x)}</span>
+              <span key={i} className={i === 2 ? 'mmul-cell is-live' : 'mmul-cell'}>
+                {f(x)}
+              </span>
             ))}
           </div>
         </div>
 
         <div className="evs-row">
           <span className="evs-tag">{labels.eigen ?? 'eigenvalues'}</span>
-          <span className={kind === 'distinct' || kind === 'scalar' ? 'evs-verdict is-ok' : 'evs-verdict is-bad'}>
+          <span
+            className={
+              kind === 'distinct' || kind === 'scalar' ? 'evs-verdict is-ok' : 'evs-verdict is-bad'
+            }
+          >
             {eigenText}
           </span>
         </div>
@@ -85,12 +95,21 @@ export default function EigenVsSingular({ labels = {} }: EigenVsSingularProps) {
       </div>
 
       <div className="evs-controls">
-        <p className="dvec-hint">{labels.hint ?? 'One parameter sweeps every eigenvalue regime.'}</p>
+        <p className="dvec-hint">
+          {labels.hint ?? 'One parameter sweeps every eigenvalue regime.'}
+        </p>
 
         <label className="mplay-slider">
           <span className="mplay-name">t</span>
-          <input type="range" min={-1} max={1.5} step={0.05} value={t}
-                 onChange={(e) => setT(Number(e.target.value))} aria-label="t" />
+          <input
+            type="range"
+            min={-1}
+            max={1.5}
+            step={0.05}
+            value={t}
+            onChange={(e) => setT(Number(e.target.value))}
+            aria-label="t"
+          />
           <span className="mplay-val">{t.toFixed(2)}</span>
         </label>
 

@@ -85,13 +85,21 @@ export default function TransposeGrid({
 
         <p className="mmul-formula" aria-live="polite">
           <span className="mmul-lhs">
-            a<sub>{i + 1}{j + 1}</sub>
+            a
+            <sub>
+              {i + 1}
+              {j + 1}
+            </sub>
           </span>
           {' = '}
           <strong>{a[i][j]}</strong>
           {'  →  '}
           <span className="mmul-lhs">
-            (Aᵀ)<sub>{j + 1}{i + 1}</sub>
+            (Aᵀ)
+            <sub>
+              {j + 1}
+              {i + 1}
+            </sub>
           </span>
           {' = '}
           <strong>{a[i][j]}</strong>
@@ -99,7 +107,9 @@ export default function TransposeGrid({
       </div>
 
       <div className="mmul-controls">
-        <p className="dvec-hint">{labels.diagonal ?? 'The diagonal stays fixed; every other entry swaps its indices.'}</p>
+        <p className="dvec-hint">
+          {labels.diagonal ?? 'The diagonal stays fixed; every other entry swaps its indices.'}
+        </p>
         <div className="elim-buttons">
           <button
             type="button"

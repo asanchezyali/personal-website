@@ -61,18 +61,34 @@ export default function SolveCost({ labels = {} }: SolveCostProps) {
       </div>
 
       <div className="scost-controls">
-        <p className="dvec-hint">{labels.hint ?? 'Flop counts: 2n³/3 to factor, 2n² per triangular solve.'}</p>
+        <p className="dvec-hint">
+          {labels.hint ?? 'Flop counts: 2n³/3 to factor, 2n² per triangular solve.'}
+        </p>
 
         <label className="mplay-slider">
           <span className="mplay-name">n</span>
-          <input type="range" min={50} max={2000} step={50} value={n}
-                 onChange={(e) => setN(Number(e.target.value))} aria-label="n" />
+          <input
+            type="range"
+            min={50}
+            max={2000}
+            step={50}
+            value={n}
+            onChange={(e) => setN(Number(e.target.value))}
+            aria-label="n"
+          />
           <span className="mplay-val">{n}</span>
         </label>
         <label className="mplay-slider">
           <span className="mplay-name">k</span>
-          <input type="range" min={1} max={200} step={1} value={k}
-                 onChange={(e) => setK(Number(e.target.value))} aria-label="k" />
+          <input
+            type="range"
+            min={1}
+            max={200}
+            step={1}
+            value={k}
+            onChange={(e) => setK(Number(e.target.value))}
+            aria-label="k"
+          />
           <span className="mplay-val">{k}</span>
         </label>
 
@@ -80,7 +96,14 @@ export default function SolveCost({ labels = {} }: SolveCostProps) {
           {labels.size ?? 'matrix'} {n}×{n} · {labels.rhs ?? 'right-hand sides'} k = {k}
         </p>
 
-        <button className="mplay-reset" type="button" onClick={() => { setN(500); setK(20) }}>
+        <button
+          className="mplay-reset"
+          type="button"
+          onClick={() => {
+            setN(500)
+            setK(20)
+          }}
+        >
           {labels.reset ?? 'Reset'}
         </button>
       </div>

@@ -64,12 +64,7 @@ export default function MatMulGrid({
   const nameB = names.b ?? 'B'
   const nameC = names.c ?? 'C'
 
-  const grid = (
-    rows: number[][],
-    kind: 'a' | 'b' | 'c',
-    label: string,
-    shape: string
-  ) => (
+  const grid = (rows: number[][], kind: 'a' | 'b' | 'c', label: string, shape: string) => (
     <div className="mmul-block">
       <span className="mmul-name">
         {label} <em>{shape}</em>
@@ -122,7 +117,8 @@ export default function MatMulGrid({
           <span className="mmul-lhs">
             {nameC}
             <sub>
-              {i + 1}{j + 1}
+              {i + 1}
+              {j + 1}
             </sub>
           </span>
           {' = '}
