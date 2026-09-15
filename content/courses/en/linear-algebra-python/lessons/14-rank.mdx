@@ -1,0 +1,169 @@
+---
+title: 'Rank with Python'
+language: 'en'
+module: 'Vector spaces'
+moduleOrder: 2
+order: 5
+summary: 'The equality of row and column rank, the rank of a product, the optimal low-rank approximation by Eckart-Young, and low-rank adaptation of large models.'
+---
+
+Rank has appeared in almost every previous lesson: as a consistency criterion, as the dimension of
+the column space, as a test for independence, and as a decision subject to a tolerance. This lesson
+gathers what was left out. A theorem that has been used without being stated, and the construction
+that turns rank into a compression tool.
+
+## Rows and columns
+
+Rank can be defined as the number of linearly independent rows or as the number of independent
+columns. These are two different definitions producing the same number:
+
+$$
+\operatorname{rank}(A) = \operatorname{rank}(A^\top)
+$$
+
+The result is not obvious. A $3 \times 100$ matrix has at most three independent rows and a hundred
+candidate columns, and yet the number of independent columns cannot exceed three either.
+
+The singular value decomposition explains it in one line. If $A = U\Sigma V^\top$, then
+$A^\top = V\Sigma^\top U^\top$, and both have the same non-zero singular values. Since the rank is
+the number of non-zero singular values, the equality is immediate. The lesson on subspaces
+anticipated it by assigning the same dimension $r$ to the row space and the column space.
+
+```python
+import numpy as np
+
+A = np.array([[1., 2., 3.],
+              [2., 4., 6.]])              # row 2 = 2 · row 1
+
+np.linalg.matrix_rank(A)                  # 1
+np.linalg.matrix_rank(A.T)                # 1
+```
+
+An immediate consequence is the bound $\operatorname{rank}(A) \le \min(m, n)$. When equality holds,
+the matrix has **full rank**. For a square matrix that is equivalent to being invertible, which is
+the condition $\det A \neq 0$ of the lesson on the inverse seen now as a statement about dimensions.
+
+## The rank of a product
+
+From the reading of the product as composition, a second bound follows:
+
+$$
+\operatorname{rank}(AB) \le \min\big(\operatorname{rank}(A),\ \operatorname{rank}(B)\big)
+$$
+
+The reason is that $\operatorname{col}(AB) \subseteq \operatorname{col}(A)$, since every column of
+$AB$ is a combination of the columns of $A$, and symmetrically for the rows. Composing
+transformations cannot increase the dimension of the image.
+
+That bound, which looks like a limitation, is the basis of the last section: multiplying two narrow
+matrices produces a large matrix of guaranteed low rank.
+
+## Low-rank approximation
+
+With real data the rank is nearly always full, as the lesson on linear independence established. The
+useful question stops being what the rank is and becomes **what is lost by treating the matrix as if
+it had rank $k$**.
+
+The singular value decomposition answers exactly. Writing
+$A = \sum_{i=1}^{r} \sigma_i \vec{u}_i \vec{v}_i^\top$ as a sum of rank-one matrices ordered by
+decreasing $\sigma_i$, and truncating the sum:
+
+$$
+A_k = \sum_{i=1}^{k} \sigma_i \vec{u}_i \vec{v}_i^\top
+$$
+
+The **Eckart-Young theorem** states that $A_k$ is the best possible rank-$k$ approximation, and that
+the error incurred is exactly what was discarded:
+
+$$
+\min_{\operatorname{rank}(B) \le k} \lVert A - B \rVert_F = \lVert A - A_k \rVert_F = \sqrt{\sum_{i>k} \sigma_i^2}
+$$
+
+The best approximation does not have to be searched for: the decomposition supplies it, in order.
+
+<LowRankImage
+  n={32}
+  labels={{
+    hint: 'The bars are the singular values; the kept ones are highlighted.',
+    original: 'A',
+    approx: 'A',
+    error: 'error',
+    energy: 'energy',
+    storage: 'storage',
+    note: 'Rank k costs k(2n+1) numbers instead of n².',
+  }}
+/>
+
+The figure decomposes a $32\times 32$ field and reconstructs it from the first $k$ terms. With
+$k = 4$ it retains $95.4\,\%$ of the energy while occupying $25\,\%$ of the storage; with $k = 8$,
+$99.3\,\%$ while occupying $51\,\%$.
+
+One detail of the example illustrates the theory. The Gaussian blobs are separable, of the form
+$f(x)g(y)$, and therefore rank one each: a figure made only of blobs would have exactly finite rank
+and nothing to truncate. The diagonal ridge and the ring are not separable, and they are what give
+the spectrum its tail.
+
+Storage is the practical reason. Keeping $A_k$ requires $k$ vectors of length $m$, $k$ of length $n$
+and $k$ singular values, that is $k(m + n + 1)$ numbers against the $mn$ of the full matrix.
+Compression pays off when $k \ll mn/(m+n)$.
+
+## Effective rank
+
+Between the numerical rank, an integer subject to a tolerance, and the full spectrum, which is
+$\min(m,n)$ numbers, there are intermediate measures of how many directions matter.
+
+The most common in practice is counting how many singular values are needed to reach a given
+fraction of the energy:
+
+```python
+s = np.linalg.svd(A, compute_uv=False)
+energy = np.cumsum(s**2) / np.sum(s**2)
+k_90 = np.searchsorted(energy, 0.90) + 1       # directions to reach 90 %
+```
+
+It is the same quantity that principal component analysis plots as cumulative explained variance,
+and the criterion for choosing the number of components.
+
+## Application: low-rank adaptation
+
+Fitting a large model to a specific task requires modifying its weight matrices. For a layer with
+$W \in \mathbb{R}^{d\times d}$, updating $W$ in full means training $d^2$ parameters, which for
+$d = 4096$ is almost seventeen million per layer.
+
+**Low-rank adaptation** starts from a hypothesis: the required update has low intrinsic rank. If so,
+it can be written as a product of two narrow matrices:
+
+$$
+W' = W + \Delta W, \qquad \Delta W = BA, \quad B \in \mathbb{R}^{d\times r},\ A \in \mathbb{R}^{r\times d}
+$$
+
+By the bound of the previous section, $\operatorname{rank}(BA) \le r$ by construction, without having
+to impose it. The trainable parameters go from $d^2$ to $2dr$.
+
+<LoRABudget
+  labels={{
+    hint: 'ΔW is d×d; B is d×r and A is r×d, so rank(BA) ≤ r by construction.',
+    full: 'full ΔW',
+    lora: 'B·A, rank r',
+    ratio: 'trainable parameters',
+    rank: 'reduction factor',
+    note: 'The saving is d²/(2dr) = d/(2r), and grows with the size of the layer.',
+    reset: 'Reset',
+  }}
+/>
+
+With $d = 4096$ and $r = 8$, the trainable parameters drop to $0.39\,\%$: a factor of $256$. The
+saving is $d/(2r)$, so it grows with the size of the layer, which is why the technique becomes more
+advantageous the larger the model.
+
+The low-rank hypothesis is empirical, not a theorem: it works because the updates required to
+specialise an already trained model turn out, in practice, to have little effective dimension. When
+it does not hold, the rank $r$ limits what the adaptation can represent, and the diagnosis is the
+same as in the rest of the lesson: the reachable column space has dimension at most $r$.
+
+---
+
+**Exercise.** Generate a $50\times 50$ matrix as the product of two $50\times 3$ matrices plus
+Gaussian noise of scale $10^{-3}$. Check that `matrix_rank` returns $50$ and plot the singular values
+on a logarithmic scale, identifying the gap between the first three and the rest. Then verify the
+Eckart-Young equality by comparing `norm(A - A_3, 'fro')` with `sqrt(sum(s[3:]**2))`.

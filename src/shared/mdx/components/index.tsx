@@ -39,6 +39,8 @@ import GramSchmidt from './GramSchmidt'
 import DependenceDegree from './DependenceDegree'
 import CoordinatesInBasis from './CoordinatesInBasis'
 import EnergyCompaction from './EnergyCompaction'
+import LowRankImage from './LowRankImage'
+import LoRABudget from './LoRABudget'
 import { PseudoCodeLine, PseudoCode } from './PseudoCode'
 
 export const components: MDXComponents = {
@@ -76,6 +78,8 @@ export const components: MDXComponents = {
   DependenceDegree,
   CoordinatesInBasis,
   EnergyCompaction,
+  LowRankImage,
+  LoRABudget,
   TOCInline,
   a: CustomLink,
   pre: CodeBlock,
