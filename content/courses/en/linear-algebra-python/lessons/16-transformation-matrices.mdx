@@ -1,0 +1,176 @@
+---
+title: 'Transformation matrices with Python'
+language: 'en'
+module: 'Vector spaces'
+moduleOrder: 2
+order: 7
+summary: 'The catalogue of plane transformations, the homogeneous coordinates that turn an affine map into a linear one, the order of composition, and the row-versus-column convention.'
+---
+
+The previous lesson established that every linear map is a matrix and that an affine map is not
+linear. This one develops the practical consequences of both statements: which matrices produce the
+usual transformations of the plane, and how translation is accommodated when the definition excludes
+it.
+
+## The catalogue
+
+The linear transformations of the plane reduce to a few families, each with its matrix. The
+parameters describing them determine their effect completely.
+
+<TransformGallery
+  labels={{
+    hint: 'The dashed figure is the original.',
+    det: 'det',
+    names: {
+      rotate: 'rotation',
+      scale: 'scaling',
+      reflect: 'reflection',
+      shear: 'shear',
+      project: 'projection',
+    },
+    param: { rotate: 'θ', scale: 'k', reflect: 'θ', shear: 'k', project: 'θ' },
+    collapses: 'collapses to a line',
+    flips: 'reverses orientation',
+  }}
+/>
+
+$$
+R_\theta = \begin{bmatrix}\cos\theta & -\sin\theta\\ \sin\theta & \cos\theta\end{bmatrix}, \qquad
+S = \begin{bmatrix}k & 0\\ 0 & 1/k\end{bmatrix}, \qquad
+H = \begin{bmatrix}1 & k\\ 0 & 1\end{bmatrix}
+$$
+
+The determinant, from its own lesson, classifies what happens. The rotation has $\det = 1$: it
+preserves areas and orientation. The scaling chosen here does too, because the factors are
+reciprocal. The reflection has $\det = -1$, and the negative sign is the reversal of orientation. The
+projection has $\det = 0$, because it flattens the plane onto a line and loses information
+irreversibly.
+
+The matrix projecting onto the line at angle $\theta$ is the one from the lesson on subspaces,
+$P = \vec{u}\vec{u}^\top$ with $\vec{u}$ a unit vector, which expands to
+
+$$
+P_\theta = \begin{bmatrix}\cos^2\theta & \cos\theta\sin\theta\\ \cos\theta\sin\theta & \sin^2\theta\end{bmatrix}
+$$
+
+## Transforming a set of points
+
+A single matrix transforms any number of points. Placing them as the columns of a matrix $P$, the
+product $AP$ transforms them all at once:
+
+```python
+import numpy as np
+
+t = np.pi / 2
+R = np.array([[np.cos(t), -np.sin(t)],
+              [np.sin(t),  np.cos(t)]])
+
+P = np.array([[1., 0., 1.],
+              [0., 1., 1.]])        # three points, as columns
+
+R @ P
+# array([[ 0., -1., -1.],
+#        [ 1.,  0.,  1.]])
+```
+
+A clash of conventions surfaces here and is worth stating. In graphics and in most linear algebra
+texts, points are **columns** and the transformation multiplies from the left: $AP$. In machine
+learning the examples are **rows**, as the lesson on matrices established, and the same operation is
+written $XA^\top$.
+
+```python
+X = P.T                  # the same points, as rows
+np.allclose(X @ R.T, (R @ P).T)      # True
+```
+
+Neither convention is preferable; what causes errors is mixing them. Checking `.shape` remains the
+way to tell which one someone else's code uses.
+
+## Homogeneous coordinates
+
+Translation $\vec{x} \mapsto \vec{x} + \vec{t}$ is not linear: it moves the origin, and the previous
+lesson showed that $\Phi(\vec{0}) = \vec{0}$ is compulsory. No $2\times 2$ matrix translates the
+plane.
+
+The usual solution is to work one dimension higher. A point $(x, y)$ is represented as $(x, y, 1)$,
+and translation becomes a product with a $3\times 3$ matrix:
+
+$$
+\begin{bmatrix}1 & 0 & t_x\\ 0 & 1 & t_y\\ 0 & 0 & 1\end{bmatrix}
+\begin{bmatrix}x\\ y\\ 1\end{bmatrix}
+=
+\begin{bmatrix}x + t_x\\ y + t_y\\ 1\end{bmatrix}
+$$
+
+These are **homogeneous coordinates**. The map is still not linear on $\mathbb{R}^2$, but it is
+linear on $\mathbb{R}^3$ restricted to the plane $z = 1$. The upper-left $2\times 2$ block holds the
+linear part and the third column the translation.
+
+The gain is in composition. With every affine transformation written as a $3\times 3$ matrix,
+composing them is multiplying them, and an arbitrary sequence of rotations, scalings and
+translations reduces to a single product. This is what graphics pipelines and image transformation
+libraries do.
+
+<HomogeneousCompose
+  labels={{
+    hint: 'The grey dashed figure is the original; the violet one is the other order.',
+    rotateFirst: 'T · R',
+    translateFirst: 'R · T',
+    composed: 'composed matrix',
+    angle: 'θ',
+    shift: 'tx',
+    note: 'The third column holds the translation; the third row keeps the block a matrix.',
+  }}
+/>
+
+Order matters, and the figure makes it plain. $TR$ rotates about the origin and then shifts; $RT$
+shifts first and rotates the result about the origin, so the figure sweeps an arc. The violet outline
+is whichever order is not selected.
+
+The difference can be read off the matrix itself. With $\theta = 90°$ and $t_x = 2.5$, the third
+column is $(2.5,\ 0)$ in $TR$ and $(0,\ 2.5)$ in $RT$: in the second case the translation has been
+rotated along with everything else, because it was applied first.
+
+From this comes the recipe for rotating about a point $\vec{c}$ other than the origin, which no
+$2\times 2$ matrix can express:
+
+$$
+M = T_{\vec{c}}\, R_\theta\, T_{-\vec{c}}
+$$
+
+move the centre to the origin, rotate, and undo the translation. It reads right to left, like any
+composition.
+
+## Application: data augmentation
+
+Data augmentation in vision consists of applying random geometric transformations to the training
+images, so that the model learns to recognise an object independently of its position, scale or
+orientation.
+
+```python
+def random_affine(rng, scale=(0.9, 1.1), turn=15, shift=0.1):
+    t = rng.uniform(-turn, turn) * np.pi / 180
+    k = rng.uniform(*scale)
+    c, s = np.cos(t), np.sin(t)
+    R = np.array([[k * c, -k * s, rng.uniform(-shift, shift)],
+                  [k * s,  k * c, rng.uniform(-shift, shift)],
+                  [0.,     0.,    1.]])
+    return R
+```
+
+Each call returns a $3\times 3$ matrix, and composing several transformations is multiplying them.
+The libraries in this area work exactly this way, and what they add is interpolation: applying the
+matrix to the pixel grid produces non-integer coordinates, and the value at each destination pixel
+has to be estimated from its neighbours.
+
+The justification for the technique is a hypothesis about the problem, not about the algebra: the
+label is assumed invariant under those transformations. Rotating a handwritten digit by $15°$ does
+not change which digit it is, but rotating it by $180°$ can turn a $6$ into a $9$. The range of the
+parameters encodes that assumption, and choosing it badly introduces mislabelled examples.
+
+---
+
+**Exercise.** Build the matrix rotating by $90°$ about the point $(2, 1)$ by composing
+$T_{\vec{c}} R_{90°} T_{-\vec{c}}$ in homogeneous coordinates, and check that it leaves that point
+fixed. Then verify that the upper-left $2\times 2$ block of the product equals $R_{90°}$ and explain
+why.

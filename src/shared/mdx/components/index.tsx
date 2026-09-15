@@ -43,6 +43,8 @@ import LowRankImage from './LowRankImage'
 import LoRABudget from './LoRABudget'
 import LinearityCheck from './LinearityCheck'
 import LayerCollapse from './LayerCollapse'
+import TransformGallery from './TransformGallery'
+import HomogeneousCompose from './HomogeneousCompose'
 import { PseudoCodeLine, PseudoCode } from './PseudoCode'
 
 export const components: MDXComponents = {
@@ -84,6 +86,8 @@ export const components: MDXComponents = {
   LoRABudget,
   LinearityCheck,
   LayerCollapse,
+  TransformGallery,
+  HomogeneousCompose,
   TOCInline,
   a: CustomLink,
   pre: CodeBlock,
