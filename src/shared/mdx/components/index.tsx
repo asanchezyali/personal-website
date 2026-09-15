@@ -41,6 +41,8 @@ import CoordinatesInBasis from './CoordinatesInBasis'
 import EnergyCompaction from './EnergyCompaction'
 import LowRankImage from './LowRankImage'
 import LoRABudget from './LoRABudget'
+import LinearityCheck from './LinearityCheck'
+import LayerCollapse from './LayerCollapse'
 import { PseudoCodeLine, PseudoCode } from './PseudoCode'
 
 export const components: MDXComponents = {
@@ -80,6 +82,8 @@ export const components: MDXComponents = {
   EnergyCompaction,
   LowRankImage,
   LoRABudget,
+  LinearityCheck,
+  LayerCollapse,
   TOCInline,
   a: CustomLink,
   pre: CodeBlock,

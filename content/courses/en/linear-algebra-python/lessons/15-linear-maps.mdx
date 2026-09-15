@@ -1,0 +1,209 @@
+---
+title: 'Linear maps with Python'
+language: 'en'
+module: 'Vector spaces'
+moduleOrder: 2
+order: 6
+summary: 'The definition of a linear map, its correspondence with matrices, the dependence of that matrix on the chosen bases, the classification by rank, and the collapse of a network without non-linearities.'
+---
+
+The course has multiplied matrices by vectors since the first lesson, and has described them as
+factorisations, projections and changes of basis. What it has not done is state what a matrix is as
+a mathematical object. This lesson establishes it: a matrix is the representation of a function, and
+of a very particular kind of function.
+
+## The definition
+
+A map $\Phi : V \to W$ between vector spaces is **linear** if it respects the two operations that
+define a vector space:
+
+$$
+\Phi(\vec{u} + \vec{v}) = \Phi(\vec{u}) + \Phi(\vec{v}), \qquad \Phi(\lambda\vec{v}) = \lambda\,\Phi(\vec{v})
+$$
+
+Both are summarised in a single condition, which is the usual way of checking it:
+
+$$
+\Phi(\lambda\vec{x} + \vec{y}) = \lambda\,\Phi(\vec{x}) + \Phi(\vec{y})
+$$
+
+The reading is that the order of the operations is immaterial: combining and then transforming
+produces the same result as transforming and then combining.
+
+<LinearityCheck
+  a={[1.2, -0.6, 0.5, 1.1]}
+  x={[2, 1]}
+  y={[-1, 2]}
+  labels={{
+    hint: 'Drag x or y in the left panel.',
+    domain: 'x, y, λx + y',
+    codomain: 'their images',
+    combine: 'Φ(λx + y)',
+    apply: 'λΦ(x) + Φ(y)',
+    agree: 'difference',
+    reset: 'Reset',
+  }}
+/>
+
+The left panel shows $\vec{x}$, $\vec{y}$ and the combination $\lambda\vec{x} + \vec{y}$; the right,
+their images. The highlighted arrow on the right is $\Phi(\lambda\vec{x} + \vec{y})$, and it
+coincides with $\lambda\Phi(\vec{x}) + \Phi(\vec{y})$ for any position of the vectors and any value
+of $\lambda$.
+
+From the definition it follows that $\Phi(\vec{0}) = \vec{0}$, taking $\lambda = 0$ and
+$\vec{y} = \vec{0}$. A map that shifts the origin is not linear, however much it sends lines to
+lines: the function $\vec{x} \mapsto A\vec{x} + \vec{b}$ with $\vec{b} \neq \vec{0}$ is **affine**,
+not linear.
+
+## Every linear map is a matrix
+
+Let $\Phi : \mathbb{R}^n \to \mathbb{R}^m$ be linear and $\{\vec{e}_1,\dots,\vec{e}_n\}$ the
+canonical basis. Every vector is written $\vec{x} = \sum_j x_j \vec{e}_j$, and applying linearity
+
+$$
+\Phi(\vec{x}) = \sum_{j=1}^{n} x_j\, \Phi(\vec{e}_j)
+$$
+
+The map is determined by the $n$ images $\Phi(\vec{e}_j)$. Placing them as the columns of a matrix
+$A$, the expression above is exactly $A\vec{x}$.
+
+The correspondence is bijective: every matrix defines a linear map, and every linear map comes from
+a unique matrix. That equivalence is what justifies using the two languages interchangeably, as the
+course has been doing.
+
+```python
+import numpy as np
+
+A = np.array([[2., 0.],
+              [0., 3.]])
+
+A @ np.array([1., 0.])      # array([2., 0.]) = first column
+A @ np.array([0., 1.])      # array([0., 3.]) = second column
+```
+
+## The matrix depends on the bases
+
+The claim above presupposes the canonical basis at both ends. In general, the matrix of a linear map
+depends on the basis chosen in the domain and on the one chosen in the codomain.
+
+Given bases $\mathcal{B}$ of $V$ and $\mathcal{C}$ of $W$, the matrix $A_\Phi$ is built by expressing
+the image of each vector of $\mathcal{B}$ in coordinates of $\mathcal{C}$:
+
+$$
+\Phi(\vec{b}_j) = \sum_{i=1}^{m} a_{ij}\,\vec{c}_i
+$$
+
+and then $[\Phi(\vec{x})]_\mathcal{C} = A_\Phi\,[\vec{x}]_\mathcal{B}$.
+
+Changing basis changes the matrix without changing the map. If $\tilde{A}$ is the matrix with
+respect to other bases, the two are related by
+
+$$
+\tilde{A} = T^{-1} A S
+$$
+
+with $S$ and $T$ the changes of basis in domain and codomain, in the sense described in the lesson
+on basis and dimension. When $V = W$ and the same basis is used at both ends, the relation reduces
+to $\tilde{A} = T^{-1}AT$, which is called **similarity**.
+
+Hence a consequence the course has used without naming it: one map admits very different matrices,
+and choosing the basis well can make it trivial. A diagonal matrix is simply a map written in a basis
+where it does not mix directions.
+
+## Composition
+
+The composition of two linear maps is linear, and its matrix is the product:
+
+$$
+(\Psi \circ \Phi)(\vec{x}) = B(A\vec{x}) = (BA)\vec{x}
+$$
+
+The order reads right to left, as in any composition of functions. The associativity of the matrix
+product, stated in the lesson on composition and inverses, is the associativity of composition.
+
+```python
+B = np.array([[0., -1.],
+              [1.,  0.]])                    # rotation by π/2
+
+x = np.array([1., 2.])
+np.allclose((B @ A) @ x, B @ (A @ x))        # True
+```
+
+## Injective, surjective, bijective
+
+Rank classifies the map completely. For $\Phi : \mathbb{R}^n \to \mathbb{R}^m$ with matrix $A$ of
+rank $r$:
+
+| Property | Condition | Reading |
+| --- | --- | --- |
+| injective | $r = n$ | $\ker(A) = \{\vec{0}\}$: no direction collapses |
+| surjective | $r = m$ | $\operatorname{col}(A) = \mathbb{R}^m$: the whole target is reached |
+| bijective | $r = m = n$ | $A$ invertible |
+
+The first row is the rank-nullity theorem of the lesson on particular and general solutions:
+$\dim\ker(A) = n - r$, so the null space is trivial exactly when $r = n$. An injective map preserves
+information; a non-injective one sends distinct vectors to the same destination, and that loss is
+irreversible.
+
+A bijective linear map is called an **isomorphism**, and two spaces admitting one between them are
+indistinguishable from the point of view of linear algebra. The criterion is purely dimensional:
+
+$$
+V \cong W \iff \dim(V) = \dim(W)
+$$
+
+This is why every real vector space of dimension $n$ can be treated as $\mathbb{R}^n$: choosing a
+basis is exactly building that isomorphism. Polynomials of degree at most $2$ are indistinguishable
+from $\mathbb{R}^3$, and the list of coefficients is the isomorphism.
+
+## Application: why a network needs non-linearities
+
+A dense layer computes $\vec{y} = W\vec{x} + \vec{b}$, which is an affine map. Composing several
+layers with nothing between them gives
+
+$$
+W_k(\cdots(W_1\vec{x} + \vec{b}_1)\cdots) + \vec{b}_k = (W_k\cdots W_1)\vec{x} + \vec{b}'
+$$
+
+that is, another affine map with a single matrix. A stack of linear layers **is** one linear layer,
+regardless of its depth.
+
+The bound on the rank of a product, established in the previous lesson, adds a further limitation:
+
+$$
+\operatorname{rank}(W_k \cdots W_1) \le \min_i \operatorname{rank}(W_i)
+$$
+
+<LayerCollapse
+  labels={{
+    hint: 'A chain of linear layers, one of them narrow.',
+    widths: 'widths',
+    bottleneck: 'bottleneck',
+    composed: 'W = W₄W₃W₂W₁',
+    rankBound: 'rank(W) ≤',
+    injective: 'no information is lost',
+    lossy: 'the map is not injective: information is lost',
+    note: 'Without non-linearities the chain is one matrix, and the narrowest layer caps its rank.',
+    reset: 'Reset',
+  }}
+/>
+
+The narrowest layer imposes a ceiling on what the whole chain can represent. With a layer of width
+$8$ among layers of width $64$, the composition has rank at most $8$ however full-rank the others
+are, and the map stops being injective.
+
+Non-linear activation functions placed between layers break this identity: the composition is no
+longer a linear map and the arguments above stop applying. Depth contributes expressive capacity
+only because that interruption exists.
+
+The reasoning also has a constructive reading. When the bottleneck is deliberate, as in an
+autoencoder, the rank bound is the mechanism: forcing the representation through a narrow layer
+compels it to discard everything but the most informative directions, which is the low-rank
+approximation of the previous lesson applied to the weights.
+
+---
+
+**Exercise.** Check that $\vec{x} \mapsto A\vec{x} + \vec{b}$ with $\vec{b} \neq \vec{0}$ fails the
+linearity condition, by evaluating both sides of $\Phi(2\vec{x}) = 2\Phi(\vec{x})$. Then build three
+matrices of shapes $64\times 64$, $8\times 64$ and $64\times 8$, and verify that the rank of their
+product does not exceed $8$.
