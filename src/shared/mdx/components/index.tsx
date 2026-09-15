@@ -45,6 +45,8 @@ import LinearityCheck from './LinearityCheck'
 import LayerCollapse from './LayerCollapse'
 import TransformGallery from './TransformGallery'
 import HomogeneousCompose from './HomogeneousCompose'
+import Diagonalise from './Diagonalise'
+import SimilarityInvariants from './SimilarityInvariants'
 import { PseudoCodeLine, PseudoCode } from './PseudoCode'
 
 export const components: MDXComponents = {
@@ -88,6 +90,8 @@ export const components: MDXComponents = {
   LayerCollapse,
   TransformGallery,
   HomogeneousCompose,
+  Diagonalise,
+  SimilarityInvariants,
   TOCInline,
   a: CustomLink,
   pre: CodeBlock,

@@ -1,0 +1,201 @@
+---
+title: 'Cambio de base con Python'
+language: 'es'
+module: 'Espacios vectoriales'
+moduleOrder: 2
+order: 8
+summary: 'Valores y vectores propios, la diagonalización y los casos en que falla, las cantidades que la semejanza conserva, y el teorema espectral que sostiene el análisis de componentes principales.'
+---
+
+La lección sobre aplicaciones lineales enunció que la matriz de una transformación depende de la
+base, y que la relación entre dos representaciones es una semejanza. Esta lección responde a la
+pregunta que aquella dejó planteada: entre todas las bases posibles, cuál produce la matriz más
+simple, y qué se conserva al cambiar de una a otra.
+
+## Vectores propios
+
+El curso ha empleado los vectores propios en varias ocasiones —al describir el análisis de
+componentes principales, al justificar la simetría de $A^\top A$— sin definirlos. La definición es
+la siguiente.
+
+Sea $A \in \mathbb{R}^{n\times n}$. Un vector $\vec{v} \neq \vec{0}$ es un **vector propio** de $A$
+si existe un escalar $\lambda$ tal que
+
+$$
+A\vec{v} = \lambda\vec{v}
+$$
+
+y $\lambda$ es el **valor propio** asociado. La condición $\vec{v} \neq \vec{0}$ es parte de la
+definición: el vector nulo satisface la igualdad para todo $\lambda$ y admitirlo la vaciaría de
+contenido.
+
+Geométricamente, $\vec{v}$ genera una recta que la transformación deja invariante. Sobre ella, la
+aplicación se limita a multiplicar por $\lambda$.
+
+Reescribiendo la definición como $(A - \lambda I)\vec{v} = \vec{0}$ con $\vec{v} \neq \vec{0}$, el
+núcleo de $A - \lambda I$ debe ser no trivial, lo que por la lección sobre el determinante equivale
+a
+
+$$
+\det(A - \lambda I) = 0
+$$
+
+Esta es la **ecuación característica**. Para $n = 2$ es un polinomio de grado dos, de modo que hay a
+lo sumo dos valores propios reales, y puede no haber ninguno.
+
+<Diagonalise
+  initial={[2, 1, 0, 3]}
+  labels={{
+    hint: 'Las rectas son las direcciones que la aplicación deja invariantes. La flecha gris es un vector unitario; la roja, su imagen.',
+    distinct: 'dos direcciones propias independientes: diagonalizable',
+    scalar: 'múltiplo de la identidad: ya es diagonal',
+    defective: 'una sola dirección propia: no diagonalizable',
+    complex: 'sin valores propios reales: la aplicación rota',
+    eigen: 'λ',
+    inBasis: 'En su base propia la matriz es diag(',
+    reset: 'Reiniciar',
+  }}
+/>
+
+## Diagonalización
+
+Si $A$ tiene $n$ vectores propios linealmente independientes, colocarlos como columnas de una matriz
+$S$ produce
+
+$$
+S^{-1} A S = \Lambda = \operatorname{diag}(\lambda_1,\dots,\lambda_n)
+$$
+
+Es la semejanza de la lección anterior con una elección concreta de base: la formada por los propios
+vectores propios. En esa base la aplicación no mezcla direcciones, se limita a escalar cada eje por
+su valor propio. Es la forma más simple que la matriz puede adoptar.
+
+```python
+import numpy as np
+
+A = np.array([[2., 1.],
+              [0., 3.]])
+
+vals, S = np.linalg.eig(A)
+np.allclose(np.linalg.inv(S) @ A @ S, np.diag(vals))     # True
+```
+
+No toda matriz es diagonalizable, y la figura permite alcanzar los tres casos que lo impiden o lo
+permiten.
+
+Con **valores propios reales y distintos** los vectores propios son automáticamente independientes y
+la diagonalización existe. Un **múltiplo de la identidad** ya es diagonal en cualquier base. Pero
+una **cizalladura** como $\begin{bmatrix}1&1\\0&1\end{bmatrix}$ tiene un valor propio doble y una
+sola dirección propia: no hay dos vectores propios independientes con los que formar $S$, y la
+matriz se denomina **defectiva**. Una **rotación** carece de valores propios reales, porque ninguna
+recta sobrevive al giro.
+
+La consecuencia práctica es que `np.linalg.eig` puede devolver valores complejos, y que la matriz
+$S$ que produce puede estar mal condicionada cuando la matriz se aproxima al caso defectivo. La
+diagonalización no es una operación siempre disponible ni siempre estable.
+
+## Lo que la semejanza conserva
+
+Dos matrices relacionadas por $\tilde{A} = S^{-1}AS$ representan la misma aplicación en bases
+distintas. Las cantidades que no dependen de la base son, por tanto, propiedades de la aplicación, y
+resultan idénticas en ambas.
+
+<SimilarityInvariants
+  a={[2, 1, 0, 3]}
+  labels={{
+    hint: 'S es la base; A permanece fija.',
+    original: 'A',
+    changed: 'S⁻¹AS',
+    invariant: 'Las entradas cambian; la traza, el determinante y los valores propios, no.',
+    singular: 'S es singular: no define una base',
+    reset: 'Reiniciar',
+  }}
+/>
+
+Una elección concreta de $S$ devuelve la forma diagonal: la formada por los vectores propios. Para
+$A = \begin{bmatrix}2&1\\0&3\end{bmatrix}$ esa matriz es $\begin{bmatrix}1&1\\0&1\end{bmatrix}$, y el
+resultado es $\operatorname{diag}(2, 3)$. Cualquier otra $S$ produce entradas distintas con los
+mismos invariantes.
+
+La demostración para el determinante es inmediata a partir de la multiplicatividad de la lección
+correspondiente:
+
+$$
+\det(S^{-1}AS) = \det(S^{-1})\det(A)\det(S) = \frac{1}{\det S}\det(A)\det(S) = \det(A)
+$$
+
+Para la traza se usa la propiedad cíclica $\operatorname{tr}(XY) = \operatorname{tr}(YX)$, que da
+$\operatorname{tr}(S^{-1}AS) = \operatorname{tr}(ASS^{-1}) = \operatorname{tr}(A)$. Los valores
+propios coinciden porque el polinomio característico es el mismo, y con ellos el rango.
+
+De ahí salen dos identidades que conectan las cantidades:
+
+$$
+\operatorname{tr}(A) = \sum_i \lambda_i, \qquad \det(A) = \prod_i \lambda_i
+$$
+
+En la base propia ambas son evidentes, ya que la matriz es diagonal; y como ninguna de las dos
+depende de la base, valen en cualquiera.
+
+## El teorema espectral
+
+Para matrices simétricas la situación mejora de manera sustancial. El **teorema espectral** afirma
+que toda matriz simétrica real es diagonalizable, que sus valores propios son reales, y que sus
+vectores propios pueden elegirse **ortonormales**:
+
+$$
+A = A^\top \quad\Longrightarrow\quad A = Q\Lambda Q^\top, \qquad Q^\top Q = I
+$$
+
+La diferencia con el caso general es que $S^{-1}$ se sustituye por $Q^\top$. No hay inversa que
+calcular, el condicionamiento de $Q$ es exactamente $1$ por la lección sobre base y dimensión, y los
+casos defectivo y complejo quedan excluidos.
+
+```python
+C = np.array([[2., 1.],
+              [1., 3.]])                    # simétrica
+
+vals, Q = np.linalg.eigh(C)                 # eigh, no eig
+np.allclose(Q @ np.diag(vals) @ Q.T, C)     # True
+np.allclose(Q.T @ Q, np.eye(2))             # True
+```
+
+`np.linalg.eigh` no es una comodidad sino la rutina correcta: explota la simetría, garantiza valores
+propios reales por construcción y devuelve una base ortonormal ordenada. Emplear `eig` sobre una
+matriz simétrica produce el mismo resultado con más trabajo y con error de redondeo en la parte
+imaginaria.
+
+## Aplicación: el análisis de componentes principales
+
+Las lecciones sobre subespacios y sobre base y dimensión presentaron el análisis de componentes
+principales de dos maneras: como la búsqueda del subespacio que minimiza el residuo, y como el
+cambio a la base donde los datos necesitan menos coordenadas. El teorema espectral explica por qué
+ambas descripciones coinciden y por qué el problema tiene solución.
+
+La matriz de covarianza $C = \tfrac{1}{n}X^\top X$ de unos datos centrados es simétrica y
+semidefinida positiva, como estableció la lección sobre la inversa y la transpuesta. El teorema
+espectral garantiza entonces una base ortonormal de vectores propios con valores propios reales y no
+negativos.
+
+```python
+X = X - X.mean(axis=0)
+C = X.T @ X / len(X)
+
+vals, Q = np.linalg.eigh(C)         # ascendente
+Z = X @ Q[:, ::-1]                  # coordenadas en la base propia
+```
+
+En esa base la covarianza es diagonal: las nuevas coordenadas están **incorreladas**, y el valor
+propio $i$-ésimo es la varianza a lo largo de la dirección $i$. Retener las $k$ mayores es
+exactamente la aproximación de rango bajo de la lección sobre el rango, y el error de truncamiento
+es la suma de los valores propios descartados.
+
+El análisis de componentes principales no es, por tanto, un algoritmo aparte. Es la diagonalización
+de una matriz simétrica, con la interpretación estadística de sus valores propios.
+
+---
+
+**Ejercicio.** Construir la cizalladura $\begin{bmatrix}1&1\\0&1\end{bmatrix}$ y comprobar que
+`np.linalg.eig` devuelve un valor propio doble y dos columnas prácticamente idénticas en $S$.
+Calcular `np.linalg.cond(S)` y explicar por qué la diagonalización no es utilizable en ese caso.
+Repetir con $\begin{bmatrix}1&1\\0&1.01\end{bmatrix}$ y observar cómo cambia el condicionamiento.
