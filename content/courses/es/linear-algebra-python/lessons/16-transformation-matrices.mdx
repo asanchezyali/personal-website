@@ -1,0 +1,176 @@
+---
+title: 'Matriz de transformación con Python'
+language: 'es'
+module: 'Espacios vectoriales'
+moduleOrder: 2
+order: 7
+summary: 'El catálogo de transformaciones del plano, las coordenadas homogéneas que convierten una aplicación afín en lineal, el orden de composición y la convención de filas frente a columnas.'
+---
+
+La lección anterior estableció que toda aplicación lineal es una matriz y que una aplicación afín no
+es lineal. Esta desarrolla las consecuencias prácticas de ambas afirmaciones: qué matrices producen
+las transformaciones habituales del plano, y cómo se incorpora la traslación, que la definición
+excluye.
+
+## El catálogo
+
+Las transformaciones lineales del plano se reducen a unas pocas familias, cada una con su matriz.
+Los parámetros que las describen determinan por completo su efecto.
+
+<TransformGallery
+  labels={{
+    hint: 'La figura punteada es la original.',
+    det: 'det',
+    names: {
+      rotate: 'rotación',
+      scale: 'escalado',
+      reflect: 'reflexión',
+      shear: 'cizalladura',
+      project: 'proyección',
+    },
+    param: { rotate: 'θ', scale: 'k', reflect: 'θ', shear: 'k', project: 'θ' },
+    collapses: 'colapsa a una recta',
+    flips: 'invierte la orientación',
+  }}
+/>
+
+$$
+R_\theta = \begin{bmatrix}\cos\theta & -\sin\theta\\ \sin\theta & \cos\theta\end{bmatrix}, \qquad
+S = \begin{bmatrix}k & 0\\ 0 & 1/k\end{bmatrix}, \qquad
+H = \begin{bmatrix}1 & k\\ 0 & 1\end{bmatrix}
+$$
+
+El determinante, de la lección correspondiente, clasifica lo que ocurre. La rotación tiene
+$\det = 1$: conserva áreas y orientación. El escalado elegido aquí también, porque los factores son
+recíprocos. La reflexión tiene $\det = -1$, y el signo negativo es la inversión de la orientación. La
+proyección tiene $\det = 0$, porque aplasta el plano sobre una recta y pierde información de forma
+irreversible.
+
+La matriz de proyección sobre la recta de ángulo $\theta$ es la de la lección sobre subespacios,
+$P = \vec{u}\vec{u}^\top$ con $\vec{u}$ unitario, que desarrollada da
+
+$$
+P_\theta = \begin{bmatrix}\cos^2\theta & \cos\theta\sin\theta\\ \cos\theta\sin\theta & \sin^2\theta\end{bmatrix}
+$$
+
+## Transformar un conjunto de puntos
+
+Una única matriz transforma cualquier número de puntos. Colocándolos como columnas de una matriz
+$P$, el producto $AP$ transforma todos a la vez:
+
+```python
+import numpy as np
+
+t = np.pi / 2
+R = np.array([[np.cos(t), -np.sin(t)],
+              [np.sin(t),  np.cos(t)]])
+
+P = np.array([[1., 0., 1.],
+              [0., 1., 1.]])        # tres puntos, como columnas
+
+R @ P
+# array([[ 0., -1., -1.],
+#        [ 1.,  0.,  1.]])
+```
+
+Aquí aparece una discrepancia de convención que merece explicitarse. En gráficos y en la mayoría de
+los textos de álgebra lineal, los puntos son **columnas** y la transformación multiplica por la
+izquierda: $AP$. En aprendizaje automático los ejemplos son **filas**, como estableció la lección
+sobre matrices, y la misma operación se escribe $XA^\top$.
+
+```python
+X = P.T                  # los mismos puntos, como filas
+np.allclose(X @ R.T, (R @ P).T)      # True
+```
+
+Ninguna convención es preferible; lo que causa errores es mezclarlas. La comprobación de `.shape`
+sigue siendo la manera de saber cuál emplea un código ajeno.
+
+## Coordenadas homogéneas
+
+La traslación $\vec{x} \mapsto \vec{x} + \vec{t}$ no es lineal: desplaza el origen, y la lección
+anterior mostró que $\Phi(\vec{0}) = \vec{0}$ es obligatorio. No existe ninguna matriz $2\times 2$
+que traslade el plano.
+
+La solución habitual consiste en trabajar una dimensión más arriba. Un punto $(x, y)$ se representa
+como $(x, y, 1)$, y la traslación pasa a ser el producto por una matriz $3\times 3$:
+
+$$
+\begin{bmatrix}1 & 0 & t_x\\ 0 & 1 & t_y\\ 0 & 0 & 1\end{bmatrix}
+\begin{bmatrix}x\\ y\\ 1\end{bmatrix}
+=
+\begin{bmatrix}x + t_x\\ y + t_y\\ 1\end{bmatrix}
+$$
+
+Esas son las **coordenadas homogéneas**. La aplicación sigue sin ser lineal en $\mathbb{R}^2$, pero
+es lineal en $\mathbb{R}^3$ restringida al plano $z = 1$. El bloque $2\times 2$ superior izquierdo
+contiene la parte lineal y la tercera columna la traslación.
+
+La ganancia es de composición. Con toda transformación afín escrita como una matriz $3\times 3$,
+componerlas es multiplicarlas, y una secuencia arbitraria de rotaciones, escalados y traslaciones se
+reduce a un único producto. Es lo que hacen las canalizaciones gráficas y las bibliotecas de
+transformación de imágenes.
+
+<HomogeneousCompose
+  labels={{
+    hint: 'La figura punteada gris es la original; la violeta, el otro orden.',
+    rotateFirst: 'T · R',
+    translateFirst: 'R · T',
+    composed: 'matriz compuesta',
+    angle: 'θ',
+    shift: 'tx',
+    note: 'La tercera columna contiene la traslación; la tercera fila mantiene el bloque como matriz.',
+  }}
+/>
+
+El orden importa, y la figura lo hace evidente. $TR$ rota alrededor del origen y después desplaza;
+$RT$ desplaza primero y rota el resultado alrededor del origen, de modo que la figura describe un
+arco. La silueta violeta es el orden que no está seleccionado.
+
+La diferencia se lee en la propia matriz. Con $\theta = 90°$ y $t_x = 2.5$, la tercera columna vale
+$(2{,}5,\ 0)$ en $TR$ y $(0,\ 2{,}5)$ en $RT$: en el segundo caso la traslación ha sido rotada junto
+con todo lo demás, porque se aplicó antes.
+
+De ahí sale la receta para rotar alrededor de un punto $\vec{c}$ que no sea el origen, que ninguna
+matriz $2\times 2$ puede expresar:
+
+$$
+M = T_{\vec{c}}\, R_\theta\, T_{-\vec{c}}
+$$
+
+trasladar el centro al origen, rotar, y deshacer la traslación. Se lee de derecha a izquierda, como
+toda composición.
+
+## Aplicación: aumento de datos
+
+El aumento de datos en visión consiste en aplicar transformaciones geométricas aleatorias a las
+imágenes de entrenamiento, de modo que el modelo aprenda a reconocer un objeto con independencia de
+su posición, escala u orientación.
+
+```python
+def afin_aleatoria(rng, escala=(0.9, 1.1), giro=15, desp=0.1):
+    t = rng.uniform(-giro, giro) * np.pi / 180
+    k = rng.uniform(*escala)
+    c, s = np.cos(t), np.sin(t)
+    R = np.array([[k * c, -k * s, rng.uniform(-desp, desp)],
+                  [k * s,  k * c, rng.uniform(-desp, desp)],
+                  [0.,     0.,    1.]])
+    return R
+```
+
+Cada llamada devuelve una matriz $3\times 3$, y componer varias transformaciones es multiplicarlas.
+Las bibliotecas del ámbito trabajan exactamente así, y lo que añaden es la interpolación: aplicar la
+matriz a la retícula de píxeles produce coordenadas no enteras, y el valor en cada píxel de destino
+debe estimarse a partir de sus vecinos.
+
+La justificación de la técnica es una hipótesis sobre el problema, no sobre el álgebra: se asume que
+la etiqueta es invariante bajo esas transformaciones. Rotar un dígito manuscrito $15°$ no cambia qué
+dígito es, pero rotarlo $180°$ puede convertir un $6$ en un $9$. El rango de los parámetros codifica
+esa suposición, y elegirlo mal introduce ejemplos mal etiquetados.
+
+---
+
+**Ejercicio.** Construir la matriz que rota $90°$ alrededor del punto $(2, 1)$ componiendo
+$T_{\vec{c}} R_{90°} T_{-\vec{c}}$ en coordenadas homogéneas, y comprobar que deja fijo ese punto.
+Verificar después que el bloque $2\times 2$ superior izquierdo del producto coincide con $R_{90°}$ y
+explicar por qué.

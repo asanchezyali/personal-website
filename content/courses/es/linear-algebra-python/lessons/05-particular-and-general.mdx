@@ -1,0 +1,203 @@
+---
+title: 'Solución particular y general con Python'
+language: 'es'
+module: 'Sistemas y matrices'
+moduleOrder: 1
+order: 5
+summary: 'La estructura afín del conjunto solución, el núcleo y el teorema del rango, y por qué la solución de norma mínima que devuelve lstsq es un sesgo implícito con consecuencias en modelos sobreparametrizados.'
+---
+
+La lección sobre sistemas lineales estableció que un sistema admite cero, una o infinitas soluciones,
+y que el criterio de rango decide cuál de los tres casos se da. El caso de solución única quedó
+resuelto con `np.linalg.solve`. Falta el tercero: cuando las soluciones son infinitas, describirlas
+todas y entender cuál devuelve el código.
+
+## Un sistema subdeterminado
+
+Cuando $A \in \mathbb{R}^{m\times n}$ tiene menos ecuaciones que incógnitas, $m < n$, el rango no
+puede superar $m$, de modo que $\operatorname{rank}(A) < n$ necesariamente. Si el sistema es
+compatible, las soluciones son infinitas.
+
+```python
+import numpy as np
+
+A = np.array([[1., 0., 8., -4.],
+              [0., 1., 2., 12.]])
+b = np.array([42., 8.])
+
+A.shape                      # (2, 4): dos ecuaciones, cuatro incógnitas
+np.linalg.matrix_rank(A)     # 2
+```
+
+`np.linalg.solve` no es aplicable aquí: exige una matriz cuadrada y no singular. La función que
+opera sobre sistemas rectangulares es `np.linalg.lstsq`.
+
+## Una solución particular
+
+```python
+xp, *_ = np.linalg.lstsq(A, b, rcond=None)
+
+xp                      # array([ 0.5898,  0.1804,  5.0789, -0.1948])
+np.allclose(A @ xp, b)  # True
+```
+
+El vector devuelto satisface el sistema, pero no es la única posibilidad. Se denomina **solución
+particular**, $\vec{x}_p$, precisamente porque es una entre infinitas. Describirlas todas requiere
+un objeto adicional.
+
+## El núcleo
+
+El **núcleo** de $A$, también llamado espacio nulo, es el conjunto de vectores que $A$ envía al
+origen:
+
+$$
+\ker(A) = \{\, \vec{z} \in \mathbb{R}^n \;:\; A\vec{z} = \vec{0} \,\}
+$$
+
+Es un subespacio vectorial: contiene al $\vec{0}$ y es cerrado bajo suma y producto por escalar. Su
+relevancia aquí es inmediata. Si $A\vec{x}_p = \vec{b}$ y $A\vec{z} = \vec{0}$, entonces por
+linealidad
+
+$$
+A(\vec{x}_p + \vec{z}) = A\vec{x}_p + A\vec{z} = \vec{b} + \vec{0} = \vec{b}
+$$
+
+Sumar cualquier elemento del núcleo a una solución produce otra solución. Y el recíproco también se
+cumple: si $\vec{x}_1$ y $\vec{x}_2$ son ambas soluciones, su diferencia satisface
+$A(\vec{x}_1 - \vec{x}_2) = \vec{0}$, luego pertenece al núcleo.
+
+De ahí la caracterización completa del conjunto solución:
+
+$$
+\{\, \vec{x} : A\vec{x} = \vec{b} \,\} = \vec{x}_p + \ker(A)
+$$
+
+No es un subespacio —salvo que $\vec{b} = \vec{0}$, no contiene al origen— sino un **subespacio
+afín**: un subespacio trasladado por $\vec{x}_p$.
+
+## El teorema del rango
+
+La dimensión del núcleo no es arbitraria. El **teorema del rango** la fija:
+
+$$
+\operatorname{rank}(A) + \dim\ker(A) = n
+$$
+
+La lectura es directa: de las $n$ dimensiones del dominio, $\operatorname{rank}(A)$ sobreviven a la
+transformación y el resto se colapsa sobre el origen. En el ejemplo, $4 - 2 = 2$, de modo que el
+conjunto solución es un plano afín dentro de $\mathbb{R}^4$.
+
+```python
+from scipy.linalg import null_space
+
+N = null_space(A)        # (4, 2): las columnas son una base ortonormal
+np.allclose(A @ N, 0)    # True
+```
+
+`null_space` no introduce ningún método nuevo: calcula la descomposición en valores singulares y
+retiene las direcciones cuyo valor singular es nulo. El equivalente en NumPy explicita ese
+mecanismo:
+
+```python
+U, s, Vt = np.linalg.svd(A)
+tol = max(A.shape) * np.finfo(float).eps * s[0]
+N = Vt[(s > tol).sum():].T        # columnas = base del núcleo
+```
+
+La base que devuelve es **ortonormal**, propiedad que no es exigible a un núcleo cualquiera pero que
+la descomposición proporciona sin coste adicional y que simplifica los cálculos posteriores.
+
+## La solución general
+
+Con $\vec{x}_p$ y una base $\{\vec{n}_1, \vec{n}_2\}$ del núcleo, toda solución se escribe
+
+$$
+\vec{x} = \vec{x}_p + c_1\vec{n}_1 + c_2\vec{n}_2, \qquad c_1, c_2 \in \mathbb{R}
+$$
+
+```python
+c = np.array([3.0, -1.5])       # coeficientes arbitrarios
+x = xp + N @ c
+
+np.allclose(A @ x, b)           # True
+np.linalg.norm(x)               # mayor que ‖xp‖
+```
+
+Cualquier elección de coeficientes produce una solución válida. La comprobación `A @ x == b` se
+cumple para todas ellas por igual, y por tanto no sirve para distinguirlas.
+
+## Cuál elige el código
+
+Si todas son soluciones, la pregunta es qué criterio adicional aplica `lstsq` al devolver una sola.
+La respuesta es la **norma mínima**: entre todas, devuelve la de menor $\lVert\vec{x}\rVert_2$.
+
+La figura reduce la situación al caso más pequeño posible, una ecuación con dos incógnitas, donde el
+conjunto solución es una recta:
+
+<SolutionSet
+  a={[1, 2]}
+  b={4}
+  labels={{
+    hint: 'Todos los puntos de la recta violeta resuelven el sistema. El deslizador recorre el núcleo.',
+    minimal: 'mínima',
+    norm: '‖x‖',
+    check: 'A·x − b',
+    particular: '‖x‖² = ‖x*‖² + c², porque x* es ortogonal al núcleo. El mínimo está en c = 0, y solo ahí.',
+    reset: 'Reiniciar',
+  }}
+/>
+
+El residuo $A\vec{x} - \vec{b}$ permanece nulo a lo largo de toda la recta, mientras que
+$\lVert\vec{x}\rVert$ alcanza un mínimo en un único punto: el pie de la perpendicular desde el
+origen, marcado en color verde azulado.
+
+Esa observación geométrica admite una demostración de una línea. La solución de norma mínima
+$\vec{x}^{*}$ es ortogonal al núcleo, de modo que por el teorema de Pitágoras
+
+$$
+\lVert \vec{x}^{*} + \vec{z} \rVert^2 = \lVert \vec{x}^{*} \rVert^2 + \lVert \vec{z} \rVert^2 \ge \lVert \vec{x}^{*} \rVert^2
+$$
+
+para todo $\vec{z} \in \ker(A)$, con igualdad únicamente si $\vec{z} = \vec{0}$. La solución de norma
+mínima es la componente de cualquier solución en el espacio fila de $A$, que es el complemento
+ortogonal del núcleo.
+
+## Aplicación: sobreparametrización
+
+Una red neuronal moderna tiene con frecuencia más parámetros que ejemplos de entrenamiento. La
+situación es exactamente la de esta lección: el sistema está subdeterminado y existen infinitas
+configuraciones de pesos que ajustan los datos de entrenamiento igual de bien.
+
+Que el modelo generalice o no depende, por tanto, de **cuál** de esas infinitas soluciones selecciona
+el entrenamiento. La respuesta no está en la función de pérdida, que las valora a todas por igual,
+sino en el algoritmo de optimización.
+
+Para el caso lineal el resultado es demostrable. Si el descenso por gradiente se inicializa en
+$\vec{w} = \vec{0}$, cada actualización añade un múltiplo de $A^\top(\text{residuo})$, que pertenece
+al espacio fila de $A$. Los iterados permanecen en ese subespacio, y el límite es precisamente la
+solución de norma mínima:
+
+```python
+w = np.zeros(4)
+for _ in range(2000):
+    w -= 0.002 * A.T @ (A @ w - b)      # descenso por gradiente desde cero
+
+np.allclose(w, xp, atol=1e-3)           # converge a la solución de lstsq
+```
+
+El optimizador introduce así una preferencia que nadie escribió en el objetivo. Se denomina **sesgo
+implícito**, y actúa como una regularización que no aparece en la función de pérdida.
+
+Conviene precisar el alcance de esta afirmación. El resultado está demostrado para modelos lineales
+y para ciertos casos con función de pérdida cuadrática; en redes profundas con activaciones no
+lineales, el sesgo implícito del descenso por gradiente es objeto de investigación activa y no se
+reduce a la norma mínima euclídea. La analogía es útil para entender por qué la sobreparametrización
+no implica necesariamente sobreajuste, pero no constituye una explicación completa de la
+generalización.
+
+---
+
+**Ejercicio.** Calcular `np.linalg.norm(xp)` y compararlo con la norma de `xp + N @ c` para varios
+valores de `c`. Comprobar que la diferencia de los cuadrados coincide con
+$\lVert N\vec{c} \rVert^2$, y explicar qué propiedad de la base devuelta por `null_space` hace que
+ese cálculo se reduzca a $\lVert\vec{c}\rVert^2$.

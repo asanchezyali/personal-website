@@ -1,0 +1,231 @@
+---
+title: 'Espacios afines con Python'
+language: 'es'
+module: 'Espacios vectoriales'
+moduleOrder: 2
+order: 10
+summary: 'Los subespacios trasladados, la combinación afín y su restricción convexa, el hiperplano como frontera de decisión con el margen que define, y la aplicación afín como descripción exacta de una capa densa con sesgo.'
+---
+
+Todas las construcciones del curso comparten una exigencia que no se ha discutido: pasan por el
+origen. Un subespacio contiene $\vec{0}$ por definición, una aplicación lineal cumple
+$\Phi(\vec{0}) = \vec{0}$, y el espacio columna de una matriz es el conjunto de salidas alcanzables
+desde el $\vec{0}$ de partida. Esta lección levanta esa restricción, que es lo que separa el marco
+desarrollado hasta aquí de una capa densa real.
+
+## Subespacios trasladados
+
+Sea $V$ un espacio vectorial, $U \subseteq V$ un subespacio y $\vec{x}_0 \in V$ un punto. El
+conjunto
+
+$$
+L = \vec{x}_0 + U = \{\,\vec{x}_0 + \vec{u} : \vec{u} \in U\,\}
+$$
+
+es un **espacio afín** con **espacio de dirección** $U$ y **punto de apoyo** $\vec{x}_0$. Su
+dimensión es la de $U$. Una recta afín corresponde a $\dim U = 1$ y un **hiperplano** afín a
+$\dim U = \dim V - 1$.
+
+```python
+import numpy as np
+
+x0 = np.array([1., 2.])
+d  = np.array([2., 1.])
+L  = x0 + np.outer(np.linspace(0, 1, 5), d)
+```
+
+Dos observaciones delimitan el objeto. La primera es que $L$ **no** es un subespacio salvo en un
+caso: contiene a $\vec{0}$ si y solo si $-\vec{x}_0 \in U$, es decir, si y solo si
+$\vec{x}_0 \in U$, y entonces $L = U$. Un espacio afín que no pasa por el origen no es cerrado bajo
+suma ni bajo producto por escalares, de modo que ninguna de las herramientas de las lecciones
+anteriores se le aplica directamente.
+
+La segunda es que el punto de apoyo no está determinado por $L$. Si $\vec{x}_1 \in L$, entonces
+$\vec{x}_1 = \vec{x}_0 + \vec{u}_1$ con $\vec{u}_1 \in U$, y
+
+$$
+\vec{x}_1 + U = \vec{x}_0 + \vec{u}_1 + U = \vec{x}_0 + U = L
+$$
+
+porque $\vec{u}_1 + U = U$. Cualquier punto de $L$ sirve como apoyo; el espacio de dirección, en
+cambio, es único. El apoyo es una elección de representación, no una propiedad del conjunto.
+
+## La combinación afín
+
+La descripción anterior depende de un punto elegido a mano. Existe una caracterización intrínseca.
+Dados $\vec{v}_1,\dots,\vec{v}_k$ y escalares $\lambda_1,\dots,\lambda_k$, la expresión
+$\sum_i \lambda_i \vec{v}_i$ es una **combinación afín** cuando
+
+$$
+\sum_{i=1}^{k} \lambda_i = 1
+$$
+
+La restricción es exactamente lo que hace falta para que el resultado no dependa del origen. Al
+trasladar todos los puntos por un mismo $\vec{c}$, la combinación se traslada por
+$\left(\sum_i \lambda_i\right)\vec{c} = \vec{c}$: se mueve con los datos en lugar de deformarse. Sin
+la restricción, la traslación introduce un factor $\sum_i \lambda_i$ arbitrario.
+
+Si además todos los pesos son no negativos, la combinación se llama **convexa** y el conjunto de
+todas ellas es la **envolvente convexa** de los puntos.
+
+<AffineCombination
+  labels={{
+    hint: 'Dos pesos son libres; el tercero queda fijado por la suma. Los vértices se alcanzan con peso 1.',
+    sum: 'λ₁ + λ₂ + λ₃',
+    convex: 'combinación convexa: dentro de la envolvente',
+    affineOnly: 'un peso es negativo: afín, pero no convexa',
+    note: 'Los pesos de una softmax son no negativos y suman uno: la salida de la atención no abandona la envolvente.',
+    reset: 'Reiniciar',
+  }}
+/>
+
+La distinción no es un tecnicismo. El mecanismo de atención calcula
+$\sum_i \alpha_i \vec{v}_i$ con pesos $\alpha_i$ producidos por una softmax, que son positivos y
+suman uno por construcción. La salida de una cabeza de atención es, por tanto, una combinación
+convexa de los vectores de valor, y queda encerrada en su envolvente convexa: no puede producir
+nada que esté fuera del casco que forman los valores disponibles. La interpolación entre ejemplos
+que emplea la técnica de aumento *mixup* es igualmente una combinación convexa de dos puntos, y el
+paso a pesos negativos —permitido por la definición afín, prohibido por la convexa— es exactamente
+lo que la sacaría del segmento que une los ejemplos.
+
+## El conjunto de soluciones, otra vez
+
+La lección sobre la solución particular y general estableció que el conjunto de soluciones de
+$A\vec{x} = \vec{b}$ es $\vec{x}_p + \ker(A)$, y la lección sobre la imagen y el núcleo lo situó
+dentro de la descomposición ortogonal del dominio. El objeto tiene ahora nombre: es un espacio afín
+de dirección $\ker(A)$ y dimensión $n - \operatorname{rg}(A)$.
+
+```python
+from scipy.linalg import null_space
+
+A = np.array([[1., 1., 1.]])
+b = np.array([6.])
+
+x0, *_ = np.linalg.lstsq(A, b, rcond=None)   # un apoyo concreto
+U = null_space(A)                             # la dirección, 3 × 2
+```
+
+El apoyo que devuelve `lstsq` es el de norma mínima, según se vio en la lección sobre la imagen y el
+núcleo, pero cualquier otra solución describe el mismo conjunto. Que el sistema homogéneo dé un
+subespacio y el inhomogéneo un espacio afín es la misma distinción con la que abre esta lección:
+$\vec{b} = \vec{0}$ es lo que ancla el conjunto al origen.
+
+## El hiperplano y el margen
+
+Un hiperplano afín en $\mathbb{R}^n$ admite una descripción por una sola ecuación:
+
+$$
+H = \{\,\vec{x} \in \mathbb{R}^n : \vec{w}^\top\vec{x} + b = 0\,\}
+$$
+
+con $\vec{w} \neq \vec{0}$. El vector $\vec{w}$ es normal al hiperplano —si $\vec{x}$ e $\vec{y}$
+pertenecen a $H$, restar las dos ecuaciones da $\vec{w}^\top(\vec{x}-\vec{y}) = 0$— y $b$ controla
+el desplazamiento respecto del origen.
+
+<AffineHyperplane
+  w={[2, 1]}
+  b={-2}
+  point={[2, 2]}
+  labels={{
+    hint: 'Arrastrar la normal w o el punto x; deslizar el desplazamiento b.',
+    score: 'wᵀx + b',
+    distance: 'distancia',
+    positive: 'lado positivo',
+    negative: 'lado negativo',
+    onPlane: 'sobre el hiperplano',
+    throughOrigin: 'Con b = 0 el hiperplano pasa por el origen.',
+    reset: 'Reiniciar',
+  }}
+/>
+
+La cantidad $\vec{w}^\top\vec{x} + b$ no es una distancia, y la diferencia importa. Para cualquier
+$\vec{y} \in H$, la componente de $\vec{x} - \vec{y}$ a lo largo de la normal unitaria vale
+
+$$
+\frac{\vec{w}^\top}{\lVert\vec{w}\rVert}(\vec{x} - \vec{y}) = \frac{\vec{w}^\top\vec{x} - \vec{w}^\top\vec{y}}{\lVert\vec{w}\rVert} = \frac{\vec{w}^\top\vec{x} + b}{\lVert\vec{w}\rVert}
+$$
+
+donde la última igualdad usa $\vec{w}^\top\vec{y} = -b$. El resultado no depende del $\vec{y}$
+elegido, y su valor absoluto es la distancia de $\vec{x}$ a $H$. El signo indica el semiespacio.
+
+La consecuencia práctica se enuncia así: sustituir $(\vec{w}, b)$ por $(2\vec{w}, 2b)$ deja el
+hiperplano intacto —la ecuación define el mismo conjunto— pero duplica todas las puntuaciones. En
+una regresión logística, donde la probabilidad es $\sigma(\vec{w}^\top\vec{x} + b)$, esto significa
+que la confianza del modelo puede crecer sin que la frontera de decisión se mueva un milímetro. La
+magnitud del logit mezcla dos cosas distintas: a qué distancia de la frontera está el punto, y
+cuánto se ha permitido crecer a $\lVert\vec{w}\rVert$. Solo la primera es una propiedad de la
+geometría del problema, y es la razón de que la penalización sobre la norma de los pesos afecte a la
+calibración de las probabilidades sin alterar necesariamente las predicciones.
+
+La misma escala explica la formulación de la máquina de vectores de soporte. Fijando la
+normalización $\vec{w}^\top\vec{x} + b = \pm 1$ sobre los ejemplos más próximos, la separación entre
+los dos hiperplanes resultantes es
+
+$$
+\frac{2}{\lVert\vec{w}\rVert}
+$$
+
+de modo que maximizar el margen equivale a minimizar $\lVert\vec{w}\rVert$. El problema geométrico y
+el problema de optimización son el mismo escrito dos veces.
+
+## La aplicación afín y el sesgo
+
+Una **aplicación afín** entre espacios vectoriales es la composición de una lineal con una
+traslación:
+
+$$
+\phi(\vec{x}) = A\vec{x} + \vec{a}
+$$
+
+Es la definición exacta de una capa densa. El término $\vec{a}$ es el sesgo, y su papel geométrico
+es el de punto de apoyo: sin él, $\phi(\vec{0}) = \vec{0}$ y toda frontera de decisión estaría
+obligada a pasar por el origen del espacio de características.
+
+```python
+A = np.random.randn(3, 2)
+a = np.random.randn(3)
+
+def capa(x):
+    return A @ x + a           # exactamente nn.Linear(2, 3)
+```
+
+Una aplicación afín no conserva combinaciones lineales arbitrarias, pero sí conserva las afines. La
+comprobación es inmediata y la restricción $\sum_i \lambda_i = 1$ es justo lo que la hace funcionar:
+
+$$
+\phi\!\left(\sum_i \lambda_i \vec{x}_i\right) = A\sum_i \lambda_i \vec{x}_i + \vec{a} = \sum_i \lambda_i A\vec{x}_i + \left(\sum_i \lambda_i\right)\vec{a} = \sum_i \lambda_i \phi(\vec{x}_i)
+$$
+
+Como corolario, una capa densa transforma envolventes convexas en envolventes convexas: la imagen
+del casco es el casco de las imágenes.
+
+Queda una consecuencia que matiza un resultado anterior. La composición de dos aplicaciones afines
+es afín:
+
+$$
+\phi_2(\phi_1(\vec{x})) = A_2(A_1\vec{x} + \vec{a}_1) + \vec{a}_2 = (A_2A_1)\vec{x} + (A_2\vec{a}_1 + \vec{a}_2)
+$$
+
+La lección sobre aplicaciones lineales mostró que una red sin funciones de activación colapsa en una
+sola matriz. La igualdad anterior cierra la única escapatoria que quedaba: añadir sesgos no lo
+impide. Una pila de capas densas sin activaciones colapsa en una sola capa densa, con matriz
+$A_k \cdots A_1$ y sesgo acumulado. El sesgo aporta el desplazamiento respecto del origen, que es
+imprescindible, pero no aporta capacidad expresiva: la no linealidad tiene que venir de otro sitio.
+
+## El recorrido
+
+El curso partió de resolver $A\vec{x} = \vec{b}$ y termina describiendo con precisión qué es una
+capa densa. Entre ambos extremos, los objetos fueron apareciendo por necesidad: la eliminación para
+resolver, los factores para no repetir el trabajo, el rango para saber cuánta información contiene
+de verdad una matriz, la base para elegir la representación, los valores propios para encontrar la
+mejor, y el núcleo para saber qué se pierde por el camino. La capa
+$\vec{x} \mapsto \sigma(W\vec{x} + \vec{b})$ contiene todo salvo $\sigma$, y lo que hay dentro del
+paréntesis ya no tiene nada de opaco.
+
+---
+
+**Ejercicio.** Generar dos nubes de puntos separables en $\mathbb{R}^2$ y ajustar una regresión
+logística con `scikit-learn`. Extraer `coef_` e `intercept_`, dibujar el hiperplano
+$\vec{w}^\top\vec{x} + b = 0$ y comprobar que las distancias con signo $(\vec{w}^\top\vec{x}+b)/\lVert\vec{w}\rVert$
+tienen el signo correcto en cada clase. Repetir el ajuste con `C` diez veces mayor y verificar que
+$\lVert\vec{w}\rVert$ crece mientras la frontera apenas se mueve.

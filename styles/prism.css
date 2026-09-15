@@ -37,7 +37,9 @@
 }
 
 .line-number::before {
-  display: table-cell;
+  /* inline-block, not table-cell: code lines are laid out as blocks so that
+     indentation survives — see .code-highlight in pages.css */
+  display: inline-block;
   padding-right: 16px;
   padding-left: 0;
   width: 2rem;

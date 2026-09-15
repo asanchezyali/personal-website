@@ -1,0 +1,210 @@
+---
+title: 'Aplicaciones lineales con Python'
+language: 'es'
+module: 'Espacios vectoriales'
+moduleOrder: 2
+order: 6
+summary: 'La definición de aplicación lineal, su correspondencia con matrices, la dependencia de la matriz respecto de las bases elegidas, la clasificación por rango y el colapso de una red sin no linealidades.'
+---
+
+El curso ha multiplicado matrices por vectores desde la primera lección, y las ha descrito como
+factorizaciones, proyecciones y cambios de base. Lo que no ha hecho es enunciar qué es una matriz
+como objeto matemático. Esta lección lo establece: una matriz es la representación de una función,
+y de un tipo muy particular de función.
+
+## La definición
+
+Una aplicación $\Phi : V \to W$ entre espacios vectoriales es **lineal** si respeta las dos
+operaciones que definen un espacio vectorial:
+
+$$
+\Phi(\vec{u} + \vec{v}) = \Phi(\vec{u}) + \Phi(\vec{v}), \qquad \Phi(\lambda\vec{v}) = \lambda\,\Phi(\vec{v})
+$$
+
+Ambas se resumen en una sola condición, que es la forma habitual de comprobarla:
+
+$$
+\Phi(\lambda\vec{x} + \vec{y}) = \lambda\,\Phi(\vec{x}) + \Phi(\vec{y})
+$$
+
+La lectura es que el orden de las operaciones resulta indiferente: combinar y después transformar
+produce el mismo resultado que transformar y después combinar.
+
+<LinearityCheck
+  a={[1.2, -0.6, 0.5, 1.1]}
+  x={[2, 1]}
+  y={[-1, 2]}
+  labels={{
+    hint: 'Arrastra x o y en el panel izquierdo.',
+    domain: 'x, y, λx + y',
+    codomain: 'sus imágenes',
+    combine: 'Φ(λx + y)',
+    apply: 'λΦ(x) + Φ(y)',
+    agree: 'diferencia',
+    reset: 'Reiniciar',
+  }}
+/>
+
+El panel izquierdo muestra $\vec{x}$, $\vec{y}$ y la combinación $\lambda\vec{x} + \vec{y}$; el
+derecho, sus imágenes. La flecha destacada del panel derecho es $\Phi(\lambda\vec{x} + \vec{y})$, y
+coincide con $\lambda\Phi(\vec{x}) + \Phi(\vec{y})$ para cualquier posición de los vectores y
+cualquier valor de $\lambda$.
+
+De la definición se sigue $\Phi(\vec{0}) = \vec{0}$, tomando $\lambda = 0$ e $\vec{y} = \vec{0}$. Una
+aplicación que desplace el origen no es lineal, por mucho que transforme rectas en rectas: la función
+$\vec{x} \mapsto A\vec{x} + \vec{b}$ con $\vec{b} \neq \vec{0}$ es **afín**, no lineal.
+
+## Toda aplicación lineal es una matriz
+
+Sea $\Phi : \mathbb{R}^n \to \mathbb{R}^m$ lineal y $\{\vec{e}_1,\dots,\vec{e}_n\}$ la base canónica.
+Todo vector se escribe $\vec{x} = \sum_j x_j \vec{e}_j$, y aplicando linealidad
+
+$$
+\Phi(\vec{x}) = \sum_{j=1}^{n} x_j\, \Phi(\vec{e}_j)
+$$
+
+La aplicación queda determinada por las $n$ imágenes $\Phi(\vec{e}_j)$. Colocándolas como columnas
+de una matriz $A$, la expresión anterior es exactamente $A\vec{x}$.
+
+La correspondencia es biyectiva: toda matriz define una aplicación lineal, y toda aplicación lineal
+procede de una única matriz. Esa equivalencia es la que justifica usar los dos lenguajes sin
+distinguirlos, como el curso ha venido haciendo.
+
+```python
+import numpy as np
+
+A = np.array([[2., 0.],
+              [0., 3.]])
+
+A @ np.array([1., 0.])      # array([2., 0.]) = primera columna
+A @ np.array([0., 1.])      # array([0., 3.]) = segunda columna
+```
+
+## La matriz depende de las bases
+
+La afirmación anterior presupone la base canónica en ambos extremos. En general, la matriz de una
+aplicación lineal depende de la base elegida en el dominio y de la elegida en el codominio.
+
+Dadas bases $\mathcal{B}$ de $V$ y $\mathcal{C}$ de $W$, la matriz $A_\Phi$ se construye expresando
+la imagen de cada vector de $\mathcal{B}$ en coordenadas de $\mathcal{C}$:
+
+$$
+\Phi(\vec{b}_j) = \sum_{i=1}^{m} a_{ij}\,\vec{c}_i
+$$
+
+y entonces $[\Phi(\vec{x})]_\mathcal{C} = A_\Phi\,[\vec{x}]_\mathcal{B}$.
+
+Cambiar de base cambia la matriz sin cambiar la aplicación. Si $\tilde{A}$ es la matriz respecto de
+otras bases, ambas se relacionan por
+
+$$
+\tilde{A} = T^{-1} A S
+$$
+
+con $S$ y $T$ los cambios de base en dominio y codominio, en el sentido descrito en la lección sobre
+base y dimensión. Cuando $V = W$ y se emplea la misma base en ambos extremos, la relación se reduce
+a $\tilde{A} = T^{-1}AT$, que se denomina **semejanza**.
+
+De ahí una consecuencia que el curso ha usado sin nombrarla: una misma aplicación admite matrices
+muy distintas, y elegir bien la base puede volverla trivial. Una matriz diagonal es simplemente una
+aplicación escrita en una base donde no mezcla direcciones.
+
+## Composición
+
+La composición de dos aplicaciones lineales es lineal, y su matriz es el producto:
+
+$$
+(\Psi \circ \Phi)(\vec{x}) = B(A\vec{x}) = (BA)\vec{x}
+$$
+
+El orden se lee de derecha a izquierda, como en cualquier composición de funciones. La
+asociatividad del producto de matrices, $(AB)C = A(BC)$, no es en el fondo otra cosa que la
+asociatividad de la composición de funciones.
+
+```python
+B = np.array([[0., -1.],
+              [1.,  0.]])                    # rotación de π/2
+
+x = np.array([1., 2.])
+np.allclose((B @ A) @ x, B @ (A @ x))        # True
+```
+
+## Inyectiva, sobreyectiva, biyectiva
+
+El rango clasifica la aplicación por completo. Para $\Phi : \mathbb{R}^n \to \mathbb{R}^m$ con matriz
+$A$ de rango $r$:
+
+| Propiedad | Condición | Lectura |
+| --- | --- | --- |
+| inyectiva | $r = n$ | $\ker(A) = \{\vec{0}\}$: no colapsa direcciones |
+| sobreyectiva | $r = m$ | $\operatorname{col}(A) = \mathbb{R}^m$: alcanza todo el destino |
+| biyectiva | $r = m = n$ | $A$ invertible |
+
+La primera fila es el teorema del rango de la lección sobre solución particular y general:
+$\dim\ker(A) = n - r$, de modo que el núcleo es trivial exactamente cuando $r = n$. Una aplicación
+inyectiva conserva la información; una no inyectiva envía vectores distintos al mismo destino y esa
+pérdida es irreversible.
+
+Una aplicación lineal biyectiva se denomina **isomorfismo**, y dos espacios que admiten uno entre
+ellos son indistinguibles desde el punto de vista del álgebra lineal. El criterio es puramente
+dimensional:
+
+$$
+V \cong W \iff \dim(V) = \dim(W)
+$$
+
+Es la razón de que todo espacio vectorial real de dimensión $n$ pueda tratarse como $\mathbb{R}^n$:
+elegir una base es exactamente construir ese isomorfismo. Los polinomios de grado a lo sumo $2$ son
+indistinguibles de $\mathbb{R}^3$, y la lista de coeficientes es el isomorfismo.
+
+## Aplicación: por qué una red necesita no linealidades
+
+Una capa densa calcula $\vec{y} = W\vec{x} + \vec{b}$, que es una aplicación afín. Componer varias
+capas sin nada entre ellas produce
+
+$$
+W_k(\cdots(W_1\vec{x} + \vec{b}_1)\cdots) + \vec{b}_k = (W_k\cdots W_1)\vec{x} + \vec{b}'
+$$
+
+es decir, otra aplicación afín con una única matriz. Una pila de capas lineales **es** una sola capa
+lineal, con independencia de su profundidad.
+
+La cota del rango de un producto, establecida en la lección anterior, añade una limitación adicional:
+
+$$
+\operatorname{rank}(W_k \cdots W_1) \le \min_i \operatorname{rank}(W_i)
+$$
+
+<LayerCollapse
+  labels={{
+    hint: 'Una cadena de capas lineales, una de ellas estrecha.',
+    widths: 'anchuras',
+    bottleneck: 'cuello de botella',
+    composed: 'W = W₄W₃W₂W₁',
+    rankBound: 'rank(W) ≤',
+    injective: 'no se pierde información',
+    lossy: 'la aplicación no es inyectiva: se pierde información',
+    note: 'Sin no linealidades la cadena es una sola matriz, y la capa más estrecha acota su rango.',
+    reset: 'Reiniciar',
+  }}
+/>
+
+La capa más estrecha impone un techo a lo que toda la cadena puede representar. Con una capa de
+anchura $8$ en medio de capas de anchura $64$, la composición tiene rango a lo sumo $8$ por mucho
+que las demás sean de rango completo, y la aplicación deja de ser inyectiva.
+
+Las funciones de activación no lineales intercaladas entre capas rompen esta identidad: la
+composición deja de ser una aplicación lineal y los argumentos anteriores dejan de aplicarse. La
+profundidad aporta capacidad expresiva únicamente porque existe esa interrupción.
+
+El razonamiento tiene también una lectura constructiva. Cuando el cuello de botella es deliberado,
+como en un autocodificador, la cota de rango es el mecanismo: forzar la representación a través de
+una capa estrecha obliga a descartar todo salvo las direcciones más informativas, que es la
+aproximación de rango bajo de la lección anterior aplicada a los pesos.
+
+---
+
+**Ejercicio.** Comprobar que $\vec{x} \mapsto A\vec{x} + \vec{b}$ con $\vec{b} \neq \vec{0}$ falla la
+condición de linealidad, evaluando ambos lados de $\Phi(2\vec{x}) = 2\Phi(\vec{x})$. Construir
+después tres matrices $64\times 64$, $8\times 64$ y $64\times 8$, y verificar que el rango de su
+producto no supera $8$.

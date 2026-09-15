@@ -1,0 +1,239 @@
+---
+title: 'Inverse and transpose with Python'
+language: 'en'
+module: 'Systems and matrices'
+moduleOrder: 1
+order: 3
+summary: 'The inverse and its existence, the condition number as a measure of reliability, the transpose and symmetric matrices, closing on the normal equations of linear regression.'
+---
+
+Two operations on a square matrix admit an immediate reading: the **inverse** undoes the
+transformation the matrix applies, and the **transpose** exchanges the roles of rows and columns. The
+first raises a question of existence that a single number settles; the second generates the class of
+matrices on which a large part of machine learning rests.
+
+## The inverse matrix
+
+A matrix $A \in \mathbb{R}^{n\times n}$ is **invertible** if there exists $A^{-1}$ such that
+
+$$
+A A^{-1} = A^{-1} A = I_n
+$$
+
+The inverse, when it exists, is unique, and represents the transformation that returns every vector
+to its original position.
+
+```python
+import numpy as np
+
+A = np.array([[1., 2.],
+              [3., 4.]])
+
+Ainv = np.linalg.inv(A)
+np.allclose(A @ Ainv, np.eye(2))    # True
+```
+
+## Existence: the determinant
+
+The criterion is a single scalar. The matrix $A$ is invertible if and only if $\det A \neq 0$, a
+condition equivalent to its columns being linearly independent.
+
+```python
+np.linalg.det(A)
+# -2.0000000000000004
+```
+
+The exact value is $1\cdot4 - 2\cdot3 = -2$. The discrepancy in the fifteenth digit is
+floating-point arithmetic, not a computational error: real numbers are represented with finite
+precision and operations accumulate rounding.
+
+Hence a rule worth applying without exception: **the determinant is not compared to zero with `==`**.
+
+```python
+np.linalg.det(A) == 0             # False, but for the wrong reason
+np.isclose(np.linalg.det(A), 0)   # the correct comparison
+```
+
+When the matrix is exactly singular, `inv` does not return an approximate result but an error:
+
+```python
+S = np.array([[1., 2.],
+              [2., 4.]])       # row 2 = 2 · row 1
+
+np.linalg.inv(S)
+# LinAlgError: Singular matrix
+```
+
+## The condition number
+
+The singular case is the benign one, because it fails visibly. The troublesome case is the **nearly**
+singular matrix: `inv` returns a result, the program carries on, and the figures are meaningless.
+
+The quantity that measures this is the **condition number** $\kappa(A) = \lVert A \rVert \cdot
+\lVert A^{-1} \rVert$. In the $2$-norm it is the ratio of the largest to the smallest singular value,
+and it bounds the propagation of relative error when solving $A\vec{x} = \vec{b}$:
+
+$$
+\frac{\lVert \Delta\vec{x} \rVert}{\lVert \vec{x} \rVert} \;\le\; \kappa(A)\,\frac{\lVert \Delta\vec{b} \rVert}{\lVert \vec{b} \rVert}
+$$
+
+In the figure, the parameter $\varepsilon$ separates the second row from an exact multiple of the
+first. The constant term is perturbed by the same amount throughout, and what can be observed is how
+much of that perturbation reaches the solution.
+
+<Conditioning
+  b={[3, 6]}
+  nudge={0.001}
+  labels={{
+    hint: 'ε separates the second row from twice the first. At ε = 0 the matrix is singular.',
+    det: 'det(A)',
+    cond: 'cond(A)',
+    changeB: 'change in b',
+    changeX: 'change in x',
+    amplification: 'error amplification',
+    singular: 'LinAlgError: Singular matrix',
+    reset: 'Reset',
+  }}
+/>
+
+With $\varepsilon$ close to $1$ the perturbation arrives attenuated. As $\varepsilon$ is reduced
+towards zero, a variation of thousandths in $\vec{b}$ produces variations of order one in $\vec{x}$.
+The system still has a unique solution in the mathematical sense, but the computed solution stops
+being informative.
+
+```python
+np.linalg.cond(A)     # ~14.9 for the matrix above
+```
+
+As an order of magnitude: if $\kappa(A) \approx 10^k$, the loss of roughly $k$ significant digits is
+to be expected. Double precision provides about 16, so $\kappa \approx 10^{12}$ leaves barely four
+reliable digits.
+
+The recommendation from the lesson on linear systems — use `solve` rather than `inv` — rests on
+this: `solve` avoids constructing the inverse and with it an additional source of error
+amplification.
+
+## The transpose
+
+The **transpose** $A^\top \in \mathbb{R}^{n\times m}$ of a matrix $A \in \mathbb{R}^{m\times n}$ is
+defined by $(A^\top)_{ij} = a_{ji}$: it reflects the matrix about its main diagonal, which stays
+fixed.
+
+<TransposeGrid
+  a={[[1, 2, 3], [4, 5, 6]]}
+  names={{ a: 'A', t: 'Aᵀ' }}
+  labels={{
+    step: 'Step',
+    diagonal: 'The diagonal stays fixed; every other entry swaps its indices.',
+  }}
+/>
+
+```python
+A = np.array([[1, 2, 3],
+              [4, 5, 6]])
+
+A.T
+# array([[1, 4],
+#        [2, 5],
+#        [3, 6]])
+```
+
+In NumPy, `.T` returns a **view**: it copies no data, it only swaps the order in which the entries
+are traversed. The operation costs constant time, as `reshape` does. From the definition it follows
+that $(A^\top)^\top = A$.
+
+## The reversal of order
+
+Both transposition and inversion reverse the order of the factors of a product:
+
+$$
+(AB)^\top = B^\top A^\top, \qquad (AB)^{-1} = B^{-1} A^{-1}
+$$
+
+The reason is the same in both cases. If $AB$ means applying $B$ and then $A$, undoing that
+composition requires undoing first whatever was done last. The numerical check is immediate:
+
+```python
+P = np.random.randn(2, 3)
+Q = np.random.randn(3, 2)
+
+np.allclose((P @ Q).T, Q.T @ P.T)     # True
+```
+
+The dimensions confirm it on their own: $A^\top B^\top$ is generally undefined, whereas
+$B^\top A^\top$ always is.
+
+## Symmetric matrices
+
+A square matrix is **symmetric** when $A = A^\top$. The construction that produces them
+systematically is the product of a matrix with its transpose:
+
+$$
+(A^\top A)^\top = A^\top (A^\top)^\top = A^\top A
+$$
+
+The result is symmetric whatever $A$ is, rectangular included. For
+$A \in \mathbb{R}^{m\times n}$, the product $A^\top A$ has order $n\times n$.
+
+```python
+A = np.random.randn(4, 3)
+G = A.T @ A                  # 3×3
+
+np.allclose(G, G.T)          # True
+```
+
+Besides being symmetric, $A^\top A$ is **positive semidefinite**: for every $\vec{v}$,
+$\vec{v}^\top A^\top A \vec{v} = \lVert A\vec{v} \rVert^2 \ge 0$. That property guarantees its
+eigenvalues are real and non-negative.
+
+The class appears everywhere in machine learning, and always for the same reason: it comes from a
+product of the form $A^\top A$.
+
+| Object | Construction | Where it appears |
+| --- | --- | --- |
+| Covariance matrix | $\tfrac{1}{n}X_c^\top X_c$ | PCA, data whitening |
+| Gram or kernel matrix | $XX^\top$ | support vector machines, Gaussian processes |
+| Hessian | $\nabla^2 f$ | second-order methods, curvature analysis |
+
+The practical value of symmetry is that it guarantees real eigenvalues and an orthogonal basis of
+eigenvectors, which allows the matrix to be decomposed stably. Principal component analysis rests on
+that guarantee.
+
+## Application: the normal equations
+
+Linear regression seeks the weights $\vec{w}$ minimising $\lVert A\vec{w} - \vec{b} \rVert^2$, where
+each row of $A$ is one observation. Setting the gradient to zero yields the **normal equations**:
+
+$$
+A^\top A\,\vec{w} = A^\top \vec{b} \qquad\Longrightarrow\qquad \hat{\vec{w}} = (A^\top A)^{-1} A^\top \vec{b}
+$$
+
+The expression on the right is the form found in textbooks, and it is the one that should **not** be
+carried into code. The matrix $A^\top A$ squares the condition number of $A$,
+$\kappa(A^\top A) = \kappa(A)^2$, so a moderately ill-conditioned problem becomes a severe one on
+forming that product. And it is that matrix which then gets inverted.
+
+```python
+w = np.linalg.solve(A.T @ A, A.T @ b)        # acceptable
+w = np.linalg.lstsq(A, b, rcond=None)[0]     # preferable
+```
+
+`lstsq` solves the least-squares problem without forming $A^\top A$, using a QR factorisation or the
+singular value decomposition, and preserves the original conditioning.
+
+The transpose reappears in the training of neural networks. If the forward pass of a layer is
+$Y = XW$, the gradient with respect to the input propagates backwards by multiplying by $W^\top$:
+
+$$
+\frac{\partial \mathcal{L}}{\partial X} = \frac{\partial \mathcal{L}}{\partial Y} W^\top
+$$
+
+Transposition is what makes the dimensions fit: $\partial\mathcal{L}/\partial Y$ has the shape of
+$Y$, and multiplying by $W^\top$ returns it to the shape of $X$. Every backpropagation step is, in
+essence, a product with the transpose of the weights.
+
+---
+
+**Exercise.** For $A = \begin{bmatrix}1 & 2\\ 2 & 4+\varepsilon\end{bmatrix}$, verify that
+$\det A = \varepsilon$. Compute `np.linalg.cond(A)` for $\varepsilon = 10^{-1}$, $10^{-4}$ and
+$10^{-8}$, and estimate in each case how many significant digits survive in double precision.

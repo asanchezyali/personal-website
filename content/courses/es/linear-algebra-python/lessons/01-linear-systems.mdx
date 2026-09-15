@@ -1,0 +1,206 @@
+---
+title: 'Sistemas lineales con Python'
+language: 'es'
+module: 'Sistemas y matrices'
+moduleOrder: 1
+order: 1
+summary: 'Forma matricial de un sistema lineal, resolución con np.linalg.solve, factorización LU con pivoteo y el criterio de rango que determina existencia y unicidad.'
+---
+
+Un **sistema de ecuaciones lineales** de $m$ ecuaciones y $n$ incógnitas tiene la forma
+
+$$
+a_{i1}x_1 + a_{i2}x_2 + \cdots + a_{in}x_n = b_i, \qquad i = 1,\dots,m
+$$
+
+y se escribe de forma compacta como
+
+$$
+A\vec{x} = \vec{b}, \qquad A \in \mathbb{R}^{m \times n},\; \vec{x} \in \mathbb{R}^n,\; \vec{b} \in \mathbb{R}^m
+$$
+
+Resolverlo es determinar el conjunto $\{\vec{x} \in \mathbb{R}^n : A\vec{x} = \vec{b}\}$. Ese
+conjunto es vacío, un único punto o un subespacio afín de dimensión positiva; no hay más casos.
+
+El sistema que sirve de ejemplo a lo largo de la lección es
+
+$$
+\begin{aligned}
+  x_1 + x_2 + x_3 &= 3\\
+  x_1 - x_2 + 2x_3 &= 2\\
+  x_2 + x_3 &= 2
+\end{aligned}
+$$
+
+## Forma matricial
+
+La fila $i$ de $A$ recoge los coeficientes de la ecuación $i$; la componente $i$ de $\vec{b}$, su
+término independiente. Los coeficientes nulos ocupan posición: la tercera ecuación carece de $x_1$,
+luego $a_{31} = 0$.
+
+```python
+import numpy as np
+
+A = np.array([[1,  1, 1],
+              [1, -1, 2],
+              [0,  1, 1]])
+b = np.array([3, 2, 2])
+```
+
+## Resolución con NumPy
+
+Cuando $m = n$ y $A$ es invertible, la solución es única y se obtiene con `np.linalg.solve`:
+
+```python
+x = np.linalg.solve(A, b)
+# array([1., 1., 1.])
+```
+
+La rutina no calcula $A^{-1}$. Aplica eliminación gaussiana con **pivoteo parcial**, que produce la
+factorización
+
+$$
+PA = LU
+$$
+
+con $P$ una matriz de permutación, $L$ triangular inferior unitaria y $U$ triangular superior. El
+sistema se resuelve entonces en dos sustituciones encadenadas, $L\vec{y} = P\vec{b}$ y
+$U\vec{x} = \vec{y}$, ambas inmediatas por triangularidad. El coste es $\Theta(n^3)$ operaciones. La
+implementación delega en LAPACK.
+
+La matriz de permutación no es un tecnicismo prescindible: sin pivoteo, un pivote nulo detiene el
+proceso y un pivote de magnitud pequeña amplifica el error de redondeo.
+
+## Eliminación gaussiana
+
+La figura aplica el método de Gauss-Jordan sobre la matriz ampliada $[A \mid \vec{b}]$. Cada paso es
+una operación elemental de fila. El proceso termina cuando el bloque izquierdo es la identidad, y en
+ese momento la columna derecha contiene la solución.
+
+<EliminationSteps
+  a={[[1, 1, 1], [1, -1, 2], [0, 1, 1]]}
+  b={[3, 2, 2]}
+  rowLetter="F"
+  labels={{
+    start: 'Matriz ampliada [A | b]',
+    done: 'Identidad a la izquierda: la última columna es x',
+    singular: 'A es singular: no existe solución única',
+    step: 'Paso',
+  }}
+/>
+
+Las tres operaciones elementales —intercambiar dos filas, multiplicar una fila por un escalar no
+nulo y sumar a una fila un múltiplo de otra— son invertibles, de modo que preservan el conjunto de
+soluciones.
+
+## Verificación
+
+```python
+np.allclose(A @ x, b)
+# True
+```
+
+El operador `@` denota el producto matricial. La comparación se hace con `allclose` y no con `==`:
+en aritmética de coma flotante la solución calculada satisface $A\hat{x} \approx \vec{b}$ con un
+residuo del orden del épsilon de máquina, y la igualdad estricta resultaría falsa.
+
+## Interpretación geométrica
+
+Para $n = 2$, cada ecuación $a x_1 + b x_2 = c$ con $(a,b) \neq (0,0)$ describe una recta en
+$\mathbb{R}^2$, y el conjunto solución del sistema es la intersección de ambas.
+
+<LinearSystem2D
+  first={[1, 1, 1.25]}
+  second={[1, -2, 0.5]}
+  labels={{
+    hint: 'Cada ecuación describe una recta. Los deslizadores modifican sus coeficientes.',
+    unique: 'Solución única: las rectas se cortan en un punto.',
+    none: 'Sistema incompatible: rectas paralelas distintas.',
+    infinite: 'Sistema compatible indeterminado: ambas ecuaciones describen la misma recta.',
+    solution: 'x',
+    reset: 'Reiniciar',
+  }}
+/>
+
+Dos rectas del plano se cortan en un punto, son paralelas y disjuntas, o coinciden. Esos tres casos
+agotan las posibilidades y se corresponden con solución única, sistema incompatible y sistema
+compatible indeterminado. Para $n = 3$ cada ecuación describe un plano y la intersección de los tres
+es un punto, una recta, un plano o el conjunto vacío.
+
+## Existencia y unicidad
+
+El **rango** de una matriz es el número de filas linealmente independientes, equivalentemente el
+número de columnas linealmente independientes. El criterio que resuelve la cuestión es el teorema de
+Rouché-Frobenius:
+
+$$
+\begin{aligned}
+\operatorname{rank}(A) &= \operatorname{rank}([A \mid \vec{b}]) = n &&\Rightarrow\; \text{solución única}\\
+\operatorname{rank}(A) &= \operatorname{rank}([A \mid \vec{b}]) < n &&\Rightarrow\; \text{infinitas soluciones}\\
+\operatorname{rank}(A) &< \operatorname{rank}([A \mid \vec{b}]) &&\Rightarrow\; \text{sin solución}
+\end{aligned}
+$$
+
+Una matriz cuadrada con $\operatorname{rank}(A) < n$ se denomina **singular** y no admite inversa.
+`np.linalg.solve` exige $A$ cuadrada y no singular; en caso contrario lanza una excepción.
+
+```python
+C = np.array([[1,  1, 1],
+              [1, -1, 2],
+              [2,  0, 3]])          # fila 3 = fila 1 + fila 2
+
+np.linalg.solve(C, np.array([3, 2, 1]))
+# LinAlgError: Singular matrix
+
+np.linalg.matrix_rank(C)            # 2
+```
+
+En este caso $\operatorname{rank}(C) = 2 < 3$. El término independiente decide entre los dos casos
+restantes: con $\vec{b} = (3, 2, 5)$ se cumple $b_3 = b_1 + b_2$, el rango de la ampliada sigue
+siendo 2 y el sistema tiene infinitas soluciones; con $\vec{b} = (3, 2, 1)$ el rango de la ampliada
+es 3 y el sistema es incompatible.
+
+<EliminationSteps
+  a={[[1, 1, 1], [1, -1, 2], [2, 0, 3]]}
+  b={[3, 2, 1]}
+  rowLetter="F"
+  labels={{
+    start: 'Matriz ampliada de un sistema incompatible',
+    done: 'Proceso terminado',
+    singular: 'Fila nula en el bloque de A: el rango es 2, no 3',
+    step: 'Paso',
+  }}
+/>
+
+El estado final exhibe una fila nula en el bloque correspondiente a $A$ con término independiente no
+nulo. Esa fila codifica la ecuación $0 = c$ con $c \neq 0$, que es la forma en que la eliminación
+manifiesta la incompatibilidad.
+
+Para sistemas sin solución exacta, `np.linalg.lstsq` devuelve el minimizador de
+$\lVert A\vec{x} - \vec{b} \rVert_2$; si ese minimizador no es único, devuelve el de norma mínima.
+
+```python
+x, residuos, rango, sv = np.linalg.lstsq(C, np.array([3, 2, 1]), rcond=None)
+```
+
+## `solve` frente a `inv`
+
+Para resolver $A\vec{x} = \vec{b}$ con $A$ invertible, ambas expresiones son matemáticamente
+equivalentes:
+
+```python
+x = np.linalg.solve(A, b)      # recomendado
+x = np.linalg.inv(A) @ b       # desaconsejado
+```
+
+Numéricamente no lo son. Calcular $A^{-1}$ requiere resolver $n$ sistemas en lugar de uno, y el
+producto posterior añade una segunda fuente de error de redondeo. La cota de error de la segunda vía
+es peor, y la diferencia crece con el número de condición de $A$. La inversa explícita solo se
+justifica cuando la propia matriz $A^{-1}$ es el objeto de interés, lo que en la práctica es
+infrecuente.
+
+---
+
+**Ejercicio.** Sustituir el coeficiente $a_{31} = 2$ de `C` por $3$ y recalcular el rango.
+Determinar si la matriz resultante sigue siendo singular y qué configuración geométrica de los tres
+planos corresponde a cada caso.

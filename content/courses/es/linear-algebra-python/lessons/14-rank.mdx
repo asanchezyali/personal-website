@@ -1,0 +1,173 @@
+---
+title: 'Rango con Python'
+language: 'es'
+module: 'Espacios vectoriales'
+moduleOrder: 2
+order: 5
+summary: 'La igualdad entre rango por filas y por columnas, el rango de un producto, la aproximación óptima de rango bajo según Eckart-Young, y la adaptación de bajo rango de modelos grandes.'
+---
+
+El rango ha aparecido en casi todas las lecciones anteriores: como criterio de compatibilidad, como
+dimensión del espacio columna, como prueba de independencia y como decisión sujeta a una tolerancia.
+Esta lección reúne lo que faltaba. Un teorema que se ha usado sin enunciar, y la construcción que
+convierte el rango en una herramienta de compresión.
+
+## Filas y columnas
+
+El rango puede definirse como el número de filas linealmente independientes o como el número de
+columnas independientes. Son dos definiciones distintas que producen el mismo número:
+
+$$
+\operatorname{rank}(A) = \operatorname{rank}(A^\top)
+$$
+
+El resultado no es evidente. Una matriz de $3 \times 100$ tiene a lo sumo tres filas independientes
+y hasta cien columnas candidatas, y sin embargo el número de columnas independientes tampoco puede
+superar tres.
+
+La descomposición en valores singulares lo explica en una línea. Si $A = U\Sigma V^\top$, entonces
+$A^\top = V\Sigma^\top U^\top$, y ambas tienen los mismos valores singulares no nulos. Como el rango
+es el número de valores singulares no nulos, la igualdad es inmediata. La lección sobre subespacios
+lo había anticipado al asignar la misma dimensión $r$ al espacio fila y al espacio columna.
+
+```python
+import numpy as np
+
+A = np.array([[1., 2., 3.],
+              [2., 4., 6.]])              # fila 2 = 2 · fila 1
+
+np.linalg.matrix_rank(A)                  # 1
+np.linalg.matrix_rank(A.T)                # 1
+```
+
+Una consecuencia inmediata es la cota $\operatorname{rank}(A) \le \min(m, n)$. Cuando se alcanza la
+igualdad, la matriz tiene **rango completo**. Para una matriz cuadrada eso equivale a ser
+invertible, que es la condición $\det A \neq 0$ de la lección sobre la inversa vista ahora como una
+afirmación sobre dimensiones.
+
+## El rango de un producto
+
+De la interpretación del producto como composición se sigue una segunda cota:
+
+$$
+\operatorname{rank}(AB) \le \min\big(\operatorname{rank}(A),\ \operatorname{rank}(B)\big)
+$$
+
+La razón es que $\operatorname{col}(AB) \subseteq \operatorname{col}(A)$, porque toda columna de $AB$
+es combinación de las columnas de $A$, y simétricamente para las filas. Componer transformaciones no
+puede aumentar la dimensión de la imagen.
+
+Esa cota, que parece una limitación, es la base de la última sección: multiplicar dos matrices
+estrechas produce una matriz grande de rango garantizadamente bajo.
+
+## Aproximación de rango bajo
+
+Con datos reales el rango es casi siempre completo, como estableció la lección sobre independencia
+lineal. La pregunta útil deja de ser cuál es el rango y pasa a ser **qué se pierde al tratar la
+matriz como si tuviera rango $k$**.
+
+La descomposición en valores singulares responde de forma exacta. Escribiendo
+$A = \sum_{i=1}^{r} \sigma_i \vec{u}_i \vec{v}_i^\top$ como suma de matrices de rango uno ordenadas
+por $\sigma_i$ decreciente, y truncando la suma:
+
+$$
+A_k = \sum_{i=1}^{k} \sigma_i \vec{u}_i \vec{v}_i^\top
+$$
+
+El **teorema de Eckart-Young** establece que $A_k$ es la mejor aproximación posible de rango $k$, y
+que el error cometido es exactamente lo descartado:
+
+$$
+\min_{\operatorname{rank}(B) \le k} \lVert A - B \rVert_F = \lVert A - A_k \rVert_F = \sqrt{\sum_{i>k} \sigma_i^2}
+$$
+
+No hay que buscar la mejor aproximación: la proporciona la descomposición, ordenada.
+
+<LowRankImage
+  n={32}
+  labels={{
+    hint: 'Las barras son los valores singulares; las conservadas aparecen destacadas.',
+    original: 'A',
+    approx: 'A',
+    error: 'error',
+    energy: 'energía',
+    storage: 'almacenamiento',
+    note: 'El rango k cuesta k(2n+1) números en lugar de n².',
+  }}
+/>
+
+La figura descompone un campo de $32\times 32$ y reconstruye con los $k$ primeros términos. Con
+$k = 4$ se retiene el $95.4\,\%$ de la energía ocupando el $25\,\%$ del almacenamiento; con $k = 8$,
+el $99.3\,\%$ ocupando el $51\,\%$.
+
+Un detalle del ejemplo ilustra la teoría. Las manchas gaussianas son separables, de la forma
+$f(x)g(y)$, y por tanto de rango uno cada una: una figura compuesta solo de manchas tendría rango
+exactamente finito y nada que truncar. La cresta diagonal y el anillo no son separables, y son las
+que dan al espectro su cola.
+
+El almacenamiento es la razón práctica. Guardar $A_k$ requiere $k$ vectores de longitud $m$, $k$ de
+longitud $n$ y $k$ valores singulares, es decir $k(m + n + 1)$ números frente a los $mn$ de la
+matriz completa. La compresión es rentable cuando $k \ll mn/(m+n)$.
+
+## El rango efectivo
+
+Entre el rango numérico, que es un entero sujeto a una tolerancia, y el espectro completo, que son
+$\min(m,n)$ números, existen medidas intermedias del número de direcciones que importan.
+
+La más común en la práctica es contar cuántos valores singulares hacen falta para alcanzar una
+fracción dada de la energía:
+
+```python
+s = np.linalg.svd(A, compute_uv=False)
+energia = np.cumsum(s**2) / np.sum(s**2)
+k_90 = np.searchsorted(energia, 0.90) + 1       # direcciones al 90 %
+```
+
+Es la misma cantidad que en el análisis de componentes principales se representa como varianza
+explicada acumulada, y el criterio para elegir el número de componentes.
+
+## Aplicación: adaptación de bajo rango
+
+Ajustar un modelo grande a una tarea concreta requiere modificar sus matrices de pesos. Para una capa
+con $W \in \mathbb{R}^{d\times d}$, actualizar $W$ por completo significa entrenar $d^2$ parámetros,
+que para $d = 4096$ son casi diecisiete millones por capa.
+
+La **adaptación de bajo rango** parte de una hipótesis: la actualización necesaria tiene rango
+intrínseco bajo. Si es así, puede escribirse como producto de dos matrices estrechas:
+
+$$
+W' = W + \Delta W, \qquad \Delta W = BA, \quad B \in \mathbb{R}^{d\times r},\ A \in \mathbb{R}^{r\times d}
+$$
+
+Por la cota del apartado anterior, $\operatorname{rank}(BA) \le r$ por construcción, sin necesidad de
+imponerlo. Los parámetros entrenables pasan de $d^2$ a $2dr$.
+
+<LoRABudget
+  labels={{
+    hint: 'ΔW es d×d; B es d×r y A es r×d, de modo que rank(BA) ≤ r por construcción.',
+    full: 'ΔW completa',
+    lora: 'B·A, rango r',
+    ratio: 'parámetros entrenables',
+    rank: 'factor de reducción',
+    note: 'El ahorro es d²/(2dr) = d/(2r), y crece con el tamaño de la capa.',
+    reset: 'Reiniciar',
+  }}
+/>
+
+Con $d = 4096$ y $r = 8$, los parámetros entrenables se reducen al $0.39\,\%$: un factor de $256$.
+El ahorro es $d/(2r)$, de modo que crece con el tamaño de la capa, que es la razón de que la técnica
+resulte más ventajosa cuanto mayor es el modelo.
+
+La hipótesis de rango bajo es empírica, no un teorema: funciona porque las actualizaciones
+requeridas para especializar un modelo ya entrenado resultan tener, en la práctica, poca dimensión
+efectiva. Cuando no se cumple, el rango $r$ limita lo que la adaptación puede representar, y el
+diagnóstico es el mismo que en el resto de la lección: el espacio columna alcanzable tiene dimensión
+a lo sumo $r$.
+
+---
+
+**Ejercicio.** Generar una matriz $50\times 50$ como producto de dos matrices $50\times 3$ más ruido
+gaussiano de escala $10^{-3}$. Comprobar que `matrix_rank` devuelve $50$ y representar los valores
+singulares en escala logarítmica, identificando el salto entre los tres primeros y el resto.
+Verificar después la igualdad de Eckart-Young comparando
+`norm(A - A_3, 'fro')` con `sqrt(sum(s[3:]**2))`.

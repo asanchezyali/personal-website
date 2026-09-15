@@ -1,0 +1,196 @@
+---
+title: 'Vector spaces with Python'
+language: 'en'
+module: 'Vector spaces'
+moduleOrder: 2
+order: 1
+summary: 'The eight axioms defining a vector space, subspaces and the test for them, the span, and the distinction between the three orientations of a one-dimensional array.'
+---
+
+The previous lessons operated on vectors and matrices taking for granted what they are. This module
+establishes the definition. It is not a dispensable formality: it is what explains why the same
+techniques apply to lists of numbers, to polynomials and to the internal representations of a
+language model.
+
+## The definition
+
+A **vector space** over $\mathbb{R}$ is a set $V$ with two operations, an addition
+$V \times V \to V$ and a scalar multiplication $\mathbb{R} \times V \to V$, satisfying eight
+conditions. For all $\vec{u},\vec{v},\vec{w} \in V$ and $\lambda,\mu \in \mathbb{R}$:
+
+$$
+\begin{aligned}
+&\vec{u} + \vec{v} = \vec{v} + \vec{u} && \text{commutativity}\\
+&(\vec{u} + \vec{v}) + \vec{w} = \vec{u} + (\vec{v} + \vec{w}) && \text{associativity}\\
+&\exists\, \vec{0} : \vec{v} + \vec{0} = \vec{v} && \text{identity element}\\
+&\exists\, (-\vec{v}) : \vec{v} + (-\vec{v}) = \vec{0} && \text{inverse element}\\
+&\lambda(\vec{u} + \vec{v}) = \lambda\vec{u} + \lambda\vec{v} && \text{distributivity over vectors}\\
+&(\lambda + \mu)\vec{v} = \lambda\vec{v} + \mu\vec{v} && \text{distributivity over scalars}\\
+&\lambda(\mu\vec{v}) = (\lambda\mu)\vec{v} && \text{associativity of the scalar}\\
+&1 \cdot \vec{v} = \vec{v} && \text{identity scalar}
+\end{aligned}
+$$
+
+The elements of $V$ are called **vectors**, whatever their nature. The definition mentions neither
+arrows, nor lists, nor coordinates.
+
+In $V = \mathbb{R}^n$, realised in NumPy as a one-dimensional `ndarray`, all eight are inherited
+from the properties of the real numbers and can be checked directly:
+
+```python
+import numpy as np
+
+u = np.array([1., 2., 3.])
+v = np.array([4., 5., 6.])
+
+np.allclose(u + v, v + u)                  # commutativity
+np.allclose(3 * (u + v), 3 * u + 3 * v)    # distributivity
+np.allclose(u + np.zeros(3), u)            # identity element
+```
+
+## Closure and vectorisation
+
+The first two conditions of the definition, preceding the axioms, are that addition and scalar
+multiplication return elements of $V$. That property is called **closure**, and in NumPy it shows up
+in the shape of the result:
+
+```python
+(u + v).shape == (3 * u).shape == u.shape    # True
+```
+
+The consequence is one of implementation, not merely of notation. Because the result belongs to the
+same space and has the same type and shape, the operation can be compiled into a single typed loop
+over a contiguous block of memory, with nothing to decide per element. That is what **vectorisation**
+means, and it is why `u + v` runs one to two orders of magnitude faster than the equivalent Python
+loop.
+
+Algebraic closure and library efficiency are not independent facts: the second is possible because
+the first holds.
+
+## Linear combinations and the span
+
+The central operation of linear algebra combines both: scaling several vectors and adding them.
+
+$$
+\vec{w} = \lambda_1\vec{v}_1 + \cdots + \lambda_k\vec{v}_k
+$$
+
+Arranging the vectors as the columns of a matrix, the combination is a matrix-vector product:
+
+```python
+V = np.column_stack([u, v])    # (3, 2)
+c = np.array([2., -1.])
+
+V @ c                          # array([-2., -1.,  0.])  =  2u − v
+```
+
+The identification is worth stating plainly: **the product $V\vec{c}$ is the linear combination of
+the columns of $V$ with coefficients $\vec{c}$**. It is the reading that turns $A\vec{x} = \vec{b}$
+into the question of which combination of the columns of $A$ produces $\vec{b}$.
+
+The set of all possible linear combinations is called the **span**:
+
+$$
+\operatorname{span}\{\vec{v}_1,\dots,\vec{v}_k\} = \Big\{\, \textstyle\sum_i \lambda_i\vec{v}_i \;:\; \lambda_i \in \mathbb{R} \,\Big\}
+$$
+
+Applied to the columns of a matrix, it is called the **column space**, and it is exactly the set of
+vectors $\vec{b}$ for which $A\vec{x} = \vec{b}$ has a solution.
+
+## Subspaces
+
+A subset $U \subseteq V$ is a **subspace** if it is itself a vector space under the same operations.
+There is no need to verify the eight axioms: they are inherited from $V$. Three conditions suffice:
+
+1. $\vec{0} \in U$
+2. $\vec{u},\vec{v} \in U \Rightarrow \vec{u} + \vec{v} \in U$
+3. $\vec{u} \in U,\ \lambda \in \mathbb{R} \Rightarrow \lambda\vec{u} \in U$
+
+The figure applies the test to several subsets of $\mathbb{R}^2$:
+
+<SubspaceTest
+  labels={{
+    zero: 'contains 0',
+    addition: 'closed under addition',
+    scaling: 'closed under scalar multiplication',
+    isSubspace: 'is a subspace',
+    isNot: 'is not a subspace',
+  }}
+/>
+
+Each failure illustrates a different condition. The shifted line does not contain the origin. The
+first quadrant does contain it and is closed under addition, but multiplying by $-1$ leaves it. The
+parabola contains the origin and fails the other two: $(1,1)$ and $(2,4)$ belong to it and their sum
+$(3,5)$ does not, and doubling $(1,1)$ gives $(2,2)$, which does not either.
+
+The subspaces of $\mathbb{R}^2$ are therefore only $\{\vec{0}\}$, the lines through the origin, and
+$\mathbb{R}^2$ itself. A subspace always contains the origin, and that is the difference from the
+solution set of $A\vec{x} = \vec{b}$ described in the lesson on particular and general solutions,
+which is affine unless $\vec{b} = \vec{0}$.
+
+The subspaces already met in the course are instances of this definition: the **null space** of a
+matrix, its **column space** and its **row space**.
+
+## The three orientations of an array
+
+In NumPy, a one-dimensional vector of shape `(n,)` has no orientation: it is neither a row nor a
+column. For matrix algebra it is given one explicitly:
+
+```python
+u.shape                  # (3,)   no orientation
+u.reshape(-1, 1).shape   # (3, 1) column
+u.reshape(1, -1).shape   # (1, 3) row
+```
+
+The distinction is not cosmetic. Under the broadcasting rules described in the lesson on matrices,
+combining two different orientations produces a matrix rather than a vector:
+
+<ShapeOrientation
+  v={[1, 2, 3]}
+  labels={{
+    left: 'left operand',
+    right: 'right operand',
+    result: 'result',
+    elementwise: 'element by element',
+    outer: 'every pair, not element by element',
+    warning: 'Silent: no error is raised.',
+  }}
+/>
+
+Adding a column `(3, 1)` to a row `(1, 3)` aligns the shapes from the right, finds a $1$ in each
+position and stretches both: the result has shape `(3, 3)` and holds every cross sum. The operation
+is legal and raises no warning, so the error surfaces later, in a dimension that does not fit or in a
+loss quietly computed wrong.
+
+Checking `.shape` before operating is the habit that prevents it.
+
+## Spaces that are not ℝⁿ
+
+The generality of the definition is not a technicality. Any set whose operations satisfy the eight
+axioms inherits the whole of the theory that follows: linear independence, basis, dimension, linear
+transformations.
+
+| Space | Elements | Dimension |
+| --- | --- | --- |
+| $\mathbb{R}^{m\times n}$ | real matrices | $mn$ |
+| $\mathcal{P}_k$ | polynomials of degree $\le k$ | $k+1$ |
+| $\mathcal{C}[a,b]$ | continuous functions on $[a,b]$ | infinite |
+| $\{\vec{x} : A\vec{x} = \vec{0}\}$ | the null space of $A$ | $n - \operatorname{rank}(A)$ |
+
+In machine learning the relevant space is almost always $\mathbb{R}^d$, but the choice of $d$ and of
+the map that carries the data there is where the design work sits. A text is represented as a point
+of $\mathbb{R}^{768}$, an image as one of $\mathbb{R}^{d}$ after flattening its pixels, a user as a
+vector of latent factors.
+
+That these representations live in a vector space is what licenses the usual operations on them.
+Averaging *embeddings* to represent a document makes sense because addition and scalar
+multiplication are defined and the result still belongs to the space. The lesson on multiplication
+by a scalar showed the other side: the metric used on that space decides what it means for two
+representations to be close.
+
+---
+
+**Exercise.** Determine which of the following subsets of $\mathbb{R}^3$ are subspaces by applying
+the three conditions: the vectors with $x_1 + x_2 + x_3 = 0$; the vectors with
+$x_1 + x_2 + x_3 = 1$; the vectors with $x_1 x_2 = 0$. Then verify the first answer by checking that
+`null_space(np.ones((1, 3)))` has the expected dimension.

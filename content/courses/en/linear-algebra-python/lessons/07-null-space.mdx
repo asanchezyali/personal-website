@@ -1,0 +1,177 @@
+---
+title: 'The null space with Python'
+language: 'en'
+module: 'Systems and matrices'
+moduleOrder: 1
+order: 7
+summary: 'The minus-one trick for obtaining a basis by hand, numerical rank as a decision about a threshold, and the null space of the design matrix as the source of collinearity.'
+---
+
+The lesson on particular and general solutions used the null space as a tool: it was the homogeneous
+part which, added to a particular solution, generated all the others. This one takes it as the
+object of study. How a basis is obtained by hand, how a computer decides its dimension in floating
+point, and what it means for a model's matrix to have a non-trivial null space.
+
+## The homogeneous system
+
+The null space is the solution set of $A\vec{x} = \vec{0}$. That system is always consistent: the
+zero vector satisfies it for any $A$. The relevant question is whether it admits any other solution.
+
+$$
+\ker(A) \neq \{\vec{0}\} \iff \operatorname{rank}(A) < n \iff \text{the columns are dependent}
+$$
+
+The three conditions are equivalent and have already appeared separately in earlier lessons. A
+non-trivial null space means some non-zero combination of the columns vanishes, that is, that at
+least one column carries no information the others do not already contain.
+
+## The minus-one trick
+
+There is a procedure for reading a basis of the null space directly off the reduced row echelon
+form, without solving anything. It is known as the **minus-one trick**.
+
+Given the reduced form of $A$, build an $n\times n$ matrix: each row whose index corresponds to a
+pivot column receives the corresponding row of the reduced form, and each row whose index
+corresponds to a free column receives a $-1$ on the diagonal and zeros elsewhere. That done, **the
+columns containing those $-1$ entries form a basis of the null space**.
+
+<MinusOneTrick
+  a={[[1, 2, -1], [2, 4, -2]]}
+  labels={{
+    step: 'Step',
+    original: 'A, with the second row twice the first',
+    rref: 'reduced row echelon form',
+    insert: 'row with −1 for the free variable',
+    basis: 'the −1 columns are a basis of the null space',
+  }}
+/>
+
+The reason it works is direct. Call $M$ the square matrix built and $\vec{m}_j$ its $j$-th column
+for a free column $j$. The rows of $M$ coming from the reduced form are combinations of the rows of
+$A$, so annihilating those rows against $\vec{m}_j$ is equivalent to annihilating $A\vec{m}_j$. And
+the product of pivot row $i$ with $\vec{m}_j$ is precisely $r_{ij} + (-1)\,r_{ij} = 0$: the entry of
+the reduced form minus itself, contributed by the $-1$.
+
+The $\dim\ker(A)$ columns so obtained are independent by construction, since each carries a $-1$ in
+a position where the others have a $0$.
+
+For the matrix in the figure, whose second row doubles the first, the resulting basis is
+$\{(2,-1,0),\; (-1,0,-1)\}$, and both vectors vanish when multiplied by $A$.
+
+## Exact basis against numerical basis
+
+`scipy.linalg.null_space` returns an **orthonormal** basis in floating point; `sympy` returns an
+**exact rational** basis.
+
+```python
+from scipy.linalg import null_space
+null_space(A)
+# array([[-0.894, -0.186],
+#        [ 0.447, -0.373],
+#        [ 0.   ,  0.909]])
+
+import sympy as sp
+sp.Matrix(A).nullspace()
+# [Matrix([[-2], [1], [0]]), Matrix([[1], [0], [1]])]
+```
+
+The vectors do not coincide, and there is no reason they should: a subspace admits infinitely many
+bases. What does coincide is the subspace they span and its dimension. The rational basis from
+`sympy` reproduces, up to sign, the one from the minus-one trick; the one from `scipy` is what the
+singular value decomposition produces, orthonormal and therefore convenient for projecting.
+
+The choice follows the criterion of the previous lesson: `sympy` to reason about exact structure in
+small matrices, `scipy` for numerical computation.
+
+## Rank is a decision, not a fact
+
+In exact arithmetic the rank is determined. In floating point it is not, and the dimension of the
+null space a program returns depends on that difference.
+
+`np.linalg.matrix_rank` computes the singular values and counts how many exceed a tolerance:
+
+$$
+\text{tol} = \max(m,n)\cdot \varepsilon_{\text{mach}} \cdot \sigma_1
+$$
+
+The figure perturbs a single entry of a rank-deficient matrix and shows the smallest singular value
+against that tolerance:
+
+<NumericalRank
+  labels={{
+    hint: 'ε perturbs a single entry of a rank-1 matrix.',
+    sigma: 'against the tolerance',
+    tol: 'tolerance',
+    rank: 'matrix_rank',
+    nullity: 'dim ker(A)',
+    exact: 'exactly singular',
+    note: 'Rank in floating point is a decision about a threshold, not a property read off the matrix.',
+    reset: 'Reset',
+  }}
+/>
+
+The jump occurs between $\varepsilon = 10^{-15}$ and $\varepsilon = 10^{-14}$: below it, the matrix
+is declared rank 1 and the null space has dimension 2; above it, rank 2 and dimension 1. The matrix
+changes continuously; the program's answer does not.
+
+An instructive detail appears at the extreme. At $\varepsilon = 10^{-16}$ the smaller singular value
+is **exactly zero**, not merely small: the spacing between representable numbers near $2$ is about
+$4{\cdot}10^{-16}$, so `2 + 1e-16` evaluates to `2` and the perturbation never comes into existence.
+
+When the rank matters, the tolerance should be set explicitly rather than left at the default:
+
+```python
+np.linalg.matrix_rank(A, tol=1e-10)    # threshold matched to the noise in the data
+```
+
+The reasonable criterion is to place the tolerance above the measurement noise of the data and below
+the magnitude of the directions that are to count as significant.
+
+## Application: collinearity
+
+In a linear model, each row of the design matrix $X$ is an observation and each column a feature. If
+one column is a linear combination of others, $X$ has a non-trivial null space, and a concrete
+consequence follows.
+
+```python
+X = np.array([[1., 2., 3.],
+              [2., 1., 3.],
+              [3., 5., 8.],
+              [0., 4., 4.]])        # column 3 = column 1 + column 2
+
+n = np.array([1., 1., -1.])         # belongs to the null space
+X @ n                               # array([0., 0., 0., 0.])
+```
+
+For any weight vector $\vec{w}$ and any scalar $t$:
+
+$$
+X(\vec{w} + t\vec{n}) = X\vec{w} + t\,X\vec{n} = X\vec{w}
+$$
+
+The predictions are identical. Infinitely many weight vectors produce exactly the same fit, and
+therefore the same value of the loss. The coefficients are not **identified**: their individual
+magnitudes carry no interpretation, because they can be shifted arbitrarily along the null space
+without anything observable changing.
+
+This is the phenomenon known as **collinearity**, and it explains why the coefficients of a
+regression with redundant features come out unstable across retrainings. L2 regularisation resolves
+it by adding $\lambda\lVert\vec{w}\rVert^2$ to the loss: the term stops being constant along the
+null space and selects the minimum-norm representative, which is unique.
+
+The diagnosis is direct:
+
+```python
+np.linalg.matrix_rank(X)      # 2, with 3 columns → one redundant direction
+null_space(X)                 # which combination of features is superfluous
+```
+
+The second call gives more than the first: it reports not merely that redundancy exists, but which
+specific combination is superfluous, which is the information needed to decide what to drop.
+
+---
+
+**Exercise.** Apply the minus-one trick by hand to
+$A = \begin{bmatrix}1 & 2 & 0 & 1\\ 0 & 0 & 1 & 3\end{bmatrix}$, which is already in reduced form,
+and check the result against `null_space`. Verify that both bases span the same subspace by solving
+the system expressing each vector of one in terms of the other.

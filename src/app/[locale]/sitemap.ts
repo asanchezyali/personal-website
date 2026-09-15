@@ -10,7 +10,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   for (const locale of locales) {
     const prefix = locale === 'en' ? '' : `/${locale}`
-    const pages = ['', '/blog', '/about', '/collaborate', '/tags']
+    const pages = ['', '/blog', '/about', '/courses', '/collaborate', '/tags']
     pages.forEach((page) => {
       staticRoutes.push({
         url: `${base}${prefix}${page}`,

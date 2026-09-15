@@ -1,0 +1,241 @@
+---
+title: 'Inversa y transpuesta con Python'
+language: 'es'
+module: 'Sistemas y matrices'
+moduleOrder: 1
+order: 3
+summary: 'La inversa y su existencia, el número de condición como medida de fiabilidad, la transpuesta y las matrices simétricas, con las ecuaciones normales de la regresión lineal como cierre.'
+---
+
+Dos operaciones sobre una matriz cuadrada admiten una lectura inmediata: la **inversa** deshace la
+transformación que la matriz aplica, y la **transpuesta** intercambia el papel de filas y columnas.
+La primera plantea una cuestión de existencia que un solo número resuelve; la segunda genera la
+clase de matrices sobre la que descansa buena parte del aprendizaje automático.
+
+## La matriz inversa
+
+Una matriz $A \in \mathbb{R}^{n\times n}$ es **invertible** si existe $A^{-1}$ tal que
+
+$$
+A A^{-1} = A^{-1} A = I_n
+$$
+
+La inversa, cuando existe, es única, y representa la transformación que devuelve cada vector a su
+posición de partida.
+
+```python
+import numpy as np
+
+A = np.array([[1., 2.],
+              [3., 4.]])
+
+Ainv = np.linalg.inv(A)
+np.allclose(A @ Ainv, np.eye(2))    # True
+```
+
+## Existencia: el determinante
+
+El criterio es un único escalar. La matriz $A$ es invertible si y solo si $\det A \neq 0$, condición
+equivalente a que sus columnas sean linealmente independientes.
+
+```python
+np.linalg.det(A)
+# -2.0000000000000004
+```
+
+El valor exacto es $1\cdot4 - 2\cdot3 = -2$. La discrepancia en el decimoquinto dígito es
+aritmética de coma flotante, no un error de cálculo: los números reales se representan con precisión
+finita y las operaciones acumulan redondeo.
+
+De ahí una regla que conviene aplicar sin excepciones: **el determinante no se compara con cero
+mediante `==`**.
+
+```python
+np.linalg.det(A) == 0        # False, pero por la razón equivocada
+np.isclose(np.linalg.det(A), 0)   # la comparación correcta
+```
+
+Cuando la matriz es exactamente singular, `inv` no devuelve un resultado aproximado sino un error:
+
+```python
+S = np.array([[1., 2.],
+              [2., 4.]])       # fila 2 = 2 · fila 1
+
+np.linalg.inv(S)
+# LinAlgError: Singular matrix
+```
+
+## El número de condición
+
+El caso singular es el benigno, porque falla de forma visible. El problemático es la matriz **casi**
+singular: `inv` devuelve un resultado, el programa continúa y las cifras carecen de significado.
+
+La magnitud que lo cuantifica es el **número de condición** $\kappa(A) = \lVert A \rVert \cdot
+\lVert A^{-1} \rVert$. En la norma $2$ es el cociente entre el mayor y el menor valor singular, y
+acota la propagación del error relativo al resolver $A\vec{x} = \vec{b}$:
+
+$$
+\frac{\lVert \Delta\vec{x} \rVert}{\lVert \vec{x} \rVert} \;\le\; \kappa(A)\,\frac{\lVert \Delta\vec{b} \rVert}{\lVert \vec{b} \rVert}
+$$
+
+En la figura, el parámetro $\varepsilon$ separa la segunda fila de un múltiplo exacto de la primera.
+El término independiente se perturba siempre en la misma cantidad, y lo que se observa es cuánto de
+esa perturbación llega a la solución.
+
+<Conditioning
+  b={[3, 6]}
+  nudge={0.001}
+  labels={{
+    hint: 'ε separa la segunda fila del doble de la primera. En ε = 0 la matriz es singular.',
+    det: 'det(A)',
+    cond: 'cond(A)',
+    changeB: 'cambio en b',
+    changeX: 'cambio en x',
+    amplification: 'amplificación del error',
+    singular: 'LinAlgError: Singular matrix',
+    reset: 'Reiniciar',
+  }}
+/>
+
+Con $\varepsilon$ próximo a $1$ la perturbación llega atenuada. Al reducir $\varepsilon$ hacia cero,
+una variación de milésimas en $\vec{b}$ produce variaciones de orden uno en $\vec{x}$. El sistema
+sigue teniendo solución única en sentido matemático, pero la solución calculada deja de ser
+informativa.
+
+```python
+np.linalg.cond(A)     # ~14.9 para la matriz de arriba
+```
+
+Como orden de magnitud: si $\kappa(A) \approx 10^k$, cabe esperar la pérdida de unas $k$ cifras
+significativas. En doble precisión se dispone de unas 16, de modo que $\kappa \approx 10^{12}$ deja
+apenas cuatro cifras fiables.
+
+La recomendación de la lección sobre sistemas lineales —emplear `solve` y no `inv`— se apoya en esto:
+`solve` evita construir la inversa y con ello una fuente adicional de amplificación del error.
+
+## La transpuesta
+
+La **transpuesta** $A^\top \in \mathbb{R}^{n\times m}$ de una matriz $A \in \mathbb{R}^{m\times n}$
+se define por $(A^\top)_{ij} = a_{ji}$: refleja la matriz respecto de su diagonal principal, que
+permanece fija.
+
+<TransposeGrid
+  a={[[1, 2, 3], [4, 5, 6]]}
+  names={{ a: 'A', t: 'Aᵀ' }}
+  labels={{
+    step: 'Paso',
+    diagonal: 'La diagonal queda fija; el resto de entradas intercambia sus índices.',
+  }}
+/>
+
+```python
+A = np.array([[1, 2, 3],
+              [4, 5, 6]])
+
+A.T
+# array([[1, 4],
+#        [2, 5],
+#        [3, 6]])
+```
+
+En NumPy, `.T` devuelve una **vista**: no copia los datos, solo intercambia el orden en que se
+recorren. La operación es de coste constante, igual que `reshape`. De la definición se sigue
+$(A^\top)^\top = A$.
+
+## La inversión del orden
+
+Tanto la transposición como la inversión invierten el orden de los factores de un producto:
+
+$$
+(AB)^\top = B^\top A^\top, \qquad (AB)^{-1} = B^{-1} A^{-1}
+$$
+
+La razón es la misma en ambos casos. Si $AB$ significa aplicar $B$ y después $A$, deshacer esa
+composición exige deshacer primero lo último que se hizo. La comprobación numérica es inmediata:
+
+```python
+P = np.random.randn(2, 3)
+Q = np.random.randn(3, 2)
+
+np.allclose((P @ Q).T, Q.T @ P.T)     # True
+```
+
+Las dimensiones lo confirman por sí solas: $A^\top B^\top$ no está definido en general, mientras que
+$B^\top A^\top$ siempre lo está.
+
+## Matrices simétricas
+
+Una matriz cuadrada es **simétrica** cuando $A = A^\top$. La construcción que las produce de forma
+sistemática es el producto de una matriz por su transpuesta:
+
+$$
+(A^\top A)^\top = A^\top (A^\top)^\top = A^\top A
+$$
+
+El resultado es simétrico cualquiera que sea $A$, incluso rectangular. Para
+$A \in \mathbb{R}^{m\times n}$, el producto $A^\top A$ es de orden $n\times n$.
+
+```python
+A = np.random.randn(4, 3)
+G = A.T @ A                  # 3×3
+
+np.allclose(G, G.T)          # True
+```
+
+Además de simétrica, $A^\top A$ es **semidefinida positiva**: para todo $\vec{v}$ se cumple
+$\vec{v}^\top A^\top A \vec{v} = \lVert A\vec{v} \rVert^2 \ge 0$. Esa propiedad garantiza que sus
+valores propios son reales y no negativos.
+
+La clase aparece por todas partes en aprendizaje automático, y siempre por la misma razón: procede de
+un producto de la forma $A^\top A$.
+
+| Objeto | Construcción | Dónde aparece |
+| --- | --- | --- |
+| Matriz de covarianza | $\tfrac{1}{n}X_c^\top X_c$ | PCA, blanqueo de datos |
+| Matriz de Gram o kernel | $XX^\top$ | máquinas de vectores soporte, procesos gaussianos |
+| Hessiana | $\nabla^2 f$ | métodos de segundo orden, análisis de curvatura |
+
+El interés práctico de la simetría es que garantiza valores propios reales y una base ortogonal de
+vectores propios, lo que permite descomponer la matriz de forma estable. Sobre esa garantía se apoya
+el análisis de componentes principales.
+
+## Aplicación: las ecuaciones normales
+
+La regresión lineal busca los pesos $\vec{w}$ que minimizan
+$\lVert A\vec{w} - \vec{b} \rVert^2$, donde cada fila de $A$ es una observación. Anulando el
+gradiente se obtienen las **ecuaciones normales**:
+
+$$
+A^\top A\,\vec{w} = A^\top \vec{b} \qquad\Longrightarrow\qquad \hat{\vec{w}} = (A^\top A)^{-1} A^\top \vec{b}
+$$
+
+La expresión de la derecha es la forma habitual en los textos, y es la que **no** conviene trasladar
+al código. La matriz $A^\top A$ eleva al cuadrado el número de condición de $A$,
+$\kappa(A^\top A) = \kappa(A)^2$, de modo que un problema moderadamente mal condicionado se vuelve
+severo al formar ese producto. Sobre esa matriz, además, se invierte.
+
+```python
+w = np.linalg.solve(A.T @ A, A.T @ b)        # aceptable
+w = np.linalg.lstsq(A, b, rcond=None)[0]     # preferible
+```
+
+`lstsq` resuelve el problema de mínimos cuadrados sin formar $A^\top A$, empleando una
+factorización QR o la descomposición en valores singulares, y conserva el condicionamiento original.
+
+La transpuesta reaparece en el entrenamiento de redes neuronales. Si la propagación hacia adelante
+de una capa es $Y = XW$, el gradiente respecto de la entrada se propaga hacia atrás multiplicando
+por $W^\top$:
+
+$$
+\frac{\partial \mathcal{L}}{\partial X} = \frac{\partial \mathcal{L}}{\partial Y} W^\top
+$$
+
+La transposición es lo que hace encajar las dimensiones: $\partial\mathcal{L}/\partial Y$ tiene la
+forma de $Y$, y multiplicar por $W^\top$ la devuelve a la forma de $X$. Cada paso de
+retropropagación es, en esencia, un producto por la transpuesta de los pesos.
+
+---
+
+**Ejercicio.** Para $A = \begin{bmatrix}1 & 2\\ 2 & 4+\varepsilon\end{bmatrix}$, comprobar que
+$\det A = \varepsilon$. Calcular `np.linalg.cond(A)` para $\varepsilon = 10^{-1}$, $10^{-4}$ y
+$10^{-8}$, y estimar en cada caso cuántas cifras significativas sobreviven en doble precisión.

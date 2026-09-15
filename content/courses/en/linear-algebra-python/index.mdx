@@ -1,0 +1,81 @@
+---
+title: 'Linear Algebra with Python'
+language: 'en'
+level: 'Introductory'
+summary: 'Linear systems and matrices, and the vector space structure underlying them, implemented in NumPy.'
+tags: ['linear-algebra', 'python', 'numpy', 'mathematics']
+---
+
+Linear algebra is customarily taught as a sequence of algorithms: multiply rows by columns, expand a
+determinant, reduce a system. The outcome is operational competence without semantic content, in
+which procedures are executed correctly without any grasp of what they represent.
+
+This course reverses the order of exposition. Each concept is introduced through its geometric
+interpretation, supported by a figure that can be manipulated, and closes with the formal definition
+and its implementation in NumPy. Computation is presented as a consequence of the definition rather
+than as the starting point.
+
+## Prerequisites
+
+A basic command of Python and familiarity with the Cartesian plane. No prior background in linear
+algebra is assumed.
+
+```bash
+pip install numpy
+```
+
+## Organisation
+
+The **first module** starts from systems of linear equations, the problem that historically motivates
+the discipline: their matrix form, the solution with `np.linalg.solve`, LU factorisation with
+pivoting, and the rank criterion governing existence and uniqueness.
+
+The second treats the matrix as a data structure — shape, memory layout, broadcasting, the matrix
+product, transpose and identity — and closes on the linear layer of a neural network, where those
+operations appear together in a single expression.
+
+The third covers the inverse and the transpose: when the inverse exists, why a nearly singular
+matrix is more dangerous than a singular one, and how the product $A^\top A$ generates the
+symmetric matrices that principal component analysis and linear regression rest on.
+
+The fourth covers multiplication by a scalar and the norm, and reaches two everyday machine
+learning decisions that come down to choosing a number: cosine similarity between *embeddings* and
+the learning rate of gradient descent.
+
+The fifth describes the solution set when the solutions are infinite: its affine structure, the null
+space, the rank-nullity theorem, and why the minimum-norm solution `lstsq` returns amounts to an
+implicit bias of the optimiser.
+
+The sixth returns to Gaussian elimination to keep what it produces: the $L$, $U$ and $P$ factors,
+the advantage of holding on to them when there are several right-hand sides, and the Cholesky and QR
+factorisations with the problems each one belongs to.
+
+The seventh takes the null space as the object of study: the minus-one trick for obtaining a basis
+by hand, numerical rank as a decision about a threshold, and collinearity as the case where the null
+space of the design matrix leaves a model's coefficients unidentified.
+
+The eighth closes the block by returning to the inverse from the computational side: the $n$ systems
+behind it, the Gauss-Jordan construction, why the customary check fails to detect a wrong result,
+and the cases where the inverse matrix really is the object sought.
+
+The ninth closes the block by drawing the rest together: the pseudoinverse as the general case, the
+fill-in that prevents factorising large sparse matrices, the iterative methods that avoid it, and a
+criterion for choosing the algorithm from the shape, rank and structure of the matrix.
+
+The **second module** starts from the axiomatic definition of a vector space, which is what explains
+why the same techniques apply to lists of numbers, to polynomials and to the internal
+representations of a model. It introduces subspaces, the span and the column space, and goes on to the orthogonal projection,
+the four fundamental subspaces of a matrix, and principal component analysis posed as the choice of
+the subspace that best represents a set of data. It closes with linear independence and with
+measuring the degree of dependence in real data, where rank turns out to be a binary answer to a
+continuous question. It ends with basis and dimension, and with change of basis as a choice of
+representation: the basis determines how many numbers are needed to describe an object. It closes with rank: the
+theorem equating rows and columns, and the optimal low-rank approximation that underpins compression
+and the adaptation of large models. The last lesson defines linear maps and their correspondence
+with matrices, which the rest of the module had been using without stating, and reaches why a
+network without activation functions collapses into a single layer, and ends with transformation matrices and the homogeneous
+coordinates that allow a translation and a rotation to compose into one product. It closes with eigenvalues and eigenvectors, diagonalisation and the
+spectral theorem, which is what explains why principal component analysis works. The last lesson gathers the image and the kernel under the rank-nullity theorem, read as a conservation law: every dimension of the domain is either transmitted or crushed, and the split between the two is computable before anything is trained. The module closes by lifting the requirement everything before it shared —passing through the origin— to reach the affine space, the hyperplane separating two classes, and the dense layer with bias, which is an affine map and nothing more. The course closes with the singular value decomposition, which the rest of the lessons had been using without defining: where it comes from, why it exists where diagonalisation fails, and why the determinant is a volume.
+
+The series continues. Each lesson includes at least one interactive figure; exploring it beforehand
+eases the reading of the algebraic formulation that accompanies it.

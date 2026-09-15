@@ -1,0 +1,200 @@
+---
+title: 'Particular and general solutions with Python'
+language: 'en'
+module: 'Systems and matrices'
+moduleOrder: 1
+order: 5
+summary: 'The affine structure of the solution set, the null space and the rank-nullity theorem, and why the minimum-norm solution lstsq returns is an implicit bias with consequences for overparameterised models.'
+---
+
+The lesson on linear systems established that a system admits zero, one or infinitely many
+solutions, and that the rank criterion decides which of the three occurs. The unique case was
+settled with `np.linalg.solve`. The third remains: when the solutions are infinite, describing all
+of them and understanding which one the code returns.
+
+## An underdetermined system
+
+When $A \in \mathbb{R}^{m\times n}$ has fewer equations than unknowns, $m < n$, the rank cannot
+exceed $m$, so $\operatorname{rank}(A) < n$ necessarily. If the system is consistent, the solutions
+are infinite.
+
+```python
+import numpy as np
+
+A = np.array([[1., 0., 8., -4.],
+              [0., 1., 2., 12.]])
+b = np.array([42., 8.])
+
+A.shape                      # (2, 4): two equations, four unknowns
+np.linalg.matrix_rank(A)     # 2
+```
+
+`np.linalg.solve` does not apply here: it requires a square, non-singular matrix. The function that
+operates on rectangular systems is `np.linalg.lstsq`.
+
+## A particular solution
+
+```python
+xp, *_ = np.linalg.lstsq(A, b, rcond=None)
+
+xp                      # array([ 0.5898,  0.1804,  5.0789, -0.1948])
+np.allclose(A @ xp, b)  # True
+```
+
+The returned vector satisfies the system, but it is not the only possibility. It is called a
+**particular solution**, $\vec{x}_p$, precisely because it is one among infinitely many. Describing
+all of them requires one further object.
+
+## The null space
+
+The **null space** of $A$, also called the kernel, is the set of vectors that $A$ sends to the
+origin:
+
+$$
+\ker(A) = \{\, \vec{z} \in \mathbb{R}^n \;:\; A\vec{z} = \vec{0} \,\}
+$$
+
+It is a vector subspace: it contains $\vec{0}$ and is closed under addition and scalar
+multiplication. Its relevance here is immediate. If $A\vec{x}_p = \vec{b}$ and $A\vec{z} = \vec{0}$,
+then by linearity
+
+$$
+A(\vec{x}_p + \vec{z}) = A\vec{x}_p + A\vec{z} = \vec{b} + \vec{0} = \vec{b}
+$$
+
+Adding any element of the null space to a solution produces another solution. The converse holds as
+well: if $\vec{x}_1$ and $\vec{x}_2$ are both solutions, their difference satisfies
+$A(\vec{x}_1 - \vec{x}_2) = \vec{0}$, and so belongs to the null space.
+
+Hence the complete characterisation of the solution set:
+
+$$
+\{\, \vec{x} : A\vec{x} = \vec{b} \,\} = \vec{x}_p + \ker(A)
+$$
+
+It is not a subspace — unless $\vec{b} = \vec{0}$ it does not contain the origin — but an **affine
+subspace**: a subspace translated by $\vec{x}_p$.
+
+## The rank-nullity theorem
+
+The dimension of the null space is not arbitrary. The **rank-nullity theorem** fixes it:
+
+$$
+\operatorname{rank}(A) + \dim\ker(A) = n
+$$
+
+The reading is direct: of the $n$ dimensions of the domain, $\operatorname{rank}(A)$ survive the
+transformation and the rest collapse onto the origin. In the example, $4 - 2 = 2$, so the solution
+set is an affine plane inside $\mathbb{R}^4$.
+
+```python
+from scipy.linalg import null_space
+
+N = null_space(A)        # (4, 2): the columns are an orthonormal basis
+np.allclose(A @ N, 0)    # True
+```
+
+`null_space` introduces no new method: it computes the singular value decomposition and retains the
+directions whose singular value is zero. The NumPy equivalent makes that mechanism explicit:
+
+```python
+U, s, Vt = np.linalg.svd(A)
+tol = max(A.shape) * np.finfo(float).eps * s[0]
+N = Vt[(s > tol).sum():].T        # columns = basis of the null space
+```
+
+The basis it returns is **orthonormal**, a property not required of an arbitrary null space basis but
+one the decomposition supplies at no extra cost, and which simplifies the calculations that follow.
+
+## The general solution
+
+With $\vec{x}_p$ and a basis $\{\vec{n}_1, \vec{n}_2\}$ of the null space, every solution is written
+
+$$
+\vec{x} = \vec{x}_p + c_1\vec{n}_1 + c_2\vec{n}_2, \qquad c_1, c_2 \in \mathbb{R}
+$$
+
+```python
+c = np.array([3.0, -1.5])       # arbitrary coefficients
+x = xp + N @ c
+
+np.allclose(A @ x, b)           # True
+np.linalg.norm(x)               # larger than ‖xp‖
+```
+
+Any choice of coefficients produces a valid solution. The check `A @ x == b` holds equally for all of
+them, and therefore cannot distinguish between them.
+
+## Which one the code picks
+
+If all of them are solutions, the question is what additional criterion `lstsq` applies in returning
+just one. The answer is **minimum norm**: among all of them, it returns the one of least
+$\lVert\vec{x}\rVert_2$.
+
+The figure reduces the situation to the smallest possible case, one equation in two unknowns, where
+the solution set is a line:
+
+<SolutionSet
+  a={[1, 2]}
+  b={4}
+  labels={{
+    hint: 'Every point on the violet line solves the system. The slider travels along the null space.',
+    minimal: 'minimum',
+    norm: '‖x‖',
+    check: 'A·x − b',
+    particular: '‖x‖² = ‖x*‖² + c², because x* is orthogonal to the null space. The minimum sits at c = 0, and only there.',
+    reset: 'Reset',
+  }}
+/>
+
+The residual $A\vec{x} - \vec{b}$ stays zero along the whole line, while $\lVert\vec{x}\rVert$
+reaches a minimum at a single point: the foot of the perpendicular from the origin, marked in teal.
+
+That geometric observation admits a one-line proof. The minimum-norm solution $\vec{x}^{*}$ is
+orthogonal to the null space, so by the Pythagorean theorem
+
+$$
+\lVert \vec{x}^{*} + \vec{z} \rVert^2 = \lVert \vec{x}^{*} \rVert^2 + \lVert \vec{z} \rVert^2 \ge \lVert \vec{x}^{*} \rVert^2
+$$
+
+for every $\vec{z} \in \ker(A)$, with equality only if $\vec{z} = \vec{0}$. The minimum-norm solution
+is the component of any solution in the row space of $A$, which is the orthogonal complement of the
+null space.
+
+## Application: overparameterisation
+
+A modern neural network frequently has more parameters than training examples. The situation is
+exactly the one in this lesson: the system is underdetermined and infinitely many weight
+configurations fit the training data equally well.
+
+Whether the model generalises therefore depends on **which** of those infinitely many solutions the
+training procedure selects. The answer is not in the loss function, which values them all equally,
+but in the optimisation algorithm.
+
+For the linear case the result is provable. If gradient descent is initialised at $\vec{w} = \vec{0}$,
+each update adds a multiple of $A^\top(\text{residual})$, which lies in the row space of $A$. The
+iterates stay in that subspace, and the limit is precisely the minimum-norm solution:
+
+```python
+w = np.zeros(4)
+for _ in range(2000):
+    w -= 0.002 * A.T @ (A @ w - b)      # gradient descent from zero
+
+np.allclose(w, xp, atol=1e-3)           # converges to the lstsq solution
+```
+
+The optimiser thereby introduces a preference that nobody wrote into the objective. It is called
+**implicit bias**, and it acts as a regularisation that appears nowhere in the loss.
+
+The scope of this claim is worth stating. The result is proved for linear models and for certain
+cases with a quadratic loss; in deep networks with non-linear activations, the implicit bias of
+gradient descent is an active research topic and does not reduce to the minimum Euclidean norm. The
+analogy is useful for understanding why overparameterisation need not imply overfitting, but it is
+not a complete explanation of generalisation.
+
+---
+
+**Exercise.** Compute `np.linalg.norm(xp)` and compare it with the norm of `xp + N @ c` for several
+values of `c`. Check that the difference of the squares equals $\lVert N\vec{c} \rVert^2$, and
+explain which property of the basis returned by `null_space` reduces that computation to
+$\lVert\vec{c}\rVert^2$.

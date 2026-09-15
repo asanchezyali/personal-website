@@ -1,0 +1,181 @@
+---
+title: 'El núcleo con Python'
+language: 'es'
+module: 'Sistemas y matrices'
+moduleOrder: 1
+order: 7
+summary: 'El truco del −1 para obtener una base a mano, el rango numérico como decisión sobre un umbral, y el núcleo de la matriz de diseño como fuente de colinealidad.'
+---
+
+La lección sobre solución particular y general utilizó el núcleo como herramienta: era la parte
+homogénea que, sumada a una solución particular, generaba todas las demás. Esta lo toma como objeto
+de estudio. Cómo se obtiene una base a mano, cómo decide un ordenador su dimensión en coma flotante,
+y qué significa que la matriz de un modelo tenga un núcleo no trivial.
+
+## El sistema homogéneo
+
+El núcleo es el conjunto solución de $A\vec{x} = \vec{0}$. Ese sistema es siempre compatible: el
+vector nulo lo satisface para cualquier $A$. La cuestión relevante es si admite alguna solución
+más.
+
+$$
+\ker(A) \neq \{\vec{0}\} \iff \operatorname{rank}(A) < n \iff \text{las columnas son dependientes}
+$$
+
+Las tres condiciones son equivalentes y ya aparecieron por separado en lecciones anteriores. Un
+núcleo no trivial significa que alguna combinación no nula de las columnas se anula, es decir, que
+al menos una columna no aporta información que las restantes no contengan.
+
+## El truco del −1
+
+Existe un procedimiento para leer una base del núcleo directamente de la forma escalonada reducida,
+sin resolver nada. Se conoce como **truco del $-1$**.
+
+Dada la forma reducida de $A$, se construye una matriz cuadrada $n\times n$: cada fila cuyo índice
+corresponde a una columna pivote recibe la fila correspondiente de la forma reducida, y cada fila
+cuyo índice corresponde a una columna libre recibe un $-1$ en la diagonal y ceros en el resto.
+Hecho eso, **las columnas que contienen esos $-1$ forman una base del núcleo**.
+
+<MinusOneTrick
+  a={[[1, 2, -1], [2, 4, -2]]}
+  labels={{
+    step: 'Paso',
+    original: 'A, con la segunda fila igual al doble de la primera',
+    rref: 'forma escalonada reducida',
+    insert: 'fila con −1 para la variable libre',
+    basis: 'las columnas con −1 son una base del núcleo',
+  }}
+/>
+
+La razón de que funcione es directa. Llámese $M$ a la matriz cuadrada construida y $\vec{m}_j$ a su
+columna $j$-ésima para una columna libre $j$. Las filas de $M$ procedentes de la forma reducida son
+combinaciones de las filas de $A$, de modo que anular esas filas contra $\vec{m}_j$ equivale a
+anular $A\vec{m}_j$. Y el producto de la fila pivote $i$ por $\vec{m}_j$ es precisamente
+$r_{ij} + (-1)\,r_{ij} = 0$: la entrada de la forma reducida menos ella misma, aportada por el $-1$.
+
+Las $\dim\ker(A)$ columnas así obtenidas son independientes por construcción, ya que cada una lleva
+un $-1$ en una posición donde las demás tienen un $0$.
+
+Para la matriz de la figura, cuya segunda fila duplica la primera, la base resultante es
+$\{(2,-1,0),\; (-1,0,-1)\}$, y ambos vectores se anulan al multiplicarlos por $A$.
+
+## Base exacta frente a base numérica
+
+`scipy.linalg.null_space` devuelve una base **ortonormal** en coma flotante; `sympy` devuelve una
+base **racional exacta**.
+
+```python
+from scipy.linalg import null_space
+null_space(A)
+# array([[-0.894, -0.186],
+#        [ 0.447, -0.373],
+#        [ 0.   ,  0.909]])
+
+import sympy as sp
+sp.Matrix(A).nullspace()
+# [Matrix([[-2], [1], [0]]), Matrix([[1], [0], [1]])]
+```
+
+Los vectores no coinciden, y no tienen por qué: un subespacio admite infinitas bases. Lo que sí
+coincide es el subespacio que generan y su dimensión. La base racional de `sympy` reproduce, salvo
+signo, la del truco del $-1$; la de `scipy` es la que produce la descomposición en valores
+singulares, ortonormal y por tanto cómoda para proyectar.
+
+La elección sigue el criterio de la lección anterior: `sympy` para razonar sobre estructura exacta en
+matrices pequeñas, `scipy` para el cálculo numérico.
+
+## El rango es una decisión, no un dato
+
+En aritmética exacta el rango está determinado. En coma flotante no lo está, y de esa diferencia
+depende la dimensión del núcleo que devuelve un programa.
+
+`np.linalg.matrix_rank` calcula los valores singulares y cuenta cuántos superan una tolerancia:
+
+$$
+\text{tol} = \max(m,n)\cdot \varepsilon_{\text{máq}} \cdot \sigma_1
+$$
+
+La figura perturba una única entrada de una matriz de rango deficiente y muestra el valor singular
+más pequeño frente a esa tolerancia:
+
+<NumericalRank
+  labels={{
+    hint: 'ε perturba una sola entrada de una matriz de rango 1.',
+    sigma: 'frente a la tolerancia',
+    tol: 'tolerancia',
+    rank: 'matrix_rank',
+    nullity: 'dim ker(A)',
+    exact: 'exactamente singular',
+    note: 'El rango en coma flotante es una decisión sobre un umbral, no una propiedad que se lea de la matriz.',
+    reset: 'Reiniciar',
+  }}
+/>
+
+El salto se produce entre $\varepsilon = 10^{-15}$ y $\varepsilon = 10^{-14}$: por debajo, la matriz
+se declara de rango 1 y el núcleo tiene dimensión 2; por encima, rango 2 y dimensión 1. La matriz
+cambia de manera continua; la respuesta del programa, no.
+
+Un detalle instructivo aparece en el extremo. Con $\varepsilon = 10^{-16}$ el valor singular menor
+es **exactamente cero**, no simplemente pequeño: la separación entre números representables en torno
+a $2$ es de unos $4{\cdot}10^{-16}$, de modo que `2 + 1e-16` evalúa a `2` y la perturbación no llega
+a existir.
+
+Cuando el rango importa, la tolerancia debe fijarse de forma explícita en lugar de aceptar la
+predeterminada:
+
+```python
+np.linalg.matrix_rank(A, tol=1e-10)    # umbral acorde al ruido de los datos
+```
+
+El criterio razonable es situar la tolerancia por encima del ruido de medida de los datos y por
+debajo de la magnitud de las direcciones que sí se consideran significativas.
+
+## Aplicación: colinealidad
+
+En un modelo lineal, cada fila de la matriz de diseño $X$ es una observación y cada columna una
+característica. Si una columna es combinación lineal de otras, $X$ tiene núcleo no trivial, y de ahí
+se sigue una consecuencia concreta.
+
+```python
+X = np.array([[1., 2., 3.],
+              [2., 1., 3.],
+              [3., 5., 8.],
+              [0., 4., 4.]])        # columna 3 = columna 1 + columna 2
+
+n = np.array([1., 1., -1.])         # pertenece al núcleo
+X @ n                               # array([0., 0., 0., 0.])
+```
+
+Para cualquier vector de pesos $\vec{w}$ y cualquier escalar $t$:
+
+$$
+X(\vec{w} + t\vec{n}) = X\vec{w} + t\,X\vec{n} = X\vec{w}
+$$
+
+Las predicciones son idénticas. Infinitos vectores de pesos producen exactamente el mismo ajuste, y
+por tanto el mismo valor de la función de pérdida. Los coeficientes no están **identificados**: su
+magnitud individual carece de interpretación, porque puede desplazarse arbitrariamente a lo largo
+del núcleo sin que nada observable cambie.
+
+Es el fenómeno conocido como **colinealidad**, y explica por qué los coeficientes de una regresión
+con características redundantes resultan inestables entre reentrenamientos. La regularización L2 lo
+resuelve al añadir $\lambda\lVert\vec{w}\rVert^2$ a la pérdida: el término deja de ser constante a lo
+largo del núcleo y selecciona el representante de norma mínima, que es único.
+
+El diagnóstico es directo:
+
+```python
+np.linalg.matrix_rank(X)      # 2, con 3 columnas → hay una dirección redundante
+null_space(X)                 # qué combinación de características sobra
+```
+
+La segunda llamada aporta más que la primera: no solo indica que existe redundancia, sino cuál es la
+combinación concreta que sobra, que es la información necesaria para decidir qué característica
+eliminar.
+
+---
+
+**Ejercicio.** Aplicar el truco del $-1$ a mano sobre
+$A = \begin{bmatrix}1 & 2 & 0 & 1\\ 0 & 0 & 1 & 3\end{bmatrix}$, que ya está en forma reducida, y
+comprobar el resultado con `null_space`. Verificar que ambas bases generan el mismo subespacio
+resolviendo el sistema que expresa cada vector de una en términos de la otra.

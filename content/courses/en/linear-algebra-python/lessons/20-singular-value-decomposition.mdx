@@ -1,0 +1,217 @@
+---
+title: 'Singular values with Python'
+language: 'en'
+module: 'Vector spaces'
+moduleOrder: 2
+order: 11
+summary: 'The decomposition the course had been using without defining it: its construction from the spectral theorem, the ellipse as its geometric reading, the determinant understood as a volume, and the reason it exists where diagonalisation fails.'
+---
+
+The singular value decomposition has appeared in seven lessons of this course. It produced the basis
+of the kernel, decided numerical rank, underpinned the low-rank approximation, returned the
+pseudoinverse and delivered the bases of the four subspaces. In none of them was it defined: it was
+invoked as a borrowed tool. This lesson settles the debt.
+
+## The statement
+
+Every matrix $A \in \mathbb{R}^{m\times n}$ admits a factorisation
+
+$$
+A = U\Sigma V^\top
+$$
+
+with $U \in \mathbb{R}^{m\times m}$ and $V \in \mathbb{R}^{n\times n}$ **orthogonal** —$U^\top U = I$,
+$V^\top V = I$— and $\Sigma \in \mathbb{R}^{m\times n}$ diagonal with entries
+
+$$
+\sigma_1 \ge \sigma_2 \ge \cdots \ge \sigma_{\min(m,n)} \ge 0
+$$
+
+The $\sigma_i$ are the **singular values**, the columns of $U$ the left singular vectors and those of
+$V$ the right ones. The important adjective in the statement is *every*: no hypothesis of symmetry,
+of invertibility, or even that the matrix be square.
+
+## Where it comes from
+
+The construction requires no new machinery. It starts from the spectral theorem of the lesson on
+change of basis and from an observation of the lesson on the inverse and the transpose: $A^\top A$
+is symmetric and positive semi-definite, because for every $\vec{v}$
+
+$$
+\vec{v}^\top A^\top A\vec{v} = \lVert A\vec{v} \rVert^2 \ge 0
+$$
+
+The spectral theorem then supplies an orthonormal basis $\vec{v}_1,\dots,\vec{v}_n$ of eigenvectors
+of $A^\top A$ with eigenvalues $\lambda_i \ge 0$. Define $\sigma_i = \sqrt{\lambda_i}$ and, for the
+non-zero $\sigma_i$,
+
+$$
+\vec{u}_i = \frac{A\vec{v}_i}{\sigma_i}
+$$
+
+It remains to check that these $\vec{u}_i$ are orthonormal, and the computation is one line:
+
+$$
+\vec{u}_i^\top\vec{u}_j = \frac{\vec{v}_i^\top A^\top A\vec{v}_j}{\sigma_i\sigma_j} = \frac{\lambda_j\,\vec{v}_i^\top\vec{v}_j}{\sigma_i\sigma_j} = \delta_{ij}
+$$
+
+Completing the $\vec{u}_i$ to an orthonormal basis of $\mathbb{R}^m$ gives $U$, and
+$A\vec{v}_i = \sigma_i\vec{u}_i$ for every $i$ is exactly $AV = U\Sigma$. Existence is proved, and in
+passing the origin of the numerical problem flagged in the lesson on linear independence becomes
+clear: forming $A^\top A$ serves to *prove* the theorem, not to *compute* it, because it squares the
+conditioning. Real algorithms work on $A$.
+
+## The image of the circle
+
+The geometric reading is the one worth retaining. Since $V^\top$ is orthogonal it does not distort;
+$\Sigma$ stretches each axis by its factor; $U$ again does not distort. Every linear map is
+therefore a rotation, followed by a stretch along perpendicular axes, followed by another rotation.
+
+<SVDEllipse
+  a={[2, 1, 0, 1.5]}
+  labels={{
+    hint: 'The unit circle becomes an ellipse. Edit the entries of A.',
+    singular: 'σ₁, σ₂',
+    volume: 'σ₁σ₂',
+    conditioning: 'κ = σ₁/σ₂',
+    note: 'The two axes of the ellipse are perpendicular for any matrix, however asymmetric.',
+    reset: 'Reset',
+  }}
+/>
+
+What the figure shows is less obvious than it looks. An arbitrary matrix twists, shears and reflects,
+and even so the image of the unit circle is always an ellipse, and its two axes are always
+perpendicular to each other. The vectors $\vec{v}_i$ are the orthogonal directions of the domain
+that the matrix keeps orthogonal as it transforms them; the theorem asserts that such directions
+exist for every matrix.
+
+The interpretation of $\sigma_1$ follows from this too. Since $V^\top$ preserves norms, the largest
+possible stretch is the largest factor of $\Sigma$:
+
+$$
+\sigma_1 = \max_{\lVert\vec{x}\rVert = 1} \lVert A\vec{x} \rVert
+$$
+
+which is the definition of the spectral norm $\lVert A \rVert_2$. For
+$A = \begin{bmatrix}2&1\\0&1.5\end{bmatrix}$ it equals $2.379$, and a numerical sweep over the circle
+confirms it. The smallest singular value is, symmetrically, the smallest stretch.
+
+## The determinant is a volume
+
+The lesson on the inverse and the transpose introduced the determinant as a criterion for
+invertibility and left unexplained what it measures. The factorisation answers that. Taking
+determinants in $A = U\Sigma V^\top$ for square $A$, and using that an orthogonal matrix has
+determinant $\pm 1$,
+
+$$
+\lvert\det A\rvert = \lvert\det U\rvert \cdot \det\Sigma \cdot \lvert\det V^\top\rvert = \prod_{i=1}^{n}\sigma_i
+$$
+
+The product of the singular values is the volume of the image of the unit cube: each axis is
+stretched by its $\sigma_i$ and the volume is the product of the factors. The figure above shows it
+in dimension two, where $\sigma_1\sigma_2$ is the area of the ellipse divided by $\pi$ and matches
+$\lvert\det A\rvert$ for whatever matrix is entered.
+
+The criterion of lesson 3 is thus explained rather than asserted. That $\det A = 0$ is equivalent to
+some $\sigma_i$ vanishing, and that means the image of the cube has zero volume: the map flattens
+space against a subspace of lower dimension, which is precisely the non-trivial kernel of the lesson
+on the image and the kernel. Invertibility, determinant, rank and singular values are four ways of
+saying the same thing.
+
+Reading the determinant as a volume factor is also what normalising-flow generative models rely on,
+where the change of variables requires correcting the density by the determinant of the Jacobian,
+and where architectures are designed so that this determinant is cheap to compute.
+
+## Why diagonalisation is not enough
+
+The lesson on change of basis showed that diagonalisation fails in three distinct ways: a repeated
+eigenvalue with a single eigendirection, an absence of real eigenvalues, and the impossibility of
+even posing it for a rectangular matrix. The singular value decomposition fails in none of these
+cases.
+
+<EigenVsSingular
+  labels={{
+    hint: 'A single parameter sweeps every eigenvalue regime. A(t) = [[1, 1], [t, 1]].',
+    eigen: 'eigenvalues',
+    singular: 'singular values',
+    none: 'no real eigenvalues',
+    defective: 'repeated eigenvalue, one direction only: defective',
+    distinct: 'two real eigenvalues',
+    scalar: 'scalar multiple of the identity',
+    note: 'The eigenvalue story changes character three times along this slider. The singular values never flinch.',
+    reset: 'Reset',
+  }}
+/>
+
+The case $t = 0$ is the shear $\begin{bmatrix}1&1\\0&1\end{bmatrix}$ that the lesson on change of
+basis used as its example of a defective matrix: it has a single repeated eigenvalue and one
+invariant direction, so it admits no eigenbasis. Its singular values are $\varphi$ and $1/\varphi$,
+where $\varphi$ is the golden ratio, with product $1$ equal to its determinant and
+$\kappa = \varphi^2 \approx 2.62$. The matrix that resists diagonalisation is described without
+difficulty by the other factorisation.
+
+Three differences explain this. The spectral decomposition requires a square, diagonalisable matrix,
+and the singular value decomposition requires nothing. The first produces a change matrix $S$ that is
+only asked to be invertible and may be arbitrarily ill-conditioned; the second produces orthogonal
+factors, which preserve norms and angles and are therefore the best conditioned possible. The third
+is that the eigenvalues of a non-symmetric matrix may be complex, whereas singular values are real
+and non-negative by construction.
+
+A relation between the two does exist and is worth stating to avoid confusion: when $A$ is
+symmetric, its singular values are the absolute values of its eigenvalues. The sign is the
+information the singular value decomposition discards.
+
+## The condition number
+
+The lesson on the inverse and the transpose introduced `np.linalg.cond` to measure the amplification
+of error and did not explain where the number comes from. It is the ratio
+
+$$
+\kappa(A) = \frac{\sigma_1}{\sigma_n}
+$$
+
+that is, the eccentricity of the ellipse: how much the matrix stretches along the most favourable
+direction against the least favourable one. A matrix with large $\kappa$ flattens the circle until it
+is nearly degenerate, and recovering the flattened direction amplifies any perturbation by that
+factor. With $\sigma_n = 0$ the ratio is infinite and the matrix is singular, which is the same fact
+stated from the other end.
+
+```python
+import numpy as np
+
+A = np.array([[2., 1.], [0., 1.5]])
+U, s, Vt = np.linalg.svd(A)
+
+s[0] / s[-1]                 # 1.8866...  == np.linalg.cond(A)
+np.prod(s)                   # 3.0        == abs(np.linalg.det(A))
+```
+
+## What was already being used
+
+With the factorisation defined, the earlier appearances stop being recipes. The orthonormal basis of
+the kernel that `scipy.linalg.null_space` returns consists of the last columns of $V$. Numerical rank
+is the count of singular values above a threshold, and the threshold exists because the alternative
+is a binary answer to a continuous question. The optimal rank-$k$ approximation consists of keeping
+the first $k$ terms of
+
+$$
+A = \sum_{i=1}^{r} \sigma_i\,\vec{u}_i\vec{v}_i^\top
+$$
+
+which is the form in which the Eckart-Young theorem was stated in the lesson on rank. The
+pseudoinverse inverts the non-zero singular values and leaves the rest at zero, which produces the
+minimum-norm solution of the lesson on the image and the kernel. And the four fundamental subspaces
+are the two blocks of columns of $U$ and the two of $V$.
+
+The cost is $O(mn^2)$ for $m \ge n$, several times that of an LU factorisation, per the orders of
+magnitude gathered in the lesson on choosing a solver. That is why it is not used to solve a
+well-conditioned square system, and why it is nonetheless the right tool when the question is not
+*what is the solution* but *how much information does this matrix hold*.
+
+---
+
+**Exercise.** Take any $2\times 2$ matrix, compute its decomposition with `np.linalg.svd` and verify
+the three identities of this lesson: that `U` and `Vt` are orthogonal to machine precision, that
+$\prod\sigma_i$ matches $\lvert\det A\rvert$, and that $\sigma_1$ equals the maximum of
+$\lVert A\vec{x}\rVert$ over a fine sampling of the unit circle. Repeat with a $3\times 5$ matrix and
+check that $\sigma_4$ and $\sigma_5$ do not exist.

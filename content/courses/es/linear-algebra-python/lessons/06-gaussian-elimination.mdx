@@ -1,0 +1,190 @@
+---
+title: 'Eliminación gaussiana con Python'
+language: 'es'
+module: 'Sistemas y matrices'
+moduleOrder: 1
+order: 6
+summary: 'Los factores L, U y P que deja la eliminación, la razón para conservarlos, y las factorizaciones de Cholesky y QR con sus dominios de aplicación.'
+---
+
+La lección sobre sistemas lineales presentó la eliminación gaussiana como el procedimiento que
+`np.linalg.solve` ejecuta internamente. Esta se ocupa de lo que ese procedimiento deja tras de sí.
+La eliminación no solo produce una solución: produce una **factorización** de la matriz, y esa
+factorización es reutilizable.
+
+## Lo que la eliminación produce
+
+Aplicar eliminación gaussiana con pivoteo parcial a $A$ equivale a construir tres matrices:
+
+$$
+PA = LU
+$$
+
+donde $P$ es una permutación que registra los intercambios de fila, $L$ es triangular inferior con
+unos en la diagonal y contiene los multiplicadores empleados, y $U$ es triangular superior y es el
+resultado visible de la eliminación.
+
+En la figura, $U$ se va formando por eliminación mientras $L$ almacena cada multiplicador
+$\ell_{rk}$ en la posición que acaba de anularse:
+
+<LUFactors
+  a={[[2, 1, -1], [-3, -1, 2], [-2, 1, 2]]}
+  labels={{ step: 'Paso', swap: 'intercambio', store: 'ℓ', done: 'P A = L U' }}
+/>
+
+Nada se descarta. Cada operación de fila queda registrada: los intercambios en $P$, los
+multiplicadores en $L$, y el resultado en $U$. Esa es la diferencia entre ejecutar la eliminación y
+factorizar.
+
+```python
+from scipy.linalg import lu
+
+P, L, U = lu(A)
+np.allclose(P @ L @ U, A)     # True
+```
+
+La convención de SciPy difiere de la habitual. Devuelve $P$ tal que $A = PLU$, mientras que los
+textos, y el enunciado de más arriba, escriben $PA = LU$. Ambas describen la misma
+factorización: como $P$ es una permutación, $P^{-1} = P^\top$, de modo que $A = PLU$ equivale a
+$P^\top A = LU$. La $P$ de SciPy es la traspuesta de la $P$ del enunciado.
+
+Un subproducto inmediato: el determinante se lee en la diagonal de $U$.
+
+$$
+\det A = (-1)^{s} \prod_{i=1}^{n} u_{ii}
+$$
+
+donde $s$ es el número de intercambios de fila. Para la matriz de la figura, dos intercambios y una
+diagonal $(-3,\; 5/3,\; 1/5)$ dan $\det A = -1$. Es así como `np.linalg.det` obtiene su resultado:
+no desarrolla por menores, que costaría $O(n!)$, sino que factoriza.
+
+## Factorizar una vez, resolver muchas
+
+La factorización cuesta aproximadamente $\tfrac{2}{3}n^3$ operaciones. Resolver con ella, en cambio,
+son dos sustituciones triangulares —hacia adelante con $L$, hacia atrás con $U$— que cuestan
+$2n^2$ en conjunto.
+
+Esa asimetría es el motivo de conservar los factores. Cuando el mismo $A$ se resuelve contra varios
+términos independientes, situación frecuente en la práctica, repetir la eliminación desperdicia todo
+el trabajo caro:
+
+```python
+from scipy.linalg import lu_factor, lu_solve
+
+lu_piv = lu_factor(A)          # una vez: O(n³)
+x1 = lu_solve(lu_piv, b1)      # cada uno: O(n²)
+x2 = lu_solve(lu_piv, b2)
+```
+
+<SolveCost
+  labels={{
+    hint: 'Recuento de operaciones: 2n³/3 para factorizar, 2n² por cada sustitución triangular.',
+    size: 'matriz',
+    rhs: 'términos independientes',
+    fresh: 'resolver k veces',
+    reuse: 'factorizar una vez',
+    speedup: 'factor de mejora',
+    reset: 'Reiniciar',
+  }}
+/>
+
+La ventaja crece con $n$ y con el número de sistemas. Para $n$ grande el coste se aproxima al de una
+sola factorización, con independencia de cuántos términos independientes haya que procesar.
+
+Si todos los términos independientes se conocen de antemano, `np.linalg.solve` acepta una matriz
+como segundo argumento y factoriza una sola vez:
+
+```python
+B = np.column_stack([b1, b2, b3])
+X = np.linalg.solve(A, B)      # una factorización, tres soluciones
+```
+
+## Cuando la matriz es simétrica: Cholesky
+
+La lección sobre la inversa y la transpuesta estableció que $A^\top A$ es simétrica y semidefinida
+positiva. Para matrices con esa estructura existe una factorización más barata:
+
+$$
+A = LL^\top
+$$
+
+con $L$ triangular inferior de diagonal positiva. Es la **factorización de Cholesky**, y requiere que
+$A$ sea simétrica y definida positiva. Cuesta $\tfrac{1}{3}n^3$ operaciones, la mitad que LU, porque
+explota la simetría en lugar de ignorarla.
+
+```python
+L = np.linalg.cholesky(K)          # falla si K no es definida positiva
+alpha = np.linalg.solve(L.T, np.linalg.solve(L, y))
+```
+
+El fallo es informativo, no un inconveniente: si Cholesky no converge, la matriz no es definida
+positiva, lo que en un proceso gaussiano suele indicar una matriz de covarianza mal condicionada.
+La práctica habitual consiste en añadir un término de regularización a la diagonal,
+$K + \sigma^2 I$, que desplaza todos los valores propios y restaura la definición positiva.
+
+## Cuando el sistema es rectangular: QR
+
+Para mínimos cuadrados, la lección anterior señaló que formar $A^\top A$ eleva al cuadrado el número
+de condición. La alternativa es factorizar $A$ directamente:
+
+$$
+A = QR
+$$
+
+con $Q$ de columnas ortonormales y $R$ triangular superior. Sustituyendo en las ecuaciones normales,
+el problema se reduce a $R\vec{w} = Q^\top\vec{b}$, un sistema triangular, sin llegar a construir
+$A^\top A$ en ningún momento.
+
+```python
+Q, R = np.linalg.qr(A)
+w = np.linalg.solve(R, Q.T @ b)
+```
+
+Es, en esencia, lo que hace `np.linalg.lstsq` internamente.
+
+| Factorización | Requiere | Coste | Se usa para |
+| --- | --- | --- | --- |
+| LU | cuadrada, no singular | $\tfrac{2}{3}n^3$ | sistemas generales, determinante |
+| Cholesky | simétrica definida positiva | $\tfrac{1}{3}n^3$ | covarianzas, procesos gaussianos |
+| QR | rango columna completo | $2mn^2$ | mínimos cuadrados |
+| SVD | ninguna | $\sim 20n^3$ | rango, núcleo, pseudoinversa |
+
+## La forma escalonada reducida
+
+La eliminación puede llevarse más allá de $U$ hasta la **forma escalonada reducida por filas**, con
+pivotes iguales a uno y ceros también por encima de ellos. NumPy no la proporciona, y la ausencia es
+deliberada: para resolver un sistema no aporta nada que $LU$ no dé ya, y en coma flotante la
+decisión de qué entrada es un cero exacto resulta ambigua.
+
+Donde sí tiene lugar es en el álgebra exacta, con `sympy`:
+
+```python
+import sympy as sp
+
+M = sp.Matrix([[2, 1, -1], [-3, -1, 2], [-2, 1, 2]])
+M.rref()          # aritmética racional exacta, sin redondeo
+```
+
+La distinción es de dominio, no de calidad. `sympy` opera sobre números racionales exactos y resulta
+apropiado para determinar estructura —rango, base del núcleo, dependencias entre filas— en matrices
+pequeñas. `numpy` y `scipy` operan en coma flotante sobre implementaciones optimizadas y son la
+herramienta para el cálculo numérico. Emplear el segundo para razonar sobre estructura exacta, o el
+primero para resolver un sistema de tamaño considerable, invierte ambos usos.
+
+## Por qué no se programa a mano
+
+Las rutinas mostradas delegan en **LAPACK**, una biblioteca con décadas de depuración cuyas
+implementaciones tienen en cuenta la jerarquía de memoria: operan por bloques para aprovechar la
+caché, cosa que una traducción directa del pseudocódigo no hace.
+
+Una implementación propia de la eliminación es un ejercicio instructivo y una mala decisión en
+producción. Será entre uno y dos órdenes de magnitud más lenta y, con mayor probabilidad, menos
+estable: el pivoteo, el criterio de detección de singularidad y el tratamiento de los casos
+límite concentran la dificultad, y son precisamente las partes que un primer intento omite.
+
+---
+
+**Ejercicio.** Factorizar $A$ con `scipy.linalg.lu` y comprobar que el producto de la diagonal de
+`U`, con el signo correspondiente al número de intercambios, reproduce `np.linalg.det(A)`. Determinar
+después cuántos términos independientes hacen falta para que factorizar una vez resulte más barato
+que llamar a `solve` repetidamente, con $n = 1000$.

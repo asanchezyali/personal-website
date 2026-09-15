@@ -1,0 +1,189 @@
+---
+title: 'Linear independence with Python'
+language: 'en'
+module: 'Vector spaces'
+moduleOrder: 2
+order: 3
+summary: 'The definition of linear independence and its equivalent characterisations, the Gram-Schmidt process as a constructive test, and the variance inflation factor for measuring approximate dependence in real data.'
+---
+
+The course has used the phrase *linearly independent columns* as a criterion on several occasions:
+in characterising invertible matrices, in describing the null space, and in discussing collinearity.
+This lesson states the definition and, more importantly, addresses a problem the definition does not
+solve: with real data, exact independence is the norm and tells you very little.
+
+## The definition
+
+The vectors $\vec{v}_1,\dots,\vec{v}_k$ of a vector space are **linearly independent** if the only
+linear combination producing the zero vector is the trivial one:
+
+$$
+\sum_{i=1}^{k} \lambda_i \vec{v}_i = \vec{0} \quad\Longrightarrow\quad \lambda_1 = \cdots = \lambda_k = 0
+$$
+
+Otherwise they are **linearly dependent**, and at least one $\lambda_j \neq 0$. Solving for that
+term,
+
+$$
+\vec{v}_j = -\frac{1}{\lambda_j}\sum_{i \neq j} \lambda_i \vec{v}_i
+$$
+
+so $\vec{v}_j$ belongs to the span of the others and does not enlarge the subspace generated.
+
+Arranging the vectors as the columns of a matrix $X$, the condition translates into statements
+already familiar, all equivalent to one another:
+
+| Formulation | Condition |
+| --- | --- |
+| definition | $X\vec{\lambda} = \vec{0}$ only for $\vec{\lambda} = \vec{0}$ |
+| null space | $\ker(X) = \{\vec{0}\}$ |
+| rank | $\operatorname{rank}(X) = k$ |
+| Gram matrix | $X^\top X$ non-singular |
+| determinant, if $X$ is square | $\det X \neq 0$ |
+
+```python
+import numpy as np
+
+X = np.column_stack([[1., 0., 0.],
+                     [0., 1., 0.],
+                     [1., 1., 0.]])          # v₃ = v₁ + v₂
+
+np.linalg.matrix_rank(X)                     # 2 < 3: dependent
+```
+
+The first three rows of the table have already appeared separately in earlier lessons. Their
+equivalence is what makes the tools interchangeable: `matrix_rank`, `null_space` and `det` answer the
+same question from different angles.
+
+## Gram-Schmidt as a constructive test
+
+Checking the rank answers *whether* there is dependence. The **Gram-Schmidt** process also answers
+*where* it is, and does so by building an orthonormal basis of the span.
+
+The procedure is the projection of the previous lesson applied repeatedly. For each vector, its
+projection onto the subspace already built is subtracted and the residual normalised:
+
+$$
+\vec{v}_k' = \vec{v}_k - \sum_{j<k} \langle \vec{v}_k, \vec{q}_j\rangle\, \vec{q}_j, \qquad \vec{q}_k = \frac{\vec{v}_k'}{\lVert \vec{v}_k' \rVert}
+$$
+
+<GramSchmidt
+  vectors={[[1, 0, 0], [0, 1, 0], [1, 1, 0]]}
+  alternative={[0, 0, 1]}
+  labels={{
+    step: 'Step',
+    subtract: 'remove',
+    residual: 'residual norm',
+    dependent: 'residual zero: dependent',
+    independent: 'independent',
+    swap: 'replace v₃',
+    restore: 'restore v₃',
+  }}
+/>
+
+The criterion appears in the norm of the residual. If $\lVert\vec{v}_k'\rVert = 0$, the vector lay
+entirely within the span of the previous ones and contributes no new direction. The button replaces
+$\vec{v}_3 = (1,1,0)$, the sum of the first two, with $(0,0,1)$: the residual goes from $0$ to $1$
+and the set becomes independent.
+
+This is the connection with the QR factorisation of the lesson on Gaussian elimination: the vectors
+$\vec{q}_j$ are the columns of $Q$ and the coefficients $\langle\vec{v}_k,\vec{q}_j\rangle$ the
+entries of $R$. Gram-Schmidt is QR laid out step by step, although LAPACK's implementation uses
+Householder reflections, which are numerically more stable.
+
+## The binary question and real data
+
+With measured data, exact dependence essentially never occurs: the noise in the last digit suffices
+for the rank to come out full. The lesson on the null space described the immediate consequence —
+numerical rank depends on a tolerance — but there is a second, deeper one.
+
+Rank answers with an integer a question that is continuous. Two nearly parallel columns and two
+orthogonal ones receive the same answer, *independent*, while a model fitted on them will behave
+radically differently.
+
+<DependenceDegree
+  labels={{
+    hint: 'x₃ = (1 − α)·d + α·(x₁ + x₂). At α = 1 it is exactly the sum of the other two.',
+    singular: 'singular values',
+    cond: 'cond(X)',
+    vif: 'VIF of x₃',
+    rank: 'matrix_rank',
+    note: 'The rank only changes at the very end; the condition number and the VIF grow throughout.',
+    reset: 'Reset',
+  }}
+/>
+
+The figure interpolates the third column between an independent direction and the sum of the first
+two. The three indicators behave entirely differently:
+
+| $\alpha$ | $\sigma_3$ | $\operatorname{cond}(X)$ | VIF | rank |
+| --- | --- | --- | --- | --- |
+| 0 | 1.97 | 11.8 | 1.3 | 3 |
+| 0.5 | 1.93 | 14.7 | 7.3 | 3 |
+| 0.75 | 1.06 | 29.7 | 42.8 | 3 |
+| 0.9 | 0.40 | 83.6 | 338 | 3 |
+| 0.99 | 0.039 | 898 | 38,712 | 3 |
+| 1 | 0 | ∞ | ∞ | 2 |
+
+The rank stays at $3$ until the last instant and then jumps. The condition number and the VIF grow
+continuously and already signal a serious problem at $\alpha = 0.9$, where the rank still declares
+independence.
+
+The figure itself illustrates a numerical detail along the way. It obtains the singular values from
+the eigenvalues of $X^\top X$, and forming that matrix squares the condition number, so $\sigma_3$
+retains roughly half the significant digits. The applicable threshold is then
+$\sqrt{\varepsilon}\,\sigma_1$ rather than $\varepsilon\,\sigma_1$; with the usual threshold, the
+dependent column at $\alpha = 1$ would be declared independent. It is the same argument that warns
+against the normal equations in the lesson on the inverse and the transpose.
+
+## The variance inflation factor
+
+The **VIF** of column $j$ measures how much of it the others explain. It is obtained by regressing
+that column on the rest and reading the coefficient of determination:
+
+$$
+\mathrm{VIF}_j = \frac{1}{1 - R_j^2}
+$$
+
+Its interpretation is direct: the variance of the estimated coefficient $\hat{\beta}_j$ is multiplied
+by $\mathrm{VIF}_j$ relative to what it would be if that column were orthogonal to the others. A VIF
+of $42.8$ means a confidence interval $\sqrt{42.8} \approx 6.5$ times wider.
+
+```python
+def vif(X, j):
+    others = np.delete(X, j, axis=1)
+    A = np.column_stack([np.ones(len(X)), others])
+    beta, *_ = np.linalg.lstsq(A, X[:, j], rcond=None)
+    residual = X[:, j] - A @ beta
+    r2 = 1 - residual @ residual / ((X[:, j] - X[:, j].mean()) ** 2).sum()
+    return 1 / (1 - r2)
+```
+
+The usual conventions put the threshold of concern at $\mathrm{VIF} > 5$ or $\mathrm{VIF} > 10$,
+depending on the source. These are rules of thumb with no theoretical basis: what matters is the
+comparison with the size of the effect being estimated.
+
+## What to do about dependence
+
+Once collinearity is detected, the response depends on the goal.
+
+If the interest is in **prediction**, collinearity does not prevent a good fit: the model reaches the
+same projection onto the column space, as the previous lesson established. L2 regularisation
+stabilises the coefficients by selecting the minimum-norm representative, and the predictions barely
+suffer.
+
+If the interest is in **interpreting** the coefficients, collinearity is a genuine obstacle and no
+technique removes it: the data do not contain the information needed to separate the effects. The
+alternatives are to drop redundant columns, combine them into an index, or collect data in which the
+variables vary independently.
+
+Dimensionality reduction by principal components solves the numerical problem by construction, since
+its directions are orthogonal, but at the cost of interpretability: each component is a combination
+of all the original variables.
+
+---
+
+**Exercise.** Build an $8\times 3$ matrix whose third column is the sum of the first two plus noise
+of scale $\varepsilon$, and plot $\mathrm{VIF}_3$ against $\varepsilon$ for
+$\varepsilon \in \{1, 10^{-1}, 10^{-2}, 10^{-3}\}$. Check that `matrix_rank` returns $3$ in all four
+cases and explain why that result does not contradict what is observed.

@@ -1,0 +1,39 @@
+{
+  "hero": {
+    "eyebrow": "Cursos libres",
+    "title_pre": "Las matemáticas ",
+    "title_accent": "detrás del código",
+    "lead": "Material de estudio sobre los fundamentos matemáticos del cómputo. Cada concepto se presenta con su interpretación geométrica, su definición formal y su implementación en Python."
+  },
+  "empty": "Todavía no hay cursos publicados.",
+  "start": "Empezar el curso",
+  "back_to_courses": "← Todos los cursos",
+  "toc_title": "Contenido",
+  "previous": "Anterior",
+  "next": "Siguiente",
+  "finish": "Volver al curso",
+  "progress": "Lección {{current}} de {{total}}",
+  "meta": {
+    "modules_one": "{{count}} módulo",
+    "modules_other": "{{count}} módulos",
+    "lessons_one": "{{count}} lección",
+    "lessons_other": "{{count}} lecciones",
+    "free": "libre"
+  },
+  "syllabus": "Ver el temario",
+  "pitch": {
+    "one": {
+      "title": "Interpretación geométrica",
+      "body": "Los conceptos se introducen mediante figuras manipulables, de modo que la intuición precede a la formulación algebraica."
+    },
+    "two": {
+      "title": "Definición y código",
+      "body": "Cada lección enuncia la definición formal y la implementación equivalente en NumPy, sin separar la teoría del cálculo."
+    },
+    "three": {
+      "title": "Acceso libre",
+      "body": "El material completo está disponible sin registro previo ni restricciones."
+    }
+  },
+  "read": "leída"
+}

@@ -1,0 +1,237 @@
+---
+title: 'Matrices with Python'
+language: 'en'
+module: 'Systems and matrices'
+moduleOrder: 1
+order: 2
+summary: 'The matrix as a data structure: shape, memory layout, broadcasting and the matrix product, with a neural network linear layer as the worked application.'
+---
+
+A **matrix** $A \in \mathbb{R}^{m\times n}$ is a rectangular arrangement of $mn$ numbers in $m$ rows
+and $n$ columns. The entry in row $i$ and column $j$ is written $a_{ij}$.
+
+$$
+A = \begin{bmatrix}
+a_{11} & a_{12} & \cdots & a_{1n}\\
+a_{21} & a_{22} & \cdots & a_{2n}\\
+\vdots & \vdots & \ddots & \vdots\\
+a_{m1} & a_{m2} & \cdots & a_{mn}
+\end{bmatrix}
+$$
+
+The previous lesson used matrices as a container for the coefficients of a system. This one covers
+the layer underpinning all the computation that follows: what a matrix is as a data structure and
+which operations it admits.
+
+## Shape and indexing
+
+In NumPy a matrix is a two-dimensional `ndarray`. The `.shape` attribute returns the pair $(m, n)$
+and determines which operations are legal:
+
+```python
+import numpy as np
+
+A = np.array([[1, 2, 3],
+              [4, 5, 6]])
+
+A.shape      # (2, 3)
+A.ndim       # 2
+A[0, 2]      # 3
+```
+
+Indexing starts at $0$, so the entry $a_{ij}$ of mathematical notation is read as `A[i-1, j-1]`. The
+offset is a frequent source of error when transcribing a formula into code.
+
+The set $\mathbb{R}^{m\times n}$ is itself a vector space of dimension $mn$: matrices add and scale
+entry by entry, and those two operations are enough to give the set the structure of a vector
+space. A matrix is, in that sense, a vector with a shape imposed on it.
+
+## Memory layout
+
+The $mn$ elements occupy a contiguous block of memory. The shape is metadata: it states how to
+traverse that block, not how it is stored. NumPy uses *C* order by default, which varies the last
+dimension fastest, that is, row by row.
+
+```python
+A.reshape(6)     # array([1, 2, 3, 4, 5, 6])
+A.ravel()        # the same, and without copying where possible
+
+A.reshape(6).base is A      # True: a view, not a copy
+```
+
+`reshape` neither modifies nor moves any data: it reinterprets the same block under a different
+shape, provided the number of elements is preserved. The operation therefore costs constant time.
+
+That distinction has practical consequences in machine learning. Flattening a batch of $28\times 28$
+pixel images to feed a dense layer copies nothing:
+
+```python
+imgs = np.random.rand(128, 28, 28)   # 128 images
+X = imgs.reshape(128, 784)           # view: 128 vectors of 784 components
+X.shape                              # (128, 784)
+```
+
+A value of $-1$ in one dimension tells NumPy to infer it from the others:
+`imgs.reshape(128, -1)` produces the same result without writing $784$.
+
+## Addition and broadcasting
+
+Two matrices of the same shape add entry by entry. When the shapes differ, NumPy applies
+**broadcasting**: it aligns both shapes from the right and, for each pair of dimensions, requires
+that they match or that one of them equals $1$, in which case it is logically repeated along that
+axis.
+
+<Broadcasting
+  presets={[
+    { label: '(64, 8) + (8,)', a: [64, 8], b: [8] },
+    { label: '(3, 1) + (1, 4)', a: [3, 1], b: [1, 4] },
+    { label: '(2, 3) + (3, 2)', a: [2, 3], b: [3, 2] },
+  ]}
+  labels={{
+    shapeA: 'A.shape',
+    shapeB: 'B.shape',
+    result: 'result',
+    error: 'ValueError: operands could not be broadcast together',
+    match: 'dimensions match',
+    stretch: 'stretched from 1',
+    clash: 'incompatible',
+  }}
+/>
+
+The rule applies without materialising the repetition: no extra memory is reserved for the implicit
+copies. That detail explains why adding a bias vector to an entire batch costs the same memory as
+the batch itself.
+
+```python
+X = np.zeros((64, 8))     # batch of 64 examples, 8 features
+b = np.arange(8)          # one bias per feature
+
+(X + b).shape             # (64, 8): b is added to each of the 64 rows
+```
+
+The `(2, 3) + (3, 2)` case in the figure is the most common error in machine learning code. No
+dimension equals $1$ and no pair matches, so the operation is illegal. Reading `.shape` before
+operating prevents most of these failures.
+
+## The matrix product
+
+Given $A \in \mathbb{R}^{m\times k}$ and $B \in \mathbb{R}^{k\times n}$, the product
+$C = AB \in \mathbb{R}^{m\times n}$ is defined entry by entry as
+
+$$
+c_{ij} = \sum_{l=1}^{k} a_{il}\,b_{lj}
+$$
+
+Each entry of $C$ is the dot product of a row of $A$ with a column of $B$. The figure walks through
+that computation cell by cell:
+
+<MatMulGrid
+  a={[[1, 2], [3, 4]]}
+  b={[[1, 0], [3, 1]]}
+  names={{ a: 'A', b: 'B', c: 'C' }}
+  labels={{ step: 'Step' }}
+/>
+
+The definition imposes the compatibility condition: the number of columns of $A$ must equal the
+number of rows of $B$. The inner dimensions cancel and the outer ones determine the shape of the
+result.
+
+$$
+(m \times \underbrace{k)\,(k}_{\text{must match}} \times n) \;\longrightarrow\; (m \times n)
+$$
+
+```python
+A = np.ones((2, 3))
+C = np.ones((2, 2))
+
+A @ C
+# ValueError: matmul: Input operand 1 has a mismatch in its core dimension 0
+```
+
+## `@` versus `*`
+
+`@` implements the matrix product; `*` implements the Hadamard product, which multiplies entry by
+entry and requires shapes compatible under broadcasting. They are distinct operations returning
+distinct results from the same inputs.
+
+```python
+M = np.array([[1, 2],
+              [3, 4]])
+
+M @ M        # array([[ 7, 10],    matrix product
+             #        [15, 22]])
+M * M        # array([[ 1,  4],    Hadamard
+             #        [ 9, 16]])
+```
+
+The confusion is silent when both matrices are square: the code does not fail, it returns a
+numerically plausible result, and the error surfaces much later.
+
+## Transpose and identity
+
+The **transpose** $A^\top \in \mathbb{R}^{n\times m}$ swaps rows and columns,
+$(A^\top)_{ij} = a_{ji}$. In NumPy it is obtained with `.T`, which returns a view and does not copy.
+
+```python
+A = np.ones((2, 3))
+
+(A @ A.T).shape     # (2, 3) @ (3, 2) → (2, 2)
+(A.T @ A).shape     # (3, 2) @ (2, 3) → (3, 3)
+```
+
+Both expressions are legal and produce matrices of different sizes, which shows immediately that the
+product is not commutative. The next lesson treats the transpose in detail.
+
+The **identity matrix** $I_n$ has ones on the diagonal and zeros elsewhere, and is the neutral
+element of the product:
+
+$$
+I_m A = A I_n = A, \qquad A \in \mathbb{R}^{m\times n}
+$$
+
+```python
+I = np.eye(3)
+M3 = np.random.randn(3, 3)
+
+np.allclose(I @ M3, M3)     # True
+```
+
+## Application: the linear layer
+
+A dense layer of a neural network applies an affine transformation to each example: a product with a
+weight matrix followed by the addition of a bias.
+
+$$
+\vec{y} = W\vec{x} + \vec{b}, \qquad W \in \mathbb{R}^{d_{\text{out}} \times d_{\text{in}}}
+$$
+
+In practice examples are not processed one at a time. A **batch** of $N$ examples is arranged as a
+matrix $X \in \mathbb{R}^{N \times d_{\text{in}}}$, one example per row, and the whole layer is
+evaluated with a single product:
+
+```python
+X = np.random.randn(64, 3)    # batch of 64 examples, 3 features
+W = np.random.randn(3, 8)     # layer from 3 to 8 units
+b = np.random.randn(8)        # one bias per output unit
+
+Y = X @ W + b                 # (64, 3) @ (3, 8) → (64, 8), and b by broadcasting
+Y.shape                       # (64, 8)
+```
+
+That line brings together the three operations of this lesson. The product `X @ W` transforms all 64
+examples at once; broadcasting adds the same bias to the 64 rows without replicating it in memory;
+and the row-wise layout is what makes the dimensions fit.
+
+The convention of placing examples in rows explains the shape of $W$ in the code, transposed with
+respect to the formula. Both conventions coexist in the literature, and checking `.shape` is the
+reliable way to tell which one a given implementation uses.
+
+The cost of $XW$ is $\Theta(N d_{\text{in}} d_{\text{out}})$ operations, all independent of one
+another. That independence is what allows them to be distributed across thousands of cores, and is
+the technical reason deep learning runs on GPUs: training a network is, for the most part, a
+succession of matrix products.
+
+---
+
+**Exercise.** For `X` of shape `(64, 3)` and `W` of shape `(3, 8)`, determine the shape of
+`X.T @ X` and of `W @ W.T` before running them. Explain why `X @ X` is illegal and which product is.

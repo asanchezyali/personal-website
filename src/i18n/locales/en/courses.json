@@ -1,0 +1,39 @@
+{
+  "hero": {
+    "eyebrow": "Free courses",
+    "title_pre": "The mathematics ",
+    "title_accent": "behind the code",
+    "lead": "Study material on the mathematical foundations of computing. Each concept is presented with its geometric interpretation, its formal definition and its implementation in Python."
+  },
+  "empty": "No courses published yet.",
+  "start": "Start the course",
+  "back_to_courses": "← All courses",
+  "toc_title": "Contents",
+  "previous": "Previous",
+  "next": "Next",
+  "finish": "Back to the course",
+  "progress": "Lesson {{current}} of {{total}}",
+  "meta": {
+    "modules_one": "{{count}} module",
+    "modules_other": "{{count}} modules",
+    "lessons_one": "{{count}} lesson",
+    "lessons_other": "{{count}} lessons",
+    "free": "free"
+  },
+  "syllabus": "See the syllabus",
+  "pitch": {
+    "one": {
+      "title": "Geometric interpretation",
+      "body": "Concepts are introduced through figures that can be manipulated, so that intuition precedes the algebraic formulation."
+    },
+    "two": {
+      "title": "Definition and code",
+      "body": "Each lesson states the formal definition and the equivalent NumPy implementation, keeping theory and computation together."
+    },
+    "three": {
+      "title": "Freely available",
+      "body": "The complete material is available without prior registration or restrictions."
+    }
+  },
+  "read": "read"
+}

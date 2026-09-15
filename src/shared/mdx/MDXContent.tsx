@@ -1,4 +1,6 @@
 'use client'
+import 'katex/dist/katex.css'
+import 'styles/prism.css'
 import React from 'react'
 import { Fragment, jsx, jsxs } from 'react/jsx-runtime'
 import { usePathname } from 'next/navigation'

@@ -393,7 +393,9 @@
   .post-body li { margin-bottom: 8px; }
   .post-body figcaption { margin-top: 16px; font-size: 14px; color: var(--g-500); text-align: center; line-height: 1.5; }
   .post-body figure { margin: 28px 0; }
-  .post-body > p:first-of-type::first-letter { font-family: var(--f-ubuntu); font-weight: 700; font-size: 4em; float: left; line-height: .9; margin: 6px 10px 0 0; background: linear-gradient(135deg, var(--p-500), var(--s-500)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  /* margin-top measured, not guessed: with Lato at 18px/1.75 against Ubuntu bold
+     at 4em/.9, the cap's ink starts 2px below the first line's. 6px put it 4px low. */
+  .post-body > p:first-of-type::first-letter { font-family: var(--f-ubuntu); font-weight: 700; font-size: 4em; float: left; line-height: .9; margin: 2px 10px 0 0; background: linear-gradient(135deg, var(--p-500), var(--s-500)); -webkit-background-clip: text; background-clip: text; color: transparent; }
 
   .callout { border-left: 3px solid var(--p-500); background: color-mix(in oklab, var(--p-50) 80%, transparent); padding: 18px 20px; border-radius: 0 12px 12px 0; margin: 28px 0; font-size: 16px; line-height: 1.6; display: flex; gap: 14px; align-items: flex-start; }
   html.dark .callout { background: color-mix(in oklab, var(--p-900) 20%, transparent); }
@@ -407,10 +409,25 @@
   .post-body pre { background: #0f172a; color: #e2e8f0; padding: 20px 32px; border-radius: 0; overflow: visible; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 14px; line-height: 1.6; margin: 0; border: none; outline: none; box-shadow: none; min-width: max-content; }
   .post-body div.relative { margin: 24px 0; border: none; outline: none; box-shadow: none; }
   .post-body div.relative pre { margin: 0; }
+  /* Math (KaTeX): scale to sit closer to the 18px body text instead of 1.21em */
+  .post-body .katex { font-size: 1.05em; }
+  /* clear: left stops the first display equation of a lesson from wrapping around
+     the floated drop cap when the opening paragraph is only a line or two. */
+  .post-body .katex-display { margin: 28px 0; overflow-x: auto; overflow-y: hidden; padding: 4px 0; clear: left; }
+  .post-body .katex-display > .katex { font-size: 1.1em; }
+  /* Equation number: muted, same scale as the equation */
+  .post-body .katex-display .tag { color: var(--g-500); }
   .katex .eqn-num::before { border: none !important; border-radius: 0 !important; background: none !important; box-shadow: none !important; padding: 0 !important; }
   .katex-display > .katex > .katex-html > .tag { border: none !important; border-radius: 0 !important; background: none !important; box-shadow: none !important; }
   .post-body pre .k { color: #c084fc; } .post-body pre .s { color: #86efac; } .post-body pre .c { color: #64748b; font-style: italic; } .post-body pre .n { color: #fbbf24; } .post-body pre .f { color: #60a5fa; }
   .post-body code { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: .9em; padding: 2px 6px; border-radius: 4px; background: var(--g-100); }
+  /* Block code: the MDX pipeline emits <code class="code-highlight"> with no <pre>.
+     Prism's default display:table drops indentation when the anonymous table cells
+     are generated, even under white-space:pre, so lay the lines out as blocks
+     instead. The inline-code pill above must not apply here either. */
+  .post-body code.code-highlight { display: block; white-space: pre; background: none; padding: 20px 32px; border-radius: 0; font-size: 14px; line-height: 1.6; color: #e2e8f0; }
+  html.dark .post-body code.code-highlight { background: none; }
+  .post-body code.code-highlight .code-line { display: block; white-space: pre; }
   html.dark .post-body code { background: var(--g-200); }
 
   /* ---- Tables (MDX <TableWrapper />) ---- */
@@ -467,6 +484,512 @@
     .case-stat:first-child { border-top: none; }
   }
 
+  /* ---- Course visuals: VectorPlot / MatrixPlayground / LinearCombo ---- */
+  :root { --vp-a: #e11d48; --vp-b: #0f766e; --vp-c: #7c3aed; --vp-d: #b45309; }
+  html.dark { --vp-a: #fb7185; --vp-b: #2dd4bf; --vp-c: #a78bfa; --vp-d: #fbbf24; }
+
+  .vplot { margin: 28px 0; display: flex; flex-direction: column; align-items: center; }
+  .vplot svg { width: 100%; max-width: var(--vplot-h, 340px); height: auto; background: color-mix(in oklab, var(--g-50) 60%, transparent); border: 1px solid var(--g-200); border-radius: 14px; }
+  html.dark .vplot svg { background: color-mix(in oklab, var(--g-100) 45%, transparent); border-color: var(--g-300); }
+  .vplot figcaption { margin-top: 10px; font-size: 13.5px; color: var(--g-500); text-align: center; }
+  .vplot-grid { stroke: var(--g-200); stroke-width: 1; }
+  html.dark .vplot-grid { stroke: var(--g-300); }
+  .vplot-axis { stroke: var(--g-400); stroke-width: 1.4; }
+  .vplot-label { font-size: 13px; font-weight: 700; font-family: var(--f-ubuntu); }
+
+  .mplay, .lcombo, .dvec, .lsys, .elim, .mmul, .bc, .cond, .gstep, .sset, .scost, .nrank, .fill, .chooser, .sub, .shp, .bsub, .ddeg, .ec, .lr, .lc, .lyr, .tg, .dg, .si, .fs, .evs { margin: 30px 0; border: 1px solid var(--g-200); border-radius: 16px; overflow: hidden; background: color-mix(in oklab, var(--g-50) 60%, transparent); display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  html.dark .mplay, html.dark .lcombo, html.dark .dvec, html.dark .lsys, html.dark .elim, html.dark .mmul, html.dark .bc, html.dark .cond, html.dark .gstep, html.dark .sset, html.dark .scost, html.dark .nrank, html.dark .fill, html.dark .chooser, html.dark .sub, html.dark .shp, html.dark .bsub, html.dark .ddeg, html.dark .ec, html.dark .lr, html.dark .lc, html.dark .lyr, html.dark .tg, html.dark .dg, html.dark .si, html.dark .fs, html.dark .evs { border-color: var(--g-300); background: color-mix(in oklab, var(--g-100) 45%, transparent); }
+  .mplay-canvas, .lcombo-canvas, .dvec-canvas, .lsys-canvas, .elim-stage, .mmul-stage, .bc-stage, .cond-stage, .gstep-canvas, .sset-canvas, .scost-stage, .nrank-stage, .fill-stage, .chooser-stage, .sub-canvas, .shp-stage, .bsub-canvas, .ddeg-stage, .ec-stage, .lr-stage, .lc-stage, .lyr-stage, .tg-canvas, .dg-canvas, .si-stage, .fs-stage, .evs-stage { padding: 18px; display: flex; align-items: center; justify-content: center; }
+  .mplay-canvas svg, .lcombo-canvas svg, .dvec-canvas svg, .lsys-canvas svg, .gstep-canvas svg, .sset-canvas svg, .sub-canvas svg, .bsub-canvas svg, .tg-canvas svg, .dg-canvas svg { width: 100%; height: auto; }
+  .mplay-grid { stroke: var(--g-300); stroke-width: 0.9; }
+  html.dark .mplay-grid { stroke: var(--g-300); }
+  .mplay-axis { stroke: var(--g-500); stroke-width: 1.4; }
+  .mplay-area { fill: color-mix(in oklab, var(--vp-c) 22%, transparent); stroke: var(--vp-c); stroke-width: 1.4; }
+  .mplay-eigen { stroke: var(--vp-d); stroke-width: 1.6; stroke-dasharray: 6 5; }
+
+  .mplay-controls, .lcombo-controls, .dvec-controls, .lsys-controls, .elim-controls, .mmul-controls, .bc-controls, .cond-controls, .gstep-controls, .sset-controls, .scost-controls, .nrank-controls, .fill-controls, .chooser-controls, .sub-controls, .shp-controls, .bsub-controls, .ddeg-controls, .ec-controls, .lr-controls, .lc-controls, .lyr-controls, .tg-controls, .dg-controls, .si-controls, .fs-controls, .evs-controls { padding: 20px 22px; border-left: 1px solid var(--g-200); display: flex; flex-direction: column; gap: 10px; justify-content: center; }
+  html.dark .mplay-controls, html.dark .lcombo-controls, html.dark .dvec-controls, html.dark .lsys-controls, html.dark .elim-controls, html.dark .mmul-controls, html.dark .bc-controls, html.dark .cond-controls, html.dark .gstep-controls, html.dark .sset-controls, html.dark .scost-controls, html.dark .nrank-controls, html.dark .fill-controls, html.dark .chooser-controls, html.dark .sub-controls, html.dark .shp-controls, html.dark .bsub-controls, html.dark .ddeg-controls, html.dark .ec-controls, html.dark .lr-controls, html.dark .lc-controls, html.dark .lyr-controls, html.dark .tg-controls, html.dark .dg-controls, html.dark .si-controls, html.dark .fs-controls, html.dark .evs-controls { border-left-color: var(--g-300); }
+  .mplay-matrix { display: flex; align-items: center; gap: 4px; margin-bottom: 6px; }
+  .mplay-bracket { font-size: 44px; line-height: 1; color: var(--g-400); font-weight: 300; }
+  .mplay-cells { display: grid; grid-template-columns: repeat(2, 46px); gap: 2px 10px; font-family: var(--f-ubuntu); font-weight: 700; font-size: 15px; color: var(--fg); text-align: center; }
+  .mplay-slider { display: grid; grid-template-columns: 18px 1fr 34px; align-items: center; gap: 10px; }
+  .mplay-name { font-family: var(--f-ubuntu); font-weight: 700; font-size: 13px; color: var(--s-500); }
+  html.dark .mplay-name { color: var(--s-400); }
+  .mplay-val { font-size: 12.5px; color: var(--g-500); text-align: right; font-variant-numeric: tabular-nums; }
+  .mplay-slider input[type="range"] { width: 100%; accent-color: var(--s-500); }
+  .post-body .mplay-readout { margin: 2px 0 0; font-size: 13.5px; color: var(--g-600); }
+  .mplay-readout strong { color: var(--fg); }
+  .mplay-reset { align-self: flex-start; margin-top: 6px; font-size: 12.5px; font-weight: 600; padding: 6px 14px; border-radius: 999px; border: 1px solid var(--g-300); background: transparent; color: var(--g-600); cursor: pointer; transition: background .18s var(--ease); }
+  .mplay-reset:hover { background: var(--g-100); }
+  .post-body .mplay-code { grid-column: 1 / -1; margin: 0; border-top: 1px solid var(--g-200); border-radius: 0; }
+  html.dark .post-body .mplay-code { border-top-color: var(--g-300); }
+  .lcombo-ghost { stroke-width: 1.8; stroke-dasharray: 5 4; opacity: .55; }
+
+  /* Draggable vector tips */
+  .dvec-ghost { stroke-width: 1.8; stroke-dasharray: 5 4; opacity: .55; }
+  .dvec-handle { cursor: grab; touch-action: none; outline: none; }
+  .dvec-handle:active { cursor: grabbing; }
+  .dvec-grip { stroke: var(--bg); stroke-width: 2.5; }
+  .dvec-handle:focus-visible .dvec-grip { stroke: var(--s-500); stroke-width: 3.5; }
+  .post-body .dvec-hint { margin: 0 0 4px; font-size: 12.5px; line-height: 1.5; color: var(--g-500); }
+
+  /* Two-line system explorer */
+  .lsys-line { stroke-width: 2.4; transition: none; }
+  .lsys-dot { fill: var(--s-500); stroke: var(--bg); stroke-width: 2.5; transition: cx .2s var(--ease), cy .2s var(--ease); }
+  .post-body .lsys-eq { margin: 10px 0 2px; font-family: var(--f-ubuntu); font-size: 13px; font-weight: 700; }
+  .lsys-row { display: flex; flex-direction: column; gap: 4px; }
+  .post-body .lsys-verdict { margin: 12px 0 0; font-size: 13.5px; font-weight: 600; padding: 7px 12px; border-radius: 10px; border-left: 3px solid var(--g-400); background: var(--g-100); color: var(--fg); }
+  html.dark .lsys-verdict { background: var(--g-200); }
+  .lsys-verdict.is-unique { border-left-color: var(--s-500); }
+  .lsys-verdict.is-none { border-left-color: var(--vp-b); }
+  .lsys-verdict.is-infinite { border-left-color: var(--vp-c); }
+
+  /* Gauss-Jordan stepper */
+  .elim-stage { flex-direction: column; gap: 16px; }
+  .elim-matrix { display: flex; align-items: stretch; gap: 6px; }
+  .elim-bracket { width: 9px; border: 2px solid var(--g-400); border-right: none; border-radius: 3px 0 0 3px; }
+  .elim-bracket.is-right { border: 2px solid var(--g-400); border-left: none; border-radius: 0 3px 3px 0; }
+  .elim-cells { display: grid; gap: 6px 14px; align-items: center; padding: 10px 4px; }
+  .elim-cell { font-family: var(--f-ubuntu); font-size: 15px; font-variant-numeric: tabular-nums; text-align: right; color: var(--fg); padding: 3px 5px; border-radius: 6px; }
+  .elim-cell.is-pivot { background: color-mix(in oklab, var(--vp-a) 18%, transparent); }
+  .elim-cell.is-target { background: color-mix(in oklab, var(--s-500) 20%, transparent); }
+  .elim-cell.is-changed { animation: elim-flash .7s var(--ease); }
+  @keyframes elim-flash {
+    0%   { transform: translateY(-3px); color: var(--s-500); }
+    100% { transform: translateY(0);    color: var(--fg); }
+  }
+  .elim-sep { border-left: 1px dashed var(--g-400); height: 100%; }
+  .post-body .elim-note { margin: 0; font-family: var(--f-ubuntu); font-size: 13.5px; font-weight: 700; color: var(--s-500); min-height: 1.4em; text-align: center; }
+  html.dark .elim-note { color: var(--s-400); }
+  .elim-buttons { display: flex; gap: 8px; }
+  .elim-btn { width: 38px; height: 34px; border-radius: 9px; border: 1px solid var(--g-300); background: transparent; color: var(--g-600); font-size: 13px; cursor: pointer; transition: background .18s var(--ease); }
+  .elim-btn:hover:not(:disabled) { background: var(--g-100); }
+  .elim-btn:disabled { opacity: .35; cursor: default; }
+  .elim-btn.is-play { background: var(--s-500); border-color: var(--s-500); color: #fff; }
+  .elim-track { height: 4px; border-radius: 999px; background: var(--g-200); overflow: hidden; margin-top: 12px; }
+  .elim-track span { display: block; height: 100%; background: var(--s-500); transition: width .3s var(--ease); }
+  .post-body .elim-count { margin: 6px 0 0; font-size: 12px; color: var(--g-500); }
+
+  /* Matrix product, cell by cell */
+  .mmul-stage { flex-direction: column; gap: 18px; }
+  .mmul-row { display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap; }
+  .mmul-block { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .mmul-name { font-family: var(--f-ubuntu); font-size: 12px; font-weight: 700; color: var(--g-600); }
+  .mmul-name em { font-style: normal; font-weight: 500; color: var(--g-500); }
+  .mmul-bracket { border: 2px solid var(--g-400); border-radius: 4px; padding: 6px 4px; }
+  .mmul-cells { display: grid; gap: 3px; }
+  .mmul-cell { font-family: var(--f-ubuntu); font-size: 14px; font-variant-numeric: tabular-nums; text-align: center; padding: 4px 7px; border-radius: 5px; color: var(--fg); transition: background .18s var(--ease), color .18s var(--ease); }
+  .mmul-cell.is-source { background: color-mix(in oklab, var(--vp-a) 22%, transparent); }
+  .mmul-cell.is-target { background: var(--s-500); color: #fff; font-weight: 700; }
+  .mmul-cell.is-pending { color: var(--g-400); }
+  .mmul-op { font-family: var(--f-ubuntu); font-size: 18px; font-weight: 700; color: var(--g-500); }
+  .post-body .mmul-formula { margin: 0; text-align: center; font-family: var(--f-ubuntu); font-size: 14px; color: var(--g-600); }
+  .mmul-formula strong { color: var(--s-500); font-size: 15px; }
+  html.dark .mmul-formula strong { color: var(--s-400); }
+  .mmul-lhs { color: var(--fg); font-weight: 700; }
+  .mmul-cell.is-diagonal { background: color-mix(in oklab, var(--g-500) 22%, transparent); }
+
+  /* Conditioning: how far a small change in b travels into x */
+  /* The shared canvas rule centres its children, which shrinks these blocks
+     to their content width; the readout and the bar need the full column. */
+  .cond-stage { flex-direction: column; gap: 16px; justify-content: center; align-items: stretch; }
+  .cond-matrix { display: flex; align-items: stretch; gap: 6px; align-self: center; }
+  .cond-cells { display: grid; grid-template-columns: repeat(2, minmax(42px, auto)); gap: 4px 12px; padding: 8px 4px; }
+  .cond-cells span { font-family: var(--f-ubuntu); font-size: 15px; font-variant-numeric: tabular-nums; text-align: right; color: var(--fg); }
+  .cond-cells span.is-eps { color: var(--s-500); font-weight: 700; }
+  .post-body .cond-readout { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px 18px; margin: 0; }
+  .cond-readout div { display: flex; flex-direction: column; gap: 2px; }
+  .post-body .cond-readout dt { font-family: var(--f-ubuntu); font-size: 11px; color: var(--g-500); }
+  .post-body .cond-readout dd { margin: 0; font-family: var(--f-ubuntu); font-size: 16px; font-variant-numeric: tabular-nums; color: var(--fg); }
+  .cond-readout dd.is-warn { color: var(--vp-d); }
+  .cond-readout dd.is-bad { color: var(--vp-a); }
+  .cond-amp-head { display: flex; justify-content: space-between; align-items: baseline; gap: 14px; font-family: var(--f-ubuntu); font-size: 11.5px; color: var(--g-500); margin-bottom: 6px; }
+  .cond-amp-head strong { font-size: 15px; color: var(--vp-b); }
+  .cond-amp-head strong.is-warn { color: var(--vp-d); }
+  .cond-amp-head strong.is-bad { color: var(--vp-a); }
+  .cond-bar { height: 6px; border-radius: 999px; background: var(--g-200); overflow: hidden; }
+  .cond-bar span { display: block; height: 100%; background: var(--vp-b); transition: width .25s var(--ease); }
+  .cond-bar span.is-warn { background: var(--vp-d); }
+  .cond-bar span.is-bad { background: var(--vp-a); }
+  .post-body .cond-warning { margin: 4px 0 0; font-family: var(--f-ubuntu); font-size: 12.5px; font-weight: 600; color: var(--vp-a); }
+  @media (prefers-reduced-motion: reduce) { .cond-bar span { transition: none; } }
+
+  /* Gradient descent: the path a single number decides */
+  .gstep-level { fill: none; stroke: var(--g-200); stroke-width: 1; }
+  html.dark .gstep-level { stroke: var(--g-300); }
+  .gstep-path { fill: none; stroke: var(--s-500); stroke-width: 1.8; stroke-linejoin: round; }
+  .gstep-dot { fill: var(--s-500); }
+  .gstep-dot.is-last { fill: var(--s-500); stroke: var(--bg); stroke-width: 2; }
+  .gstep-min { fill: var(--vp-b); }
+  .post-body .gstep-verdict { margin: 10px 0 2px; font-family: var(--f-ubuntu); font-size: 13.5px; font-weight: 700; }
+  .gstep-verdict.is-ok { color: var(--vp-b); }
+  .gstep-verdict.is-bad { color: var(--vp-a); }
+  .gstep-controls .elim-buttons { margin-top: 10px; align-items: center; }
+
+  /* Cosine similarity: the unit circle and the normalised pair */
+  .cs-circle { fill: none; stroke: var(--g-300); stroke-width: 1; stroke-dasharray: 3 4; }
+  .cs-unit { stroke-width: 3.5; opacity: .45; }
+  .cs-unit-dot { stroke: var(--bg); stroke-width: 1.5; }
+  .post-body .cs-note { margin: 8px 0 0; font-size: 12px; line-height: 1.5; color: var(--g-500); border-left: 2px solid var(--vp-c); padding-left: 10px; }
+
+  /* Solution set: the affine line x* + ker(A) */
+  .sset-line { stroke: var(--vp-c); stroke-width: 2.4; }
+  .sset-perp { stroke: var(--vp-b); stroke-width: 2; stroke-dasharray: 4 4; }
+  .sset-current { stroke: var(--s-500); stroke-width: 2; opacity: .75; }
+  .sset-star { fill: var(--vp-b); stroke: var(--bg); stroke-width: 2; }
+  .sset-dot { fill: var(--s-500); stroke: var(--bg); stroke-width: 2; }
+  .post-body .sset-norm { margin: 6px 0 6px; font-family: var(--f-ubuntu); font-size: 14px; color: var(--fg); }
+  .sset-norm em { font-style: normal; font-weight: 700; color: var(--vp-b); font-size: 12.5px; }
+  .sset-norm.is-min { color: var(--vp-b); }
+  /* The shared bar is teal by default, which would read as 'minimal' at every c. */
+  .sset-controls .cond-bar span { background: var(--s-500); }
+  .sset-controls .cond-bar span.is-min { background: var(--vp-b); }
+
+  /* Cost of factoring once against solving from scratch */
+  .scost-stage { flex-direction: column; gap: 18px; justify-content: center; align-items: stretch; }
+  .scost-bars { display: flex; flex-direction: column; gap: 14px; }
+  .scost-row { display: grid; grid-template-columns: 96px 1fr 76px; gap: 12px; align-items: center; }
+  .scost-label { font-family: var(--f-ubuntu); font-size: 11.5px; color: var(--g-500); }
+  .scost-bar { height: 12px; border-radius: 999px; background: var(--g-200); overflow: hidden; }
+  .scost-bar span { display: block; height: 100%; transition: width .25s var(--ease); }
+  .scost-bar span.is-bad { background: var(--vp-a); }
+  .scost-bar span.is-ok { background: var(--vp-b); }
+  .scost-value { font-family: var(--f-ubuntu); font-size: 12.5px; font-variant-numeric: tabular-nums; color: var(--fg); text-align: right; }
+  .post-body .scost-speedup { margin: 0; text-align: center; font-family: var(--f-ubuntu); font-size: 12.5px; color: var(--g-500); }
+  .scost-speedup strong { font-size: 20px; color: var(--vp-b); margin-left: 6px; }
+  @media (prefers-reduced-motion: reduce) { .scost-bar span { transition: none; } }
+
+  /* Numerical rank: a singular value against a threshold */
+  .nrank-stage { flex-direction: column; gap: 16px; justify-content: center; align-items: stretch; }
+  .nrank-scale { position: relative; height: 10px; border-radius: 999px; background: var(--g-200); }
+  .nrank-tol { position: absolute; top: -4px; width: 2px; height: 18px; background: var(--g-500); }
+  .nrank-sigma { position: absolute; top: -1px; width: 12px; height: 12px; border-radius: 50%; background: var(--vp-a); transform: translateX(-50%); transition: left .25s var(--ease); }
+  .post-body .nrank-legend { margin: 0; font-family: var(--f-ubuntu); font-size: 11px; color: var(--g-500); text-align: center; }
+  .nrank-legend em { font-style: normal; color: var(--vp-a); font-weight: 700; }
+  .post-body .nrank-verdict { margin: 0; font-family: var(--f-ubuntu); font-size: 14px; font-weight: 700; color: var(--fg); text-align: center; }
+  .nrank-verdict.is-deficient { color: var(--vp-d); }
+  .cond-readout dd.is-ok { color: var(--vp-b); }
+
+  /* Fill-in: the sparsity a factorisation destroys */
+  .fill-stage { flex-direction: column; gap: 16px; }
+  .fill-row { display: flex; align-items: center; justify-content: center; gap: 16px; flex-wrap: wrap; }
+  .fill-block { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .fill-grid { display: grid; gap: 2px; padding: 6px; border: 1px solid var(--g-300); border-radius: 6px; }
+  .fill-cell { width: 15px; height: 15px; border-radius: 2px; background: var(--g-100); }
+  html.dark .fill-cell { background: var(--g-200); }
+  .fill-cell.is-on { background: var(--fg); }
+  .fill-cell.is-fill { background: var(--vp-a); }
+  .fill-toggle { display: flex; gap: 8px; margin-bottom: 12px; }
+  .bc-preset.is-active { border-color: var(--s-500); color: var(--s-500); font-weight: 700; }
+
+  /* Solver chooser */
+  .chooser-stage { flex-direction: column; gap: 10px; justify-content: center; align-items: stretch; }
+  .post-body .chooser-recommends { margin: 0; font-family: var(--f-ubuntu); font-size: 11px; text-transform: uppercase; letter-spacing: .1em; color: var(--g-500); }
+  .post-body .chooser-call { margin: 0; padding: 14px 16px; border-radius: 10px; background: #0f172a; color: #e2e8f0; font-size: 14px; overflow-x: auto; }
+  .post-body .chooser-call code { background: none; padding: 0; font-size: inherit; color: inherit; }
+  .post-body .chooser-why { margin: 0; font-size: 13px; line-height: 1.55; color: var(--g-600); }
+  .chooser-why span { font-family: var(--f-ubuntu); font-size: 10.5px; text-transform: uppercase; letter-spacing: .1em; color: var(--s-500); margin-right: 6px; }
+  .chooser-group { margin-bottom: 14px; }
+  .chooser-label { display: block; font-family: var(--f-ubuntu); font-size: 11px; color: var(--g-500); margin-bottom: 6px; }
+  .chooser-opts { display: flex; gap: 6px; flex-wrap: wrap; }
+
+  /* Subspace test */
+  .sub-region { fill: color-mix(in oklab, var(--vp-c) 16%, transparent); }
+  .sub-set { stroke: var(--vp-c); stroke-width: 2.4; }
+  .sub-pt { fill: var(--g-500); stroke: var(--bg); stroke-width: 1.5; }
+  .sub-sum { stroke: var(--bg); stroke-width: 2; }
+  .sub-sum.is-in { fill: var(--vp-b); }
+  .sub-sum.is-out { fill: var(--vp-a); }
+  .sub-zero.is-in { fill: var(--vp-b); }
+  .sub-zero.is-out { fill: none; stroke: var(--vp-a); stroke-width: 2; }
+  .sub-checks { list-style: none; margin: 14px 0 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+  .sub-check { display: grid; grid-template-columns: 16px 1fr; gap: 9px; align-items: start; font-size: 13px; color: var(--g-600); }
+  .sub-check span { font-weight: 700; }
+  .sub-check.is-ok span { color: var(--vp-b); }
+  .sub-check.is-bad span { color: var(--vp-a); }
+  .sub-check em { display: block; font-style: normal; font-family: var(--f-ubuntu); font-size: 11.5px; color: var(--g-500); margin-top: 2px; }
+  .post-body .sub-verdict { margin: 14px 0 0; font-family: var(--f-ubuntu); font-size: 14px; font-weight: 700; }
+  .sub-verdict.is-ok { color: var(--vp-b); }
+  .sub-verdict.is-bad { color: var(--vp-a); }
+
+  /* Orientation of a 1-D array */
+  .shp-stage { flex-direction: column; gap: 14px; align-items: center; justify-content: center; }
+  .post-body .shp-expr { margin: 0; }
+  .shp-expr code { font-size: 13px; }
+  .post-body .shp-verdict { margin: 0; font-family: var(--f-ubuntu); font-size: 13px; text-align: center; }
+  .shp-verdict.is-ok { color: var(--vp-b); }
+  .shp-verdict.is-bad { color: var(--vp-a); }
+  .post-body .shp-warning { margin: 0; font-size: 12px; color: var(--g-500); }
+  .bc-preset em { font-style: normal; opacity: .6; margin-left: 4px; }
+
+  /* Projection onto a line */
+  .proj-res { stroke: var(--vp-a); stroke-width: 1.8; stroke-dasharray: 4 4; }
+  .proj-dot { fill: var(--vp-b); stroke: var(--bg); stroke-width: 2; }
+  .proj-matrix { align-self: flex-start; margin: 10px 0 2px; }
+
+  /* Best one-dimensional subspace for a cloud */
+  .bsub-line { stroke: var(--vp-c); stroke-width: 2.2; }
+  .bsub-line.is-best { stroke: var(--vp-b); stroke-width: 3; }
+  .bsub-res { stroke: var(--vp-a); stroke-width: 1.4; opacity: .7; }
+  .bsub-pt { fill: var(--fg); }
+  .bsub-curve { width: 100%; height: 44px; margin-top: 12px; }
+  .bsub-curve polyline { fill: none; stroke: var(--g-400); stroke-width: 1.4; vector-effect: non-scaling-stroke; }
+  .bsub-mark { stroke: var(--s-500); stroke-width: 1.5; vector-effect: non-scaling-stroke; }
+  .post-body .bsub-axis { display: flex; justify-content: space-between; margin: 0 0 8px; font-family: var(--f-ubuntu); font-size: 10px; color: var(--g-400); }
+  .post-body .bsub-verdict { margin: 4px 0 0; font-family: var(--f-ubuntu); font-size: 13px; color: var(--g-500); }
+  .bsub-verdict.is-best { color: var(--vp-b); font-weight: 700; }
+
+  /* Gram-Schmidt verdict */
+  .post-body .gs-verdict { margin: 12px 0; font-family: var(--f-ubuntu); font-size: 14px; font-weight: 700; }
+  .gs-verdict.is-dep { color: var(--vp-a); }
+  .gs-verdict.is-indep { color: var(--vp-b); }
+
+  /* Degree of dependence */
+  .ddeg-stage { flex-direction: column; gap: 18px; justify-content: center; align-items: stretch; }
+  .scost-bar span.is-warn { background: var(--vp-d); }
+
+  /* Coordinates in a basis */
+  .cib-lattice { stroke: var(--g-200); stroke-width: 1; }
+  html.dark .cib-lattice { stroke: var(--g-300); }
+  .cib-step { stroke: var(--vp-c); stroke-width: 1.8; stroke-dasharray: 4 4; opacity: .8; }
+
+  /* Energy compaction across two bases */
+  .ec-stage { flex-direction: column; gap: 16px; justify-content: center; align-items: stretch; }
+  .ec-panel { display: flex; flex-direction: column; gap: 6px; }
+  .ec-bars { display: flex; align-items: flex-end; gap: 2px; height: 68px; }
+  .ec-bar { flex: 1; border-radius: 2px 2px 0 0; }
+  .ec-bar.is-canon { background: var(--g-400); }
+  .ec-bar.is-dct { background: var(--vp-c); }
+  .ec-bar.is-dropped { background: var(--g-300); opacity: .5; }
+  .ec-signal { width: 100%; height: 70px; }
+  .ec-orig { fill: none; stroke: var(--g-400); stroke-width: 1.6; vector-effect: non-scaling-stroke; }
+  .ec-recon { fill: none; stroke: var(--s-500); stroke-width: 1.8; vector-effect: non-scaling-stroke; }
+
+  /* Low-rank approximation */
+  .lr-stage { flex-direction: column; gap: 16px; align-items: center; justify-content: center; }
+  .lr-row { display: flex; gap: 18px; flex-wrap: wrap; justify-content: center; }
+  .lr-block { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .lr-grid { display: grid; width: 168px; aspect-ratio: 1; border: 1px solid var(--g-300); border-radius: 4px; overflow: hidden; }
+  .lr-cell { width: 100%; height: 100%; }
+  .lr-spectrum { width: 100%; height: 54px; }
+
+  /* Linearity: the two routes */
+  .lc-stage { flex-direction: column; gap: 14px; align-items: center; justify-content: center; }
+  .lc-row { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; justify-content: center; }
+  .lc-panel { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .lc-panel svg { width: 150px; height: 150px; border: 1px solid var(--g-300); border-radius: 6px; }
+  .post-body .lc-verdict { margin: 8px 0 0; font-family: var(--f-ubuntu); font-size: 13px; color: var(--vp-b); font-weight: 700; }
+
+  /* A chain of linear layers */
+  .lyr-stage { flex-direction: column; gap: 16px; align-items: center; justify-content: center; }
+  .lyr-chain { display: flex; align-items: flex-end; gap: 16px; height: 110px; }
+  .lyr-step { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; gap: 6px; }
+  .lyr-bar { width: 26px; border-radius: 3px 3px 0 0; background: var(--vp-c); }
+  .lyr-bar.is-min { background: var(--vp-a); }
+  .lyr-step em { font-style: normal; font-family: var(--f-ubuntu); font-size: 11px; color: var(--g-500); }
+  .post-body .lyr-verdict { margin: 0; font-family: var(--f-ubuntu); font-size: 13px; font-weight: 700; }
+  .lyr-verdict.is-ok { color: var(--vp-b); }
+  .lyr-verdict.is-bad { color: var(--vp-a); }
+
+  /* Transformation gallery */
+  .tg-before { fill: color-mix(in oklab, var(--g-500) 18%, transparent); stroke: var(--g-500); stroke-width: 1.4; stroke-dasharray: 4 3; }
+  .tg-after { fill: color-mix(in oklab, var(--s-500) 26%, transparent); stroke: var(--s-500); stroke-width: 2; }
+  .tg-ghost { fill: none; stroke: var(--vp-c); stroke-width: 1.6; stroke-dasharray: 3 3; opacity: .7; }
+  .tg-matrix { align-self: flex-start; margin: 10px 0 4px; }
+
+  /* Diagonalisation: invariant directions */
+  .dg-axis { stroke: var(--vp-c); stroke-width: 1.6; stroke-dasharray: 5 4; opacity: .8; }
+  .dg-vec { stroke: var(--g-500); stroke-width: 2.4; }
+  .dg-img { stroke: var(--s-500); stroke-width: 3; }
+  .dg-sliders { display: flex; flex-direction: column; gap: 4px; margin-bottom: 8px; }
+  .post-body .dg-verdict { margin: 10px 0 6px; font-family: var(--f-ubuntu); font-size: 13px; font-weight: 700; }
+  .dg-verdict.is-ok { color: var(--vp-b); }
+  .dg-verdict.is-bad { color: var(--vp-d); }
+
+  /* Similarity: what survives the change of basis */
+  .si-stage { flex-direction: column; gap: 16px; align-items: center; justify-content: center; }
+  .post-body .si-table { margin: 0; border: none; font-family: var(--f-ubuntu); font-size: 13px; border-collapse: separate; border-spacing: 14px 4px; }
+  .post-body .si-table th { text-align: right; font-weight: 600; color: var(--g-500); border: none; padding: 0; text-transform: none; letter-spacing: 0; font-size: 12px; }
+  .post-body .si-table td { border: none; padding: 0; color: var(--fg); font-variant-numeric: tabular-nums; }
+  @media (prefers-reduced-motion: reduce) { .nrank-sigma { transition: none; } }
+
+  /* Broadcasting: shape alignment */
+  .bc-stage { flex-direction: column; gap: 14px; justify-content: center; }
+  .bc-presets { display: flex; gap: 8px; flex-wrap: wrap; }
+  .bc-preset { font-family: var(--f-ubuntu); font-size: 11.5px; padding: 5px 11px; border-radius: 999px; border: 1px solid var(--g-300); background: transparent; color: var(--g-600); cursor: pointer; transition: background .18s var(--ease); }
+  .bc-preset:hover { background: var(--g-100); color: var(--fg); }
+  .post-body .bc-table { margin: 0; width: auto; border: none; font-family: var(--f-ubuntu); }
+  .post-body .bc-table th { text-align: right; font-size: 11.5px; font-weight: 600; color: var(--g-500); padding: 4px 12px 4px 0; border: none; text-transform: none; letter-spacing: 0; white-space: nowrap; }
+  .post-body .bc-table td { padding: 0; border: none; }
+  .post-body .bc-table { border-spacing: 5px 4px; border-collapse: separate; }
+  .bc-pill { display: block; min-width: 46px; padding: 6px 9px; border-radius: 7px; text-align: center; font-size: 14px; font-variant-numeric: tabular-nums; background: var(--g-100); color: var(--fg); }
+  html.dark .bc-pill { background: var(--g-200); }
+  /* These need the html.dark prefix too: html.dark .bc-pill outranks .bc-pill.is-stretch. */
+  .bc-pill.is-stretch, html.dark .bc-pill.is-stretch { background: color-mix(in oklab, var(--vp-c) 40%, transparent); }
+  .bc-pill.is-clash, html.dark .bc-pill.is-clash { background: color-mix(in oklab, var(--vp-a) 45%, transparent); }
+  .bc-pill.is-pad { opacity: .45; }
+  .bc-pad { color: var(--g-400); }
+  .bc-out .bc-pill { font-weight: 700; }
+  .post-body .bc-verdict { margin: 0; font-family: var(--f-ubuntu); font-size: 13.5px; font-weight: 700; }
+  .bc-verdict.is-ok { color: var(--vp-b); }
+  .bc-verdict.is-error { color: var(--vp-a); font-weight: 600; font-size: 12.5px; }
+  .bc-field { display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px; }
+  .bc-field span { font-family: var(--f-ubuntu); font-size: 11.5px; color: var(--g-500); }
+  .bc-field input { font-family: var(--f-ubuntu); font-size: 14px; padding: 7px 10px; border-radius: 8px; border: 1px solid var(--g-300); background: transparent; color: var(--fg); }
+  .bc-field input:focus { outline: none; border-color: var(--s-500); }
+  .bc-legend { list-style: none; margin: 4px 0 0; padding: 0; display: flex; flex-direction: column; gap: 5px; }
+  .bc-legend li { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--g-500); }
+  .bc-legend i { width: 14px; height: 14px; border-radius: 4px; background: var(--g-100); flex-shrink: 0; }
+  html.dark .bc-legend i { background: var(--g-200); }
+  .bc-legend i.is-stretch, html.dark .bc-legend i.is-stretch { background: color-mix(in oklab, var(--vp-c) 40%, transparent); }
+  .bc-legend i.is-clash, html.dark .bc-legend i.is-clash { background: color-mix(in oklab, var(--vp-a) 45%, transparent); }
+  @media (prefers-reduced-motion: reduce) {
+    .elim-cell.is-changed { animation: none; }
+    .lsys-dot { transition: none; }
+  }
+
+  @media (max-width: 720px) {
+    .mplay, .lcombo, .dvec, .lsys, .elim, .mmul, .bc, .cond, .gstep, .sset, .scost, .nrank, .fill, .chooser, .sub, .shp, .bsub, .ddeg, .ec, .lr, .lc, .lyr, .tg, .dg, .si, .fs, .evs { grid-template-columns: 1fr; }
+    .mplay-controls, .lcombo-controls, .dvec-controls, .lsys-controls, .elim-controls, .mmul-controls, .bc-controls, .cond-controls, .gstep-controls, .sset-controls, .scost-controls, .nrank-controls, .fill-controls, .chooser-controls, .sub-controls, .shp-controls, .bsub-controls, .ddeg-controls, .ec-controls, .lr-controls, .lc-controls, .lyr-controls, .tg-controls, .dg-controls, .si-controls, .fs-controls, .evs-controls { border-left: none; border-top: 1px solid var(--g-200); }
+    html.dark .mplay-controls, html.dark .lcombo-controls, html.dark .dvec-controls, html.dark .lsys-controls, html.dark .elim-controls, html.dark .mmul-controls, html.dark .bc-controls, html.dark .cond-controls, html.dark .gstep-controls, html.dark .sset-controls, html.dark .scost-controls, html.dark .nrank-controls, html.dark .fill-controls, html.dark .chooser-controls, html.dark .sub-controls, html.dark .shp-controls, html.dark .bsub-controls, html.dark .ddeg-controls, html.dark .ec-controls, html.dark .lr-controls, html.dark .lc-controls, html.dark .lyr-controls, html.dark .tg-controls, html.dark .dg-controls, html.dark .si-controls, html.dark .fs-controls, html.dark .evs-controls { border-top-color: var(--g-300); }
+  }
+
+  /* ---- Courses: index, overview and lesson shell ---- */
+  .courses-hero { padding: 64px 0 40px; max-width: 720px; }
+  .courses-hero h1 { font-size: clamp(34px, 5vw, 52px); line-height: 1.08; margin: 10px 0 18px; letter-spacing: -0.02em; }
+  .courses-list { display: grid; gap: 20px; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); padding-bottom: 80px; }
+  .courses-empty { color: var(--g-500); }
+  .course-card { display: block; border: 1px solid var(--g-200); border-radius: 18px; overflow: hidden; text-decoration: none; background: color-mix(in oklab, var(--g-50) 55%, transparent); transition: border-color .18s var(--ease), transform .18s var(--ease); }
+  html.dark .course-card { border-color: var(--g-300); background: color-mix(in oklab, var(--g-100) 45%, transparent); }
+  .course-card:hover { border-color: var(--s-500); transform: translateY(-2px); }
+  .course-card-body { padding: 26px 28px 28px; }
+  .course-card-body h2 { font-size: 24px; margin: 8px 0 10px; color: var(--fg); letter-spacing: -0.01em; }
+  .course-card-body p { margin: 0; color: var(--g-600); font-size: 15px; line-height: 1.6; }
+  .course-card-level { display: inline-block; font-family: var(--f-ubuntu); text-transform: uppercase; letter-spacing: .12em; font-size: 10.5px; font-weight: 700; color: var(--s-500); }
+  html.dark .course-card-level { color: var(--s-400); }
+  .course-card-meta { margin-top: 14px !important; font-size: 13px !important; color: var(--g-500) !important; }
+  .course-card-tags { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 16px; }
+  .course-card-tags span { font-size: 11.5px; font-weight: 600; color: var(--g-500); background: var(--g-100); padding: 3px 10px; border-radius: 999px; }
+  html.dark .course-card-tags span { background: var(--g-200); color: var(--g-600); }
+
+  /* ---- Courses index: featured course + pitch strip ---- */
+  .course-feature { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 48px; align-items: center; border: 1px solid var(--g-200); border-radius: 20px; padding: 40px 44px; background: color-mix(in oklab, var(--g-50) 55%, transparent); margin-bottom: 64px; }
+  html.dark .course-feature { border-color: var(--g-300); background: color-mix(in oklab, var(--g-100) 45%, transparent); }
+  .course-feature-body h2 { font-size: clamp(28px, 3.4vw, 38px); line-height: 1.12; margin: 10px 0 14px; letter-spacing: -0.02em; }
+  .course-feature-body h2 a { color: var(--fg); text-decoration: none; }
+  .course-feature-body h2 a:hover { color: var(--s-500); }
+  .course-feature-summary { font-size: 16.5px; line-height: 1.6; color: var(--g-600); margin: 0 0 26px; max-width: 52ch; }
+  .course-feature-modules { list-style: none; margin: 0 0 30px; padding: 0; border-top: 1px solid var(--g-200); }
+  html.dark .course-feature-modules { border-top-color: var(--g-300); }
+  .course-feature-modules li { display: grid; grid-template-columns: 30px 1fr auto; gap: 14px; align-items: baseline; padding: 11px 2px; border-bottom: 1px solid var(--g-200); }
+  html.dark .course-feature-modules li { border-bottom-color: var(--g-300); }
+  .course-feature-mnum { font-family: var(--f-ubuntu); font-size: 11.5px; font-weight: 700; color: var(--s-500); }
+  html.dark .course-feature-mnum { color: var(--s-400); }
+  .course-feature-mtitle { font-size: 15px; font-weight: 600; color: var(--fg); }
+  .course-feature-mcount { font-size: 12.5px; color: var(--g-500); }
+  .course-feature-actions { display: flex; align-items: center; gap: 22px; flex-wrap: wrap; }
+  .course-feature-alt { font-size: 14px; font-weight: 600; color: var(--g-500); text-decoration: none; border-bottom: 1px solid transparent; }
+  .course-feature-alt:hover { color: var(--s-500); border-bottom-color: var(--s-500); }
+  .course-feature-figure { display: flex; justify-content: center; overflow: hidden; border-radius: 14px; }
+
+  .chero { width: 100%; max-width: 260px; }
+  .chero svg { width: 100%; height: auto; }
+  .chero-grid line { stroke: var(--g-200); stroke-width: 1; }
+  html.dark .chero-grid line { stroke: var(--g-300); }
+  .chero-axis { stroke: var(--g-400); stroke-width: 1.3; }
+  .chero-area { fill: color-mix(in oklab, var(--s-500) 20%, transparent); stroke: var(--s-500); stroke-width: 1.3; }
+  .chero-i, .chero-dot-i { stroke: var(--vp-a); fill: var(--vp-a); stroke-width: 2.6; }
+  .chero-j, .chero-dot-j { stroke: var(--vp-b); fill: var(--vp-b); stroke-width: 2.6; }
+  .chero-grid, .chero-vecs { transform-origin: 130px 130px; animation: chero-shear 9s ease-in-out infinite; }
+  @keyframes chero-shear {
+    0%, 100% { transform: matrix(1, 0, 0, 1, 0, 0); }
+    30%      { transform: matrix(1, 0, -0.55, 1, 0, 0); }
+    62%      { transform: matrix(1.25, 0.28, -0.2, 0.95, 0, 0); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .chero-grid, .chero-vecs { animation: none; }
+  }
+
+  .courses-pitch { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 40px; padding-bottom: 88px; }
+  .courses-pitch > div { border-top: 2px solid var(--s-500); padding-top: 16px; }
+  .courses-pitch-num { font-family: var(--f-ubuntu); font-size: 11px; font-weight: 700; letter-spacing: .14em; color: var(--s-500); }
+  html.dark .courses-pitch-num { color: var(--s-400); }
+  .courses-pitch h3 { font-size: 17px; margin: 8px 0 8px; color: var(--fg); letter-spacing: -0.01em; }
+  .courses-pitch p { margin: 0; font-size: 14.5px; line-height: 1.6; color: var(--g-600); }
+
+  @media (max-width: 900px) {
+    .course-feature { grid-template-columns: 1fr; gap: 32px; padding: 32px 26px; }
+    .course-feature-figure { order: -1; }
+  }
+
+  .course-overview { padding-bottom: 80px; }
+  .course-head { padding: 48px 0 30px; max-width: 760px; }
+  .course-head h1 { font-size: clamp(30px, 4.4vw, 46px); line-height: 1.1; margin: 10px 0 16px; letter-spacing: -0.02em; }
+  .course-head-meta { font-size: 13.5px; color: var(--g-500); margin: 6px 0 24px; }
+  .course-back { display: block; font-size: 13px; font-weight: 600; color: var(--g-500); text-decoration: none; margin-bottom: 14px; }
+  .course-back:hover { color: var(--s-500); }
+  .course-start { display: inline-block; font-family: var(--f-ubuntu); font-weight: 700; font-size: 14.5px; padding: 11px 24px; border-radius: 999px; background: var(--s-500); color: #fff; text-decoration: none; transition: opacity .18s var(--ease); }
+  .course-start:hover { opacity: .88; }
+  .course-overview-grid { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 48px; align-items: start; }
+  .course-intro { max-width: none; }
+
+  /* No card, no rails: the panel is a list, and chrome around it only competes
+     with the text it is meant to index. */
+  .course-toc { position: sticky; top: 92px; }
+  .course-toc-modules, .course-toc-lessons { list-style: none; margin: 0; padding: 0; }
+  .course-toc-module + .course-toc-module { margin-top: 18px; }
+  .course-toc-module-title { display: flex; gap: 8px; align-items: baseline; font-size: 13px; font-weight: 700; color: var(--g-500); margin: 0 0 8px; }
+  .course-toc-module.is-current .course-toc-module-title { color: var(--fg); }
+  .course-toc-module-num { font-family: var(--f-ubuntu); font-size: 11px; color: var(--g-400); }
+  .course-toc-module.is-current .course-toc-module-num { color: var(--s-500); }
+  .course-toc-module-name { flex: 1; }
+  .course-toc-lessons { padding-left: 0; }
+  .course-toc-link { display: grid; grid-template-columns: 22px 1fr; gap: 8px; align-items: baseline; padding: 6px 10px; border-radius: 8px; text-decoration: none; font-size: 13.5px; line-height: 1.45; color: var(--g-600); transition: background .16s var(--ease), color .16s var(--ease); }
+  .course-toc-link:hover { background: var(--g-100); color: var(--fg); }
+  .course-toc-link { position: relative; }
+  .course-toc-link.is-active { color: var(--fg); font-weight: 600; }
+  .course-toc-link.is-active::before { content: ''; position: absolute; left: 0; top: 5px; bottom: 5px; width: 2px; border-radius: 2px; background: var(--s-500); }
+  .course-toc-num { font-family: var(--f-ubuntu); font-size: 11px; color: var(--g-400); text-align: right; }
+  .course-toc-link.is-active .course-toc-num { color: var(--s-500); }
+  .course-toc-link.is-read { color: var(--g-500); }
+  .course-toc-link.is-read .course-toc-num { color: var(--g-400); font-size: 11px; }
+
+  /* Headings of the lesson being read, nested under its entry and tracked on scroll. */
+  .course-toc-sections { list-style: none; margin: 2px 0 6px; padding: 0 0 0 30px; }
+  .course-toc-section { display: block; position: relative; padding: 3px 10px 3px 12px; border-radius: 6px; font-size: 12px; line-height: 1.4; color: var(--g-400); text-decoration: none; transition: color .16s var(--ease); }
+  .course-toc-section::before { content: ''; position: absolute; left: 0; top: 50%; width: 2px; height: 70%; border-radius: 2px; background: var(--s-500); transform: translateY(-50%) scaleY(0); transition: transform .18s var(--ease); }
+  .course-toc-section:hover { color: var(--fg); }
+  .course-toc-section.is-active { color: var(--fg); font-weight: 600; }
+  .course-toc-section.is-active::before { transform: translateY(-50%) scaleY(1); }
+  @media (prefers-reduced-motion: reduce) { .course-toc-section::before { transition: none; } }
+
+  .lesson-shell { display: grid; grid-template-columns: 300px minmax(0, 1fr); gap: 56px; align-items: start; padding-top: 44px; padding-bottom: 80px; }
+  .lesson-aside { position: sticky; top: 92px; }
+  .lesson-aside .course-toc { position: static; }
+  .lesson-progress-label { font-size: 12px; color: var(--g-500); margin: 8px 0 20px; }
+  .lesson-head { margin-bottom: 26px; }
+  .lesson-module { font-family: var(--f-ubuntu); text-transform: uppercase; letter-spacing: .12em; font-size: 10.5px; font-weight: 700; color: var(--s-500); margin: 0 0 8px; }
+  html.dark .lesson-module { color: var(--s-400); }
+  .lesson-head h1 { font-size: clamp(28px, 4vw, 42px); line-height: 1.12; margin: 0 0 14px; letter-spacing: -0.02em; }
+  .lesson-nav { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 56px; padding-top: 28px; border-top: 1px solid var(--g-200); }
+  html.dark .lesson-nav { border-top-color: var(--g-300); }
+  .lesson-nav a { display: flex; flex-direction: column; gap: 5px; padding: 16px 18px; border: 1px solid var(--g-200); border-radius: 14px; text-decoration: none; transition: border-color .18s var(--ease); }
+  html.dark .lesson-nav a { border-color: var(--g-300); }
+  .lesson-nav a:hover { border-color: var(--s-500); }
+  .lesson-nav span { font-size: 12px; color: var(--g-500); }
+  .lesson-nav strong { font-size: 14.5px; color: var(--fg); font-weight: 600; line-height: 1.4; }
+  .lesson-nav-next { text-align: right; grid-column: 2; }
+
+  @media (max-width: 1000px) {
+    .course-overview-grid { grid-template-columns: 1fr; gap: 32px; }
+    .lesson-shell { grid-template-columns: 1fr; gap: 28px; }
+    .lesson-aside, .course-toc { position: static; }
+  }
+  @media (max-width: 620px) {
+    .lesson-nav { grid-template-columns: 1fr; }
+    .lesson-nav-next { grid-column: 1; text-align: left; }
+  }
+
   .math-block { background: color-mix(in oklab, var(--p-50) 60%, transparent); border: 1px dashed var(--p-300); padding: 24px; border-radius: 12px; margin: 24px 0; text-align: center; font-family: "Latin Modern Math", Georgia, serif; font-style: italic; font-size: 20px; color: var(--g-800); }
   html.dark .math-block { background: color-mix(in oklab, var(--p-900) 20%, transparent); border-color: var(--p-700); color: var(--g-200); }
 
@@ -513,14 +1036,17 @@
   .comment-form .row { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
   .comment-form .muted { font-size: 12px; color: var(--g-500); }
   .comment-list { margin-top: 24px; display: flex; flex-direction: column; gap: 20px; }
-  .comment { display: flex; gap: 12px; }
-  .comment .avatar { width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0; overflow: hidden; }
-  .comment .avatar .ph { width: 100%; height: 100%; font-size: 11px; }
-  .comment .b { flex: 1; }
-  .comment .head { display: flex; gap: 10px; align-items: baseline; font-size: 13px; }
-  .comment .head .name { font-weight: 600; }
-  .comment .head .time { color: var(--g-500); font-size: 12px; }
-  .comment .body { font-size: 14px; color: var(--g-600); line-height: 1.6; margin-top: 4px; }
+  /* Scoped to .comment-list on purpose: a bare .comment also matches Prism's
+     <span class="token comment">, which turned every code comment on the site
+     into a full-width flex block on its own line. */
+  .comment-list .comment { display: flex; gap: 12px; }
+  .comment-list .comment .avatar { width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0; overflow: hidden; }
+  .comment-list .comment .avatar .ph { width: 100%; height: 100%; font-size: 11px; }
+  .comment-list .comment .b { flex: 1; }
+  .comment-list .comment .head { display: flex; gap: 10px; align-items: baseline; font-size: 13px; }
+  .comment-list .comment .head .name { font-weight: 600; }
+  .comment-list .comment .head .time { color: var(--g-500); font-size: 12px; }
+  .comment-list .comment .body { font-size: 14px; color: var(--g-600); line-height: 1.6; margin-top: 4px; }
   html.dark .comment .body { color: var(--g-600); }
 
   @media (max-width: 900px) {
@@ -777,3 +1303,77 @@
     .offers, .steps, .pr-grid, .quotes, .contact { grid-template-columns: 1fr; }
     .steps::before { display: none; }
   }
+
+  /* The four fundamental subspaces */
+  .fs-stage { flex-direction: column; gap: 12px; align-items: stretch; }
+  .fs-stage svg { width: 100%; height: auto; }
+  .fs-box { stroke: var(--g-400); stroke-width: 1; rx: 4; }
+  .fs-box.is-row, .fs-box.is-img { fill: color-mix(in oklab, var(--vp-b) 30%, transparent); }
+  .fs-box.is-ker { fill: color-mix(in oklab, var(--vp-a) 26%, transparent); }
+  .fs-box.is-coker { fill: color-mix(in oklab, var(--g-500) 22%, transparent); }
+  .fs-cap { font-family: var(--f-ubuntu); font-size: 11px; font-weight: 700; fill: var(--g-500); }
+  .fs-lab { font-family: var(--f-ubuntu); font-size: 11px; font-weight: 600; fill: var(--fg); }
+  .fs-arrow { stroke-width: 1.8; }
+  .fs-arrow.is-bij { stroke: var(--vp-b); }
+  .fs-arrow.is-zero { stroke: var(--vp-a); stroke-dasharray: 5 4; }
+  .post-body .fs-legend { list-style: none; margin: 4px 0 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+  .fs-legend li { display: flex; align-items: center; gap: 8px; font-family: var(--f-ubuntu); font-size: 12px; color: var(--g-600); }
+  .fs-legend i { width: 18px; height: 3px; border-radius: 2px; flex-shrink: 0; }
+  .fs-legend i.is-bij { background: var(--vp-b); }
+  .fs-legend i.is-zero { background: var(--vp-a); }
+  .fs-legend i.is-coker { background: var(--g-500); }
+
+  /* Minimum-norm solution */
+  .mn-ker { stroke: var(--vp-a); stroke-width: 2.2; stroke-dasharray: 6 5; }
+  .mn-sol { stroke: var(--vp-b); stroke-width: 2.4; }
+  .mn-row { stroke: var(--vp-c); stroke-width: 1.4; stroke-dasharray: 3 4; opacity: .75; }
+  .mn-reach { stroke: var(--g-500); stroke-width: 1.4; }
+  .mn-reach.is-min { stroke: var(--vp-c); stroke-width: 2.4; }
+  .mn-ring { fill: none; stroke: var(--g-400); stroke-width: 1; stroke-dasharray: 2 4; }
+  .mn-dot { fill: var(--g-600); }
+  .mn-dot.is-min { fill: var(--vp-c); }
+  .fs-origin { fill: var(--vp-a); }
+  .mn-right { fill: none; stroke: var(--g-500); stroke-width: 1.2; }
+  .mn-tag { font-family: var(--f-ubuntu); font-size: 12px; font-weight: 700; fill: var(--g-600); }
+  .mn-tag.is-min, .mn-tag.is-row { fill: var(--vp-c); }
+
+  /* Affine hyperplane */
+  .ah-side { fill: color-mix(in oklab, var(--vp-b) 7%, transparent); }
+  .ah-unit { stroke: var(--vp-c); stroke-width: 1.4; stroke-dasharray: 3 3; opacity: .8; }
+  .ah-plane { stroke: var(--vp-b); stroke-width: 2.4; }
+  .ah-normal { stroke: var(--vp-c); stroke-width: 2; }
+  .ah-drop { stroke: var(--g-500); stroke-width: 1.4; stroke-dasharray: 4 4; }
+  .ah-foot { fill: var(--g-500); }
+
+  /* Affine and convex combinations */
+  .ac-hull { fill: color-mix(in oklab, var(--vp-b) 16%, transparent); stroke: var(--vp-b); stroke-width: 1.6; }
+  .ac-vertex { fill: var(--vp-c); }
+  .ac-point { fill: var(--vp-b); stroke: var(--bg); stroke-width: 2; }
+  .ac-point.is-out { fill: var(--vp-a); }
+
+  /* SVD: the image of the unit circle */
+  .sv-circle { fill: none; stroke: var(--g-500); stroke-width: 1.4; stroke-dasharray: 4 4; }
+  .sv-ellipse { fill: color-mix(in oklab, var(--vp-b) 14%, transparent); stroke: var(--vp-b); stroke-width: 2.2; }
+  .sv-v { stroke: var(--g-500); stroke-width: 1.6; }
+  .sv-u { stroke-width: 2.6; }
+  .sv-u.is-1 { stroke: var(--vp-c); }
+  .sv-u.is-2 { stroke: var(--vp-a); }
+  .sv-matrix { align-self: flex-start; margin-bottom: 4px; }
+  .sv-cell input {
+    width: 100%; background: none; border: none; text-align: center; color: var(--fg);
+    font-family: var(--f-ubuntu); font-size: 14px; padding: 6px 2px;
+  }
+  .sv-cell input:focus { outline: 2px solid var(--vp-c); outline-offset: -2px; border-radius: 4px; }
+
+  /* Eigenvalues against singular values */
+  .evs-stage { flex-direction: column; gap: 12px; align-items: stretch; justify-content: center; }
+  .evs-row { display: flex; flex-direction: column; gap: 3px; }
+  .evs-tag { font-family: var(--f-ubuntu); font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--g-500); }
+  .evs-verdict { font-family: var(--f-ubuntu); font-size: 14px; font-weight: 700; }
+  .evs-verdict.is-ok { color: var(--vp-b); }
+  .evs-verdict.is-bad { color: var(--vp-a); }
+  .evs-bars { display: flex; flex-direction: column; gap: 5px; }
+  .evs-bar { height: 9px; border-radius: 3px; min-width: 2px; }
+  .evs-bar.is-1 { background: var(--vp-c); }
+  .evs-bar.is-2 { background: var(--vp-a); }
+  .mmul-cell.is-live { color: var(--vp-c); font-weight: 700; }

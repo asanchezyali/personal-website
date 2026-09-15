@@ -81,6 +81,64 @@ const posts = defineCollection({
     })),
 })
 
+// Define the courses collection (one index.mdx per course, per locale)
+const courses = defineCollection({
+  name: 'Course',
+  pattern: 'courses/*/*/index.mdx',
+  schema: s
+    .object({
+      slug: s.path(),
+      title: s.string(),
+      language: s.string(),
+      summary: s.string(),
+      level: s.string().optional(),
+      cover: s.string().optional(),
+      tags: s.array(s.string()).default([]),
+      draft: s.boolean().optional(),
+      metadata: s.metadata(),
+      content: s.mdx(),
+    })
+    .transform((data) => {
+      // courses/<locale>/<courseSlug>/index
+      const parts = data.slug.split('/')
+      const courseSlug = parts[2]
+      return { ...data, courseSlug, path: `courses/${courseSlug}` }
+    }),
+})
+
+// Define the lessons collection (courses/<locale>/<course>/lessons/*.mdx)
+const lessons = defineCollection({
+  name: 'Lesson',
+  pattern: 'courses/*/*/lessons/*.mdx',
+  schema: s
+    .object({
+      slug: s.path(),
+      title: s.string(),
+      language: s.string(),
+      summary: s.string().optional(),
+      module: s.string(),
+      moduleOrder: s.number(),
+      order: s.number(),
+      draft: s.boolean().optional(),
+      metadata: s.metadata(),
+      content: s.mdx(),
+      toc: s.toc(),
+    })
+    .transform((data) => {
+      // courses/<locale>/<courseSlug>/lessons/<lessonSlug>
+      const parts = data.slug.split('/')
+      const courseSlug = parts[2]
+      const lessonSlug = parts[4]
+      return {
+        ...data,
+        courseSlug,
+        lessonSlug,
+        readingTime: data.metadata,
+        path: `courses/${courseSlug}/${lessonSlug}`,
+      }
+    }),
+})
+
 // Define the authors collection
 const authors = defineCollection({
   name: 'Authors',
@@ -119,7 +177,7 @@ export default defineConfig({
     name: '[name]-[hash:6].[ext]',
     clean: true,
   },
-  collections: { posts, authors },
+  collections: { posts, authors, courses, lessons },
   mdx: {
     rehypePlugins: [
       rehypeSlug,

@@ -1,0 +1,282 @@
+---
+title: 'Imagen y núcleo con Python'
+language: 'es'
+module: 'Espacios vectoriales'
+moduleOrder: 2
+order: 9
+summary: 'El núcleo como relación de ambigüedad, el teorema de rango-nulidad como ley de conservación, las dos descomposiciones ortogonales que lo explican, las cuatro bases que entrega la descomposición en valores singulares y la solución de norma mínima.'
+---
+
+El curso ha empleado ya la imagen y el núcleo bajo otros nombres. El espacio columna apareció al
+tratar los subespacios; el conjunto de soluciones de $A\vec{x} = \vec{0}$, al describir la solución
+general de un sistema. Esta lección los reúne bajo el punto de vista de la aplicación lineal, donde
+dejan de ser dos construcciones independientes y pasan a ser las dos mitades de una única igualdad.
+
+## Las dos preguntas
+
+Sea $\Phi : V \to W$ una aplicación lineal. Dos subespacios la describen por completo.
+
+La **imagen** es lo que $\Phi$ alcanza:
+
+$$
+\operatorname{Im}(\Phi) = \{\,\Phi(\vec{v}) : \vec{v} \in V\,\} \subseteq W
+$$
+
+El **núcleo** es lo que $\Phi$ aniquila:
+
+$$
+\ker(\Phi) = \{\,\vec{v} \in V : \Phi(\vec{v}) = \vec{0}_W\,\} \subseteq V
+$$
+
+Ambos son subespacios, y la comprobación es inmediata a partir de la linealidad. El núcleo contiene
+siempre $\vec{0}_V$, porque $\Phi(\vec{0}) = \vec{0}$; si $\Phi(\vec{u}) = \Phi(\vec{v}) = \vec{0}$
+entonces $\Phi(\alpha\vec{u} + \vec{v}) = \alpha\vec{0} + \vec{0} = \vec{0}$. La imagen contiene
+$\vec{0}_W$ por la misma razón, y es cerrada bajo combinaciones porque
+$\alpha\Phi(\vec{u}) + \Phi(\vec{v}) = \Phi(\alpha\vec{u} + \vec{v})$.
+
+Para una matriz $A \in \mathbb{R}^{m\times n}$, que representa una aplicación
+$\mathbb{R}^n \to \mathbb{R}^m$, la imagen es el espacio generado por las columnas y el núcleo es el
+conjunto de soluciones del sistema homogéneo. Viven en espacios distintos: el núcleo en el dominio,
+la imagen en el codominio.
+
+## El núcleo mide la ambigüedad
+
+La definición del núcleo como conjunto de vectores que van a cero es correcta pero engañosamente
+estrecha. Su contenido real es el siguiente. Si $\Phi(\vec{x}) = \Phi(\vec{y})$, entonces
+
+$$
+\Phi(\vec{x} - \vec{y}) = \Phi(\vec{x}) - \Phi(\vec{y}) = \vec{0}
+$$
+
+y por tanto $\vec{x} - \vec{y} \in \ker(\Phi)$. El recíproco es igual de directo. La conclusión es
+una equivalencia:
+
+$$
+\Phi(\vec{x}) = \Phi(\vec{y}) \iff \vec{x} - \vec{y} \in \ker(\Phi)
+$$
+
+El núcleo no es un conjunto de vectores especiales: es la lista completa de las confusiones que la
+aplicación comete. Dos entradas resultan indistinguibles en la salida exactamente cuando su
+diferencia cae en el núcleo. De ahí el criterio conocido, que ahora aparece como caso particular:
+$\Phi$ es inyectiva si y solo si $\ker(\Phi) = \{\vec{0}\}$, porque solo entonces la única forma de
+que dos entradas coincidan en la salida es que fueran iguales desde el principio.
+
+Esta lectura es la que importa en aprendizaje automático. Una capa lineal $W\vec{x}$ con núcleo no
+trivial descarta información de manera irreversible, y lo hace según una regla precisa: descarta
+justamente las direcciones del núcleo. Ninguna capa posterior puede recuperarlas, porque no llegaron.
+
+## El teorema de rango-nulidad
+
+Las dimensiones de estos dos subespacios no son independientes. Están ligadas por una igualdad
+exacta.
+
+$$
+\dim\ker(\Phi) + \dim\operatorname{Im}(\Phi) = \dim V
+$$
+
+La demostración explica por qué. Sea $\{\vec{b}_1,\dots,\vec{b}_k\}$ una base del núcleo, con
+$k = \dim\ker(\Phi)$. Al tratarse de un conjunto independiente en $V$, admite extensión a una base
+completa $\{\vec{b}_1,\dots,\vec{b}_k,\vec{c}_1,\dots,\vec{c}_{n-k}\}$ de $V$. Entonces las
+imágenes $\Phi(\vec{c}_1),\dots,\Phi(\vec{c}_{n-k})$ generan la imagen —porque los $\vec{b}_i$
+aportan cero— y son independientes: una combinación nula
+$\sum \alpha_j \Phi(\vec{c}_j) = \vec{0}$ sitúa a $\sum \alpha_j \vec{c}_j$ en el núcleo, lo que
+obliga a que sea combinación de los $\vec{b}_i$, y la independencia de la base completa fuerza
+$\alpha_j = 0$. Hay, pues, exactamente $n - k$ de ellas.
+
+El enunciado es una ley de conservación. El dominio aporta $n$ dimensiones y ninguna se pierde de
+vista: cada una se transmite a la imagen o se aplasta contra el núcleo. Aumentar el rango exige
+reducir el núcleo en la misma cantidad.
+
+<FourSubspaces
+  labels={{
+    hint: 'Los bloques miden la dimensión que contienen. El rango no puede superar ni a n ni a m.',
+    domain: 'dominio ℝⁿ',
+    codomain: 'codominio ℝᵐ',
+    row: 'filas',
+    bijection: 'espacio de filas → imagen, biyectiva',
+    toZero: 'núcleo → 0',
+    unreachable: 'núcleo por la izquierda: nunca alcanzado',
+    identity: 'rg(A) + dim ker(A) = n',
+    reset: 'Reiniciar',
+  }}
+/>
+
+La figura recoge dos consecuencias que el enunciado deja implícitas. La primera es que el rango está
+acotado por ambas dimensiones, $\operatorname{rg}(A) \le \min(m, n)$: una matriz ancha tiene núcleo
+forzosamente, y una matriz alta deja forzosamente parte del codominio sin alcanzar. La segunda es
+que los dos bloques inferiores tienen naturalezas distintas. El núcleo describe información que
+entra y no sale; el bloque inferior derecho describe salidas que el sistema nunca produce, y es la
+razón de que $A\vec{x} = \vec{b}$ pueda no tener solución.
+
+## Las dos descomposiciones ortogonales
+
+El teorema admite una lectura más fina, que además explica por qué es cierto. Considérese la
+condición $A\vec{x} = \vec{0}$ escrita fila a fila: el producto de cada fila de $A$ por $\vec{x}$ es
+cero. Es decir, $\vec{x}$ es ortogonal a todas las filas, y por tanto a todo el subespacio que
+generan:
+
+$$
+\ker(A) = \operatorname{fil}(A)^{\perp}
+$$
+
+No se trata de una relación aproximada ni de una analogía: es la definición del producto matricial
+leída de otro modo. Como un subespacio y su complemento ortogonal suman el espacio entero,
+
+$$
+\mathbb{R}^n = \operatorname{fil}(A) \oplus \ker(A)
+$$
+
+Aplicar lo mismo a $A^\top$, cuyo espacio de filas es el espacio columna de $A$, produce la
+descomposición del codominio:
+
+$$
+\mathbb{R}^m = \operatorname{col}(A) \oplus \ker(A^\top)
+$$
+
+El teorema de rango-nulidad es ahora un corolario. La primera descomposición da
+$\dim\operatorname{fil}(A) + \dim\ker(A) = n$, y el teorema que iguala el rango por filas y por
+columnas —tratado en la lección sobre el rango— identifica el primer sumando con
+$\dim\operatorname{Im}(A)$.
+
+Queda además clara la estructura de la aplicación: restringida al espacio de filas, $A$ es una
+biyección sobre su imagen. Es la flecha continua de la figura anterior. Todo lo que $A$ hace de
+interesante ocurre entre dos subespacios de dimensión $r$; el resto es aniquilación por un lado e
+inaccesibilidad por el otro.
+
+## Las cuatro bases
+
+La descomposición en valores singulares entrega bases ortonormales de los cuatro subespacios a la
+vez. Si $A = U\Sigma V^\top$ tiene rango $r$, las primeras $r$ columnas de $V$ generan el espacio de
+filas y las $n - r$ restantes generan el núcleo; las primeras $r$ columnas de $U$ generan la imagen
+y las $m - r$ restantes generan $\ker(A^\top)$.
+
+Un ejemplo concreto. Sea
+
+$$
+A = \begin{bmatrix} 1 & 2 & 3 & 4 \\ 2 & 4 & 7 & 10 \\ 1 & 2 & 4 & 6 \end{bmatrix}
+$$
+
+cuya tercera fila es la primera más $(0,0,1,2)$, y cuya segunda es el doble de la primera más el
+mismo vector. La relación $\vec{f}_1 - \vec{f}_2 + \vec{f}_3 = \vec{0}$ deja el rango en $2$.
+
+```python
+import numpy as np
+
+A = np.array([[1, 2, 3, 4],
+              [2, 4, 7, 10],
+              [1, 2, 4, 6]], dtype=float)
+
+U, s, Vt = np.linalg.svd(A)
+r = np.linalg.matrix_rank(A)          # 2
+
+nucleo   = Vt[r:].T                   # 4 × 2
+izquierda = U[:, r:]                  # 3 × 1
+
+print(np.abs(A @ nucleo).max())       # ≈ 1e-15
+print(np.abs(izquierda.T @ A).max())  # ≈ 1e-15
+```
+
+Los valores singulares no nulos son $\sigma_1 \approx 15{,}989$ y $\sigma_2 \approx 0{,}583$;
+comprobación independiente: $\sigma_1^2 + \sigma_2^2 = 256 = \lVert A \rVert_F^2$. El recuento
+encaja por ambos lados: $2 + 2 = 4$ en el dominio y $2 + 1 = 3$ en el codominio.
+
+Las bases devueltas por la descomposición son ortonormales pero no son las únicas posibles. Una
+resolución a mano del sistema homogéneo da la base entera
+
+$$
+\ker(A) = \operatorname{span}\left\{ \begin{bmatrix} -2 \\ 1 \\ 0 \\ 0 \end{bmatrix},\ \begin{bmatrix} 2 \\ 0 \\ -2 \\ 1 \end{bmatrix} \right\}
+$$
+
+y la relación entre filas identifica $\ker(A^\top) = \operatorname{span}\{(1,-1,1)\}$. Generan los
+mismos subespacios; lo que aporta la descomposición es la ortonormalidad y la estabilidad numérica.
+
+Sobre esto último conviene una advertencia ya formulada en la lección sobre independencia lineal.
+Obtener los valores singulares a través de $A^\top A$ eleva al cuadrado el condicionamiento: en este
+mismo ejemplo, ese camino devuelve $\sigma_3 \approx 4{,}8\times10^{-8}$ en lugar de cero, magnitud
+suficiente para que un umbral mal elegido cuente un rango $3$ inexistente. `np.linalg.svd` opera
+directamente sobre $A$ y no incurre en esa pérdida.
+
+## La solución de norma mínima
+
+La lección sobre la solución particular y general estableció que el conjunto de soluciones de
+$A\vec{x} = \vec{b}$ es $\vec{x}_p + \ker(A)$. La descomposición ortogonal precisa cuál de esas
+infinitas soluciones es distinguida: exactamente una de ellas pertenece al espacio de filas.
+
+<MinimumNorm
+  a={[2, 1]}
+  b={2}
+  labels={{
+    hint: 'La recta discontinua es el núcleo; la continua, el conjunto de soluciones. Arrastrar la fila de A o deslizar t.',
+    current: '‖x‖',
+    minimal: '‖x†‖',
+    decomposition: '‖x‖² = ‖x†‖² + t²',
+    note: 'Todo punto de la recta resuelve Ax = b; solo uno está en el espacio de filas.',
+    reset: 'Reiniciar',
+  }}
+/>
+
+El argumento es el teorema de Pitágoras. Escrita como $\vec{x} = \vec{x}^{\dagger} + \vec{k}$ con
+$\vec{x}^{\dagger} \in \operatorname{fil}(A)$ y $\vec{k} \in \ker(A)$, la ortogonalidad de los dos
+sumandos da
+
+$$
+\lVert \vec{x} \rVert^2 = \lVert \vec{x}^{\dagger} \rVert^2 + \lVert \vec{k} \rVert^2
+$$
+
+de modo que la norma es mínima precisamente cuando $\vec{k} = \vec{0}$. La solución de norma mínima
+es la componente en el espacio de filas, y es lo que devuelve la pseudoinversa.
+
+Para $A = \begin{bmatrix}1&1&1&1\\1&2&3&4\end{bmatrix}$ y $\vec{b} = (4, 10)$, el cálculo
+$\vec{x}^{\dagger} = A^\top(AA^\top)^{-1}\vec{b}$ da $(1,1,1,1)$, con norma $2$. La solución
+alternativa $(0,2,2,0)$ satisface el mismo sistema y tiene norma $2\sqrt{2} \approx 2{,}83$.
+
+```python
+A = np.array([[1, 1, 1, 1],
+              [1, 2, 3, 4]], dtype=float)
+b = np.array([4.0, 10.0])
+
+x = np.linalg.pinv(A) @ b       # [1. 1. 1. 1.]
+```
+
+La relevancia para el aprendizaje automático es la siguiente. Un modelo con más parámetros que datos
+plantea un sistema indeterminado, y el conjunto de parámetros que ajustan el conjunto de
+entrenamiento es un subespacio afín entero. Qué elemento de ese conjunto se obtiene depende del
+algoritmo, no del problema. El descenso de gradiente inicializado en cero sobre un problema de
+mínimos cuadrados lineal converge a la solución de norma mínima, porque cada actualización es
+combinación de filas de $A$ y el iterado nunca abandona el espacio de filas. Es un sesgo implícito
+hacia la solución más pequeña, impuesto por la geometría del optimizador y no por un término de
+regularización explícito.
+
+## Lo que pierde una capa
+
+El teorema de rango-nulidad convierte el diseño de una arquitectura en aritmética. Una proyección de
+$768$ a $64$ dimensiones tiene rango como máximo $64$, de modo que su núcleo tiene dimensión al
+menos $704$: setecientas cuatro direcciones independientes del espacio de entrada se vuelven
+indistinguibles al atravesarla.
+
+```python
+W = np.random.randn(64, 768)
+r = np.linalg.matrix_rank(W)      # 64
+print(W.shape[1] - r)             # 704
+```
+
+Dos precisiones impiden extraer de aquí más de lo que dice. La primera es que una red con funciones
+de activación no lineales no es una aplicación lineal, y el recuento se aplica capa a capa, no a la
+composición: la cota que produce es necesaria, no suficiente, y la lección sobre aplicaciones
+lineales ya mostró que sin activaciones la composición colapsa en una sola matriz. La segunda es que
+el rango numérico es una respuesta binaria a una pregunta continua, según se trató en la lección
+sobre la independencia lineal: una dirección con valor singular $10^{-6}$ cuenta formalmente dentro
+de la imagen y sobrevive al paso, pero queda sepultada bajo el ruido de la representación en coma
+flotante y bajo el ruido de los propios datos.
+
+Con esas reservas, la afirmación que sí se sostiene es de carácter estructural. La pérdida de
+información en una capa lineal no es difusa ni gradual: tiene una dirección, un subespacio y una
+dimensión exacta, y todas tres son calculables antes de entrenar nada.
+
+---
+
+**Ejercicio.** Construir una matriz $5\times 8$ de rango $3$ como producto de una $5\times 3$ por
+una $3\times 8$ aleatorias. Obtener bases de los cuatro subespacios con `np.linalg.svd` y comprobar
+numéricamente las cuatro relaciones de ortogonalidad y aniquilación. Verificar después que
+`np.linalg.lstsq` devuelve, para un $\vec{b}$ en la imagen, la solución de menor norma entre varias
+obtenidas sumándole vectores del núcleo.

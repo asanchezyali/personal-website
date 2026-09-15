@@ -1,0 +1,238 @@
+---
+title: 'Matrices con Python'
+language: 'es'
+module: 'Sistemas y matrices'
+moduleOrder: 1
+order: 2
+summary: 'La matriz como estructura de datos: forma, disposición en memoria, broadcasting y producto matricial, con la capa lineal de una red neuronal como caso de aplicación.'
+---
+
+Una **matriz** $A \in \mathbb{R}^{m\times n}$ es una disposición rectangular de $mn$ números en $m$
+filas y $n$ columnas. La entrada situada en la fila $i$ y la columna $j$ se denota $a_{ij}$.
+
+$$
+A = \begin{bmatrix}
+a_{11} & a_{12} & \cdots & a_{1n}\\
+a_{21} & a_{22} & \cdots & a_{2n}\\
+\vdots & \vdots & \ddots & \vdots\\
+a_{m1} & a_{m2} & \cdots & a_{mn}
+\end{bmatrix}
+$$
+
+La lección anterior utilizó matrices como recipiente de los coeficientes de un sistema. Esta se
+ocupa de la capa que sostiene todo el cómputo posterior: qué es una matriz como estructura de datos
+y qué operaciones admite.
+
+## Forma e indexación
+
+En NumPy una matriz es un `ndarray` de dos dimensiones. El atributo `.shape` devuelve el par
+$(m, n)$ y determina qué operaciones son legales:
+
+```python
+import numpy as np
+
+A = np.array([[1, 2, 3],
+              [4, 5, 6]])
+
+A.shape      # (2, 3)
+A.ndim       # 2
+A[0, 2]      # 3
+```
+
+La indexación comienza en $0$, de modo que la entrada $a_{ij}$ de la notación matemática se lee
+`A[i-1, j-1]`. El desfase es una fuente frecuente de errores al trasladar una fórmula a código.
+
+El conjunto $\mathbb{R}^{m\times n}$ es a su vez un espacio vectorial de dimensión $mn$: las
+matrices se suman y se escalan entrada a entrada, y esas dos operaciones bastan para dotar al
+conjunto de estructura de espacio vectorial. Una matriz es, en ese sentido, un vector con una forma
+impuesta.
+
+## Disposición en memoria
+
+Los $mn$ elementos ocupan un bloque contiguo de memoria. La forma es metadato: indica cómo recorrer
+ese bloque, no cómo está almacenado. NumPy emplea orden *C* por defecto, que recorre primero la
+última dimensión, es decir, fila por fila.
+
+```python
+A.reshape(6)     # array([1, 2, 3, 4, 5, 6])
+A.ravel()        # igual, y sin copiar cuando es posible
+
+A.reshape(6).base is A      # True: es una vista, no una copia
+```
+
+`reshape` no modifica ni mueve dato alguno: reinterpreta el mismo bloque con otra forma, siempre que
+el número de elementos se conserve. La operación es, por tanto, de coste constante.
+
+Esa distinción tiene consecuencias prácticas en aprendizaje automático. Aplanar un lote de imágenes
+de $28\times 28$ píxeles para alimentar una capa densa no copia los datos:
+
+```python
+imgs = np.random.rand(128, 28, 28)   # 128 imágenes
+X = imgs.reshape(128, 784)           # vista: 128 vectores de 784 componentes
+X.shape                              # (128, 784)
+```
+
+El valor $-1$ en una dimensión indica a NumPy que la deduzca a partir de las restantes:
+`imgs.reshape(128, -1)` produce el mismo resultado sin escribir $784$.
+
+## Suma y broadcasting
+
+Dos matrices de la misma forma se suman entrada a entrada. Cuando las formas difieren, NumPy aplica
+**broadcasting**: alinea ambas formas por la derecha y, para cada par de dimensiones, exige que
+coincidan o que una de ellas valga $1$, en cuyo caso se repite lógicamente a lo largo de ese eje.
+
+<Broadcasting
+  presets={[
+    { label: '(64, 8) + (8,)', a: [64, 8], b: [8] },
+    { label: '(3, 1) + (1, 4)', a: [3, 1], b: [1, 4] },
+    { label: '(2, 3) + (3, 2)', a: [2, 3], b: [3, 2] },
+  ]}
+  labels={{
+    shapeA: 'A.shape',
+    shapeB: 'B.shape',
+    result: 'resultado',
+    error: 'ValueError: operands could not be broadcast together',
+    match: 'dimensiones iguales',
+    stretch: 'se estira desde 1',
+    clash: 'incompatibles',
+  }}
+/>
+
+La regla se aplica sin materializar la repetición: no se reserva memoria adicional para las copias
+implícitas. Ese detalle explica por qué sumar un vector de sesgo a un lote completo tiene el mismo
+coste de memoria que el propio lote.
+
+```python
+X = np.zeros((64, 8))     # lote de 64 ejemplos, 8 características
+b = np.arange(8)          # un sesgo por característica
+
+(X + b).shape             # (64, 8): b se suma a cada una de las 64 filas
+```
+
+El caso `(2, 3) + (3, 2)` de la figura es el error más común en código de aprendizaje automático.
+Ninguna dimensión vale $1$ y ninguna pareja coincide, de modo que la operación es ilegal. La lectura
+de `.shape` antes de operar evita la mayor parte de estos fallos.
+
+## Producto matricial
+
+Dadas $A \in \mathbb{R}^{m\times k}$ y $B \in \mathbb{R}^{k\times n}$, el producto
+$C = AB \in \mathbb{R}^{m\times n}$ se define entrada a entrada como
+
+$$
+c_{ij} = \sum_{l=1}^{k} a_{il}\,b_{lj}
+$$
+
+Cada entrada de $C$ es el producto escalar de una fila de $A$ por una columna de $B$. La figura
+recorre ese cálculo celda a celda:
+
+<MatMulGrid
+  a={[[1, 2], [3, 4]]}
+  b={[[1, 0], [3, 1]]}
+  names={{ a: 'A', b: 'B', c: 'C' }}
+  labels={{ step: 'Paso' }}
+/>
+
+La definición impone la condición de compatibilidad: el número de columnas de $A$ debe coincidir con
+el número de filas de $B$. Las dimensiones interiores se cancelan y las exteriores determinan la
+forma del resultado.
+
+$$
+(m \times \underbrace{k)\,(k}_{\text{deben coincidir}} \times n) \;\longrightarrow\; (m \times n)
+$$
+
+```python
+A = np.ones((2, 3))
+C = np.ones((2, 2))
+
+A @ C
+# ValueError: matmul: Input operand 1 has a mismatch in its core dimension 0
+```
+
+## `@` frente a `*`
+
+`@` implementa el producto matricial; `*` implementa el producto de Hadamard, que multiplica entrada
+a entrada y exige formas compatibles por broadcasting. Son operaciones distintas que devuelven
+resultados distintos con las mismas entradas.
+
+```python
+M = np.array([[1, 2],
+              [3, 4]])
+
+M @ M        # array([[ 7, 10],    producto matricial
+             #        [15, 22]])
+M * M        # array([[ 1,  4],    Hadamard
+             #        [ 9, 16]])
+```
+
+La confusión es silenciosa cuando ambas matrices son cuadradas: el código no falla, devuelve un
+resultado numéricamente plausible y el error se manifiesta mucho después.
+
+## Transpuesta e identidad
+
+La **transpuesta** $A^\top \in \mathbb{R}^{n\times m}$ intercambia filas y columnas,
+$(A^\top)_{ij} = a_{ji}$. En NumPy se obtiene con `.T`, que devuelve una vista y no copia.
+
+```python
+A = np.ones((2, 3))
+
+(A @ A.T).shape     # (2, 3) @ (3, 2) → (2, 2)
+(A.T @ A).shape     # (3, 2) @ (2, 3) → (3, 3)
+```
+
+Las dos expresiones son legales y producen matrices de tamaños distintos, lo que ilustra de forma
+inmediata que el producto no es conmutativo. La lección siguiente trata la transpuesta en detalle.
+
+La **matriz identidad** $I_n$ tiene unos en la diagonal y ceros fuera de ella, y es el elemento
+neutro del producto:
+
+$$
+I_m A = A I_n = A, \qquad A \in \mathbb{R}^{m\times n}
+$$
+
+```python
+I = np.eye(3)
+M3 = np.random.randn(3, 3)
+
+np.allclose(I @ M3, M3)     # True
+```
+
+## Aplicación: la capa lineal
+
+Una capa densa de una red neuronal aplica a cada ejemplo una transformación afín: un producto por
+una matriz de pesos seguido de la suma de un sesgo.
+
+$$
+\vec{y} = W\vec{x} + \vec{b}, \qquad W \in \mathbb{R}^{d_{\text{out}} \times d_{\text{in}}}
+$$
+
+En la práctica los ejemplos no se procesan de uno en uno. Un **lote** de $N$ ejemplos se dispone
+como una matriz $X \in \mathbb{R}^{N \times d_{\text{in}}}$, con un ejemplo por fila, y la capa
+completa se evalúa con un único producto:
+
+```python
+X = np.random.randn(64, 3)    # lote de 64 ejemplos, 3 características
+W = np.random.randn(3, 8)     # capa de 3 a 8 unidades
+b = np.random.randn(8)        # un sesgo por unidad de salida
+
+Y = X @ W + b                 # (64, 3) @ (3, 8) → (64, 8), y b por broadcasting
+Y.shape                       # (64, 8)
+```
+
+Esa línea reúne las tres operaciones de la lección. El producto `X @ W` transforma los 64 ejemplos
+simultáneamente; el broadcasting suma el mismo sesgo a las 64 filas sin replicarlo en memoria; y la
+disposición por filas es la que hace que las dimensiones encajen.
+
+La convención de situar los ejemplos en filas explica la forma de $W$ en el código, traspuesta
+respecto de la fórmula. Ambas convenciones coexisten en la literatura, y comprobar `.shape` es la
+manera fiable de saber cuál emplea una implementación concreta.
+
+El coste de $XW$ es $\Theta(N d_{\text{in}} d_{\text{out}})$ operaciones, todas independientes entre
+sí. Esa independencia es lo que permite repartirlas entre miles de núcleos, y es la razón técnica
+por la que el aprendizaje profundo se ejecuta en GPU: el entrenamiento de una red es, en su mayor
+parte, una sucesión de productos de matrices.
+
+---
+
+**Ejercicio.** Para `X` de forma `(64, 3)` y `W` de forma `(3, 8)`, determinar la forma de
+`X.T @ X` y la de `W @ W.T` antes de ejecutarlas. Explicar por qué `X @ X` es ilegal y qué producto
+sí lo es.

@@ -1,0 +1,204 @@
+---
+title: 'Linear systems with Python'
+language: 'en'
+module: 'Systems and matrices'
+moduleOrder: 1
+order: 1
+summary: 'Matrix form of a linear system, solution with np.linalg.solve, LU factorisation with pivoting, and the rank criterion governing existence and uniqueness.'
+---
+
+A **system of linear equations** in $m$ equations and $n$ unknowns has the form
+
+$$
+a_{i1}x_1 + a_{i2}x_2 + \cdots + a_{in}x_n = b_i, \qquad i = 1,\dots,m
+$$
+
+and is written compactly as
+
+$$
+A\vec{x} = \vec{b}, \qquad A \in \mathbb{R}^{m \times n},\; \vec{x} \in \mathbb{R}^n,\; \vec{b} \in \mathbb{R}^m
+$$
+
+Solving it means determining the set $\{\vec{x} \in \mathbb{R}^n : A\vec{x} = \vec{b}\}$. That set is
+empty, a single point, or an affine subspace of positive dimension; there are no other cases.
+
+The system used throughout this lesson is
+
+$$
+\begin{aligned}
+  x_1 + x_2 + x_3 &= 3\\
+  x_1 - x_2 + 2x_3 &= 2\\
+  x_2 + x_3 &= 2
+\end{aligned}
+$$
+
+## Matrix form
+
+Row $i$ of $A$ holds the coefficients of equation $i$; component $i$ of $\vec{b}$ holds its constant
+term. Zero coefficients occupy a position: the third equation has no $x_1$, hence $a_{31} = 0$.
+
+```python
+import numpy as np
+
+A = np.array([[1,  1, 1],
+              [1, -1, 2],
+              [0,  1, 1]])
+b = np.array([3, 2, 2])
+```
+
+## Solution with NumPy
+
+When $m = n$ and $A$ is invertible, the solution is unique and is obtained with `np.linalg.solve`:
+
+```python
+x = np.linalg.solve(A, b)
+# array([1., 1., 1.])
+```
+
+The routine does not compute $A^{-1}$. It applies Gaussian elimination with **partial pivoting**,
+which yields the factorisation
+
+$$
+PA = LU
+$$
+
+with $P$ a permutation matrix, $L$ unit lower triangular and $U$ upper triangular. The system is
+then solved by two chained substitutions, $L\vec{y} = P\vec{b}$ and $U\vec{x} = \vec{y}$, each
+immediate by triangularity. The cost is $\Theta(n^3)$ operations. The implementation delegates to
+LAPACK.
+
+The permutation matrix is not a dispensable technicality: without pivoting a zero pivot halts the
+process, and a pivot of small magnitude amplifies rounding error.
+
+## Gaussian elimination
+
+The figure applies Gauss-Jordan elimination to the augmented matrix $[A \mid \vec{b}]$. Each step is
+an elementary row operation. The process terminates when the left block is the identity, at which
+point the right-hand column holds the solution.
+
+<EliminationSteps
+  a={[[1, 1, 1], [1, -1, 2], [0, 1, 1]]}
+  b={[3, 2, 2]}
+  rowLetter="R"
+  labels={{
+    start: 'Augmented matrix [A | b]',
+    done: 'Identity on the left: the last column is x',
+    singular: 'A is singular: no unique solution exists',
+    step: 'Step',
+  }}
+/>
+
+The three elementary operations — swapping two rows, multiplying a row by a non-zero scalar, and
+adding a multiple of one row to another — are invertible, and therefore preserve the solution set.
+
+## Verification
+
+```python
+np.allclose(A @ x, b)
+# True
+```
+
+The `@` operator denotes the matrix product. The comparison uses `allclose` rather than `==`: in
+floating-point arithmetic the computed solution satisfies $A\hat{x} \approx \vec{b}$ with a residual
+on the order of machine epsilon, and strict equality would return false.
+
+## Geometric interpretation
+
+For $n = 2$, each equation $a x_1 + b x_2 = c$ with $(a,b) \neq (0,0)$ describes a line in
+$\mathbb{R}^2$, and the solution set of the system is their intersection.
+
+<LinearSystem2D
+  first={[1, 1, 1.25]}
+  second={[1, -2, 0.5]}
+  labels={{
+    hint: 'Each equation describes a line. The sliders modify its coefficients.',
+    unique: 'Unique solution: the lines meet at one point.',
+    none: 'Inconsistent system: distinct parallel lines.',
+    infinite: 'Underdetermined system: both equations describe the same line.',
+    solution: 'x',
+    reset: 'Reset',
+  }}
+/>
+
+Two lines in the plane meet at a point, are parallel and disjoint, or coincide. Those three cases are
+exhaustive and correspond to a unique solution, an inconsistent system, and an underdetermined
+system. For $n = 3$ each equation describes a plane, and the intersection of the three is a point, a
+line, a plane, or the empty set.
+
+## Existence and uniqueness
+
+The **rank** of a matrix is the number of linearly independent rows, equivalently the number of
+linearly independent columns. The governing criterion is the Rouché-Capelli theorem:
+
+$$
+\begin{aligned}
+\operatorname{rank}(A) &= \operatorname{rank}([A \mid \vec{b}]) = n &&\Rightarrow\; \text{unique solution}\\
+\operatorname{rank}(A) &= \operatorname{rank}([A \mid \vec{b}]) < n &&\Rightarrow\; \text{infinitely many solutions}\\
+\operatorname{rank}(A) &< \operatorname{rank}([A \mid \vec{b}]) &&\Rightarrow\; \text{no solution}
+\end{aligned}
+$$
+
+A square matrix with $\operatorname{rank}(A) < n$ is called **singular** and admits no inverse.
+`np.linalg.solve` requires $A$ square and non-singular; otherwise it raises an exception.
+
+```python
+C = np.array([[1,  1, 1],
+              [1, -1, 2],
+              [2,  0, 3]])          # row 3 = row 1 + row 2
+
+np.linalg.solve(C, np.array([3, 2, 1]))
+# LinAlgError: Singular matrix
+
+np.linalg.matrix_rank(C)            # 2
+```
+
+Here $\operatorname{rank}(C) = 2 < 3$. The constant term decides between the two remaining cases:
+with $\vec{b} = (3, 2, 5)$ the relation $b_3 = b_1 + b_2$ holds, the rank of the augmented matrix
+remains 2 and the system has infinitely many solutions; with $\vec{b} = (3, 2, 1)$ the augmented
+rank is 3 and the system is inconsistent.
+
+<EliminationSteps
+  a={[[1, 1, 1], [1, -1, 2], [2, 0, 3]]}
+  b={[3, 2, 1]}
+  rowLetter="R"
+  labels={{
+    start: 'Augmented matrix of an inconsistent system',
+    done: 'Process complete',
+    singular: 'Zero row in the A block: the rank is 2, not 3',
+    step: 'Step',
+  }}
+/>
+
+The final state exhibits a zero row in the block corresponding to $A$ with a non-zero constant term.
+That row encodes the equation $0 = c$ with $c \neq 0$, which is how elimination exposes
+inconsistency.
+
+For systems without an exact solution, `np.linalg.lstsq` returns the minimiser of
+$\lVert A\vec{x} - \vec{b} \rVert_2$; when that minimiser is not unique, it returns the one of
+minimum norm.
+
+```python
+x, residuals, rank, sv = np.linalg.lstsq(C, np.array([3, 2, 1]), rcond=None)
+```
+
+## `solve` versus `inv`
+
+For solving $A\vec{x} = \vec{b}$ with $A$ invertible, both expressions are mathematically
+equivalent:
+
+```python
+x = np.linalg.solve(A, b)      # recommended
+x = np.linalg.inv(A) @ b       # discouraged
+```
+
+Numerically they are not. Computing $A^{-1}$ requires solving $n$ systems rather than one, and the
+subsequent product introduces a second source of rounding error. The error bound for the second
+route is worse, and the gap widens with the condition number of $A$. An explicit inverse is
+warranted only when the matrix $A^{-1}$ is itself the object of interest, which in practice is
+uncommon.
+
+---
+
+**Exercise.** Replace the coefficient $a_{31} = 2$ in `C` with $3$ and recompute the rank. Determine
+whether the resulting matrix is still singular, and which configuration of the three planes
+corresponds to each case.

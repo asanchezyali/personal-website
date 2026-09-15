@@ -1,0 +1,83 @@
+---
+title: 'Álgebra Lineal con Python'
+language: 'es'
+level: 'Introductorio'
+summary: 'Sistemas lineales y matrices, y la estructura de espacio vectorial que los sostiene, implementado en NumPy.'
+tags: ['álgebra-lineal', 'python', 'numpy', 'matemáticas']
+---
+
+La enseñanza habitual del álgebra lineal presenta la materia como una sucesión de algoritmos:
+multiplicar filas por columnas, desarrollar un determinante, escalonar un sistema. El resultado es
+una competencia operativa sin contenido semántico, en la que los procedimientos se ejecutan
+correctamente sin que se sepa qué representan.
+
+Este curso invierte el orden de exposición. Cada concepto se introduce mediante su interpretación
+geométrica, sostenida en una figura manipulable, y se cierra con la definición formal y su
+implementación en NumPy. El cálculo se presenta como consecuencia de la definición, no como punto de
+partida.
+
+## Requisitos
+
+Conocimientos básicos de Python y familiaridad con el plano cartesiano. No se presupone formación
+previa en álgebra lineal.
+
+```bash
+pip install numpy
+```
+
+## Organización
+
+El **primer módulo** parte de los sistemas de ecuaciones lineales, el problema que motiva
+históricamente la disciplina: su forma matricial, la resolución con `np.linalg.solve`, la
+factorización LU con pivoteo y el criterio de rango que determina existencia y unicidad.
+
+La segunda trata la matriz como estructura de datos —forma, disposición en memoria, broadcasting,
+producto matricial, transpuesta e identidad— y cierra en la capa lineal de una red neuronal, donde
+esas operaciones aparecen reunidas en una sola expresión.
+
+La tercera aborda la inversa y la transpuesta: cuándo existe la inversa, por qué una matriz casi
+singular es más peligrosa que una singular, y cómo el producto $A^\top A$ genera las matrices
+simétricas sobre las que se apoyan el análisis de componentes principales y la regresión lineal.
+
+La cuarta trata el producto por un escalar y la norma, y llega a dos decisiones cotidianas en
+aprendizaje automático que se reducen a elegir un número: la similitud coseno entre *embeddings* y
+la tasa de aprendizaje del descenso por gradiente.
+
+La quinta describe el conjunto solución cuando las soluciones son infinitas: su estructura afín, el
+núcleo, el teorema del rango y por qué la solución de norma mínima que devuelve `lstsq` constituye
+un sesgo implícito del optimizador.
+
+La sexta vuelve sobre la eliminación gaussiana para quedarse con lo que produce: los factores
+$L$, $U$ y $P$, la ventaja de conservarlos cuando hay varios términos independientes, y las
+factorizaciones de Cholesky y QR con los problemas a los que corresponde cada una.
+
+La séptima toma el núcleo como objeto de estudio: el truco del $-1$ para obtener una base a mano,
+el rango numérico como decisión sobre un umbral, y la colinealidad como el caso en que el núcleo de
+la matriz de diseño vuelve inidentificables los coeficientes de un modelo.
+
+La octava cierra el bloque volviendo sobre la inversa desde el lado del cálculo: los $n$ sistemas
+que hay detrás, la construcción de Gauss-Jordan, por qué la comprobación habitual no detecta un
+resultado erróneo, y los casos en que la matriz inversa es de verdad el objeto buscado.
+
+La novena cierra el bloque reuniendo lo anterior: la pseudoinversa como caso general, el relleno que
+impide factorizar matrices dispersas de gran tamaño, los métodos iterativos que lo evitan, y un
+criterio para elegir el algoritmo a partir de la forma, el rango y la estructura de la matriz.
+
+El **segundo módulo** parte de la definición axiomática de espacio vectorial, que es lo que explica
+por qué las mismas técnicas se aplican a listas de números, a polinomios y a las representaciones
+internas de un modelo. Introduce los subespacios, el span y el espacio columna, y continúa con la proyección ortogonal,
+los cuatro subespacios fundamentales de una matriz y el análisis de componentes principales
+planteado como la elección del subespacio que mejor representa unos datos. Cierra con la
+independencia lineal y con la medida del grado de dependencia en datos reales, donde el rango
+resulta ser una respuesta binaria a una pregunta continua. Termina en la base y la dimensión, y en
+el cambio de base como elección de representación: la base determina cuántos números hacen falta
+para describir un objeto. Cierra con el rango: el teorema que iguala filas y columnas, y la
+aproximación óptima de rango bajo, que es lo que sostiene la compresión y la adaptación de modelos
+grandes. La última lección define las aplicaciones lineales y su correspondencia con matrices, que
+el resto del módulo venía usando sin enunciar, y llega a por qué una red sin funciones de activación
+colapsa en una sola capa, y termina con las matrices de transformación y las coordenadas homogéneas
+que permiten componer una traslación con una rotación en un solo producto. Cierra con los valores y vectores propios, la diagonalización y el teorema
+espectral, que es lo que explica por qué el análisis de componentes principales funciona. La última lección reúne la imagen y el núcleo bajo el teorema de rango-nulidad, leído como una ley de conservación: cada dimensión del dominio se transmite o se aplasta, y el reparto entre ambas cosas es calculable antes de entrenar nada. El módulo se cierra levantando la exigencia que todo lo anterior compartía —pasar por el origen— para llegar al espacio afín, al hiperplano que separa dos clases y a la capa densa con sesgo, que es una aplicación afín y nada más. El curso cierra con la descomposición en valores singulares, que el resto de las lecciones venía usando sin definir: de dónde sale, por qué existe donde la diagonalización fracasa, y por qué el determinante es un volumen.
+
+La serie continúa. Cada lección incorpora al menos una figura interactiva; la exploración previa de
+la figura facilita la lectura de la formulación algebraica que la acompaña.
