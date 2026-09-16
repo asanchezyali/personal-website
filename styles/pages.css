@@ -512,7 +512,7 @@
   .mplay-matrix { display: flex; align-items: center; gap: 4px; margin-bottom: 6px; }
   .mplay-bracket { font-size: 44px; line-height: 1; color: var(--g-400); font-weight: 300; }
   .mplay-cells { display: grid; grid-template-columns: repeat(2, 46px); gap: 2px 10px; font-family: var(--f-ubuntu); font-weight: 700; font-size: 15px; color: var(--fg); text-align: center; }
-  .mplay-slider { display: grid; grid-template-columns: 18px 1fr 34px; align-items: center; gap: 10px; }
+  .mplay-slider { display: grid; grid-template-columns: minmax(18px, auto) 1fr 34px; align-items: center; gap: 10px; }
   .mplay-name { font-family: var(--f-ubuntu); font-weight: 700; font-size: 13px; color: var(--s-500); }
   html.dark .mplay-name { color: var(--s-400); }
   .mplay-val { font-size: 12.5px; color: var(--g-500); text-align: right; font-variant-numeric: tabular-nums; }
@@ -1474,3 +1474,17 @@
   .sp-tag { font-family: var(--f-ubuntu); font-size: 10px; text-transform: uppercase; letter-spacing: .1em; color: var(--g-500); }
   .post-body .sp-card p { margin: 6px 0 0; font-size: 13.5px; line-height: 1.5; color: var(--g-600); }
   .post-body .sp-card p.is-offtopic { color: var(--vp-a); }
+
+  /* Span corruption, and cross-attention */
+  .sc-tok, .ca-tok {
+    padding: 5px 9px; border: 1px solid var(--g-300); border-radius: 7px;
+    font-family: var(--f-ubuntu); font-size: 12.5px; color: var(--g-500); background: var(--bg);
+  }
+  html.dark .sc-tok, html.dark .ca-tok { background: var(--g-100); }
+  .sc-tok.is-sent { border-color: var(--vp-d); color: var(--vp-d); font-weight: 700; }
+  .ca-tok.is-lit { color: var(--fg); }
+  .ca-tok.is-lit.is-src { border-color: var(--vp-c); }
+  .ca-tok.is-lit.is-tgt { border-color: var(--vp-b); }
+  .ca-tok.is-cur { border-color: var(--vp-a); border-width: 2px; color: var(--fg); font-weight: 700; }
+  .fs-legend i.ca-k-src { background: var(--vp-c); }
+  .fs-legend i.ca-k-tgt { background: var(--vp-b); }

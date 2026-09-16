@@ -1,0 +1,193 @@
+---
+title: 'Encoder and decoder'
+language: 'en'
+module: 'Pre-training'
+moduleOrder: 1
+order: 4
+summary: 'Cross-attention as the only bridge between the two halves, the text-to-text framing and what descends from it, the corruptions by which a model learns to rebuild a document, and what the ablation usually cited for this architecture was actually comparing.'
+---
+
+The previous two lessons described families with complementary limitations. The decoder generates but
+looks only to its left; the encoder has both sides but does not generate. This lesson covers the
+architecture combining the two, the objective it is pre-trained with, and closes the module with a
+map of every objective seen.
+
+## The bridge between the two halves
+
+A common description places encoder and decoder side by side without specifying what connects them.
+The connector is a third kind of attention, and without it the architecture would make no sense.
+
+A decoder layer runs **two** consecutive attention steps. The first is masked self-attention, causal,
+over the tokens generated so far: the same one from the lesson on the decoder. The second is
+**cross-attention**, where the queries come from the decoder but the keys and values come from the
+encoder's states.
+
+<CrossAttention
+  labels={{
+    hint: 'One decoder position runs two attentions over two different sequences.',
+    source: 'source',
+    target: 'target so far',
+    selfAttn: 'masked self-attention',
+    crossAttn: 'cross-attention',
+    reads: 'reads',
+    note: 'The source is never masked: every generated token may read the whole input. Only the target is causal.',
+    reset: 'Reset',
+  }}
+/>
+
+The asymmetry the figure shows is the content of the architecture. Over the target the mask is
+triangular, for the usual reason: position $t$ cannot see what it has not yet generated. Over the
+source there is **no mask at all**, because the input is complete from the start and there is
+nothing to leak. Every generated token consults the entire input sequence.
+
+From this follows the answer to why the encoder is kept. Remove cross-attention and the decoder is
+an ordinary language model with no access to the source. Cross-attention is what makes the output
+depend on the input.
+
+## Every problem as text to text
+
+T5 took that structure to its conclusion. If the model turns one text sequence into another, any
+task can be expressed in that format: translation, obviously, but also classification —whose label
+is emitted as a word— and even regression, whose number is emitted as text.
+
+| Input | Output |
+| --- | --- |
+| `translate En→De: Hello` | `Hallo!` |
+| `answer: when was Einstein born?` | `March 14, 1879` |
+| `score a translation: ...` | `0.81` |
+
+The uniformity has an immediate practical consequence: one model, one loss function and one training
+procedure for the whole set of tasks.
+
+Its descendants are also worth naming, since they usually go unmentioned. The prefix stating the
+task —`translate En→De:`— is an instruction written into the input itself. The distance between that
+and the instruction tuning that defines today's assistants is short: T5 introduced the idea that the
+task is specified in the text rather than in the architecture.
+
+## Denoising as the objective
+
+How to pre-train the pair on unlabelled text remains. The answer is to make it a **denoising
+autoencoder**: take correct text, corrupt it, hand the corrupted version to the encoder and require
+the decoder to reconstruct the original.
+
+$$
+(\hat\theta, \hat\omega) = \operatorname*{arg\,min}_{\theta,\omega} \sum_{\mathbf{x} \in \mathcal{D}} \text{CE}\!\left(\text{Model}_{\theta,\omega}(\mathbf{x}_{\text{noise}}),\, \mathbf{x}\right)
+$$
+
+The loss is the cross-entropy of the lesson on the decoder, now applied to the whole reconstructed
+sequence. The label remains free: it is the text before it was corrupted.
+
+## The repertoire of corruptions
+
+If the objective is to reconstruct the original, the design decision is **how to break it**. BART
+tried a repertoire: masking single tokens, deleting them, replacing a whole span with one marker,
+permuting sentence order and rotating the document.
+
+The variants are not equivalent, and the difference is instructive. When masking, the model knows how
+many pieces are missing, since each marker occupies a position. When **deleting**, it must also
+deduce **how many** tokens were removed. When replacing a span with one marker, it must deduce the
+span's **length**. Each corruption defines a different difficulty, so the corruption chosen *is* the
+curriculum.
+
+The published result is concrete: BART performed best by combining **text infilling** with
+**sentence shuffling**, with gains of up to six ROUGE points on abstractive summarisation, dialogue
+and question answering.
+
+## T5's sentinels
+
+BART reconstructs the whole sentence. T5 introduces an economy: the decoder emits **only the missing
+pieces**. Each removed span is replaced in the input by a distinct **sentinel**, and the target is to
+produce just the spans, each preceded by its sentinel.
+
+<SpanCorruption
+  labels={{
+    hint: 'Only the removed spans are generated, each tagged by its sentinel.',
+    encoderIn: 'encoder input',
+    decoderOut: 'decoder target',
+    rate: 'rate',
+    span: 'span',
+    targetLen: 'target',
+    fullLen: 'full sentence',
+    real: 'on a 512-token input',
+    note: 'BART reconstructs the whole sentence; T5 emits only what is missing, which is why its targets are short.',
+    reset: 'Reset',
+  }}
+/>
+
+The gain is in sequence length, and over a realistic input it is considerable. T5's ablations settled
+on a corruption rate of $15\%$ —the same one BERT uses for masking— with spans of mean length $3$.
+Over a 512-token input that corrupts some 77 tokens spread across 26 spans, so the target measures
+104 tokens against the 512 of the full sentence: **80% shorter**. Since the cost of attention grows
+with the square of the length, shortening the target makes each training step cheaper, and it is one
+of the reasons T5 scaled cleanly across sizes.
+
+The same authors noted that differences between objectives were limited and that performance held
+steady at rates between $10$ and $25\%$. The choice of $15\%$ is reasonable, not critical.
+
+## One stack suffices: prefix language modelling
+
+The separation between encoder and decoder is not a necessary architectural boundary. The
+introductory lesson showed three attention masks, and the third —the prefix one— reproduces the
+behaviour of both halves within a **single** stack of layers: prefix tokens attend to one another in
+both directions, like an encoder, and continuation tokens attend causally, like a decoder.
+
+The shift in perspective is worth stating: what distinguishes the module's three families is not so
+much the architecture as **which positions each position may read**. Encoder, decoder and prefix are
+three masks over the same attention mechanism.
+
+## The map of objectives
+
+The module has covered every major self-supervised objective. They do not divide cleanly by
+architecture —several admit more than one— so it is cleaner to organise them by what they optimise.
+
+| Objective | Idea | Fits |
+| --- | --- | --- |
+| Language modelling | predict the next token | decoder |
+| Masked | predict the hidden tokens | encoder · enc-dec |
+| Permuted | predict in a random order | autoregressive |
+| Discriminative | classify: sentence order, replaced token | encoder |
+| Denoising | reconstruct corrupted text | enc-dec |
+
+One procedure underlies all of them: manufacture a prediction problem from unlabelled text and solve
+it at scale.
+
+## What the ablation was actually comparing
+
+The architecture is usually defended by citing T5's ablations, and the citation is frequently passed
+on in distorted form. Stating it correctly requires a precision about parameter counts.
+
+An encoder-decoder with $L$ layers in each half has roughly **twice** the parameters of an
+$L$-layer decoder. Its compute cost, however, is **the same**, because each token passes through one
+of the two halves and not both. The comparison the authors ran therefore pits an encoder-decoder of
+$2P$ parameters against a decoder of $P$ parameters, **at equal compute**, and under those conditions
+the former with a denoising objective beat both the plain language model and the prefix one.
+
+The difference matters. Claiming it wins "at equal parameters" would be false, and would invert the
+result's meaning: what it shows is that, for a given compute budget, it is worth spending parameters
+on keeping the two halves separate.
+
+## Closing the module
+
+Three families and one procedure. Decoders predict the next token and learn to generate. Encoders
+fill in blanks and learn to represent. Encoder-decoder models corrupt and rebuild, and learn both.
+All three turn raw text into free supervision, which is the entire mechanism behind a foundation
+model.
+
+That closes the module on pre-training. What follows is the transformation of these models into the
+assistants that get used: instruction tuning, alignment with human preferences, and reasoning in the
+context.
+
+---
+
+**Exercise.** Load `t5-small` with `transformers` and feed it an input with sentinels, of the form
+`The puppies <extra_id_0> of the house <extra_id_1>`, checking that the output reproduces the tagged
+span format rather than the full sentence. Then measure the target length at corruption rates of
+$10$, $15$ and $30\%$ over a long paragraph and compare against the reduction computed in the figure.
+
+## References
+
+- Xiao and Zhu, *Foundations of Large Language Models* (2025), secs. 1.2.3 and 1.2.4: [arXiv:2501.09223](https://arxiv.org/abs/2501.09223).
+- Raffel and co-authors, *T5* (2020): [arXiv:1910.10683](https://arxiv.org/abs/1910.10683).
+- Lewis and co-authors, *BART* (2020): [arXiv:1910.13461](https://arxiv.org/abs/1910.13461).
+- Dong and co-authors, *UniLM* (2019): [arXiv:1905.03197](https://arxiv.org/abs/1905.03197) — prefix language modelling.
+- Vaswani and co-authors, *Attention Is All You Need* (2017): [arXiv:1706.03762](https://arxiv.org/abs/1706.03762) — the original cross-attention.

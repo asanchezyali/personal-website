@@ -59,6 +59,8 @@ import DecodingStrategies from './DecodingStrategies'
 import KVCacheCost from './KVCacheCost'
 import PermutationOrder from './PermutationOrder'
 import SentencePairTask from './SentencePairTask'
+import SpanCorruption from './SpanCorruption'
+import CrossAttention from './CrossAttention'
 import { PseudoCodeLine, PseudoCode } from './PseudoCode'
 
 export const components: MDXComponents = {
@@ -116,6 +118,8 @@ export const components: MDXComponents = {
   KVCacheCost,
   PermutationOrder,
   SentencePairTask,
+  SpanCorruption,
+  CrossAttention,
   TOCInline,
   a: CustomLink,
   pre: CodeBlock,

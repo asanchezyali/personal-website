@@ -1,0 +1,205 @@
+---
+title: 'Codificador y decodificador'
+language: 'es'
+module: 'Preentrenamiento'
+moduleOrder: 1
+order: 4
+summary: 'La atención cruzada como único puente entre las dos mitades, el planteamiento de texto a texto y su descendencia, las corrupciones con las que se aprende a reconstruir un documento, y qué comparaba realmente la ablación que suele citarse a favor de esta arquitectura.'
+---
+
+Las dos lecciones anteriores describieron familias con una limitación complementaria. El
+decodificador genera pero solo mira a su izquierda; el codificador dispone de ambos lados pero no
+genera. Esta lección trata la arquitectura que combina ambas, el objetivo con el que se preentrena,
+y cierra el módulo con un mapa de todos los objetivos vistos.
+
+## El puente entre las dos mitades
+
+Una descripción frecuente sitúa al codificador y al decodificador uno junto a otro sin precisar qué
+los conecta. El conector es un tercer tipo de atención, y sin él la arquitectura no tendría sentido.
+
+Una capa del decodificador ejecuta **dos** pasos de atención consecutivos. El primero es la atención
+propia enmascarada, causal, sobre los tokens ya generados: la misma de la lección sobre el
+decodificador. El segundo es la **atención cruzada**, en la que las consultas proceden del
+decodificador pero las claves y los valores proceden de los estados del codificador.
+
+<CrossAttention
+  source={['Der', 'Hund', 'schläft', 'im', 'Garten']}
+  target={['El', 'perro', 'duerme', 'en', 'el', 'jardín']}
+  labels={{
+    hint: 'Una misma posición del decodificador ejecuta dos atenciones sobre dos secuencias distintas.',
+    source: 'fuente',
+    target: 'objetivo hasta ahora',
+    selfAttn: 'atención propia enmascarada',
+    crossAttn: 'atención cruzada',
+    reads: 'lee',
+    note: 'La fuente nunca se enmascara: todo token generado puede leer la entrada entera. Solo el objetivo es causal.',
+    reset: 'Reiniciar',
+  }}
+/>
+
+La asimetría que muestra la figura es el contenido de la arquitectura. Sobre el objetivo la máscara
+es triangular, por la razón de siempre: la posición $t$ no puede ver lo que aún no ha generado.
+Sobre la fuente **no hay máscara alguna**, porque la entrada está completa desde el principio y no
+hay nada que filtrar. Cada token generado consulta la secuencia de entrada entera.
+
+De aquí se sigue la respuesta a por qué conservar el codificador. Suprimida la atención cruzada, el
+decodificador queda como un modelo de lenguaje corriente sin acceso a la fuente. La atención cruzada
+es lo que hace que la salida dependa de la entrada.
+
+## Todo problema como texto a texto
+
+T5 llevó esa estructura a su conclusión. Si el modelo transforma una secuencia de texto en otra,
+cualquier tarea puede expresarse en ese formato: la traducción, evidentemente, pero también la
+clasificación —cuya etiqueta se emite como palabra— e incluso la regresión, cuyo número se emite
+como texto.
+
+| Entrada | Salida |
+| --- | --- |
+| `traducir es→de: Hola` | `Hallo!` |
+| `responder: ¿cuándo nació Einstein?` | `14 de marzo de 1879` |
+| `puntuar la traducción: ...` | `0.81` |
+
+La uniformidad tiene una consecuencia práctica inmediata: un solo modelo, una sola función de
+pérdida y un solo procedimiento de entrenamiento para todo el conjunto de tareas.
+
+Conviene además señalar su descendencia, que suele pasarse por alto. El prefijo que indica la tarea
+—`traducir es→de:`— es una instrucción escrita en la propia entrada. La distancia entre eso y el
+ajuste por instrucciones que hoy define a los asistentes es pequeña: T5 introdujo la idea de que la
+tarea se especifica en el texto y no en la arquitectura.
+
+## La eliminación de ruido como objetivo
+
+Queda por resolver cómo preentrenar la pareja sobre texto sin etiquetar. La respuesta es convertirla
+en un **autocodificador de eliminación de ruido**: se toma un texto correcto, se corrompe, se
+entrega la versión corrompida al codificador y se exige al decodificador que reconstruya el
+original.
+
+$$
+(\hat\theta, \hat\omega) = \operatorname*{arg\,min}_{\theta,\omega} \sum_{\mathbf{x} \in \mathcal{D}} \text{EC}\!\left(\text{Modelo}_{\theta,\omega}(\mathbf{x}_{\text{ruido}}),\, \mathbf{x}\right)
+$$
+
+La pérdida es la entropía cruzada de la lección sobre el decodificador, aplicada ahora a la
+secuencia reconstruida completa. La etiqueta sigue siendo gratuita: es el texto antes de
+corromperlo.
+
+## El repertorio de corrupciones
+
+Si el objetivo consiste en reconstruir el original, la decisión de diseño es **cómo romperlo**. BART
+ensayó un repertorio: enmascarar tokens sueltos, borrarlos, sustituir un tramo entero por una sola
+marca, permutar el orden de las frases y rotar el documento.
+
+Las variantes no son equivalentes, y la diferencia es instructiva. Al enmascarar, el modelo sabe
+cuántas piezas faltan, porque cada marca ocupa una posición. Al **borrar**, ha de deducir además
+**cuántos** tokens se suprimieron. Al sustituir un tramo por una sola marca, ha de deducir la
+**longitud** del tramo. Cada corrupción define una dificultad distinta, de modo que la corrupción
+elegida *es* el plan de estudios.
+
+El resultado publicado es concreto: BART obtuvo su mejor rendimiento combinando el **relleno de
+tramos** con la **permutación del orden de las frases**, con mejoras de hasta seis puntos ROUGE en
+tareas de resumen abstractivo, diálogo y respuesta a preguntas.
+
+## Los centinelas de T5
+
+BART reconstruye la frase entera. T5 introduce una economía: el decodificador emite **solo las
+piezas que faltan**. Cada tramo suprimido se sustituye en la entrada por un **centinela** distinto,
+y el objetivo consiste en producir únicamente los tramos, cada uno precedido de su centinela.
+
+<SpanCorruption
+  tokens={['Los', 'cachorros', 'juegan', 'fuera', 'de', 'la', 'casa', 'otra', 'vez']}
+  labels={{
+    hint: 'Solo se generan los tramos suprimidos, cada uno marcado por su centinela.',
+    encoderIn: 'entrada del codificador',
+    decoderOut: 'objetivo del decodificador',
+    rate: 'tasa',
+    span: 'tramo',
+    targetLen: 'objetivo',
+    fullLen: 'frase completa',
+    real: 'sobre una entrada de 512 tokens',
+    note: 'BART reconstruye la frase entera; T5 emite solo lo que falta, y por eso sus objetivos son cortos.',
+    reset: 'Reiniciar',
+  }}
+/>
+
+La ganancia es de longitud de secuencia, y sobre una entrada realista resulta considerable. Las
+ablaciones de T5 fijaron una tasa de corrupción del $15\,\%$ —la misma que BERT emplea para
+enmascarar— con tramos de longitud media $3$. Sobre una entrada de 512 tokens eso corrompe unos 77
+tokens repartidos en 26 tramos, de modo que el objetivo mide 104 tokens frente a los 512 de la
+frase completa: **un 80 % más corto**. Como el coste de la atención crece con el cuadrado de la
+longitud, acortar el objetivo abarata cada paso de entrenamiento, y es una de las razones por las
+que T5 escaló con limpieza entre tamaños.
+
+Los mismos autores señalaron que las diferencias entre objetivos eran limitadas y que el
+rendimiento se mantenía estable con tasas entre el $10$ y el $25\,\%$. La elección del $15\,\%$ es
+razonable, no crítica.
+
+## Un solo bloque basta: el modelado con prefijo
+
+La separación entre codificador y decodificador no es una frontera arquitectónica necesaria. La
+lección introductoria mostró tres máscaras de atención, y la tercera —la de prefijo— reproduce el
+comportamiento de ambas mitades dentro de **una sola** pila de capas: los tokens del prefijo se
+atienden entre sí en ambas direcciones, como un codificador, y los de la continuación se atienden de
+forma causal, como un decodificador.
+
+El cambio de perspectiva merece enunciarse: lo que distingue a las tres familias del módulo no es
+tanto la arquitectura como **qué posiciones puede leer cada posición**. Codificador, decodificador y
+prefijo son tres máscaras sobre el mismo mecanismo de atención.
+
+## El mapa de los objetivos
+
+El módulo ha recorrido todos los objetivos autosupervisados principales. No se reparten limpiamente
+por arquitectura —varios admiten más de una—, de modo que conviene organizarlos por lo que
+optimizan.
+
+| Objetivo | Idea | Encaja en |
+| --- | --- | --- |
+| Modelado de lenguaje | predecir el token siguiente | decodificador |
+| Enmascarado | predecir los tokens ocultos | codificador · cod.-dec. |
+| Permutado | predecir en orden aleatorio | autorregresivo |
+| Discriminativo | clasificar: orden de frases, token sustituido | codificador |
+| Eliminación de ruido | reconstruir el texto corrompido | cod.-dec. |
+
+Bajo todos ellos subyace un único procedimiento: fabricar un problema de predicción a partir de
+texto sin etiquetar y resolverlo a escala.
+
+## Lo que la ablación comparaba realmente
+
+La arquitectura suele defenderse citando las ablaciones de T5, y la cita se transmite con
+frecuencia deformada. El enunciado correcto exige una precisión sobre el recuento de parámetros.
+
+Un codificador-decodificador con $L$ capas en cada mitad tiene aproximadamente **el doble** de
+parámetros que un decodificador de $L$ capas. Su coste de cómputo, en cambio, es **el mismo**,
+porque cada token atraviesa una de las dos mitades y no ambas. La comparación que realizaron los
+autores enfrenta por tanto un codificador-decodificador de $2P$ parámetros con un decodificador de
+$P$ parámetros, **a igualdad de cómputo**, y en esas condiciones el primero con objetivo de
+eliminación de ruido superó tanto al modelo de lenguaje corriente como al de prefijo.
+
+La diferencia importa. Afirmar que gana «a igualdad de parámetros» sería falso, y invertiría el
+sentido del resultado: lo que muestra es que, para un mismo presupuesto de cómputo, conviene gastar
+parámetros en mantener las dos mitades separadas.
+
+## El cierre del módulo
+
+Tres familias y un solo procedimiento. Los decodificadores predicen el token siguiente y aprenden a
+generar. Los codificadores rellenan huecos y aprenden a representar. Los modelos
+codificador-decodificador corrompen y reconstruyen, y aprenden ambas cosas. Los tres convierten
+texto en bruto en supervisión gratuita, que es el mecanismo entero detrás de un modelo fundacional.
+
+Con esto termina el módulo sobre preentrenamiento. Lo que sigue es la transformación de estos
+modelos en los asistentes que se usan: el ajuste por instrucciones, la alineación con preferencias
+humanas y el razonamiento en el contexto.
+
+---
+
+**Ejercicio.** Cargar `t5-small` con `transformers` y pasarle una entrada con centinelas, del tipo
+`Los cachorros <extra_id_0> de la casa <extra_id_1>`, comprobando que la salida reproduce el formato
+de tramos etiquetados en lugar de la frase completa. Medir después la longitud del objetivo con
+tasas de corrupción del $10$, $15$ y $30\,\%$ sobre un párrafo largo y contrastar con la reducción
+calculada en la figura.
+
+## Referencias
+
+- Xiao y Zhu, *Foundations of Large Language Models* (2025), secs. 1.2.3 y 1.2.4: [arXiv:2501.09223](https://arxiv.org/abs/2501.09223).
+- Raffel y coautores, *T5* (2020): [arXiv:1910.10683](https://arxiv.org/abs/1910.10683).
+- Lewis y coautores, *BART* (2020): [arXiv:1910.13461](https://arxiv.org/abs/1910.13461).
+- Dong y coautores, *UniLM* (2019): [arXiv:1905.03197](https://arxiv.org/abs/1905.03197) — el modelado con prefijo.
+- Vaswani y coautores, *Attention Is All You Need* (2017): [arXiv:1706.03762](https://arxiv.org/abs/1706.03762) — la atención cruzada original.
