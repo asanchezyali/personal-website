@@ -1501,3 +1501,26 @@
   html.dark .mg-tok { background: var(--g-100); }
   .mg-tok.is-cont { color: var(--g-500); border-style: dashed; }
   .mg-tok.is-hidden { border-color: var(--vp-d); color: var(--vp-d); font-weight: 700; border-style: solid; }
+
+  /* Scaled dot product, and layer-norm placement */
+  .sdp-bars { display: flex; align-items: flex-end; gap: 10px; height: 74px; }
+  .sdp-col { display: flex; flex-direction: column; align-items: center; gap: 4px; flex: 1; height: 100%; }
+  .sdp-track { flex: 1; width: 100%; display: flex; align-items: flex-end; background: var(--g-200); border-radius: 3px; overflow: hidden; }
+  html.dark .sdp-track { background: var(--g-200); }
+  .sdp-bar { display: block; width: 100%; border-radius: 3px 3px 0 0; }
+  .sdp-bar.is-raw { background: var(--vp-a); }
+  .sdp-bar.is-scaled { background: var(--vp-b); }
+  .sdp-col em { font-style: normal; font-family: var(--f-ubuntu); font-size: 10px; color: var(--g-500); }
+
+  .np-stack { display: flex; flex-direction: column; gap: 6px; }
+  .np-layer { display: grid; grid-template-columns: 16px 4px 1fr; gap: 8px; align-items: center; }
+  .np-idx { font-family: var(--f-ubuntu); font-size: 10px; color: var(--g-400); text-align: right; }
+  .np-stream { height: 100%; min-height: 26px; border-radius: 2px; background: var(--g-300); }
+  .np-stream.is-clean { background: var(--vp-b); }
+  .np-blocks { display: flex; gap: 5px; align-items: center; }
+  .np-box {
+    padding: 4px 9px; border-radius: 6px; font-family: var(--f-ubuntu); font-size: 11px;
+    border: 1px solid var(--g-300); color: var(--g-600);
+  }
+  .np-box.is-ln { border-color: var(--vp-c); color: var(--vp-c); }
+  .np-box.is-add { border-color: var(--vp-b); color: var(--vp-b); font-weight: 700; }

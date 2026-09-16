@@ -63,6 +63,8 @@ import SpanCorruption from './SpanCorruption'
 import CrossAttention from './CrossAttention'
 import ParameterBudget from './ParameterBudget'
 import MaskingGranularity from './MaskingGranularity'
+import ScaledDotProduct from './ScaledDotProduct'
+import NormPlacement from './NormPlacement'
 import { PseudoCodeLine, PseudoCode } from './PseudoCode'
 
 export const components: MDXComponents = {
@@ -124,6 +126,8 @@ export const components: MDXComponents = {
   CrossAttention,
   ParameterBudget,
   MaskingGranularity,
+  ScaledDotProduct,
+  NormPlacement,
   TOCInline,
   a: CustomLink,
   pre: CodeBlock,
