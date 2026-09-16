@@ -61,6 +61,8 @@ import PermutationOrder from './PermutationOrder'
 import SentencePairTask from './SentencePairTask'
 import SpanCorruption from './SpanCorruption'
 import CrossAttention from './CrossAttention'
+import ParameterBudget from './ParameterBudget'
+import MaskingGranularity from './MaskingGranularity'
 import { PseudoCodeLine, PseudoCode } from './PseudoCode'
 
 export const components: MDXComponents = {
@@ -120,6 +122,8 @@ export const components: MDXComponents = {
   SentencePairTask,
   SpanCorruption,
   CrossAttention,
+  ParameterBudget,
+  MaskingGranularity,
   TOCInline,
   a: CustomLink,
   pre: CodeBlock,

@@ -1488,3 +1488,16 @@
   .ca-tok.is-cur { border-color: var(--vp-a); border-width: 2px; color: var(--fg); font-weight: 700; }
   .fs-legend i.ca-k-src { background: var(--vp-c); }
   .fs-legend i.ca-k-tgt { background: var(--vp-b); }
+
+  /* Parameter budget, and masking granularity */
+  .pb-bar { display: block; height: 100%; border-radius: 3px; background: var(--g-500); }
+  .pb-bar.is-emb { background: var(--vp-d); }
+  .pb-bar.is-layers { background: var(--vp-b); }
+  .pb-bar.is-pos { background: var(--vp-c); }
+  .mg-tok {
+    padding: 5px 9px; border: 1px solid var(--g-300); border-radius: 7px;
+    font-family: var(--f-ubuntu); font-size: 12.5px; color: var(--fg); background: var(--bg);
+  }
+  html.dark .mg-tok { background: var(--g-100); }
+  .mg-tok.is-cont { color: var(--g-500); border-style: dashed; }
+  .mg-tok.is-hidden { border-color: var(--vp-d); color: var(--vp-d); font-weight: 700; border-style: solid; }
