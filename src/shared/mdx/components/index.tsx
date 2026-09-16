@@ -57,6 +57,8 @@ import ScalingLaw from './ScalingLaw'
 import AttentionMask from './AttentionMask'
 import DecodingStrategies from './DecodingStrategies'
 import KVCacheCost from './KVCacheCost'
+import PermutationOrder from './PermutationOrder'
+import SentencePairTask from './SentencePairTask'
 import { PseudoCodeLine, PseudoCode } from './PseudoCode'
 
 export const components: MDXComponents = {
@@ -112,6 +114,8 @@ export const components: MDXComponents = {
   AttentionMask,
   DecodingStrategies,
   KVCacheCost,
+  PermutationOrder,
+  SentencePairTask,
   TOCInline,
   a: CustomLink,
   pre: CodeBlock,

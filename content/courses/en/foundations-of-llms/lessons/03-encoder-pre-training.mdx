@@ -1,0 +1,205 @@
+---
+title: 'Training the encoder'
+language: 'en'
+module: 'Pre-training'
+moduleOrder: 1
+order: 3
+summary: 'How a model whose output has no right answer is supervised, the contextual representation as the real product of pre-training, the two objections to masking and the objectives that tried to fix them, including one that turned out to measure something other than intended.'
+---
+
+The previous lesson described training a decoder, where the target comes for free: the next token is
+already in the sequence. An encoder has no such convenience. It reads the whole sequence and returns
+one vector per position, and a vector of real numbers admits no comparison against any reference.
+This lesson is about how it is supervised instead, what is kept when training ends, and why the
+family's most obvious auxiliary objective turned out to measure something other than intended.
+
+## The problem of supervising an encoder
+
+The encoder's output is a matrix of representations:
+
+$$
+\mathbf{H} = \text{Encode}_\theta(\mathbf{x}), \qquad \mathbf{H} = (\mathbf{h}_0, \dots, \mathbf{h}_m)
+$$
+
+There is no correct $\mathbf{H}$ to compare it against. The solution is to add, temporarily, a head
+turning each vector into a distribution over the vocabulary, which can be compared to a reference:
+
+$$
+\mathbf{p}_i = \text{Softmax}_{\mathbf{W}}(\mathbf{h}_i)
+$$
+
+Both $\theta$ and $\mathbf{W}$ are trained jointly, and when training ends **$\mathbf{W}$ is
+discarded**. The head is scaffolding: it exists only to give the error somewhere to enter through.
+What is kept is the encoder.
+
+The asymmetry with the decoder is worth naming, because it explains the rest of the lesson. There
+the output head is kept, because generating is the point. Here it is thrown away, because the point
+was never to reconstruct hidden words: it was to obtain the representations produced along the way.
+
+## What is kept is the contextual representation
+
+The product of pre-training is one vector per token that depends on the sentence it appears in. That
+is the difference from a static representation of the word2vec kind, where every vocabulary entry
+has a fixed vector. A polysemous word then forces a compromise: the vector for *bank* must sit
+between the financial sense and the river's edge, and represents neither well.
+
+A bidirectional encoder has no such constraint. In "he sat on the river bank" and "the bank refused
+him the loan", the token *bank* goes in identical and comes out different, because the two
+representations are built by attending to different contexts. The representation stops being a
+property of the word and becomes a property of the occurrence.
+
+The idea predates BERT. Peters and co-authors introduced it in 2018 with ELMo, using a bidirectional
+recurrent network; the contribution of the attention-based encoder was to make those representations
+considerably better and, above all, easy to fine-tune.
+
+This is why the fine-tuning of the introductory lesson is cheap. The network added on top does not
+learn to understand language: it learns to **read** representations that already distinguish each
+word's senses from its context.
+
+## The two cracks in masking
+
+Masked language modelling was formulated in the first lesson. Yang and co-authors raised two
+objections to it in 2019 that are worth stating precisely, because they motivate everything that
+follows.
+
+The first is the **pretrain-finetune discrepancy**. The `[MASK]` symbol appears during pre-training
+and in no text afterwards. The first lesson described the 80/10/10 split with which BERT softens the
+problem, but its nature should be clear: it is a mitigation, not a solution. The mismatch is still
+there.
+
+The second is deeper and usually overlooked. In predicting several hidden positions at once, the
+objective treats them as **conditionally independent** given the visible context:
+
+$$
+P(x_{\mathcal{M}} \mid \mathbf{x}_{\setminus\mathcal{M}}) \approx \prod_{i \in \mathcal{M}} P(x_i \mid \mathbf{x}_{\setminus\mathcal{M}})
+$$
+
+In the sentence "New [MASK] is a [MASK]", reconstructing *York* evidently depends on having
+reconstructed *New*, and the objective cannot represent that dependency: each blank is predicted
+without knowing what went into the others. The causal decoder does not suffer from this, because its
+chain factorisation is exact and approximates nothing.
+
+## Permuted language modelling
+
+XLNet proposed keeping bidirectionality without resorting to masking. The idea is to leave the
+positions untouched and **randomise the order in which tokens are predicted**, predicting each one
+autoregressively from those already predicted.
+
+<PermutationOrder
+  labels={{
+    hint: 'Positions never move; the only thing shuffled is the order of prediction.',
+    shuffle: 'Another order',
+    predicted: 'predicted',
+    context: 'visible to it',
+    pending: 'not predicted yet',
+    sees: 'sees',
+    target: 'target',
+    note: 'A target may condition on tokens to its right, which is exactly what a causal model cannot do.',
+    reset: 'Reset',
+  }}
+/>
+
+The figure shows the essential point. Each token keeps its position in the sentence, but the target
+of a step may condition on tokens lying **to its right**, as long as they come earlier in the
+factorisation order. Context on both sides is thus recovered without introducing any artificial
+symbol, and without the independence assumption: every prediction sees the previous ones.
+
+Two details make the construction workable. The first is **partial prediction**: only the last part
+of each order is predicted and the rest serves as context, because predicting from an empty prefix
+converges extremely slowly. The second is **two-stream attention**, and the reason it exists is
+worth explaining. To predict position $z_t$ the model needs to know *which position* it is, but not
+*which token* occupies it; conventional attention produces a representation that already incorporates
+that position's content, so it would leak the answer. XLNet therefore keeps two streams: a content
+stream, which includes the token, and a query stream, which knows the position but not its content
+and is the one that makes the prediction.
+
+## The classification objectives, and one that failed
+
+Masking is not the only self-supervision available. **Classification** tasks whose label follows from
+document structure can also be invented from raw text.
+
+BERT included one: **next sentence prediction**. Given two sentences, decide whether the second
+follows the first. The positive examples are real consecutive pairs and the negatives are formed by
+taking the second sentence from a random document.
+
+<SentencePairTask
+  labels={{
+    hint: 'Both tasks share the positive pair. Only the construction of the negative changes.',
+    nsp: 'next sentence',
+    sop: 'sentence order',
+    positive: 'positive',
+    negative: 'negative',
+    cue: 'to tell them apart',
+    nspCue: 'detecting a change of topic suffices',
+    sopCue: 'the topic is identical; only order helps',
+    evidence: 'Measured in ALBERT: a model trained on next-sentence prediction scores 52.0% on sentence ordering, which is chance. One trained on ordering scores 78.9% on next-sentence prediction.',
+    reset: 'Reset',
+  }}
+/>
+
+The objective looks reasonable and is not. Since the negative comes from a different document, it
+almost always concerns **another topic**, and detecting a change of topic is far easier than judging
+coherence between two sentences. The task admits a shortcut, and the model takes it.
+
+The evidence is quantitative and comes from ALBERT. A model trained on next sentence prediction
+solves the **sentence ordering** task —where the negative is the same two sentences swapped, with
+identical vocabulary and topic— with $52.0\%$ accuracy, indistinguishable from chance. Conversely, a
+model trained on ordering solves the original task with $78.9\%$. The asymmetry proves the first
+never measured coherence: it measured topic shift, which is precisely what masking already taught.
+
+The practical conclusion arrived by two routes. RoBERTa removed the objective with no loss, and
+ALBERT replaced it with ordering, with consistent gains on tasks spanning several sentences. A
+self-supervised objective can be plausible, cheap and still measure something other than intended;
+checking requires designing the negative with care.
+
+## ELECTRA: signal at every position
+
+The introductory lesson noted that masking produces gradient at only 15% of positions. ELECTRA
+starts from that observation. A small **generator**, trained by ordinary masking, replaces some
+tokens with plausible alternatives. A **discriminator** —the model that is kept— then classifies
+**every** position of the sequence as original or replaced.
+
+The difference is sample efficiency: supervision reaches all tokens instead of a seventh of them.
+The published results are notable. ELECTRA trained for four days on a single GPU outperforms GPT on
+the GLUE benchmark, despite GPT using **thirty times more compute**; at scale it matches RoBERTa and
+XLNet with **less than a quarter** of their compute, and outperforms them at equal budget.
+
+One clarification the setup invites confusion about: **it is not a generative adversarial network**.
+The generator is trained on its own masking objective, not against the discriminator. There is no
+adversarial game, only a source of difficult substitutions.
+
+## Encoders did not disappear
+
+The usual account ends here, with decoders displacing encoders, and it is misleading. Adaptation
+through the context proved superior for general use, as the introductory lesson describes, but
+encoders hold the ground they were designed for: producing representations. Semantic search, result
+reranking and large-scale classification still rest on models of this family, because a dense
+representation of a sentence is computed once and reused indefinitely, whereas a generated answer
+has to be produced every time.
+
+The cost difference is structural and remains the one the mask imposed: the encoder traverses the
+sequence once; the decoder, one token at a time.
+
+## The next step
+
+Decoders generate and encoders represent. The open question is whether one model can do both. The
+answer is the encoder-decoder family, which the next lesson develops: T5's text-to-text
+pre-training, prefix language modelling, and the repertoire of corruptions with which BART learns to
+reconstruct an altered document.
+
+---
+
+**Exercise.** Load `bert-base-uncased` with `transformers`, obtain the last-layer vector for the
+token *bank* in "he sat on the river bank" and in "he went to the bank for a loan", and compute the
+cosine similarity between them. Repeat with the same word in two sentences of the same sense and
+check that the similarity is appreciably higher.
+
+## References
+
+- Xiao and Zhu, *Foundations of Large Language Models* (2025), sec. 1.2.2: [arXiv:2501.09223](https://arxiv.org/abs/2501.09223).
+- Devlin and co-authors, *BERT* (2019): [arXiv:1810.04805](https://arxiv.org/abs/1810.04805).
+- Peters and co-authors, *ELMo* (2018): [arXiv:1802.05365](https://arxiv.org/abs/1802.05365).
+- Yang and co-authors, *XLNet* (2019): [arXiv:1906.08237](https://arxiv.org/abs/1906.08237).
+- Liu and co-authors, *RoBERTa* (2019): [arXiv:1907.11692](https://arxiv.org/abs/1907.11692).
+- Lan and co-authors, *ALBERT* (2020): [arXiv:1909.11942](https://arxiv.org/abs/1909.11942) — the sentence-order task.
+- Clark and co-authors, *ELECTRA* (2020): [arXiv:2003.10555](https://arxiv.org/abs/2003.10555).
