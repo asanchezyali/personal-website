@@ -1,0 +1,156 @@
+---
+title: "BERT's family"
+language: 'en'
+module: 'The BERT model'
+moduleOrder: 2
+order: 3
+summary: 'What RoBERTa changed and dynamic masking, distillation and what a soft distribution actually transfers, the exact arithmetic of compression, and the multilingual models with the objective that aligns two languages.'
+---
+
+The previous two lessons described BERT as a model. This one walks what came after, in three
+directions that do not get in each other's way: training it better, shrinking it until it fits in
+production, and extending it to many languages at once. With it the pre-training arc closes.
+
+## Training the same thing, better
+
+The first move after BERT was the least showy. RoBERTa did not change the architecture: it changed
+the training protocol. Ten times the data —160 GB against 16—, much larger batches, longer training,
+and the removal of next sentence prediction, whose uselessness was documented in the lesson on the
+encoder.
+
+The technical adjustment usually cited is **dynamic masking**. BERT masks each sequence once, during
+preprocessing, and reuses that same mask across every epoch: the model sees exactly the same
+corrupted sentence over and over. RoBERTa generates the mask **on each pass**, so a single sentence
+yields as many distinct examples as the training has epochs.
+
+The general observation this work leaves deserves careful statement, since it tends to be overstated.
+It is not that scale makes objective design irrelevant: the lesson on the encoder showed that ELECTRA
+substantially improves sample efficiency with a better idea. What RoBERTa demonstrates is more
+precise: **a considerable part of what was attributed to BERT's architecture was in fact insufficient
+training**. Before proposing a new mechanism, it is worth checking that the old one was trained
+properly.
+
+## What a soft distribution transfers
+
+The opposite direction seeks to shrink the model. The most widespread technique is **distillation**:
+a small model, the student, is trained to reproduce the output of a large one, the teacher.
+
+The detail that matters is **what** the student copies. Not the correct label, which is already in
+the data, but the complete distribution the teacher produces. When it assigns high probability to
+*cat* and, among the rest, more to *dog* than to *house*, that ordering carries information about the
+structure of the problem which a categorical label discards entirely.
+
+The obstacle is that the information is compressed against zero. To expose it, the distribution is
+softened with a **temperature** $T > 1$:
+
+$$
+p_i(T) = \frac{\exp(z_i/T)}{\sum_j \exp(z_j/T)}
+$$
+
+<Distillation
+  labels={{
+    hint: 'The same teacher, read at different temperatures.',
+    teacher: 'teacher',
+    wrongMass: 'mass outside the answer',
+    entropy: 'entropy',
+    order: 'The ordering holds at every temperature. What changes is whether it carries enough mass to teach anything.',
+    note: 'A categorical label says only "cat". The teacher also says a dog is a nearer miss than a house.',
+    reset: 'Reset',
+  }}
+/>
+
+The figure quantifies the effect. At $T = 1$, every class other than the correct one sums to $7.1\%$
+of the mass: their contribution to the gradient is negligible and the student learns little more than
+the label. At $T = 3$ they sum to $49.5\%$, and the entropy rises from $0.33$ to $1.36$ against a
+maximum of $1.61$. The relative ordering is the same in both cases; what changes is whether it weighs
+enough to teach anything.
+
+It is worth noting that DistilBERT is not trained on that alone. It uses a **triple loss** combining
+the distillation term with the usual language modelling objective and a cosine distance between the
+student's hidden states and the teacher's. The published result is a model $40\%$ smaller and $60\%$
+faster that retains $97\%$ of the performance.
+
+## The arithmetic of compression
+
+The reduction techniques act on different factors, which is why they accumulate. Distillation removes
+**weights**; quantisation reduces the **bits** of each one, storing eight-bit integers instead of
+thirty-two-bit floating point.
+
+<CompressionStack
+  labels={{
+    hint: 'The two techniques act on different factors, so they compose.',
+    distil: 'distillation',
+    quant: 'quantisation',
+    params: 'parameters',
+    memory: 'each',
+    factor: 'smaller by',
+    note: 'Distillation removes weights; quantisation shrinks each one. Neither excludes the other.',
+    reset: 'Reset',
+  }}
+/>
+
+Starting from the count in the lesson on the parameter budget, DistilBERT's configuration —six layers
+instead of twelve, with no segment table and no pooler— gives $66.4$ million parameters against
+BERT-base's $109.5$, $39\%$ fewer, matching the published $40\%$. In 32-bit floating point that is
+$253$ MiB against $418$; with quantisation to eight bits, $63$ MiB. The combined factor is **6.6
+times**, and neither technique prevents the other.
+
+ALBERT attacks a third factor. Besides factorising the embedding table —covered in the lesson on the
+budget— it **shares one layer's parameters across the whole depth**: the twelve layers of the base
+version are the same layer applied twelve times. The resulting count is around $12$ million against
+BERT-base's $109.5$. The eighteen-fold reduction usually quoted corresponds to the large version,
+where $18$ million face $335$. It is worth noting that sharing weights reduces memory but **not**
+compute: the twelve applications still run.
+
+## One vocabulary for every language
+
+The multilingual extension depends on a prior decision: what a token is. It cannot be a word, because
+the number of words is unbounded and new ones keep appearing. BERT uses **subwords**, covered in the
+lesson on the budget: frequent ones stay whole and rare ones fragment into known pieces.
+
+That choice is what makes a multilingual model viable. A single shared subword vocabulary covers many
+languages with no word left out, and sub-lexical pieces —endings, roots— are shared between related
+languages. mBERT was trained this way over 104 languages with a single embedding table.
+
+The interesting result is **cross-lingual transfer**: fine-tune the model on a task in one language
+and it solves the same task in another it was never fine-tuned on. Since every language shares one
+representation space, what is learned crosses over at no extra cost.
+
+## Aligning two languages explicitly
+
+XLM takes the idea a step further with **translation language modelling**. Instead of monolingual
+text, **aligned** sentence pairs are fed in —the same content in two languages— and masking is
+applied across the whole pair.
+
+The consequence is the one the method is after: to reconstruct a hidden word in Spanish, the model
+can consult the English side, where that information is still present. Filling the blank that way
+requires putting both sequences into correspondence, so the objective forces the alignment rather
+than waiting for it to emerge.
+
+From the same shared space follows a property requiring no extra machinery: switching languages
+mid-sentence is processed normally, because every token is simply an entry in the one vocabulary.
+
+## Closing the arc
+
+Seven lessons and a single idea. Pre-training turns unlabelled text into free supervision; the three
+architectures are distinguished by which positions each position may read; and BERT is the instance
+that made it evident, along with the family that scaled it, shrank it and extended it.
+
+What follows falls outside pre-training: how these models become assistants. Instruction tuning,
+alignment with human preferences, and reasoning within the context.
+
+---
+
+**Exercise.** Load `distilbert-base-uncased` and `bert-base-uncased` with `transformers` and compare
+the parameter count of each, checking the $39\%$ reduction in the figure. Then apply
+`torch.quantization.quantize_dynamic` to the linear layers of the former and measure the resulting
+file size against the original.
+
+## References
+
+- Xiao and Zhu, *Foundations of Large Language Models* (2025), secs. 1.3.2 to 1.3.4: [arXiv:2501.09223](https://arxiv.org/abs/2501.09223).
+- Liu and co-authors, *RoBERTa* (2019): [arXiv:1907.11692](https://arxiv.org/abs/1907.11692) — dynamic masking and the training protocol.
+- Hinton and co-authors, *Distilling the Knowledge in a Neural Network* (2015): [arXiv:1503.02531](https://arxiv.org/abs/1503.02531) — soft distributions and temperature.
+- Sanh and co-authors, *DistilBERT* (2019): [arXiv:1910.01108](https://arxiv.org/abs/1910.01108) — the triple loss.
+- Lan and co-authors, *ALBERT* (2020): [arXiv:1909.11942](https://arxiv.org/abs/1909.11942) — cross-layer weight sharing.
+- Lample and Conneau, *XLM* (2019): [arXiv:1901.07291](https://arxiv.org/abs/1901.07291) — translation language modelling.

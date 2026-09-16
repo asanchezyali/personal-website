@@ -65,6 +65,8 @@ import ParameterBudget from './ParameterBudget'
 import MaskingGranularity from './MaskingGranularity'
 import ScaledDotProduct from './ScaledDotProduct'
 import NormPlacement from './NormPlacement'
+import Distillation from './Distillation'
+import CompressionStack from './CompressionStack'
 import { PseudoCodeLine, PseudoCode } from './PseudoCode'
 
 export const components: MDXComponents = {
@@ -128,6 +130,8 @@ export const components: MDXComponents = {
   MaskingGranularity,
   ScaledDotProduct,
   NormPlacement,
+  Distillation,
+  CompressionStack,
   TOCInline,
   a: CustomLink,
   pre: CodeBlock,
