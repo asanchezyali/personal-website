@@ -1528,3 +1528,12 @@
   /* Distillation targets */
   .dst-bar { display: block; height: 100%; border-radius: 3px; background: var(--vp-c); }
   .dst-bar.is-top { background: var(--vp-b); }
+
+  /* Feature-based against fine-tuning */
+  .fvf-row { display: grid; grid-template-columns: 110px 1fr 40px; gap: 10px; align-items: center; }
+  .fvf-row.is-base { margin-top: 4px; padding-top: 7px; border-top: 1px solid var(--g-300); }
+  .fvf-name { font-family: var(--f-ubuntu); font-size: 11.5px; color: var(--g-500); }
+  .fvf-row.is-sel .fvf-name { color: var(--fg); font-weight: 700; }
+  .fvf-bar { display: block; height: 100%; border-radius: 3px; background: var(--g-500); }
+  .fvf-bar.is-sel { background: var(--vp-c); }
+  .fvf-bar.is-base { background: var(--vp-b); }

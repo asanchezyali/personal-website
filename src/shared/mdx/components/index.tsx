@@ -67,6 +67,8 @@ import ScaledDotProduct from './ScaledDotProduct'
 import NormPlacement from './NormPlacement'
 import Distillation from './Distillation'
 import CompressionStack from './CompressionStack'
+import FeatureVsFineTune from './FeatureVsFineTune'
+import AdaptationCost from './AdaptationCost'
 import { PseudoCodeLine, PseudoCode } from './PseudoCode'
 
 export const components: MDXComponents = {
@@ -132,6 +134,8 @@ export const components: MDXComponents = {
   NormPlacement,
   Distillation,
   CompressionStack,
+  FeatureVsFineTune,
+  AdaptationCost,
   TOCInline,
   a: CustomLink,
   pre: CodeBlock,
