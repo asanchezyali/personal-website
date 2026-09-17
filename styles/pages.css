@@ -497,9 +497,9 @@
   .vplot-axis { stroke: var(--g-400); stroke-width: 1.4; }
   .vplot-label { font-size: 13px; font-weight: 700; font-family: var(--f-ubuntu); }
 
-  .mplay, .lcombo, .dvec, .lsys, .elim, .mmul, .bc, .cond, .gstep, .sset, .scost, .nrank, .fill, .chooser, .sub, .shp, .bsub, .ddeg, .ec, .lr, .lc, .lyr, .tg, .dg, .si, .fs, .evs { margin: 30px 0; border: 1px solid var(--g-200); border-radius: 16px; overflow: hidden; background: color-mix(in oklab, var(--g-50) 60%, transparent); display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
-  html.dark .mplay, html.dark .lcombo, html.dark .dvec, html.dark .lsys, html.dark .elim, html.dark .mmul, html.dark .bc, html.dark .cond, html.dark .gstep, html.dark .sset, html.dark .scost, html.dark .nrank, html.dark .fill, html.dark .chooser, html.dark .sub, html.dark .shp, html.dark .bsub, html.dark .ddeg, html.dark .ec, html.dark .lr, html.dark .lc, html.dark .lyr, html.dark .tg, html.dark .dg, html.dark .si, html.dark .fs, html.dark .evs { border-color: var(--g-300); background: color-mix(in oklab, var(--g-100) 45%, transparent); }
-  .mplay-canvas, .lcombo-canvas, .dvec-canvas, .lsys-canvas, .elim-stage, .mmul-stage, .bc-stage, .cond-stage, .gstep-canvas, .sset-canvas, .scost-stage, .nrank-stage, .fill-stage, .chooser-stage, .sub-canvas, .shp-stage, .bsub-canvas, .ddeg-stage, .ec-stage, .lr-stage, .lc-stage, .lyr-stage, .tg-canvas, .dg-canvas, .si-stage, .fs-stage, .evs-stage { padding: 18px; display: flex; align-items: center; justify-content: center; }
+  .mplay, .lcombo, .dvec, .lsys, .elim, .mmul, .bc, .cond, .gstep, .sset, .scost, .nrank, .fill, .chooser, .sub, .shp, .bsub, .ddeg, .ec, .lr, .lc, .lyr, .tg, .dg, .si, .fs, .evs, .amask, .dec, .perm { margin: 30px 0; border: 1px solid var(--g-200); border-radius: 16px; overflow: hidden; background: color-mix(in oklab, var(--g-50) 60%, transparent); display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  html.dark .mplay, html.dark .lcombo, html.dark .dvec, html.dark .lsys, html.dark .elim, html.dark .mmul, html.dark .bc, html.dark .cond, html.dark .gstep, html.dark .sset, html.dark .scost, html.dark .nrank, html.dark .fill, html.dark .chooser, html.dark .sub, html.dark .shp, html.dark .bsub, html.dark .ddeg, html.dark .ec, html.dark .lr, html.dark .lc, html.dark .lyr, html.dark .tg, html.dark .dg, html.dark .si, html.dark .fs, html.dark .evs, html.dark .amask, html.dark .dec, html.dark .perm { border-color: var(--g-300); background: color-mix(in oklab, var(--g-100) 45%, transparent); }
+  .mplay-canvas, .lcombo-canvas, .dvec-canvas, .lsys-canvas, .elim-stage, .mmul-stage, .bc-stage, .cond-stage, .gstep-canvas, .sset-canvas, .scost-stage, .nrank-stage, .fill-stage, .chooser-stage, .sub-canvas, .shp-stage, .bsub-canvas, .ddeg-stage, .ec-stage, .lr-stage, .lc-stage, .lyr-stage, .tg-canvas, .dg-canvas, .si-stage, .fs-stage, .evs-stage, .amask-stage, .dec-stage, .perm-stage { padding: 18px; display: flex; align-items: center; justify-content: center; }
   .mplay-canvas svg, .lcombo-canvas svg, .dvec-canvas svg, .lsys-canvas svg, .gstep-canvas svg, .sset-canvas svg, .sub-canvas svg, .bsub-canvas svg, .tg-canvas svg, .dg-canvas svg { width: 100%; height: auto; }
   .mplay-grid { stroke: var(--g-300); stroke-width: 0.9; }
   html.dark .mplay-grid { stroke: var(--g-300); }
@@ -507,12 +507,12 @@
   .mplay-area { fill: color-mix(in oklab, var(--vp-c) 22%, transparent); stroke: var(--vp-c); stroke-width: 1.4; }
   .mplay-eigen { stroke: var(--vp-d); stroke-width: 1.6; stroke-dasharray: 6 5; }
 
-  .mplay-controls, .lcombo-controls, .dvec-controls, .lsys-controls, .elim-controls, .mmul-controls, .bc-controls, .cond-controls, .gstep-controls, .sset-controls, .scost-controls, .nrank-controls, .fill-controls, .chooser-controls, .sub-controls, .shp-controls, .bsub-controls, .ddeg-controls, .ec-controls, .lr-controls, .lc-controls, .lyr-controls, .tg-controls, .dg-controls, .si-controls, .fs-controls, .evs-controls { padding: 20px 22px; border-left: 1px solid var(--g-200); display: flex; flex-direction: column; gap: 10px; justify-content: center; }
-  html.dark .mplay-controls, html.dark .lcombo-controls, html.dark .dvec-controls, html.dark .lsys-controls, html.dark .elim-controls, html.dark .mmul-controls, html.dark .bc-controls, html.dark .cond-controls, html.dark .gstep-controls, html.dark .sset-controls, html.dark .scost-controls, html.dark .nrank-controls, html.dark .fill-controls, html.dark .chooser-controls, html.dark .sub-controls, html.dark .shp-controls, html.dark .bsub-controls, html.dark .ddeg-controls, html.dark .ec-controls, html.dark .lr-controls, html.dark .lc-controls, html.dark .lyr-controls, html.dark .tg-controls, html.dark .dg-controls, html.dark .si-controls, html.dark .fs-controls, html.dark .evs-controls { border-left-color: var(--g-300); }
+  .mplay-controls, .lcombo-controls, .dvec-controls, .lsys-controls, .elim-controls, .mmul-controls, .bc-controls, .cond-controls, .gstep-controls, .sset-controls, .scost-controls, .nrank-controls, .fill-controls, .chooser-controls, .sub-controls, .shp-controls, .bsub-controls, .ddeg-controls, .ec-controls, .lr-controls, .lc-controls, .lyr-controls, .tg-controls, .dg-controls, .si-controls, .fs-controls, .evs-controls, .amask-controls, .dec-controls, .perm-controls { padding: 20px 22px; border-left: 1px solid var(--g-200); display: flex; flex-direction: column; gap: 10px; justify-content: center; }
+  html.dark .mplay-controls, html.dark .lcombo-controls, html.dark .dvec-controls, html.dark .lsys-controls, html.dark .elim-controls, html.dark .mmul-controls, html.dark .bc-controls, html.dark .cond-controls, html.dark .gstep-controls, html.dark .sset-controls, html.dark .scost-controls, html.dark .nrank-controls, html.dark .fill-controls, html.dark .chooser-controls, html.dark .sub-controls, html.dark .shp-controls, html.dark .bsub-controls, html.dark .ddeg-controls, html.dark .ec-controls, html.dark .lr-controls, html.dark .lc-controls, html.dark .lyr-controls, html.dark .tg-controls, html.dark .dg-controls, html.dark .si-controls, html.dark .fs-controls, html.dark .evs-controls, html.dark .amask-controls, html.dark .dec-controls, html.dark .perm-controls { border-left-color: var(--g-300); }
   .mplay-matrix { display: flex; align-items: center; gap: 4px; margin-bottom: 6px; }
   .mplay-bracket { font-size: 44px; line-height: 1; color: var(--g-400); font-weight: 300; }
   .mplay-cells { display: grid; grid-template-columns: repeat(2, 46px); gap: 2px 10px; font-family: var(--f-ubuntu); font-weight: 700; font-size: 15px; color: var(--fg); text-align: center; }
-  .mplay-slider { display: grid; grid-template-columns: 18px 1fr 34px; align-items: center; gap: 10px; }
+  .mplay-slider { display: grid; grid-template-columns: minmax(18px, auto) 1fr 34px; align-items: center; gap: 10px; }
   .mplay-name { font-family: var(--f-ubuntu); font-weight: 700; font-size: 13px; color: var(--s-500); }
   html.dark .mplay-name { color: var(--s-400); }
   .mplay-val { font-size: 12.5px; color: var(--g-500); text-align: right; font-variant-numeric: tabular-nums; }
@@ -849,21 +849,31 @@
   }
 
   @media (max-width: 720px) {
-    .mplay, .lcombo, .dvec, .lsys, .elim, .mmul, .bc, .cond, .gstep, .sset, .scost, .nrank, .fill, .chooser, .sub, .shp, .bsub, .ddeg, .ec, .lr, .lc, .lyr, .tg, .dg, .si, .fs, .evs { grid-template-columns: 1fr; }
-    .mplay-controls, .lcombo-controls, .dvec-controls, .lsys-controls, .elim-controls, .mmul-controls, .bc-controls, .cond-controls, .gstep-controls, .sset-controls, .scost-controls, .nrank-controls, .fill-controls, .chooser-controls, .sub-controls, .shp-controls, .bsub-controls, .ddeg-controls, .ec-controls, .lr-controls, .lc-controls, .lyr-controls, .tg-controls, .dg-controls, .si-controls, .fs-controls, .evs-controls { border-left: none; border-top: 1px solid var(--g-200); }
-    html.dark .mplay-controls, html.dark .lcombo-controls, html.dark .dvec-controls, html.dark .lsys-controls, html.dark .elim-controls, html.dark .mmul-controls, html.dark .bc-controls, html.dark .cond-controls, html.dark .gstep-controls, html.dark .sset-controls, html.dark .scost-controls, html.dark .nrank-controls, html.dark .fill-controls, html.dark .chooser-controls, html.dark .sub-controls, html.dark .shp-controls, html.dark .bsub-controls, html.dark .ddeg-controls, html.dark .ec-controls, html.dark .lr-controls, html.dark .lc-controls, html.dark .lyr-controls, html.dark .tg-controls, html.dark .dg-controls, html.dark .si-controls, html.dark .fs-controls, html.dark .evs-controls { border-top-color: var(--g-300); }
+    .mplay, .lcombo, .dvec, .lsys, .elim, .mmul, .bc, .cond, .gstep, .sset, .scost, .nrank, .fill, .chooser, .sub, .shp, .bsub, .ddeg, .ec, .lr, .lc, .lyr, .tg, .dg, .si, .fs, .evs, .amask, .dec, .perm { grid-template-columns: 1fr; }
+    .mplay-controls, .lcombo-controls, .dvec-controls, .lsys-controls, .elim-controls, .mmul-controls, .bc-controls, .cond-controls, .gstep-controls, .sset-controls, .scost-controls, .nrank-controls, .fill-controls, .chooser-controls, .sub-controls, .shp-controls, .bsub-controls, .ddeg-controls, .ec-controls, .lr-controls, .lc-controls, .lyr-controls, .tg-controls, .dg-controls, .si-controls, .fs-controls, .evs-controls, .amask-controls, .dec-controls, .perm-controls { border-left: none; border-top: 1px solid var(--g-200); }
+    html.dark .mplay-controls, html.dark .lcombo-controls, html.dark .dvec-controls, html.dark .lsys-controls, html.dark .elim-controls, html.dark .mmul-controls, html.dark .bc-controls, html.dark .cond-controls, html.dark .gstep-controls, html.dark .sset-controls, html.dark .scost-controls, html.dark .nrank-controls, html.dark .fill-controls, html.dark .chooser-controls, html.dark .sub-controls, html.dark .shp-controls, html.dark .bsub-controls, html.dark .ddeg-controls, html.dark .ec-controls, html.dark .lr-controls, html.dark .lc-controls, html.dark .lyr-controls, html.dark .tg-controls, html.dark .dg-controls, html.dark .si-controls, html.dark .fs-controls, html.dark .evs-controls, html.dark .amask-controls, html.dark .dec-controls, html.dark .perm-controls { border-top-color: var(--g-300); }
   }
 
   /* ---- Courses: index, overview and lesson shell ---- */
-  .courses-hero { padding: 64px 0 40px; max-width: 720px; }
+  .courses-hero { padding: 64px 0 44px; display: grid; grid-template-columns: minmax(0, 1fr) 260px;
+    gap: 48px; align-items: center; }
+  .courses-hero-copy { max-width: 620px; }
+  .courses-hero-figure { justify-self: end; }
+  @media (max-width: 860px) { .courses-hero { grid-template-columns: 1fr; }
+    .courses-hero-figure { display: none; } }
   .courses-hero h1 { font-size: clamp(34px, 5vw, 52px); line-height: 1.08; margin: 10px 0 18px; letter-spacing: -0.02em; }
-  .courses-list { display: grid; gap: 20px; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); padding-bottom: 80px; }
+  .courses-grid { display: grid; gap: 22px; grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
+    padding-bottom: 72px; align-items: stretch; }
   .courses-empty { color: var(--g-500); }
-  .course-card { display: block; border: 1px solid var(--g-200); border-radius: 18px; overflow: hidden; text-decoration: none; background: color-mix(in oklab, var(--g-50) 55%, transparent); transition: border-color .18s var(--ease), transform .18s var(--ease); }
+  .course-card { display: block; border: 1px solid var(--g-200); border-radius: 18px; overflow: hidden; background: color-mix(in oklab, var(--g-50) 55%, transparent); transition: border-color .18s var(--ease), transform .18s var(--ease); }
   html.dark .course-card { border-color: var(--g-300); background: color-mix(in oklab, var(--g-100) 45%, transparent); }
   .course-card:hover { border-color: var(--s-500); transform: translateY(-2px); }
-  .course-card-body { padding: 26px 28px 28px; }
-  .course-card-body h2 { font-size: 24px; margin: 8px 0 10px; color: var(--fg); letter-spacing: -0.01em; }
+  .course-card { display: flex; }
+  .course-card-body { padding: 26px 28px 28px; display: flex; flex-direction: column; flex: 1; }
+  .course-card-actions { margin-top: auto; }
+  .course-card-body h2 { font-size: 26px; margin: 8px 0 12px; letter-spacing: -0.015em; line-height: 1.15; }
+  .course-card-body h2 a { color: var(--fg); text-decoration: none; }
+  .course-card-body h2 a:hover { color: var(--s-500); }
   .course-card-body p { margin: 0; color: var(--g-600); font-size: 15px; line-height: 1.6; }
   .course-card-level { display: inline-block; font-family: var(--f-ubuntu); text-transform: uppercase; letter-spacing: .12em; font-size: 10.5px; font-weight: 700; color: var(--s-500); }
   html.dark .course-card-level { color: var(--s-400); }
@@ -1377,3 +1387,153 @@
   .evs-bar.is-1 { background: var(--vp-c); }
   .evs-bar.is-2 { background: var(--vp-a); }
   .mmul-cell.is-live { color: var(--vp-c); font-weight: 700; }
+
+  /* Scaling laws: parameters against tokens */
+  .sl-grid { stroke: var(--g-200); stroke-width: 0.8; }
+  html.dark .sl-grid { stroke: var(--g-300); }
+  .sl-tick { font-family: var(--f-ubuntu); font-size: 8px; fill: var(--g-500); }
+  .sl-axis { font-family: var(--f-ubuntu); font-size: 10px; font-weight: 600; fill: var(--g-500); }
+  .sl-frontier { stroke: var(--vp-b); stroke-width: 2.4; }
+  .sl-iso { stroke: var(--vp-a); stroke-width: 2; stroke-dasharray: 6 4; }
+  .sl-model { fill: var(--g-600); stroke: var(--bg); stroke-width: 1.5; }
+  .sl-opt { fill: var(--vp-c); stroke: var(--bg); stroke-width: 2; }
+  .sl-name { font-family: var(--f-ubuntu); font-size: 9px; font-weight: 700; fill: var(--fg); }
+  .fs-legend i.sl-k-frontier { background: var(--vp-b); }
+  .fs-legend i.sl-k-iso { background: var(--vp-a); }
+
+  /* Attention masks */
+  .amask-stage { flex-direction: column; align-items: center; }
+  .amask-stage svg { width: 100%; max-width: 260px; height: auto; }
+  .am-cell { fill: var(--g-200); }
+  html.dark .am-cell { fill: var(--g-200); }
+  /* the dark override above outranks a bare .is-on, so it needs its own dark rule */
+  .am-cell.is-on, html.dark .am-cell.is-on { fill: var(--vp-b); }
+  .am-idx { font-family: var(--f-ubuntu); font-size: 8px; fill: var(--g-500); }
+  .am-axis { font-family: var(--f-ubuntu); font-size: 10px; font-weight: 600; fill: var(--g-500); }
+  .am-modes { display: flex; flex-wrap: wrap; gap: 6px; }
+  .am-mode {
+    font-family: var(--f-ubuntu); font-size: 12px; padding: 6px 11px; border-radius: 999px;
+    border: 1px solid var(--g-300); background: none; color: var(--g-600); cursor: pointer;
+    transition: all .2s var(--ease);
+  }
+  .am-mode:hover { border-color: var(--g-500); color: var(--fg); }
+  .am-mode.is-on { border-color: var(--vp-b); background: color-mix(in oklab, var(--vp-b) 16%, transparent); color: var(--fg); font-weight: 700; }
+
+  /* Course cards carry the same information for every course */
+  .course-card-summary { margin: 0 0 22px; color: var(--g-600); font-size: 15.5px; line-height: 1.62; }
+  .course-card-modules { list-style: none; margin: 0 0 24px; padding: 0; border-top: 1px solid var(--g-200); }
+  html.dark .course-card-modules { border-top-color: var(--g-300); }
+  .course-card-modules li { display: grid; grid-template-columns: 28px 1fr auto; gap: 12px; align-items: baseline;
+    padding: 10px 2px; border-bottom: 1px solid var(--g-200); }
+  html.dark .course-card-modules li { border-bottom-color: var(--g-300); }
+  .course-card-mnum { font-family: var(--f-ubuntu); font-size: 11px; font-weight: 700; color: var(--s-500); }
+  .course-card-mtitle { font-size: 14.5px; font-weight: 600; color: var(--fg); }
+  .course-card-mcount { font-family: var(--f-ubuntu); font-size: 12px; color: var(--g-500); }
+  .course-card-actions { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+  .course-card-alt { font-size: 14px; color: var(--g-600); text-decoration: none; border-bottom: 1px solid var(--g-300); }
+  .course-card-alt:hover { color: var(--fg); border-bottom-color: var(--fg); }
+
+  /* Decoding strategies, and the KV cache */
+  .dec-stage { flex-direction: column; align-items: stretch; gap: 7px; justify-content: center; }
+  .dec-row { display: grid; grid-template-columns: 62px 1fr 48px; gap: 10px; align-items: center; }
+  .dec-row.is-cut { opacity: .3; }
+  .dec-tok { font-family: var(--f-ubuntu); font-size: 12.5px; color: var(--fg); }
+  .dec-track { height: 11px; border-radius: 3px; background: var(--g-200); overflow: hidden; }
+  html.dark .dec-track { background: var(--g-200); }
+  .dec-bar { display: block; height: 100%; border-radius: 3px; background: var(--vp-b); }
+  .dec-val { font-family: var(--f-ubuntu); font-size: 11.5px; color: var(--g-500); text-align: right; }
+  .kv-row { display: grid; grid-template-columns: 96px 1fr 72px; gap: 10px; align-items: center; }
+  .kv-label { font-family: var(--f-ubuntu); font-size: 11.5px; color: var(--g-500); }
+  .kv-bar { display: block; height: 100%; border-radius: 3px; background: var(--vp-b); }
+  .kv-bar.is-over { background: var(--vp-a); }
+  .kv-bar.is-weights { background: var(--g-500); }
+
+  /* Permuted language modelling */
+  .perm-stage { flex-direction: column; align-items: stretch; gap: 14px; justify-content: center; }
+  .perm-row { display: flex; flex-wrap: wrap; gap: 7px; }
+  .perm-tok {
+    position: relative; display: flex; flex-direction: column; align-items: center; gap: 1px;
+    padding: 7px 10px 5px; border: 1px solid var(--g-300); border-radius: 8px;
+    font-family: var(--f-ubuntu); font-size: 13px; color: var(--g-500); background: var(--bg);
+  }
+  html.dark .perm-tok { background: var(--g-100); }
+  .perm-tok em { font-style: normal; font-size: 9px; color: var(--g-400); }
+  .perm-tok i { font-style: normal; font-size: 9px; color: var(--g-400); }
+  .perm-tok.is-ctx { border-color: var(--vp-b); color: var(--fg); }
+  .perm-tok.is-target { border-color: var(--vp-a); border-width: 2px; color: var(--fg); font-weight: 700; }
+  .perm-tok.is-target i { color: var(--vp-a); }
+  .fs-legend i.perm-k-target { background: var(--vp-a); }
+  .fs-legend i.perm-k-ctx { background: var(--vp-b); }
+  .fs-legend i.perm-k-pending { background: var(--g-400); }
+  .perm-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+
+  /* Sentence-pair objectives */
+  .sp-card { border: 1px solid var(--g-300); border-radius: 12px; padding: 13px 15px; }
+  .sp-card.is-pos { border-left: 3px solid var(--vp-b); }
+  .sp-card.is-neg { border-left: 3px solid var(--vp-a); }
+  .sp-tag { font-family: var(--f-ubuntu); font-size: 10px; text-transform: uppercase; letter-spacing: .1em; color: var(--g-500); }
+  .post-body .sp-card p { margin: 6px 0 0; font-size: 13.5px; line-height: 1.5; color: var(--g-600); }
+  .post-body .sp-card p.is-offtopic { color: var(--vp-a); }
+
+  /* Span corruption, and cross-attention */
+  .sc-tok, .ca-tok {
+    padding: 5px 9px; border: 1px solid var(--g-300); border-radius: 7px;
+    font-family: var(--f-ubuntu); font-size: 12.5px; color: var(--g-500); background: var(--bg);
+  }
+  html.dark .sc-tok, html.dark .ca-tok { background: var(--g-100); }
+  .sc-tok.is-sent { border-color: var(--vp-d); color: var(--vp-d); font-weight: 700; }
+  .ca-tok.is-lit { color: var(--fg); }
+  .ca-tok.is-lit.is-src { border-color: var(--vp-c); }
+  .ca-tok.is-lit.is-tgt { border-color: var(--vp-b); }
+  .ca-tok.is-cur { border-color: var(--vp-a); border-width: 2px; color: var(--fg); font-weight: 700; }
+  .fs-legend i.ca-k-src { background: var(--vp-c); }
+  .fs-legend i.ca-k-tgt { background: var(--vp-b); }
+
+  /* Parameter budget, and masking granularity */
+  .pb-bar { display: block; height: 100%; border-radius: 3px; background: var(--g-500); }
+  .pb-bar.is-emb { background: var(--vp-d); }
+  .pb-bar.is-layers { background: var(--vp-b); }
+  .pb-bar.is-pos { background: var(--vp-c); }
+  .mg-tok {
+    padding: 5px 9px; border: 1px solid var(--g-300); border-radius: 7px;
+    font-family: var(--f-ubuntu); font-size: 12.5px; color: var(--fg); background: var(--bg);
+  }
+  html.dark .mg-tok { background: var(--g-100); }
+  .mg-tok.is-cont { color: var(--g-500); border-style: dashed; }
+  .mg-tok.is-hidden { border-color: var(--vp-d); color: var(--vp-d); font-weight: 700; border-style: solid; }
+
+  /* Scaled dot product, and layer-norm placement */
+  .sdp-bars { display: flex; align-items: flex-end; gap: 10px; height: 74px; }
+  .sdp-col { display: flex; flex-direction: column; align-items: center; gap: 4px; flex: 1; height: 100%; }
+  .sdp-track { flex: 1; width: 100%; display: flex; align-items: flex-end; background: var(--g-200); border-radius: 3px; overflow: hidden; }
+  html.dark .sdp-track { background: var(--g-200); }
+  .sdp-bar { display: block; width: 100%; border-radius: 3px 3px 0 0; }
+  .sdp-bar.is-raw { background: var(--vp-a); }
+  .sdp-bar.is-scaled { background: var(--vp-b); }
+  .sdp-col em { font-style: normal; font-family: var(--f-ubuntu); font-size: 10px; color: var(--g-500); }
+
+  .np-stack { display: flex; flex-direction: column; gap: 6px; }
+  .np-layer { display: grid; grid-template-columns: 16px 4px 1fr; gap: 8px; align-items: center; }
+  .np-idx { font-family: var(--f-ubuntu); font-size: 10px; color: var(--g-400); text-align: right; }
+  .np-stream { height: 100%; min-height: 26px; border-radius: 2px; background: var(--g-300); }
+  .np-stream.is-clean { background: var(--vp-b); }
+  .np-blocks { display: flex; gap: 5px; align-items: center; }
+  .np-box {
+    padding: 4px 9px; border-radius: 6px; font-family: var(--f-ubuntu); font-size: 11px;
+    border: 1px solid var(--g-300); color: var(--g-600);
+  }
+  .np-box.is-ln { border-color: var(--vp-c); color: var(--vp-c); }
+  .np-box.is-add { border-color: var(--vp-b); color: var(--vp-b); font-weight: 700; }
+
+  /* Distillation targets */
+  .dst-bar { display: block; height: 100%; border-radius: 3px; background: var(--vp-c); }
+  .dst-bar.is-top { background: var(--vp-b); }
+
+  /* Feature-based against fine-tuning */
+  .fvf-row { display: grid; grid-template-columns: 110px 1fr 40px; gap: 10px; align-items: center; }
+  .fvf-row.is-base { margin-top: 4px; padding-top: 7px; border-top: 1px solid var(--g-300); }
+  .fvf-name { font-family: var(--f-ubuntu); font-size: 11.5px; color: var(--g-500); }
+  .fvf-row.is-sel .fvf-name { color: var(--fg); font-weight: 700; }
+  .fvf-bar { display: block; height: 100%; border-radius: 3px; background: var(--g-500); }
+  .fvf-bar.is-sel { background: var(--vp-c); }
+  .fvf-bar.is-base { background: var(--vp-b); }

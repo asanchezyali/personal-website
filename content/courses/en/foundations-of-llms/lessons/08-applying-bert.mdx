@@ -1,0 +1,154 @@
+---
+title: 'Freeze or fine-tune'
+language: 'en'
+module: 'The BERT model'
+moduleOrder: 2
+order: 4
+summary: 'The two ways of adapting a pre-trained encoder and what each costs, which layer to read when it is frozen, the storage cost per task, and why the [CLS] representation is not a sentence embedding.'
+---
+
+The lesson on BERT in particular described the two shapes of fine-tuning according to which part of
+the output is read. A prior and more consequential decision remains: whether the encoder **moves at
+all** during adaptation. Cost, the amount of data required, and how many tasks one installation can
+serve all follow from it.
+
+## The two ways of adapting
+
+The model for a specific task is a composition. The pre-trained encoder reads the input and a small
+network added on top produces the answer:
+
+$$
+\mathbf{y} = \text{Predict}_\omega\!\left(\text{BERT}_{\hat\theta}(\mathbf{x})\right)
+$$
+
+Training that composition on labelled data admits two regimes. In the **feature-based approach** only
+$\omega$ is adjusted: the encoder is frozen and acts as a fixed extractor of representations. In
+**fine-tuning** both move, with $\theta$ starting from the pre-trained weights.
+
+$$
+(\tilde\omega, \tilde\theta) = \operatorname*{arg\,min}_{\omega,\,\theta} \sum_{(\mathbf{x},\mathbf{y})\in\mathcal{D}} \text{Loss}\!\left(\mathbf{y}_{\omega,\theta}(\mathbf{x}),\, \mathbf{y}\right)
+$$
+
+The procedure is ordinary supervised learning. The only particular thing is the starting point: it is
+not trained from scratch but from a model that already represents language, which is why the labelled
+set can be small. It only has to teach the task, not the language.
+
+## The layer worth reading
+
+Freezing the encoder raises a question fine-tuning never poses: of the twelve layers, which one is
+read? The usual answer —the last— turns out to be wrong, and BERT's authors measured it on named
+entity recognition.
+
+<FeatureVsFineTune
+  labels={{
+    hint: 'CoNLL-2003 development F1, with the encoder frozen.',
+    finetune: 'fine-tuning',
+    baseline: 'baseline',
+    gap: 'behind fine-tuning by',
+    note: 'The last layer alone does worse than the second-to-last: it is the most specialised to the pre-training objective.',
+    reset: 'Reset',
+  }}
+/>
+
+The published figures order the options clearly. Keeping the input embeddings gives $91.0$ F1, far
+below. The **last** hidden layer gives $94.9$, and the **second-to-last** gives $95.6$: reading the
+final layer is worse than reading the one before it. The reason is that the last layer is the most
+specialised to the pre-training objective —reconstructing masked tokens— and therefore the least
+general. The study's best option is concatenating the last four, at $96.1$, against $96.4$ for full
+fine-tuning.
+
+The final difference is $0.3$ points. Freezing the encoder costs very little performance on this
+task, provided the right layer is read.
+
+## What each regime costs
+
+Performance is not the only comparison that matters. If one encoder is to serve several tasks, the
+decisive factor is how many parameters must be **stored per task**.
+
+<AdaptationCost
+  labels={{
+    hint: 'One shared backbone, and what each task costs on top of it.',
+    frozen: 'frozen',
+    lora: 'LoRA',
+    full: 'full fine-tuning',
+    trainable: 'trainable',
+    perTask: 'per task',
+    tasks: 'tasks',
+    note: 'Full fine-tuning stores a whole copy of BERT per task. The other two store a shared backbone and something small beside it.',
+    reset: 'Reset',
+  }}
+/>
+
+Full fine-tuning trains and stores BERT-base's $109.5$ million parameters **for every task**: $418$
+MiB in 32-bit floating point, multiplied by the number of tasks. With ten tasks that is over four
+gigabytes of weights which are mostly the same thing.
+
+The opposite extreme, freezing everything and training a linear head, stores $6$ KiB per task.
+Between them lies a middle ground that has become standard: **parameter-efficient fine-tuning**.
+Instead of moving the weights, a low-rank correction is added to them —the idea of LoRA, developed in
+the lesson on rank in the linear algebra course— over the query and value projections.
+
+At rank $8$ that is $12 \times 2 \times 2 \times 768 \times 8 = 294{,}912$ parameters, $0.27\%$ of
+the model, and $1.13$ MiB per task against $418$: **369 times less**. The backbone is shared and each
+task contributes a small file beside it.
+
+## The criterion for choosing
+
+Freezing is preferable when the labelled set is very small, because the encoder cannot drift and
+overfitting is confined to the head. Also when one installation serves many tasks and the memory cost
+dominates.
+
+Fine-tuning performs better when there is enough data and the task departs from the pre-training
+domain, because it lets the representations specialise. Its risk is the converse: with few examples
+the model can overfit or degrade what it already knew.
+
+Parameter-efficient fine-tuning occupies the middle and is why it displaced the other two in
+practice: it keeps almost all the performance of full fine-tuning at the storage cost of freezing.
+
+## The [CLS] representation is not a sentence embedding
+
+One warning remains, worth stating precisely, because the mistake is very common.
+
+The lesson on BERT in particular noted that `[CLS]` summarises nothing by construction and takes on
+that role because training forces it to. The practical consequence is direct: **before** fine-tuning
+on a task, the `[CLS]` vector is not a useful representation of the sentence. Extracting it from a
+freshly pre-trained BERT and comparing by cosine similarity gives poor results.
+
+The concrete figure comes from Sentence-BERT. Taking the `[CLS]` output of an unfine-tuned BERT, or
+averaging its token vectors, produces sentence representations **worse than averaging GloVe
+vectors**, which are static and much older.
+
+What that implies is worth stating carefully, since it is usually summarised badly. The problem is
+not fixed by changing the pooling: in the Sentence-BERT study, with the model already trained by
+their procedure, averaging scores $87.44$ and `[CLS]` scores $86.62$ on the semantic similarity
+benchmark. That is two points apart, not the distance separating either from being usable. What
+Sentence-BERT contributes is not the choice of pooling but the **training objective**: a siamese
+network over sentence pairs that directly optimises the property one intends to use.
+
+The rule that follows is general. An intermediate representation is good for what it was trained for.
+`[CLS]` is trained to feed a classifier, and it does that well; it is not trained to make distances
+between sentences meaningful, and it does not.
+
+## The next step
+
+Every task in this lesson produces **one** decision per input, read from a single vector. Others
+require a decision at **every** position: labelling each word, or locating the fragment that answers
+a question.
+
+The next lesson treats that case: sequence labelling, span prediction, and using an encoder inside a
+larger system.
+
+---
+
+**Exercise.** Fine-tune `bert-base-uncased` on a small classification set under two regimes: freezing
+the encoder and training only the head, and tuning everything. Compare performance and time per
+epoch. Repeat with `peft` applying LoRA at rank 8 and check that the number of trainable parameters
+matches the $0.27\%$ in the figure.
+
+## References
+
+- Xiao and Zhu, *Foundations of Large Language Models* (2025), sec. 1.4: [arXiv:2501.09223](https://arxiv.org/abs/2501.09223).
+- Devlin and co-authors, *BERT* (2019): [arXiv:1810.04805](https://arxiv.org/abs/1810.04805) — the feature-based ablation.
+- Hu and co-authors, *LoRA* (2021): [arXiv:2106.09685](https://arxiv.org/abs/2106.09685) — the low-rank correction.
+- Houlsby and co-authors, *Parameter-Efficient Transfer Learning* (2019): [arXiv:1902.00751](https://arxiv.org/abs/1902.00751) — adapters.
+- Reimers and Gurevych, *Sentence-BERT* (2019): [arXiv:1908.10084](https://arxiv.org/abs/1908.10084) — why [CLS] is not a sentence embedding.

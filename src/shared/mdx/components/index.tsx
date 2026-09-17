@@ -53,6 +53,22 @@ import AffineHyperplane from './AffineHyperplane'
 import AffineCombination from './AffineCombination'
 import SVDEllipse from './SVDEllipse'
 import EigenVsSingular from './EigenVsSingular'
+import ScalingLaw from './ScalingLaw'
+import AttentionMask from './AttentionMask'
+import DecodingStrategies from './DecodingStrategies'
+import KVCacheCost from './KVCacheCost'
+import PermutationOrder from './PermutationOrder'
+import SentencePairTask from './SentencePairTask'
+import SpanCorruption from './SpanCorruption'
+import CrossAttention from './CrossAttention'
+import ParameterBudget from './ParameterBudget'
+import MaskingGranularity from './MaskingGranularity'
+import ScaledDotProduct from './ScaledDotProduct'
+import NormPlacement from './NormPlacement'
+import Distillation from './Distillation'
+import CompressionStack from './CompressionStack'
+import FeatureVsFineTune from './FeatureVsFineTune'
+import AdaptationCost from './AdaptationCost'
 import { PseudoCodeLine, PseudoCode } from './PseudoCode'
 
 export const components: MDXComponents = {
@@ -104,6 +120,22 @@ export const components: MDXComponents = {
   AffineCombination,
   SVDEllipse,
   EigenVsSingular,
+  ScalingLaw,
+  AttentionMask,
+  DecodingStrategies,
+  KVCacheCost,
+  PermutationOrder,
+  SentencePairTask,
+  SpanCorruption,
+  CrossAttention,
+  ParameterBudget,
+  MaskingGranularity,
+  ScaledDotProduct,
+  NormPlacement,
+  Distillation,
+  CompressionStack,
+  FeatureVsFineTune,
+  AdaptationCost,
   TOCInline,
   a: CustomLink,
   pre: CodeBlock,

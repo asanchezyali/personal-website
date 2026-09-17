@@ -1,0 +1,173 @@
+---
+title: 'La capa por dentro'
+language: 'es'
+module: 'El modelo BERT'
+moduleOrder: 2
+order: 2
+summary: 'La capa que se repite y sus dos subcapas, el mecanismo de atención con la justificación exacta del factor de escala, el bloque denso donde reside la mayoría de los parámetros, y la colocación de la normalización, que determina si el modelo necesita calentamiento.'
+---
+
+La lección anterior describió cómo aprende BERT y cómo se usa, y detalló la entrada: las tres tablas
+de embeddings cuya suma produce el vector de cada token. Queda el cuerpo del modelo, que es una
+única capa repetida $L$ veces. Esta lección la abre.
+
+## La capa que se repite
+
+Cada capa contiene **dos** subcapas. La primera es la atención propia, donde los tokens intercambian
+información entre sí. La segunda es una red densa que transforma cada posición por separado, sin
+comunicación entre ellas.
+
+Ambas comparten la misma envoltura:
+
+$$
+\text{salida} = \text{LN}\!\left(F(\text{entrada}) + \text{entrada}\right)
+$$
+
+donde $F$ es la subcapa correspondiente. Los dos elementos de esa envoltura hacen un trabajo
+desproporcionado a su simplicidad. La **conexión residual** vuelve a sumar la entrada a la salida del
+bloque, de modo que la información dispone de un camino directo que no atraviesa $F$. La
+**normalización de capa** reescala el resultado para mantener las activaciones en un rango estable.
+
+## Dentro de la atención
+
+Cada vector de token se proyecta de tres maneras distintas: una **consulta** $\mathbf{q}$, una
+**clave** $\mathbf{k}$ y un **valor** $\mathbf{v}$. La consulta de un token se compara con las claves
+de todos, y el resultado de esas comparaciones determina qué proporción de cada valor recoge.
+
+$$
+\text{Atención}(\mathbf{Q},\mathbf{K},\mathbf{V}) = \text{Softmax}\!\left(\frac{\mathbf{Q}\mathbf{K}^{\top}}{\sqrt{d_k}}\right)\mathbf{V}
+$$
+
+Leída de izquierda a derecha: $\mathbf{Q}\mathbf{K}^{\top}$ puntúa cada par consulta-clave, la
+división ajusta la escala, la softmax convierte las puntuaciones en pesos que suman uno, y esos
+pesos promedian los valores.
+
+## La división entre la raíz de la dimensión
+
+El factor $1/\sqrt{d_k}$ suele presentarse como un ajuste técnico, pero tiene una justificación
+exacta que conviene desarrollar, porque explica también por qué el tamaño de cabeza no crece al
+escalar el modelo.
+
+Supóngase que las componentes de $\mathbf{q}$ y $\mathbf{k}$ son independientes, de media cero y
+varianza uno. Su producto escalar es una suma de $d_k$ términos independientes de varianza uno, de
+modo que
+
+$$
+\operatorname{Var}(\mathbf{q}\cdot\mathbf{k}) = d_k
+$$
+
+Las puntuaciones se dispersan, por tanto, proporcionalmente a $\sqrt{d_k}$. Y la softmax no es
+invariante a escala: multiplicar sus entradas por una constante mayor que uno concentra la masa en
+el máximo.
+
+<ScaledDotProduct
+  labels={{
+    hint: 'Las mismas puntuaciones, leídas a distintas dimensiones por cabeza.',
+    unscaled: 'sin dividir',
+    scaled: 'dividido entre √dₖ',
+    spread: 'dispersión de q·k',
+    entropy: 'entropía',
+    peak: 'máximo',
+    note: 'Var(q·k) = dₖ, de modo que sin la división la softmax se satura y el gradiente se anula. BERT mantiene dₖ = 64 en ambos tamaños.',
+    reset: 'Reiniciar',
+  }}
+/>
+
+La figura cuantifica el efecto. Con $d_k = 8$ y sin dividir, el peso máximo es $0{,}69$; con
+$d_k = 64$ sube a $0{,}96$; con $d_k = 512$ alcanza $0{,}9999$ y la entropía cae de $1{,}38$ a
+$0{,}001$ sobre un máximo posible de $1{,}61$. La distribución se ha vuelto prácticamente un vector
+indicador, y en esa región la derivada de la softmax es aproximadamente nula: el gradiente deja de
+propagarse. Dividiendo entre $\sqrt{d_k}$ la distribución resulta idéntica para cualquier dimensión,
+que es lo que la columna derecha de la figura muestra.
+
+## Varias cabezas del mismo tamaño
+
+La atención no se ejecuta una vez sino varias en paralelo. La **atención multicabeza** divide los
+vectores en $n_{\text{cabezas}}$ subespacios de dimensión $d_k = d/n_{\text{cabezas}}$, aplica el
+mecanismo en cada uno y concatena los resultados. Cada cabeza dispone así de su propio conjunto de
+proyecciones y puede especializarse en un tipo de relación distinto.
+
+Hay aquí una regularidad que suele pasar inadvertida. En BERT-base, $768/12 = 64$. En BERT-large,
+$1024/16 = 64$. **El tamaño de cabeza no cambia**: al escalar el modelo se ensancha la dimensión y
+se añaden cabezas, pero cada cabeza conserva sus 64 dimensiones. Visto lo anterior, la decisión es
+coherente: $d_k$ fija el régimen en el que opera la softmax, y alterarlo cambiaría el
+comportamiento del mecanismo además de su capacidad.
+
+## El bloque denso
+
+Después de que la atención mezcle información **entre** tokens, la segunda subcapa transforma cada
+token **por separado**. Es un perceptrón de dos capas:
+
+$$
+\text{FFN}(\mathbf{x}) = \mathbf{W}_2\,\text{GELU}\!\left(\mathbf{W}_1\mathbf{x} + \mathbf{b}_1\right) + \mathbf{b}_2
+$$
+
+La dimensión interna es convencionalmente $4d$: se ensancha el vector, se aplica una no linealidad y
+se vuelve a comprimir. La no linealidad es GELU y no la ReLU habitual del transformador original.
+
+Merece la pena contrastar este bloque con el anterior en términos de coste, porque la divulgación
+concede a la atención un protagonismo que los parámetros no respaldan. Con las cifras de la lección
+anterior, en una capa de BERT-base la atención aporta $2{,}36$ millones de parámetros y la red densa
+$4{,}72$ millones: **dos tercios de cada capa están en el bloque denso**, y la proporción se mantiene
+idéntica en la versión grande. El mecanismo que da nombre a la arquitectura es la parte pequeña.
+
+## La colocación de la normalización
+
+Queda el detalle de la envoltura que la ecuación inicial deja fijado sin comentario: la
+normalización se aplica **después** de sumar el residuo. Esa disposición se denomina post-norma, y
+la alternativa —normalizar antes de la subcapa, dejando la suma intacta— se denomina pre-norma.
+
+<NormPlacement
+  labels={{
+    hint: 'Lo único que cambia es dónde se sitúa la normalización.',
+    post: 'post-norma',
+    pre: 'pre-norma',
+    clean: 'camino de identidad ininterrumpido de la entrada a la salida',
+    broken: 'cada capa normaliza la suma: no queda camino de identidad',
+    sublayer: 'subcapa',
+    note: 'BERT es post-norma, y por eso su receta necesita una fase de calentamiento. Xiong y coautores (2020) lo atribuyeron a gradientes grandes cerca de la salida en la inicialización.',
+    reset: 'Reiniciar',
+  }}
+/>
+
+La diferencia no es cosmética. Con pre-norma existe un camino que va de la entrada a la salida
+sumando contribuciones sin atravesar ninguna normalización; con post-norma, cada capa normaliza la
+suma y ese camino directo desaparece. Xiong y coautores demostraron en 2020 que la segunda
+disposición produce gradientes grandes cerca de la salida en la inicialización, y que por eso
+requiere una fase de **calentamiento** de la tasa de aprendizaje, mientras que la primera se
+comporta bien desde el principio y permite prescindir de ella.
+
+BERT es post-norma, de acuerdo con el transformador original, y su receta de entrenamiento incluye
+en consecuencia ese calentamiento. Los modelos posteriores se pasaron mayoritariamente a pre-norma,
+y la razón es la que la figura ilustra.
+
+Conviene cerrar con lo que la conexión residual resuelve, porque es la condición que hace posible
+todo lo demás. Sin ese camino alternativo, apilar veinticuatro capas atenuaría el gradiente antes de
+que alcanzara las primeras. BERT-large no sería entrenable.
+
+## El siguiente paso
+
+Con esto queda descrito el modelo completo: tres tablas de embeddings, una capa repetida $L$ veces, y
+un puñado de números que fijan su tamaño. La arquitectura no contiene ninguna idea exótica; es un
+codificador de transformador corriente, y el salto de BERT procedió del entrenamiento y no de la
+capa.
+
+La siguiente lección recorre la familia que BERT inauguró: RoBERTa y lo que cambió al reentrenarlo
+con más datos, las variantes eficientes obtenidas por destilación y cuantización, y los modelos
+multilingües.
+
+---
+
+**Ejercicio.** Tomar una matriz de consultas y otra de claves con entradas normales estándar de
+dimensión $d_k$, calcular la varianza empírica de $\mathbf{q}\cdot\mathbf{k}$ para
+$d_k \in \{8, 64, 512\}$ y comprobar que coincide con $d_k$. Aplicar después la softmax a las
+puntuaciones con y sin el factor de escala y medir la entropía de la distribución resultante en cada
+caso.
+
+## Referencias
+
+- Xiao y Zhu, *Foundations of Large Language Models* (2025), sec. 1.3.1.2: [arXiv:2501.09223](https://arxiv.org/abs/2501.09223).
+- Vaswani y coautores, *Attention Is All You Need* (2017): [arXiv:1706.03762](https://arxiv.org/abs/1706.03762) — la capa del transformador y el factor de escala.
+- Devlin y coautores, *BERT* (2019): [arXiv:1810.04805](https://arxiv.org/abs/1810.04805) — las configuraciones base y grande.
+- Xiong y coautores, *On Layer Normalization in the Transformer Architecture* (2020): [arXiv:2002.04745](https://arxiv.org/abs/2002.04745) — post-norma, pre-norma y el calentamiento.
+- Hendrycks y Gimpel, *Gaussian Error Linear Units* (2016): [arXiv:1606.08415](https://arxiv.org/abs/1606.08415) — GELU.

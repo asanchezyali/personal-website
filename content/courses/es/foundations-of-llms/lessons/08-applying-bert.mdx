@@ -1,0 +1,165 @@
+---
+title: 'Congelar o ajustar'
+language: 'es'
+module: 'El modelo BERT'
+moduleOrder: 2
+order: 4
+summary: 'Las dos maneras de adaptar un codificador preentrenado y lo que cuesta cada una, qué capa conviene leer cuando se congela, el coste de almacenamiento por tarea y por qué la representación de [CLS] no sirve como embedding de frase.'
+---
+
+La lección sobre BERT en concreto describió las dos formas del ajuste fino según qué parte de la
+salida se lee. Queda una decisión anterior y más consecuente: si el codificador **se mueve o no**
+durante la adaptación. De ella dependen el coste, la cantidad de datos necesaria y cuántas tareas
+puede servir una misma instalación.
+
+## Las dos maneras de adaptar
+
+El modelo de una tarea concreta es una composición. El codificador preentrenado lee la entrada y una
+red pequeña añadida encima produce la respuesta:
+
+$$
+\mathbf{y} = \text{Predice}_\omega\!\left(\text{BERT}_{\hat\theta}(\mathbf{x})\right)
+$$
+
+Entrenar esa composición sobre datos etiquetados admite dos regímenes. En el **enfoque basado en
+características** solo se ajusta $\omega$: el codificador queda congelado y actúa como extractor
+fijo de representaciones. En el **ajuste fino** se mueven ambos, partiendo $\theta$ de los pesos
+preentrenados.
+
+$$
+(\tilde\omega, \tilde\theta) = \operatorname*{arg\,min}_{\omega,\,\theta} \sum_{(\mathbf{x},\mathbf{y})\in\mathcal{D}} \text{Pérdida}\!\left(\mathbf{y}_{\omega,\theta}(\mathbf{x}),\, \mathbf{y}\right)
+$$
+
+El procedimiento es aprendizaje supervisado corriente. Lo único particular es el punto de partida:
+no se entrena desde cero sino desde un modelo que ya representa el lenguaje, y por eso el conjunto
+etiquetado puede ser pequeño. Solo ha de enseñar la tarea, no el idioma.
+
+## La capa que conviene leer
+
+Al congelar el codificador surge una pregunta que el ajuste fino no plantea: de las doce capas,
+¿cuál se lee? La respuesta habitual —la última— resulta ser incorrecta, y los autores de BERT la
+midieron sobre reconocimiento de entidades nombradas.
+
+<FeatureVsFineTune
+  options={[
+    { name: 'embeddings', f1: 91.0 },
+    { name: 'última capa', f1: 94.9 },
+    { name: 'suma pond., 12', f1: 95.5 },
+    { name: 'penúltima capa', f1: 95.6 },
+    { name: 'suma pond., 4', f1: 95.9 },
+    { name: 'concat. últimas 4', f1: 96.1 },
+  ]}
+  labels={{
+    hint: 'F1 de desarrollo en CoNLL-2003, con el codificador congelado.',
+    finetune: 'ajuste fino',
+    baseline: 'referencia',
+    gap: 'por detrás del ajuste fino en',
+    note: 'La última capa sola rinde menos que la penúltima: es la más especializada en el objetivo de preentrenamiento.',
+    reset: 'Reiniciar',
+  }}
+/>
+
+Las cifras publicadas ordenan las opciones con claridad. Quedarse con los embeddings de entrada da
+$91{,}0$ de F1, muy por debajo. La **última** capa oculta da $94{,}9$, y la **penúltima** da
+$95{,}6$: leer la capa final es peor que leer la anterior. La razón es que la última capa es la más
+especializada en el objetivo de preentrenamiento —reconstruir tokens enmascarados— y por tanto la
+menos general. La mejor opción del estudio es concatenar las cuatro últimas, con $96{,}1$, frente a
+$96{,}4$ del ajuste fino completo.
+
+La diferencia final es de $0{,}3$ puntos. Congelar el codificador cuesta muy poco rendimiento en
+esta tarea, siempre que se lea la capa adecuada.
+
+## Lo que cuesta cada régimen
+
+La comparación de rendimiento no es la única que importa. Si un mismo codificador ha de servir
+varias tareas, el factor decisivo es cuántos parámetros hay que **almacenar por tarea**.
+
+<AdaptationCost
+  labels={{
+    hint: 'Un solo cuerpo compartido, y lo que cuesta cada tarea encima de él.',
+    frozen: 'congelado',
+    lora: 'LoRA',
+    full: 'ajuste completo',
+    trainable: 'entrenables',
+    perTask: 'por tarea',
+    tasks: 'tareas',
+    note: 'El ajuste completo guarda una copia entera de BERT por tarea. Los otros dos guardan un cuerpo compartido y algo pequeño al lado.',
+    reset: 'Reiniciar',
+  }}
+/>
+
+El ajuste fino completo entrena y almacena los $109{,}5$ millones de parámetros de BERT-base **por
+cada tarea**: $418$ MiB en coma flotante de 32 bits, multiplicados por el número de tareas. Con diez
+tareas son más de cuatro gigabytes de pesos que en su mayor parte son la misma cosa.
+
+El extremo opuesto, congelar todo y entrenar una cabeza lineal, almacena $6$ KiB por tarea. Entre
+ambos existe un término medio que se ha vuelto el habitual: el **ajuste eficiente en parámetros**.
+En lugar de mover los pesos, se les añade una corrección de rango bajo —la idea de LoRA, desarrollada
+en la lección sobre el rango del curso de álgebra lineal— sobre las proyecciones de consulta y
+valor.
+
+Con rango $8$ eso son $12 \times 2 \times 2 \times 768 \times 8 = 294\,912$ parámetros, un
+$0{,}27\,\%$ del modelo, y $1{,}13$ MiB por tarea frente a $418$: **369 veces menos**. El cuerpo se
+comparte y cada tarea aporta un archivo pequeño al lado.
+
+## El criterio de elección
+
+Congelar es preferible cuando el conjunto etiquetado es muy pequeño, porque el codificador no puede
+desviarse y el sobreajuste queda acotado a la cabeza. También cuando una misma instalación sirve
+muchas tareas y el coste de memoria domina.
+
+El ajuste fino rinde más cuando hay datos suficientes y la tarea se aparta del dominio de
+preentrenamiento, porque permite que las representaciones se especialicen. Su riesgo es el
+contrario: con pocos ejemplos el modelo puede sobreajustarse o degradar lo que ya sabía.
+
+El ajuste eficiente en parámetros ocupa el término medio y por eso desplazó a los otros dos en la
+práctica: conserva casi todo el rendimiento del ajuste completo con el coste de almacenamiento del
+congelado.
+
+## La representación de [CLS] no es un embedding de frase
+
+Queda una advertencia que conviene enunciar con precisión, porque el error es muy frecuente.
+
+La lección sobre BERT en concreto señaló que `[CLS]` no resume nada por construcción y que adquiere
+ese papel porque el entrenamiento lo obliga. La consecuencia práctica es directa: **antes** de
+ajustar sobre una tarea, el vector de `[CLS]` no es una representación útil de la frase. Extraerlo
+de un BERT recién preentrenado y compararlo por similitud coseno produce resultados pobres.
+
+El dato concreto procede de Sentence-BERT. Tomar la salida de `[CLS]` de un BERT sin ajustar, o
+promediar sus vectores de token, produce representaciones de frase **peores que promediar vectores
+de GloVe**, que son estáticos y muy anteriores.
+
+Conviene precisar lo que eso implica, porque suele resumirse mal. El problema no se arregla cambiando
+de agregación: en el estudio de Sentence-BERT, con el modelo ya entrenado por su procedimiento, el
+promedio obtiene $87{,}44$ y `[CLS]` obtiene $86{,}62$ sobre el conjunto de similitud semántica.
+Son dos puntos de diferencia, no la distancia que separa a ambos de ser utilizables. Lo que aporta
+Sentence-BERT no es la elección del agrupamiento sino el **objetivo de entrenamiento**: una red
+siamesa sobre pares de frases que optimiza directamente la propiedad que se pretende usar.
+
+La regla que se deriva es general. Una representación intermedia sirve para aquello para lo que se
+la entrenó. `[CLS]` se entrena para alimentar un clasificador, y eso hace bien; no se entrena para
+que las distancias entre frases sean significativas, y eso no lo hace.
+
+## El siguiente paso
+
+Todas las tareas de esta lección producen **una** decisión por entrada, leída de un solo vector.
+Otras requieren una decisión en **cada** posición: etiquetar cada palabra, o localizar el fragmento
+que responde a una pregunta.
+
+La siguiente lección trata ese caso: el etiquetado de secuencias, la predicción de fragmentos, y el
+uso de un codificador dentro de un sistema mayor.
+
+---
+
+**Ejercicio.** Ajustar `bert-base-uncased` sobre un conjunto pequeño de clasificación en dos
+regímenes: congelando el codificador y entrenando solo la cabeza, y ajustando todo. Comparar el
+rendimiento y el tiempo por época. Repetir con `peft` aplicando LoRA de rango 8 y comprobar que el
+número de parámetros entrenables coincide con el $0{,}27\,\%$ de la figura.
+
+## Referencias
+
+- Xiao y Zhu, *Foundations of Large Language Models* (2025), sec. 1.4: [arXiv:2501.09223](https://arxiv.org/abs/2501.09223).
+- Devlin y coautores, *BERT* (2019): [arXiv:1810.04805](https://arxiv.org/abs/1810.04805) — la ablación del enfoque basado en características.
+- Hu y coautores, *LoRA* (2021): [arXiv:2106.09685](https://arxiv.org/abs/2106.09685) — la corrección de rango bajo.
+- Houlsby y coautores, *Parameter-Efficient Transfer Learning* (2019): [arXiv:1902.00751](https://arxiv.org/abs/1902.00751) — los adaptadores.
+- Reimers y Gurevych, *Sentence-BERT* (2019): [arXiv:1908.10084](https://arxiv.org/abs/1908.10084) — por qué [CLS] no sirve como embedding de frase.

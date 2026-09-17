@@ -1,0 +1,31 @@
+---
+title: 'Fundamentos de los LLM'
+language: 'es'
+level: 'Intermedio'
+order: 2
+summary: 'Qué se optimiza exactamente cuando se entrena un modelo de lenguaje: el preentrenamiento autosupervisado, las leyes de escalado y su corrección, y los objetivos que distinguen a cada familia de arquitecturas.'
+tags: ['llm', 'preentrenamiento', 'transformers', 'aprendizaje-automático']
+---
+
+La divulgación sobre modelos de lenguaje suele detenerse en la metáfora: el modelo «predice la
+siguiente palabra», «ha leído todo internet», «aprende como un niño». Ninguna de esas frases permite
+responder a las preguntas que importan al construir un sistema. Cuánto texto hace falta para un
+presupuesto de cómputo dado. Por qué un modelo que rellena huecos no sirve para generar. Qué se está
+optimizando en realidad cuando se minimiza una pérdida sobre miles de millones de tokens.
+
+Este curso desarrolla esas respuestas a partir de las formulaciones originales. Cada lección parte
+de un objetivo escrito de forma explícita, lo deriva cuando la derivación es corta, y contrasta las
+afirmaciones cuantitativas con las cifras publicadas de los modelos reales. Las figuras
+interactivas permiten manipular los parámetros de las expresiones antes de leer su análisis.
+
+El **primer módulo** trata el preentrenamiento como paradigma: por qué la autosupervisión desplazó
+al aprendizaje supervisado por tarea, qué prometen las leyes de escalado y en qué se equivocó su
+primera formulación, y las dos maneras de adaptar un modelo ya entrenado.
+
+La serie continúa con el objetivo de cada familia de arquitecturas: el decodificador causal y su
+equivalencia con la máxima verosimilitud, el codificador bidireccional y el modelado de lenguaje
+enmascarado, y las variantes codificador-decodificador.
+
+Los contenidos siguen a Xiao y Zhu, *Foundations of Large Language Models*
+([arXiv:2501.09223](https://arxiv.org/abs/2501.09223)), con las referencias primarias citadas en
+cada lección.

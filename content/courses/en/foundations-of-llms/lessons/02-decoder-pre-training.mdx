@@ -1,0 +1,240 @@
+---
+title: 'Training the decoder'
+language: 'en'
+module: 'Pre-training'
+moduleOrder: 1
+order: 2
+summary: 'The cross-entropy loss as it is actually implemented, perplexity and what it really measures, the mismatch between training on the correct prefix and generating from your own, and why decoding and the key-value cache are not implementation details.'
+---
+
+The previous lesson stated the causal objective and showed that maximising the probability of the
+corpus amounts to estimating $\theta$ by maximum likelihood. What remains is what is actually
+computed in a training step, what number is published to compare models, and what happens when the
+model stops reading text written by people and starts reading its own.
+
+## The loss at a single position
+
+At position $i$ the model returns a distribution over the vocabulary,
+$\mathbf{p}^{\theta}_{i+1}$, conditioned on the prefix. The reference is the vector
+$\mathbf{p}^{\text{gold}}_{i+1}$, which places all of its mass on the token that actually appeared.
+The discrepancy is measured by cross-entropy:
+
+$$
+\text{CE}\!\left(\mathbf{p}^{\text{gold}}_{i+1},\, \mathbf{p}^{\theta}_{i+1}\right) = -\sum_{v \in \mathcal{V}} p^{\text{gold}}_{i+1}(v)\,\log p^{\theta}_{i+1}(v)
+$$
+
+The sum runs over the whole vocabulary, but almost all of its terms vanish: the reference vector is
+zero everywhere except at one position. The expression then collapses to a single term,
+
+$$
+\ell_i = -\log P_\theta\!\left(x_{i+1} \mid x_0, \dots, x_i\right)
+$$
+
+that is, the negative logarithm of the probability the model assigned to the correct token. The
+consequence is worth holding onto: that number is the only feedback the model receives. Neither
+syntax nor meaning is labelled; whatever linguistic structure it ends up representing is deduced
+from repeatedly maximising one probability.
+
+The loss of a sequence is the sum over its positions, and that of the corpus the sum over its
+sequences:
+
+$$
+\text{Loss}_\theta(\mathbf{x}) = \sum_{i=0}^{m-1} \ell_i
+$$
+
+## Perplexity
+
+The accumulated loss depends on length, so it cannot be used for comparison. The quantity that is
+published instead is **perplexity**, which normalises by token count and undoes the logarithm:
+
+$$
+\text{PPL}(\mathbf{x}) = \exp\!\left(\frac{1}{n}\sum_{i=1}^{n} \ell_i\right)
+$$
+
+An equivalent manipulation expresses it as the inverse geometric mean of the assigned probabilities:
+
+$$
+\text{PPL}(\mathbf{x}) = P_\theta(\mathbf{x})^{-1/n}
+$$
+
+The two forms agree because the first is the exponential of the mean of the $-\log p_i$ and the
+second the exponential of $-\frac{1}{n}\log\prod_i p_i$. Over a five-token sequence to which the
+model assigned $0.60$, $0.31$, $0.72$, $0.85$ and $0.44$, the loss sums to $2.994$, its mean is
+$0.5988$ and the perplexity is $1.82$ along either route.
+
+```python
+import numpy as np
+
+p = np.array([0.60, 0.31, 0.72, 0.85, 0.44])
+
+ppl = np.exp(-np.log(p).mean())     # 1.8199
+ppl == p.prod() ** (-1 / len(p))    # the same quantity
+```
+
+The reading is an **effective branching factor**: the number of equiprobable alternatives the model
+would be hesitating between if its uncertainty were uniform. A model spreading its mass evenly over
+the $50{,}257$ entries of the GPT-2 vocabulary has perplexity $50{,}257$; one that is right with
+probability $1/2$ at every step has perplexity $2$. The lower bound is $1$, which would correspond
+to a model predicting the text with certainty.
+
+A caveat that is frequently omitted: perplexity is **only comparable between models that share a
+tokenisation**. A vocabulary that cuts text into more pieces produces more terms in the mean, and
+the resulting figure is not commensurable with one from a vocabulary that cuts it into fewer.
+Comparing perplexities across model families is meaningless unless normalised per character or per
+word.
+
+## Training happens in a single pass
+
+One detail of the construction explains why this objective scales. The target at position $i$ is the
+input token at position $i+1$, so the sequence contains both the inputs and the references at once.
+Nothing has to be generated in order to train: the complete real sequence is fed in and every
+position is scored in a single forward pass, in parallel.
+
+What makes that parallelism legitimate is the causal mask of the previous lesson. Without it,
+position $i$ would see the token $x_{i+1}$ it is meant to predict and the loss would vanish by
+copying the input. The triangular mask guarantees that each position observes only its prefix, and
+therefore that the $m$ simultaneous predictions are all legitimate.
+
+This way of training is called **teacher forcing**: at every position the context given to the model
+is the correct prefix, not the one the model would have produced.
+
+## Exposure bias
+
+In generation there is no correct prefix to supply. The model consumes its own output as the next
+input, one token at a time. Training and generation therefore operate in different regimes, and the
+difference has consequences.
+
+During training the model only ever sees correct prefixes. In generation, an early mistake places it
+on a prefix that was never part of its training distribution, where its predictions are of unknown
+quality and errors can compound. Ranzato and co-authors named this mismatch **exposure bias** in
+2015.
+
+The classic correction is **scheduled sampling**, by Bengio and co-authors, which replaces the
+reference token with the model's own prediction at an increasing rate, so that the model grows
+accustomed to its own prefixes. The proposal is not free of objections: Huszár showed that same year
+that its objective function is improper and that the resulting learning algorithm is inconsistent,
+despite its strong empirical results. The problem, in short, remains open, and much of the practical
+weight carried by the decoding strategy derives from it.
+
+## Decoding is not part of the model
+
+Once pre-training is over, the model returns a distribution at each step. Choosing a token from it is
+a decision **external** to the parameters: the same weights produce very different text depending on
+the rule applied.
+
+<DecodingStrategies
+  labels={{
+    hint: 'The same model; only the rule for choosing a token changes.',
+    greedy: 'greedy',
+    sample: 'sampling',
+    topk: 'top-k',
+    topp: 'top-p',
+    kept: 'candidates',
+    mass: 'mass',
+    note: 'The top-p set adapts to the shape of the distribution; the top-k set always keeps the same number.',
+    reset: 'Reset',
+  }}
+/>
+
+The **greedy** rule takes the most probable token at each step. **Sampling** draws from the
+distribution, and a **temperature** $T$ rescales it beforehand:
+
+$$
+p_i(T) = \frac{\exp(z_i/T)}{\sum_j \exp(z_j/T)}
+$$
+
+As $T \to 0$ the distribution concentrates on the maximum and sampling degenerates into the greedy
+rule; with $T > 1$ it flattens and the text becomes more varied and less reliable. Temperature adds
+no information: it redistributes what is already in the logits.
+
+The two usual truncations limit where the sample is drawn from. **Top-k** keeps the $k$ most
+probable tokens; **top-p**, or nucleus sampling, keeps the smallest set whose cumulative mass
+reaches $p$. The difference is that the second adapts the number of candidates to the shape of the
+distribution: on the distribution in the figure, $p = 0.9$ retains five tokens and $p = 0.5$ retains
+two, whereas $k = 3$ retains three in both cases.
+
+The result motivating all of this deserves stating precisely, because it runs against intuition.
+Holtzman and co-authors showed in 2020 that **maximisation is an inappropriate objective for
+open-ended generation**: beam search and the greedy rule, which pursue the most probable sequence,
+produce bland and repetitive text. Human text is not the most probable text under the model, and
+searching for the latter does not approximate the former. Hence nucleus sampling, which truncates
+the unreliable tail instead of chasing the maximum, is the usual strategy for free-form generation.
+Beam search keeps its place where a correct answer to maximise does exist, as in machine
+translation.
+
+## The key-value cache
+
+Generation is sequential by construction, but it need not be redundant. A naive implementation would
+recompute the representation of the entire prefix at every step. The causal mask makes that
+unnecessary: since no position attends to the future, the keys and values of already processed
+tokens **do not change** when a new one is appended. It suffices to compute them once and keep them.
+
+The cost of keeping them is memory, and its size is surprising. For each token two tensors —keys and
+values— are stored per layer and per head:
+
+$$
+\text{bytes} = 2 \cdot L \cdot h_{kv} \cdot d_h \cdot n \cdot b
+$$
+
+with $L$ layers, $h_{kv}$ key-value heads, $d_h$ the per-head dimension, $n$ the context length and
+$b$ the bytes per element.
+
+<KVCacheCost
+  labels={{
+    hint: 'A single sequence, in fp16. The cache grows linearly with the context.',
+    cache: 'KV cache',
+    weights: 'weights, fp16',
+    perToken: 'per token',
+    tokens: 'tokens',
+    exceeds: 'the cache now costs more memory than the model',
+    under: 'the cache still fits under the weights',
+    reset: 'Reset',
+  }}
+/>
+
+For Llama-2-7B, with 32 layers and 32 heads of 128 dimensions in half precision, each token costs
+$0.5$ MiB of cache. A context of 4096 tokens occupies exactly $2$ GiB; one of 32768 occupies $16$ GiB
+and **exceeds the model's own weights**, which in fp16 come to some $13$ GiB. The cache stops being
+an implementation detail and becomes the constraint that fixes how many sequences fit on a GPU at
+once.
+
+The figure also allows a counterintuitive effect to be observed. Llama-2-70B uses **grouped-query
+attention**, in which several query heads share a single key-value pair: 80 layers but only 8
+key-value heads. The result is that its cache at 4096 tokens occupies $1.25$ GiB, **less than that of
+Llama-2-13B**, which occupies $3.13$ GiB despite being a model five times smaller. Grouping was
+introduced for precisely this reason.
+
+One precision remains about what the cache saves, since it is usually overstated. With a cache, step
+$t$ projects a single token instead of $t$, so the cost of the projections and of the dense network
+falls from $O(t)$ to $O(1)$ per step. Attention, by contrast, **remains** $O(t)$: the new token must
+be compared against the $t$ stored keys. The cache removes the recomputation, not attention's linear
+dependence on context length, which is exactly what makes long-context inference expensive.
+
+## The next objective
+
+One objective, one loss and trillions of tokens: that is how every model of the GPT family is
+pre-trained. Its limitation is the one the mask imposes, already stated in the previous lesson: each
+position sees only its left. For generating, that is exactly what is needed. For building a
+representation of a complete sentence, having both sides helps.
+
+The next lesson develops the encoder family: masked language modelling in detail, the auxiliary
+classification objectives that accompanied it, and why the representation it produces cannot
+generate.
+
+---
+
+**Exercise.** Load `gpt2` with `transformers`, compute the perplexity of a naturally written
+paragraph and that of the same paragraph with its words shuffled, and check that the second is far
+higher. Repeat measuring per character rather than per token and check that the ordering between the
+two texts holds even though the figures change.
+
+## References
+
+- Xiao and Zhu, *Foundations of Large Language Models* (2025), sec. 1.2.1: [arXiv:2501.09223](https://arxiv.org/abs/2501.09223).
+- Radford and co-authors, *Improving Language Understanding by Generative Pre-Training* (2018): [the GPT paper](https://cdn.openai.com/research-covers/language-unsupervised/language_understanding_paper.pdf).
+- Ranzato and co-authors, *Sequence Level Training with Recurrent Neural Networks* (2015): [arXiv:1511.06732](https://arxiv.org/abs/1511.06732).
+- Bengio and co-authors, *Scheduled Sampling for Sequence Prediction* (2015): [arXiv:1506.03099](https://arxiv.org/abs/1506.03099).
+- Huszár, *How (not) to Train your Generative Model* (2015): [arXiv:1511.05101](https://arxiv.org/abs/1511.05101).
+- Fan and co-authors, *Hierarchical Neural Story Generation* (2018): [arXiv:1805.04833](https://arxiv.org/abs/1805.04833) — top-k sampling.
+- Holtzman and co-authors, *The Curious Case of Neural Text Degeneration* (2020): [arXiv:1904.09751](https://arxiv.org/abs/1904.09751) — nucleus sampling.
+- Ainslie and co-authors, *GQA* (2023): [arXiv:2305.13245](https://arxiv.org/abs/2305.13245) — grouped-query attention.

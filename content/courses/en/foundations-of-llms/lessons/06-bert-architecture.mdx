@@ -1,0 +1,167 @@
+---
+title: 'Inside the layer'
+language: 'en'
+module: 'The BERT model'
+moduleOrder: 2
+order: 2
+summary: 'The repeated layer and its two sub-layers, the attention mechanism with the exact justification for its scale factor, the dense block where most of the parameters live, and the placement of the normalisation, which decides whether the model needs warm-up.'
+---
+
+The previous lesson described how BERT learns and how it is used, and detailed the input: the three
+embedding tables whose sum produces each token's vector. What remains is the body of the model, which
+is a single layer repeated $L$ times. This lesson opens it.
+
+## The repeated layer
+
+Each layer contains **two** sub-layers. The first is self-attention, where tokens exchange
+information with one another. The second is a dense network transforming each position separately,
+with no communication between them.
+
+Both share the same envelope:
+
+$$
+\text{output} = \text{LN}\!\left(F(\text{input}) + \text{input}\right)
+$$
+
+where $F$ is the corresponding sub-layer. The two elements of that envelope do work out of all
+proportion to their simplicity. The **residual connection** adds the input back to the block's
+output, so information has a direct path that does not cross $F$. **Layer normalisation** then
+rescales the result to keep activations in a stable range.
+
+## Inside attention
+
+Each token vector is projected three ways: into a **query** $\mathbf{q}$, a **key** $\mathbf{k}$ and
+a **value** $\mathbf{v}$. A token's query is compared against every key, and the result of those
+comparisons decides what proportion of each value it collects.
+
+$$
+\text{Attention}(\mathbf{Q},\mathbf{K},\mathbf{V}) = \text{Softmax}\!\left(\frac{\mathbf{Q}\mathbf{K}^{\top}}{\sqrt{d_k}}\right)\mathbf{V}
+$$
+
+Read left to right: $\mathbf{Q}\mathbf{K}^{\top}$ scores every query-key pair, the division adjusts
+the scale, softmax turns the scores into weights summing to one, and those weights average the
+values.
+
+## The division by the square root of the dimension
+
+The factor $1/\sqrt{d_k}$ is usually presented as a technical adjustment, but it has an exact
+justification worth developing, because it also explains why head size does not grow as the model
+scales.
+
+Suppose the components of $\mathbf{q}$ and $\mathbf{k}$ are independent, with mean zero and variance
+one. Their dot product is a sum of $d_k$ independent terms of variance one, so
+
+$$
+\operatorname{Var}(\mathbf{q}\cdot\mathbf{k}) = d_k
+$$
+
+The scores therefore spread in proportion to $\sqrt{d_k}$. And softmax is not scale invariant:
+multiplying its inputs by a constant greater than one concentrates the mass on the maximum.
+
+<ScaledDotProduct
+  labels={{
+    hint: 'The same scores, read at different per-head dimensions.',
+    unscaled: 'without dividing',
+    scaled: 'divided by √dₖ',
+    spread: 'spread of q·k',
+    entropy: 'entropy',
+    peak: 'peak',
+    note: 'Var(q·k) = dₖ, so without the division the softmax saturates and the gradient vanishes. BERT holds dₖ = 64 at both sizes.',
+    reset: 'Reset',
+  }}
+/>
+
+The figure quantifies the effect. At $d_k = 8$ without dividing, the largest weight is $0.69$; at
+$d_k = 64$ it rises to $0.96$; at $d_k = 512$ it reaches $0.9999$ and the entropy falls from $1.38$
+to $0.001$ against a possible maximum of $1.61$. The distribution has become practically an
+indicator vector, and in that region the derivative of softmax is approximately zero: the gradient
+stops propagating. Dividing by $\sqrt{d_k}$ makes the distribution identical at any dimension, which
+is what the right-hand column of the figure shows.
+
+## Several heads of the same size
+
+Attention is not run once but several times in parallel. **Multi-head attention** splits the vectors
+into $n_{\text{heads}}$ subspaces of dimension $d_k = d/n_{\text{heads}}$, applies the mechanism in
+each and concatenates the results. Each head thus has its own set of projections and can specialise
+in a different kind of relation.
+
+There is a regularity here that usually goes unnoticed. In BERT-base, $768/12 = 64$. In BERT-large,
+$1024/16 = 64$. **Head size does not change**: scaling the model widens the dimension and adds heads,
+but each head keeps its 64 dimensions. Given the above, the decision is coherent: $d_k$ fixes the
+regime in which softmax operates, and altering it would change the mechanism's behaviour as well as
+its capacity.
+
+## The dense block
+
+After attention mixes information **between** tokens, the second sub-layer transforms each token
+**separately**. It is a two-layer perceptron:
+
+$$
+\text{FFN}(\mathbf{x}) = \mathbf{W}_2\,\text{GELU}\!\left(\mathbf{W}_1\mathbf{x} + \mathbf{b}_1\right) + \mathbf{b}_2
+$$
+
+The inner dimension is conventionally $4d$: the vector is widened, a non-linearity is applied, and it
+is compressed back. The non-linearity is GELU rather than the ReLU of the original transformer.
+
+It is worth contrasting this block with the previous one in terms of cost, because popular accounts
+grant attention a prominence the parameters do not support. With the figures from the previous
+lesson, in one BERT-base layer attention contributes $2.36$ million parameters and the dense network
+$4.72$ million: **two thirds of every layer sit in the dense block**, and the proportion holds
+identically in the large version. The mechanism that gives the architecture its name is the small
+part.
+
+## The placement of the normalisation
+
+One detail of the envelope remains, fixed without comment by the opening equation: the normalisation
+is applied **after** the residual is added. That arrangement is called post-norm, and the
+alternative —normalising before the sub-layer, leaving the sum untouched— is called pre-norm.
+
+<NormPlacement
+  labels={{
+    hint: 'The only thing that changes is where the normalisation sits.',
+    post: 'post-norm',
+    pre: 'pre-norm',
+    clean: 'an unbroken identity path from input to output',
+    broken: 'every layer normalises the sum: no identity path',
+    sublayer: 'sub-layer',
+    note: 'BERT is post-norm, which is why its recipe needs a warm-up phase. Xiong et al. (2020) traced this to large gradients near the output at initialisation.',
+    reset: 'Reset',
+  }}
+/>
+
+The difference is not cosmetic. With pre-norm there is a path running from input to output adding
+contributions without crossing any normalisation; with post-norm, every layer normalises the sum and
+that direct path disappears. Xiong and co-authors showed in 2020 that the second arrangement produces
+large gradients near the output at initialisation, and that it therefore requires a learning-rate
+**warm-up** phase, while the first behaves well from the start and allows it to be dispensed with.
+
+BERT is post-norm, following the original transformer, and its training recipe consequently includes
+that warm-up. Later models moved largely to pre-norm, for the reason the figure illustrates.
+
+It is worth closing with what the residual connection solves, since it is the condition that makes
+everything else possible. Without that alternative path, stacking twenty-four layers would attenuate
+the gradient before it reached the first ones. BERT-large would not be trainable.
+
+## The next step
+
+That completes the model: three embedding tables, a layer repeated $L$ times, and a handful of
+numbers fixing its size. The architecture contains no exotic idea; it is an ordinary transformer
+encoder, and BERT's leap came from the training rather than from the layer.
+
+The next lesson walks the family BERT started: RoBERTa and what changed on retraining it with more
+data, the efficient variants obtained by distillation and quantisation, and the multilingual models.
+
+---
+
+**Exercise.** Take a query matrix and a key matrix with standard normal entries of dimension $d_k$,
+compute the empirical variance of $\mathbf{q}\cdot\mathbf{k}$ for $d_k \in \{8, 64, 512\}$ and check
+that it matches $d_k$. Then apply softmax to the scores with and without the scale factor and measure
+the entropy of the resulting distribution in each case.
+
+## References
+
+- Xiao and Zhu, *Foundations of Large Language Models* (2025), sec. 1.3.1.2: [arXiv:2501.09223](https://arxiv.org/abs/2501.09223).
+- Vaswani and co-authors, *Attention Is All You Need* (2017): [arXiv:1706.03762](https://arxiv.org/abs/1706.03762) — the transformer layer and the scale factor.
+- Devlin and co-authors, *BERT* (2019): [arXiv:1810.04805](https://arxiv.org/abs/1810.04805) — the base and large configurations.
+- Xiong and co-authors, *On Layer Normalization in the Transformer Architecture* (2020): [arXiv:2002.04745](https://arxiv.org/abs/2002.04745) — post-norm, pre-norm and warm-up.
+- Hendrycks and Gimpel, *Gaussian Error Linear Units* (2016): [arXiv:1606.08415](https://arxiv.org/abs/1606.08415) — GELU.

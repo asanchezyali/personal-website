@@ -1,0 +1,277 @@
+---
+title: 'Pre-training'
+language: 'en'
+module: 'Pre-training'
+moduleOrder: 1
+order: 1
+summary: 'Why self-supervision displaced per-task supervised learning, what the scaling laws promise exactly and where their first formulation was wrong, and the structural reason a model that fills in blanks cannot generate text.'
+---
+
+For most of the history of natural language processing, every task received its own model, trained
+from scratch on its own labelled dataset. Sentiment analysis, translation and question answering
+were separate problems, with separate annotations and separate effort. The cost of annotation set a
+ceiling: no task could have more data than someone had labelled by hand for it.
+
+Pre-training inverts the order. A large model is first trained on **unlabelled** text, through an
+objective the text itself supplies, and only afterwards adapted to specific tasks. This lesson
+examines what that inversion gains, what it costs, and what its two real limits are.
+
+## The model as a function
+
+The notation is worth fixing before discussing training. Every model this course treats is a
+function of a token sequence:
+
+$$
+\mathbf{o} = g(x_0, x_1, \dots, x_m;\, \theta) = g_\theta(x_0, \dots, x_m)
+$$
+
+where $x_0$ is a conventional start symbol —`[CLS]` or `<s>`—, $\theta$ are the parameters and
+$\mathbf{o}$ is the output. What $\mathbf{o}$ is depends on the use: a distribution over the
+vocabulary if the model predicts tokens, or a vector representation of the sequence if the model
+encodes it. Pre-training consists of estimating $\theta$ once, on a general corpus, so that
+$g_{\hat\theta}$ can be reused across many problems.
+
+A model trained on broad data at scale and subsequently adapted to diverse tasks is what Bommasani
+and co-authors named a **foundation model**. The term describes an economic relation rather than an
+architecture: the cost moves from *per task* to *once*.
+
+## Three ways to pre-train
+
+The word pre-training predates deep learning and denotes three distinct procedures, differing in
+what data the first stage consumes.
+
+**Unsupervised pre-training** optimises a criterion unrelated to any task —reconstructing the input,
+for instance— and then trains on labelled data. It supplies a better starting point and acts as a
+regulariser.
+
+**Supervised pre-training** trains on one labelled task and transfers to another. It is the recipe
+computer vision popularised with ImageNet, and it presupposes that the two tasks are related.
+
+**Self-supervised pre-training** builds the labels from the text itself. Predicting a hidden word
+produces a supervised objective whose label is the word that was there all along; no annotator is
+involved.
+
+The decisive difference is one of availability. The first two procedures need labels at some point,
+and therefore inherit the very ceiling that was to be removed. The third needs none, and turns any
+text into training signal. That is why corpora went from millions to trillions of tokens.
+
+## What the scaling laws promise
+
+Removing the label ceiling is only useful if adding data and compute keeps improving the model.
+Kaplan and co-authors established in 2020 that the loss of a language model decreases as a **power
+law** in three quantities: the number of parameters $N$, the volume of data $D$ and the compute
+spent $C$.
+
+$$
+L(N) \propto N^{-\alpha_N}, \qquad L(D) \propto D^{-\alpha_D}, \qquad L(C) \propto C^{-\alpha_C}
+$$
+
+The exponents they fitted are small: $\alpha_N \approx 0.076$, $\alpha_D \approx 0.095$ and
+$\alpha_C \approx 0.050$. That magnitude deserves a pause. With $\alpha_C = 0.050$, multiplying the
+compute budget by ten reduces the loss by a factor $10^{-0.050} = 0.891$, that is, by roughly
+**11%**. Multiplying it by a hundred reduces it by 21%.
+
+The power law therefore promises no spectacular gain per order of magnitude. It promises something
+different and more valuable to whoever is planning: **regularity**. The performance of the next
+order of magnitude can be estimated before it is spent. That is what turned scaling into an
+engineering decision rather than a gamble.
+
+## Where the first formulation was wrong
+
+Kaplan's laws describe how the loss improves as each factor is raised separately. The question a
+real budget poses is a different one: given a fixed compute $C$, how should it be split between
+parameters and data? Kaplan and co-authors concluded that model size should be prioritised. Hoffmann
+and co-authors showed in 2022 that this conclusion was incorrect.
+
+The starting point is the standard estimate of the cost of training a dense transformer:
+
+$$
+C \approx 6ND
+$$
+
+The factor $6$ collects the operations per token and per parameter in the forward and backward
+passes. With $C$ fixed, the expression defines a family of possible splits: large models on little
+data, or small models on a great deal. Hoffmann's result is that the optimum scales **both factors
+equally**, which within their studied range amounts approximately to
+
+$$
+D \approx 20N
+$$
+
+Combining the two expressions gives $C \approx 120N^2$, from which the optimal split for a given
+budget is determined:
+
+$$
+N_{\text{opt}} = \sqrt{\frac{C}{120}}, \qquad D_{\text{opt}} = 20\,N_{\text{opt}}
+$$
+
+<ScalingLaw
+  labels={{
+    hint: 'Both axes are logarithmic, so both families of curves are straight lines.',
+    frontier: 'compute-optimal frontier, D = 20N',
+    isoCompute: 'equal compute, C = 6ND',
+    optimum: 'optimum',
+    params: 'parameters N',
+    tokens: 'tokens D',
+    ratio: 'tokens',
+    gain: 'Ten times the budget buys roughly 11% less loss.',
+    reset: 'Reset',
+  }}
+/>
+
+The figure places three real models against that frontier. The dashed line runs through the splits
+of equal compute; the solid one, through the optimal splits. Where they cross is the model worth
+training on that budget.
+
+The check is that the formula reproduces the authors' own decisions. Chinchilla was trained with
+$C \approx 5.76\times10^{23}$ operations, and the expression above returns
+$N_{\text{opt}} \approx 69.3$ billion parameters and $D_{\text{opt}} \approx 1.39$ trillion tokens:
+the published figures are 70 billion and 1.4 trillion.
+
+Applied to GPT-3 the conclusion is uncomfortable. With 175 billion parameters and 300 billion
+tokens, its budget was $C \approx 3.15\times10^{23}$; the optimal split for that same budget would
+have been a model of some 51 billion parameters trained on 1.02 trillion tokens. That is, a model
+**three times smaller** fed **three times more text**. Gopher, with 280 billion parameters on the
+same 300 billion tokens, fell further still from the frontier, and Chinchilla —at 70 billion—
+outperformed it on virtually every evaluation at comparable compute.
+
+The methodological lesson outlives the case. An empirical law fitted within a range describes that
+range; the operational conclusion drawn from it depends on what was held fixed while fitting. Kaplan
+and co-authors used a single learning-rate schedule across all model sizes, which systematically
+penalises models trained for longer and biases the optimum towards large models.
+
+## The two self-supervised objectives
+
+What objective is optimised remains to be specified. The two main answers give rise to the two
+families of models.
+
+**Masked language modelling**, introduced with BERT, hides around 15% of the tokens and trains the
+model to reconstruct them from context on both sides:
+
+$$
+\mathcal{L}_{\text{MLM}} = -\sum_{i \in \mathcal{M}} \log P_\theta\!\left(x_i \mid \mathbf{x}_{\setminus\mathcal{M}}\right)
+$$
+
+where $\mathcal{M}$ is the set of hidden positions. The actual procedure carries a detail usually
+omitted, and it is not cosmetic: of that 15%, only 80% is replaced by `[MASK]`, while 10% is
+replaced by a random token and the remaining 10% is left untouched. The reason is that `[MASK]`
+appears in no real text, so a model trained solely on that marker would condition its
+representations on a symbol it will never see again. The mixture forces a useful representation at
+every position, not only where a marker sits.
+
+**Causal language modelling** predicts each token from the preceding ones, which by the chain rule
+factorises the probability of the whole sequence:
+
+$$
+P_\theta(\mathbf{x}) = \prod_{t=1}^{m} P_\theta\!\left(x_t \mid x_0, x_1, \dots, x_{t-1}\right)
+$$
+
+Taking logarithms, maximising this probability over a corpus is exactly estimating $\theta$ by
+maximum likelihood. There is no auxiliary objective: the model fits the distribution of the observed
+language.
+
+## Why the mask decides everything else
+
+The difference between the two objectives lies not in the architecture but in which positions each
+position may read. That restriction is expressed as a mask over the attention matrix.
+
+<AttentionMask
+  n={8}
+  labels={{
+    hint: 'A lit cell means query i is allowed to read key j.',
+    bidirectional: 'bidirectional',
+    causal: 'causal',
+    prefix: 'prefix',
+    visible: 'visible pairs',
+    query: 'query i',
+    key: 'key j',
+    whyBi: 'Every position sees the whole sequence, so none can be predicted without leaking its own answer. It represents; it does not generate.',
+    whyCausal: 'Position i sees only what precedes it, so every position is a prediction target at once.',
+    whyPrefix: 'The prefix is read in full; the continuation is generated one token at a time.',
+    reset: 'Reset',
+  }}
+/>
+
+Two consequences follow from the figure, and they explain the recent history of the field.
+
+The first is that a bidirectional model **cannot generate** left to right. If every position sees
+the complete sequence, predicting position $i$ amounts to reading it: the answer is part of the
+input. That is why masking is necessary in BERT, and why its objective is defined only over the
+hidden positions. A causal model has no such problem, because the triangular mask guarantees that
+position $i$ never observes its own target.
+
+The second is a difference in efficiency that the figure quantifies. With $n$ positions, the causal
+mask leaves $n(n+1)/2$ pairs visible and produces training signal at **every** position of each
+sequence. Masking contributes gradient at only 15% of the positions, so each sequence yields roughly
+one seventh as much. Clark and co-authors made this point when introducing ELECTRA, and it is one of
+the reasons the causal family proved more favourable to scaling, independently of the quality of its
+representations.
+
+## Adaptation by fine-tuning
+
+A pre-trained encoder turns a sequence into vectors:
+
+$$
+\mathbf{H} = \text{Encode}_{\hat\theta}(\mathbf{x}), \qquad \mathbf{H} = (\mathbf{h}_0, \mathbf{h}_1, \dots, \mathbf{h}_m)
+$$
+
+It does not constitute a system on its own. To classify, a head is added and the composed model is
+trained on a labelled set:
+
+$$
+(\tilde\omega, \tilde\theta) = \operatorname*{arg\,min}_{\omega,\theta} \sum_{(\mathbf{x},y)} \text{Loss}\!\left(F_{\omega,\theta}(\mathbf{x}),\, y\right)
+$$
+
+Since the starting point is not random, the labelled set can be small and the run is cheap. The
+result, however, is one model per task: $\tilde\theta$ is no longer good for anything else.
+
+## Adaptation through the context
+
+A causal model good enough at continuing text admits an alternative. If the task is recast as a text
+the model must complete, it is solved **without modifying any parameter**.
+
+```text
+Polarity ∈ {positive, negative, neutral}.
+
+Input: The weather here is wonderful.
+Polarity: positive
+
+Input: I love the food at this place.
+Polarity:
+```
+
+Including worked examples inside the context itself lets the model infer the pattern with no weight
+update. The phenomenon is called **in-context learning**, and the examples, demonstrations. With
+demonstrations one speaks of the few-shot regime; with only an instruction, of the zero-shot regime.
+
+The contrast with fine-tuning is one of kind, not of degree. Fine-tuning produces one model per
+task; the context produces one model that serves them all. That difference explains much of the
+field's shift.
+
+## The shift
+
+The two forms of adaptation correspond to two eras. BERT-style encoders, trained by masking and
+adapted by fine-tuning, dominated between 2018 and 2020. GPT-style decoders, trained by next-token
+prediction and adapted through the context, hold that place today. The foundation is the same
+—self-supervised pre-training at scale— and what changed was the adaptation mechanism, which was in
+turn determined by the mask.
+
+The next lesson develops the causal objective in detail: the cross-entropy loss minimised in
+practice, its relation to perplexity, and why the factorisation above is maximum likelihood with no
+added term.
+
+---
+
+**Exercise.** Using the relation $C \approx 6ND$, compute the budget of LLaMA-65B (65 billion
+parameters, 1.4 trillion tokens) and place it relative to the frontier $D = 20N$. Compare the result
+with Gopher's and explain why two models of comparable compute can differ so much in performance.
+
+## References
+
+- Xiao and Zhu, *Foundations of Large Language Models* (2025): [arXiv:2501.09223](https://arxiv.org/abs/2501.09223).
+- Devlin and co-authors, *BERT* (2019): [arXiv:1810.04805](https://arxiv.org/abs/1810.04805).
+- Brown and co-authors, *Language Models are Few-Shot Learners* (2020): [arXiv:2005.14165](https://arxiv.org/abs/2005.14165).
+- Kaplan and co-authors, *Scaling Laws for Neural Language Models* (2020): [arXiv:2001.08361](https://arxiv.org/abs/2001.08361).
+- Hoffmann and co-authors, *Training Compute-Optimal Large Language Models* (2022): [arXiv:2203.15556](https://arxiv.org/abs/2203.15556).
+- Clark and co-authors, *ELECTRA* (2020): [arXiv:2003.10555](https://arxiv.org/abs/2003.10555).
+- Bommasani and co-authors, *On the Opportunities and Risks of Foundation Models* (2021): [arXiv:2108.07258](https://arxiv.org/abs/2108.07258).

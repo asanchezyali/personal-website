@@ -1,0 +1,243 @@
+---
+title: 'El entrenamiento del decodificador'
+language: 'es'
+module: 'Preentrenamiento'
+moduleOrder: 1
+order: 2
+summary: 'La pérdida de entropía cruzada tal como se implementa, la perplejidad y lo que mide realmente, el desajuste entre entrenar con el prefijo correcto y generar con el propio, y por qué la decodificación y la caché de claves y valores no son detalles de implementación.'
+---
+
+La lección anterior enunció el objetivo causal y mostró que maximizar la probabilidad del corpus
+equivale a estimar $\theta$ por máxima verosimilitud. Queda por ver qué se calcula realmente en un
+paso de entrenamiento, qué número se publica para comparar modelos, y qué ocurre cuando el modelo
+deja de leer texto escrito por personas y empieza a leer el suyo propio.
+
+## La pérdida en una sola posición
+
+En la posición $i$ el modelo entrega una distribución sobre el vocabulario,
+$\mathbf{p}^{\theta}_{i+1}$, condicionada al prefijo. La referencia es el vector
+$\mathbf{p}^{\text{gold}}_{i+1}$, que concentra toda la masa en el token que efectivamente apareció.
+La discrepancia se mide con la entropía cruzada:
+
+$$
+\text{EC}\!\left(\mathbf{p}^{\text{gold}}_{i+1},\, \mathbf{p}^{\theta}_{i+1}\right) = -\sum_{v \in \mathcal{V}} p^{\text{gold}}_{i+1}(v)\,\log p^{\theta}_{i+1}(v)
+$$
+
+La suma recorre todo el vocabulario, pero casi todos sus términos son nulos: el vector de referencia
+vale cero salvo en una posición. La expresión colapsa entonces a un único término,
+
+$$
+\ell_i = -\log P_\theta\!\left(x_{i+1} \mid x_0, \dots, x_i\right)
+$$
+
+es decir, el logaritmo negativo de la probabilidad que el modelo asignó al token correcto. Conviene
+retener la consecuencia: el único retorno que recibe el modelo es ese número. No se etiqueta la
+sintaxis ni el significado; toda la estructura lingüística que acabe representando se deduce de
+maximizar repetidamente una probabilidad.
+
+La pérdida de una secuencia es la suma sobre sus posiciones, y la del corpus la suma sobre sus
+secuencias:
+
+$$
+\text{Pérdida}_\theta(\mathbf{x}) = \sum_{i=0}^{m-1} \ell_i
+$$
+
+## La perplejidad
+
+La pérdida acumulada depende de la longitud, de modo que no sirve para comparar. La magnitud que sí
+se publica es la **perplejidad**, que normaliza por el número de tokens y deshace el logaritmo:
+
+$$
+\text{PPL}(\mathbf{x}) = \exp\!\left(\frac{1}{n}\sum_{i=1}^{n} \ell_i\right)
+$$
+
+Una manipulación equivalente la expresa como la media geométrica inversa de las probabilidades
+asignadas:
+
+$$
+\text{PPL}(\mathbf{x}) = P_\theta(\mathbf{x})^{-1/n}
+$$
+
+Las dos formas coinciden porque la primera es el exponencial de la media de los $-\log p_i$ y la
+segunda el exponencial de $-\frac{1}{n}\log\prod_i p_i$. Sobre una secuencia de cinco tokens a los
+que el modelo asignó $0{,}60$, $0{,}31$, $0{,}72$, $0{,}85$ y $0{,}44$, la suma de pérdidas es
+$2{,}994$, la media $0{,}5988$ y la perplejidad $1{,}82$ por cualquiera de los dos caminos.
+
+```python
+import numpy as np
+
+p = np.array([0.60, 0.31, 0.72, 0.85, 0.44])
+
+ppl = np.exp(-np.log(p).mean())     # 1.8199
+ppl == p.prod() ** (-1 / len(p))    # la misma cantidad
+```
+
+La interpretación es un **factor de ramificación efectivo**: el número de alternativas
+equiprobables entre las que el modelo estaría dudando si su incertidumbre fuera uniforme. Un modelo
+que reparte la masa por igual entre las $50\,257$ entradas del vocabulario de GPT-2 tiene perplejidad
+$50\,257$; uno que acierta con probabilidad $1/2$ en cada paso tiene perplejidad $2$. La cota
+inferior es $1$, y correspondería a un modelo que predice el texto con certeza.
+
+Una advertencia que se omite con frecuencia: la perplejidad **solo es comparable entre modelos que
+comparten la tokenización**. Un vocabulario que parte el texto en más piezas produce más términos en
+la media, y la cifra resultante no es conmensurable con la de otro que lo parte en menos. Comparar
+perplejidades entre familias de modelos distintas carece de sentido salvo que se normalice por
+carácter o por palabra.
+
+## El entrenamiento ocurre en una sola pasada
+
+Un detalle de la construcción explica por qué este objetivo escala. El objetivo de la posición $i$
+es el token de entrada de la posición $i+1$, de modo que la secuencia contiene a la vez las entradas
+y las referencias. No hace falta generar nada para entrenar: se introduce la secuencia real completa
+y se puntúan todas las posiciones en una única pasada hacia adelante, en paralelo.
+
+Lo que hace legítimo ese paralelismo es la máscara causal de la lección anterior. Sin ella, la
+posición $i$ vería el token $x_{i+1}$ que debe predecir y la pérdida se anularía copiando la
+entrada. La máscara triangular garantiza que cada posición solo observa su prefijo, y por tanto que
+las $m$ predicciones simultáneas son todas legítimas.
+
+Esta manera de entrenar recibe el nombre de **teacher forcing**: en cada posición el contexto que se
+le da al modelo es el prefijo correcto, no el que el modelo habría producido.
+
+## El sesgo de exposición
+
+En generación no hay prefijo correcto que suministrar. El modelo consume su propia salida como
+entrada siguiente, un token cada vez. Entrenamiento y generación operan por tanto en regímenes
+distintos, y la diferencia tiene consecuencias.
+
+Durante el entrenamiento el modelo solo ve prefijos correctos. En generación, un error temprano lo
+sitúa en un prefijo que nunca formó parte de su distribución de entrenamiento, donde sus
+predicciones son de calidad desconocida y los errores pueden componerse. Ranzato y coautores
+denominaron a este desajuste **sesgo de exposición** en 2015.
+
+La corrección clásica es el **muestreo programado** de Bengio y coautores, que sustituye con
+probabilidad creciente el token de referencia por el que el modelo predijo, de modo que este se
+acostumbre a sus propios prefijos. Conviene señalar que la propuesta no está exenta de objeciones:
+Huszár demostró ese mismo año que su función objetivo es impropia y que el algoritmo de aprendizaje
+resultante es inconsistente, pese a sus buenos resultados empíricos. El problema, en suma, sigue
+abierto, y buena parte de la relevancia práctica de la estrategia de decodificación procede de él.
+
+## La decodificación no es parte del modelo
+
+Terminado el preentrenamiento, el modelo entrega en cada paso una distribución. Escoger un token a
+partir de ella es una decisión **externa** a los parámetros: los mismos pesos producen textos muy
+distintos según la regla que se aplique.
+
+<DecodingStrategies
+  labels={{
+    hint: 'El mismo modelo; solo cambia la regla con la que se elige el token.',
+    greedy: 'voraz',
+    sample: 'muestreo',
+    topk: 'top-k',
+    topp: 'top-p',
+    kept: 'candidatos',
+    mass: 'masa',
+    note: 'El conjunto de top-p se adapta a la forma de la distribución; el de top-k conserva siempre el mismo número.',
+    reset: 'Reiniciar',
+  }}
+/>
+
+La regla **voraz** toma en cada paso el token de máxima probabilidad. El **muestreo** extrae de la
+distribución, y una **temperatura** $T$ la reescala antes de hacerlo:
+
+$$
+p_i(T) = \frac{\exp(z_i/T)}{\sum_j \exp(z_j/T)}
+$$
+
+Con $T \to 0$ la distribución se concentra en el máximo y el muestreo degenera en la regla voraz;
+con $T > 1$ se aplana y el texto se vuelve más variado y menos fiable. La temperatura no añade
+información: redistribuye la que ya está en los logits.
+
+Las dos truncaciones habituales limitan de dónde se muestrea. **Top-k** conserva los $k$ tokens más
+probables; **top-p**, o muestreo por núcleo, conserva el conjunto más pequeño cuya masa acumulada
+alcanza $p$. La diferencia es que el segundo adapta el número de candidatos a la forma de la
+distribución: sobre la distribución de la figura, $p = 0{,}9$ retiene cinco tokens y $p = 0{,}5$
+retiene dos, mientras que $k = 3$ retiene tres en ambos casos.
+
+El resultado que motiva todo esto merece enunciarse con precisión, porque contradice la intuición.
+Holtzman y coautores mostraron en 2020 que **la maximización es un objetivo inadecuado para la
+generación abierta**: la búsqueda en haz y la regla voraz, que persiguen la secuencia de máxima
+probabilidad, producen texto plano y repetitivo. El texto humano no es el de máxima probabilidad
+bajo el modelo, y buscarlo no lo aproxima. De ahí que el muestreo por núcleo, que trunca la cola
+poco fiable en lugar de perseguir el máximo, sea la estrategia habitual en generación de texto
+libre. La búsqueda en haz conserva su lugar donde sí existe una respuesta correcta que maximizar,
+como la traducción automática.
+
+## La caché de claves y valores
+
+La generación es secuencial por construcción, pero no tiene por qué ser redundante. Una
+implementación ingenua recalcularía en cada paso la representación del prefijo entero. La máscara
+causal lo hace innecesario: como ninguna posición atiende al futuro, las claves y los valores de los
+tokens ya procesados **no cambian** cuando se añade uno nuevo. Basta calcularlos una vez y
+conservarlos.
+
+El coste de esa conservación es memoria, y su magnitud sorprende. Para cada token se almacenan dos
+tensores —claves y valores— por capa y por cabeza:
+
+$$
+\text{bytes} = 2 \cdot L \cdot h_{kv} \cdot d_h \cdot n \cdot b
+$$
+
+con $L$ capas, $h_{kv}$ cabezas de clave y valor, $d_h$ la dimensión por cabeza, $n$ la longitud del
+contexto y $b$ los bytes por elemento.
+
+<KVCacheCost
+  labels={{
+    hint: 'Una sola secuencia, en fp16. La caché crece linealmente con el contexto.',
+    cache: 'caché KV',
+    weights: 'pesos, fp16',
+    perToken: 'por token',
+    tokens: 'tokens',
+    exceeds: 'la caché cuesta ya más memoria que el modelo',
+    under: 'la caché aún cabe por debajo de los pesos',
+    reset: 'Reiniciar',
+  }}
+/>
+
+Para Llama-2-7B, con 32 capas y 32 cabezas de 128 dimensiones en media precisión, cada token cuesta
+$0{,}5$ MiB de caché. Un contexto de 4096 tokens ocupa exactamente $2$ GiB; uno de 32768 ocupa
+$16$ GiB y **supera a los propios pesos del modelo**, que en fp16 son unos $13$ GiB. La caché deja de
+ser un detalle de implementación y se convierte en la restricción que fija cuántas secuencias caben
+simultáneamente en una GPU.
+
+La figura permite además observar un efecto contraintuitivo. Llama-2-70B emplea **atención de
+consultas agrupadas**, en la que varias cabezas de consulta comparten un mismo par de clave y valor:
+80 capas pero solo 8 cabezas de clave y valor. El resultado es que su caché a 4096 tokens ocupa
+$1{,}25$ GiB, **menos que la de Llama-2-13B**, que ocupa $3{,}13$ GiB pese a ser un modelo cinco
+veces menor. La agrupación se introdujo precisamente para eso.
+
+Queda una precisión sobre lo que la caché ahorra, porque suele enunciarse de más. Con caché, el paso
+$t$ proyecta un solo token en lugar de $t$, de modo que el coste de las proyecciones y de la red
+densa pasa de $O(t)$ a $O(1)$ por paso. La atención, en cambio, **sigue siendo** $O(t)$: el token
+nuevo ha de compararse con las $t$ claves almacenadas. La caché elimina el recálculo, no la
+dependencia lineal de la atención con la longitud del contexto, que es justamente lo que hace cara
+la inferencia con contextos largos.
+
+## El siguiente objetivo
+
+Un solo objetivo, una sola pérdida y billones de tokens: así se preentrena todo modelo de la familia
+GPT. Su limitación es la que la máscara impone, y ya quedó enunciada en la lección anterior: cada
+posición ve únicamente su izquierda. Para generar es exactamente lo que se necesita. Para construir
+una representación de una frase completa, disponer de ambos lados ayuda.
+
+La siguiente lección desarrolla la familia del codificador: el modelado de lenguaje enmascarado en
+detalle, los objetivos auxiliares de clasificación que lo acompañaron, y por qué la representación
+que produce no sirve para generar.
+
+---
+
+**Ejercicio.** Cargar `gpt2` con `transformers`, calcular la perplejidad de un párrafo escrito con
+naturalidad y la del mismo párrafo con las palabras desordenadas, y comprobar que la segunda es muy
+superior. Repetir midiendo por carácter en lugar de por token y comprobar que el orden entre ambos
+textos se mantiene aunque las cifras cambien.
+
+## Referencias
+
+- Xiao y Zhu, *Foundations of Large Language Models* (2025), sec. 1.2.1: [arXiv:2501.09223](https://arxiv.org/abs/2501.09223).
+- Radford y coautores, *Improving Language Understanding by Generative Pre-Training* (2018): [el artículo de GPT](https://cdn.openai.com/research-covers/language-unsupervised/language_understanding_paper.pdf).
+- Ranzato y coautores, *Sequence Level Training with Recurrent Neural Networks* (2015): [arXiv:1511.06732](https://arxiv.org/abs/1511.06732).
+- Bengio y coautores, *Scheduled Sampling for Sequence Prediction* (2015): [arXiv:1506.03099](https://arxiv.org/abs/1506.03099).
+- Huszár, *How (not) to Train your Generative Model* (2015): [arXiv:1511.05101](https://arxiv.org/abs/1511.05101).
+- Fan y coautores, *Hierarchical Neural Story Generation* (2018): [arXiv:1805.04833](https://arxiv.org/abs/1805.04833) — muestreo top-k.
+- Holtzman y coautores, *The Curious Case of Neural Text Degeneration* (2020): [arXiv:1904.09751](https://arxiv.org/abs/1904.09751) — muestreo por núcleo.
+- Ainslie y coautores, *GQA* (2023): [arXiv:2305.13245](https://arxiv.org/abs/2305.13245) — atención de consultas agrupadas.

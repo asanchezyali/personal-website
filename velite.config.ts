@@ -92,6 +92,7 @@ const courses = defineCollection({
       language: s.string(),
       summary: s.string(),
       level: s.string().optional(),
+      order: s.number().default(100),
       cover: s.string().optional(),
       tags: s.array(s.string()).default([]),
       draft: s.boolean().optional(),

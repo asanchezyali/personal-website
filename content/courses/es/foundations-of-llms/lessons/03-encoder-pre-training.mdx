@@ -1,0 +1,215 @@
+---
+title: 'El entrenamiento del codificador'
+language: 'es'
+module: 'Preentrenamiento'
+moduleOrder: 1
+order: 3
+summary: 'Cómo se supervisa un modelo cuya salida no tiene respuesta correcta, la representación contextual como verdadero producto del preentrenamiento, las dos objeciones al enmascaramiento y los objetivos que intentaron corregirlas, incluido uno que resultó no medir lo que se creía.'
+---
+
+La lección anterior describió el entrenamiento de un decodificador, donde el objetivo se obtiene
+gratis: el token siguiente ya está en la secuencia. Un codificador no dispone de esa comodidad. Lee
+la secuencia completa y devuelve un vector por posición, y un vector de números reales no admite
+comparación con ninguna referencia. Esta lección trata de cómo se supervisa entonces, qué se
+conserva al terminar, y por qué el objetivo más obvio de la familia resultó medir algo distinto de
+lo que se pretendía.
+
+## El problema de supervisar un codificador
+
+La salida del codificador es una matriz de representaciones:
+
+$$
+\mathbf{H} = \text{Codifica}_\theta(\mathbf{x}), \qquad \mathbf{H} = (\mathbf{h}_0, \dots, \mathbf{h}_m)
+$$
+
+No existe un $\mathbf{H}$ correcto con el que contrastarla. La solución consiste en añadir
+temporalmente una cabeza que convierta cada vector en una distribución sobre el vocabulario, que sí
+es comparable con una referencia:
+
+$$
+\mathbf{p}_i = \text{Softmax}_{\mathbf{W}}(\mathbf{h}_i)
+$$
+
+Se entrenan conjuntamente $\theta$ y $\mathbf{W}$, y al terminar **se descarta $\mathbf{W}$**. La
+cabeza es un andamio: existe solo para que el error tenga por dónde entrar. Lo que se conserva es el
+codificador.
+
+Conviene señalar la asimetría con el decodificador, porque explica el resto de la lección. Allí la
+cabeza de salida se conserva, porque generar es el objetivo. Aquí se tira, porque el objetivo nunca
+fue reconstruir palabras ocultas: era obtener las representaciones que se producen por el camino.
+
+## Lo que se conserva es la representación contextual
+
+El producto del preentrenamiento es un vector por token que depende de la frase en la que aparece.
+Es la diferencia con una representación estática del tipo word2vec, donde cada palabra del
+vocabulario tiene un vector fijo. Una palabra polisémica obliga entonces a un compromiso: el vector
+de *banco* debe situarse entre el sentido financiero y el asiento, y no representa bien ninguno.
+
+Un codificador bidireccional no tiene esa restricción. En «se sentó en el banco del parque» y «el
+banco le denegó el crédito», el token *banco* entra igual y sale distinto, porque las dos
+representaciones se construyen atendiendo a contextos distintos. La representación deja de ser una
+propiedad de la palabra y pasa a serlo de la aparición.
+
+La idea es anterior a BERT. Peters y coautores la introdujeron en 2018 con ELMo, mediante una red
+recurrente bidireccional; la contribución del codificador basado en atención fue hacer esas
+representaciones considerablemente mejores y, sobre todo, fáciles de ajustar.
+
+De aquí se sigue por qué el ajuste fino de la lección introductoria resulta barato. La red que se
+añade encima no aprende a entender el lenguaje: aprende a **leer** unas representaciones que ya
+distinguen los sentidos de cada palabra a partir de su contexto.
+
+## Las dos grietas del enmascaramiento
+
+El modelado de lenguaje enmascarado quedó formulado en la primera lección. Yang y coautores le
+señalaron en 2019 dos objeciones que conviene enunciar con precisión, porque motivan todo lo que
+sigue.
+
+La primera es la **discrepancia entre preentrenamiento y ajuste**. El símbolo `[MASK]` aparece
+durante el preentrenamiento y en ningún texto posterior. La primera lección describió el reparto
+80/10/10 con el que BERT atenúa el problema, pero conviene ser claro sobre su naturaleza: es una
+mitigación, no una solución. El desajuste sigue ahí.
+
+La segunda es más profunda y suele pasarse por alto. Al predecir varias posiciones ocultas a la vez,
+el objetivo las trata como **condicionalmente independientes** dado el contexto visible:
+
+$$
+P(x_{\mathcal{M}} \mid \mathbf{x}_{\setminus\mathcal{M}}) \approx \prod_{i \in \mathcal{M}} P(x_i \mid \mathbf{x}_{\setminus\mathcal{M}})
+$$
+
+En la frase «Nueva [MASK] es una [MASK]», la reconstrucción de *York* depende con evidencia de haber
+reconstruido *Nueva*, y el objetivo no puede representar esa dependencia: cada hueco se predice sin
+saber qué se puso en los demás. El decodificador causal no sufre este problema, porque su
+factorización en cadena es exacta y no aproxima nada.
+
+## El modelado de lenguaje permutado
+
+XLNet propuso conservar la bidireccionalidad sin recurrir al enmascaramiento. La idea es mantener
+las posiciones intactas y **aleatorizar el orden en que se predicen** los tokens, prediciendo cada
+uno de manera autorregresiva a partir de los ya predichos.
+
+<PermutationOrder
+  tokens={['El', 'sol', 'brilla', 'mucho', 'hoy', 'aquí']}
+  labels={{
+    hint: 'Las posiciones no se mueven; lo único que se baraja es el orden de predicción.',
+    shuffle: 'Otro orden',
+    predicted: 'predicho',
+    context: 'visible para él',
+    pending: 'aún sin predecir',
+    sees: 've',
+    target: 'objetivo',
+    note: 'Un objetivo puede condicionarse a tokens situados a su derecha, que es justo lo que un modelo causal no puede hacer.',
+    reset: 'Reiniciar',
+  }}
+/>
+
+La figura muestra lo esencial. Cada token conserva su posición en la frase, pero el objetivo de un
+paso puede condicionarse a tokens situados **a su derecha**, siempre que aparezcan antes en el orden
+de factorización. Se recupera así el contexto por ambos lados sin introducir ningún símbolo
+artificial, y sin la hipótesis de independencia: cada predicción ve las anteriores.
+
+Dos detalles hacen viable la construcción. El primero es la **predicción parcial**: solo se predice
+la última parte de cada orden, y el resto sirve de contexto, porque predecir desde un prefijo vacío
+converge con enorme lentitud. El segundo es la **atención de doble flujo**, y la razón de su
+existencia merece explicarse. Para predecir la posición $z_t$ el modelo necesita conocer *qué
+posición* es, pero no *qué token* la ocupa; una atención convencional produce una representación que
+ya incorpora el contenido de esa posición, de modo que filtraría la respuesta. XLNet mantiene por
+ello dos flujos: uno de contenido, que incluye el token, y otro de consulta, que conoce la posición
+pero no su contenido y es el que realiza la predicción.
+
+## Los objetivos de clasificación, y uno que falló
+
+El enmascaramiento no es la única autosupervisión disponible. Del texto en bruto pueden inventarse
+también tareas de **clasificación** cuya etiqueta se deduce de la estructura del documento.
+
+BERT incorporó una: la **predicción de la frase siguiente**. Dadas dos frases, determinar si la
+segunda continúa a la primera. Los ejemplos positivos son pares consecutivos reales y los negativos
+se forman tomando la segunda frase de un documento al azar.
+
+<SentencePairTask
+  a="El núcleo de una matriz reúne los vectores que la aplicación anula."
+  b="Su dimensión completa el rango hasta el número de columnas."
+  other="La receta necesita dos huevos y un poco de harina."
+  labels={{
+    hint: 'Las dos tareas comparten el par positivo. Solo cambia cómo se construye el negativo.',
+    nsp: 'frase siguiente',
+    sop: 'orden de frases',
+    positive: 'positivo',
+    negative: 'negativo',
+    cue: 'para distinguirlos',
+    nspCue: 'basta con detectar un cambio de tema',
+    sopCue: 'el tema es idéntico; solo sirve el orden',
+    evidence: 'Medido en ALBERT: un modelo entrenado con la tarea de frase siguiente acierta el 52,0 % en la de orden, que es el azar. Uno entrenado con la de orden acierta el 78,9 % en la de frase siguiente.',
+    reset: 'Reiniciar',
+  }}
+/>
+
+El objetivo resulta razonable y no lo es. Al proceder el negativo de un documento distinto, casi
+siempre trata de **otro tema**, y detectar un cambio de tema es mucho más fácil que juzgar la
+coherencia entre dos frases. La tarea admite un atajo, y el modelo lo toma.
+
+La evidencia es cuantitativa y está en ALBERT. Un modelo entrenado con la predicción de la frase
+siguiente resuelve la tarea de **orden de frases** —donde el negativo son las mismas dos frases
+intercambiadas, con idéntico vocabulario y tema— con un $52{,}0\,\%$ de acierto, indistinguible del
+azar. A la inversa, un modelo entrenado con el orden resuelve la tarea original con un
+$78{,}9\,\%$. La asimetría demuestra que la primera nunca midió coherencia: medía cambio de tema, que
+es precisamente lo que el enmascaramiento ya enseñaba.
+
+La conclusión práctica llegó por dos caminos. RoBERTa eliminó el objetivo sin pérdida, y ALBERT lo
+sustituyó por el de orden, con mejoras consistentes en tareas que abarcan varias frases. Un objetivo
+autosupervisado puede ser plausible, barato y aun así medir algo distinto de lo que se pretendía;
+comprobarlo exige diseñar el negativo con cuidado.
+
+## ELECTRA: señal en todas las posiciones
+
+La lección introductoria señaló que el enmascaramiento solo produce gradiente en el 15 % de las
+posiciones. ELECTRA parte de esa observación. Un **generador** pequeño, entrenado con
+enmascaramiento corriente, sustituye algunos tokens por otros plausibles. Un **discriminador** —el
+modelo que se conserva— clasifica después **cada** posición de la secuencia como original o
+sustituida.
+
+La diferencia es de eficiencia muestral: la supervisión alcanza a todos los tokens en lugar de a una
+séptima parte. Los resultados publicados son notables. ELECTRA entrenado durante cuatro días en una
+sola GPU supera a GPT en el conjunto GLUE, pese a que este empleó **treinta veces más cómputo**; a
+gran escala iguala a RoBERTa y XLNet con **menos de la cuarta parte** de su cómputo, y los supera a
+igualdad de presupuesto.
+
+Una precisión que el montaje invita a confundir: **no es una red generativa antagónica**. El
+generador se entrena con su propio objetivo de enmascaramiento, no contra el discriminador. No hay
+juego adversario, solo una fuente de sustituciones difíciles.
+
+## Los codificadores no desaparecieron
+
+El relato habitual termina aquí, con los decodificadores desplazando a los codificadores, y es
+engañoso. La adaptación mediante el contexto resultó superior para el uso general, tal como describe
+la lección introductoria, pero los codificadores conservan el terreno para el que fueron diseñados:
+producir representaciones. La búsqueda semántica, el reordenamiento de resultados y la clasificación
+a gran escala siguen apoyándose en modelos de esta familia, porque una representación densa de una
+frase se calcula una vez y se reutiliza indefinidamente, mientras que una respuesta generada hay que
+producirla cada vez.
+
+La diferencia de coste es estructural y sigue siendo la misma que impuso la máscara: el codificador
+recorre la secuencia una vez; el decodificador, un token cada vez.
+
+## El siguiente paso
+
+Los decodificadores generan y los codificadores representan. La pregunta que queda abierta es si un
+mismo modelo puede hacer ambas cosas. La respuesta es la familia codificador-decodificador, que la
+siguiente lección desarrolla: el preentrenamiento de texto a texto de T5, el modelado con prefijo, y
+el repertorio de corrupciones con las que BART aprende a reconstruir un documento alterado.
+
+---
+
+**Ejercicio.** Cargar `bert-base-uncased` con `transformers`, obtener el vector de la última capa
+para el token *bank* en «he sat on the river bank» y en «he went to the bank for a loan», y calcular
+la similitud coseno entre ambos. Repetir con la misma palabra en dos frases del mismo sentido y
+comprobar que la similitud es apreciablemente mayor.
+
+## Referencias
+
+- Xiao y Zhu, *Foundations of Large Language Models* (2025), sec. 1.2.2: [arXiv:2501.09223](https://arxiv.org/abs/2501.09223).
+- Devlin y coautores, *BERT* (2019): [arXiv:1810.04805](https://arxiv.org/abs/1810.04805).
+- Peters y coautores, *ELMo* (2018): [arXiv:1802.05365](https://arxiv.org/abs/1802.05365).
+- Yang y coautores, *XLNet* (2019): [arXiv:1906.08237](https://arxiv.org/abs/1906.08237).
+- Liu y coautores, *RoBERTa* (2019): [arXiv:1907.11692](https://arxiv.org/abs/1907.11692).
+- Lan y coautores, *ALBERT* (2020): [arXiv:1909.11942](https://arxiv.org/abs/1909.11942) — la tarea de orden de frases.
+- Clark y coautores, *ELECTRA* (2020): [arXiv:2003.10555](https://arxiv.org/abs/2003.10555).

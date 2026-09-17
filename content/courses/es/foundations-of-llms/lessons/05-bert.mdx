@@ -1,0 +1,172 @@
+---
+title: 'BERT en concreto'
+language: 'es'
+module: 'El modelo BERT'
+moduleOrder: 2
+order: 1
+summary: 'La suma de dos objetivos, las tres tablas de embeddings que componen la entrada, el recuento exacto de parámetros y lo que revela sobre el diseño, y la granularidad del enmascaramiento, que importa tanto como su proporción.'
+---
+
+El módulo anterior desarrolló los objetivos autosupervisados en abstracto. BERT es la instancia
+concreta que los popularizó, y sobre sus objetivos ya se ha dicho casi todo: el enmascaramiento y su
+reparto 80/10/10 quedaron en la lección introductoria, y la predicción de la frase siguiente, junto
+con la evidencia de que medía otra cosa, en la lección sobre el codificador.
+
+Esta lección trata lo que aquellas dejaron fuera: cómo se combinan los dos objetivos, de qué se
+compone realmente la entrada, en qué se gastan los parámetros, y una decisión de diseño que resultó
+tan importante como la proporción de tokens ocultos.
+
+## Dos objetivos sumados
+
+BERT se preentrena optimizando **ambas** tareas a la vez, y la combinación es la más simple posible:
+
+$$
+\mathcal{L}_{\text{BERT}} = \mathcal{L}_{\text{MLM}} + \mathcal{L}_{\text{NSP}}
+$$
+
+No hay coeficiente que pondere una frente a otra, ni calendario que alterne entre ellas. Cada lote
+produce las dos pérdidas y el gradiente es el de la suma.
+
+El reparto de competencias es deliberado. El enmascaramiento opera **dentro** de la frase, sobre la
+relación entre una palabra y su contexto inmediato. La predicción de la frase siguiente opera
+**entre** frases, sobre la relación entre dos segmentos. Las tareas posteriores necesitan ambas
+escalas: el análisis de sentimiento actúa sobre una frase, y la inferencia textual sobre un par.
+
+Conviene recordar el desenlace, ya tratado en la lección sobre el codificador: la segunda tarea no
+resistió el escrutinio. RoBERTa la eliminó sin pérdida y ALBERT demostró que medía cambio de tema y
+no coherencia. La suma anterior describe el modelo tal como se publicó, no la receta que hoy se
+recomendaría.
+
+## La representación de entrada
+
+Antes de la primera capa, cada token se convierte en un vector que es la **suma de tres** consultas
+a tres tablas distintas.
+
+La primera es la tabla de **tokens**, con una entrada por elemento del vocabulario. BERT emplea
+WordPiece, de modo que el vocabulario contiene subpalabras y no palabras: $30\,522$ entradas en el
+modelo en minúsculas.
+
+La segunda es la de **posición**. A diferencia del transformador original, que empleaba funciones
+sinusoidales fijas, BERT **aprende** una tabla de posiciones, con una fila por cada índice hasta el
+máximo admitido. De ahí procede el límite de $512$ tokens de contexto: no es una restricción del
+mecanismo de atención sino el número de filas de esa tabla.
+
+La tercera es la de **segmento**, con solo dos filas, que marca si un token pertenece al primer
+segmento o al segundo. Es lo que permite empaquetar un par de frases en una única secuencia.
+
+A esa secuencia se añaden dos marcadores. `[SEP]` separa los segmentos y cierra la entrada.
+`[CLS]` ocupa la posición cero, y su vector de salida se emplea como resumen del par completo, que
+es lo que lee el clasificador de la segunda tarea. Conviene señalar que `[CLS]` no resume nada por
+construcción: es una posición corriente cuya representación adquiere ese papel **porque el
+entrenamiento la obliga** a ello.
+
+## El presupuesto de parámetros
+
+Las cifras que suelen citarse —110 millones de parámetros en la versión base, 340 en la grande— se
+reproducen exactamente a partir de la configuración publicada, y el desglose resulta más
+informativo que el total.
+
+<ParameterBudget
+  labels={{
+    hint: 'Cada cifra se deriva de la configuración publicada.',
+    embeddings: 'embeddings de token',
+    positional: 'posición + segmento',
+    layers: 'capas',
+    pooler: 'pooler',
+    total: 'total',
+    share: 'solo la tabla de consulta',
+    note: 'La tabla de tokens no contiene contexto: es una consulta. ALBERT la factorizó justamente por eso.',
+    reset: 'Reiniciar',
+  }}
+/>
+
+Con doce capas, dimensión oculta $768$ y una red densa interna de $3072$, cada capa aporta unos
+$7{,}09$ millones de parámetros, y las doce suman $85{,}05$ millones. Añadidas las tablas de
+embeddings y el pooler, el total asciende a $109{,}5$ millones, que es la cifra publicada.
+
+El dato que merece atención es otro. En la versión base, la tabla de embeddings de token ocupa
+$23{,}44$ millones de parámetros, es decir, **el 21 % del modelo**. Y esa tabla no calcula nada: es
+una consulta, una fila por entrada del vocabulario, idéntica sea cual sea el contexto. Una quinta
+parte del modelo se dedica a almacenar vectores estáticos.
+
+De ahí procede una de las decisiones de ALBERT, que factoriza la tabla en dos matrices, $V \times E$
+y $E \times H$ con $E$ mucho menor que $H$. Con $E = 128$ el coste baja de $23{,}44$ a $4{,}01$
+millones, casi seis veces menos, sin tocar la capacidad de las capas. En la versión grande la
+proporción cae al 9 %, porque las capas crecen más deprisa que el vocabulario: el problema es
+específico de los modelos pequeños.
+
+## La granularidad del enmascaramiento
+
+La lección introductoria trató **cuántos** tokens se ocultan y **con qué** se sustituyen. Queda una
+tercera decisión, que BERT resolvió de la manera más simple y que sus sucesores corrigieron: **qué
+unidad** se oculta.
+
+BERT enmascara subpalabras independientes. Como el vocabulario es de subpalabras, una palabra larga
+se parte en varias piezas, y ocultar solo una de ellas deja las demás a la vista.
+
+<MaskingGranularity
+  labels={{
+    hint: 'Una palabra partida en piezas puede recuperarse a partir de las piezas que quedan.',
+    subword: 'subpalabra',
+    word: 'palabra completa',
+    span: 'tramo',
+    hidden: 'piezas ocultas',
+    whole: 'palabras a medio abrir',
+    leak: 'las piezas que sobreviven delatan la palabra',
+    noLeak: 'no sobrevive ninguna pieza de la palabra',
+    reset: 'Reiniciar',
+  }}
+/>
+
+El problema se aprecia en la figura. Ante `pre [MASK] ##do`, reconstruir la pieza central no exige
+comprender la frase: basta con saber qué subpalabras encajan entre ese prefijo y ese sufijo. La
+tarea degenera en un ejercicio de morfología resoluble localmente, y el modelo aprende menos de lo
+que el recuento de posiciones ocultas sugiere.
+
+Las dos correcciones conocidas atacan esa granularidad. El **enmascaramiento por palabra completa**
+oculta a la vez todas las piezas de una misma palabra, de modo que no queda ningún fragmento como
+pista. **SpanBERT** va más lejos y oculta tramos contiguos de varias palabras, lo que obliga a
+apoyarse en el contexto amplio en lugar de en los vecinos inmediatos.
+
+La lección general trasciende el caso: al diseñar un objetivo autosupervisado no basta con fijar
+cuánta señal se elimina, hay que comprobar que lo eliminado no se deduce por un atajo. Es el mismo
+error, en otra escala, que la lección sobre el codificador identificó en la predicción de la frase
+siguiente.
+
+## Las dos formas del ajuste fino
+
+Terminado el preentrenamiento, la adaptación adopta una de dos formas, según qué parte de la salida
+se lea.
+
+La primera lee **únicamente** el vector de `[CLS]` y produce una etiqueta para toda la entrada. Es
+la forma del análisis de sentimiento sobre una frase y de la inferencia textual sobre un par.
+
+La segunda lee **todas** las posiciones y produce una etiqueta por token. Es la forma del
+reconocimiento de entidades nombradas y, con una variante, de la respuesta extractiva a preguntas,
+donde la cabeza predice dos índices: el token donde empieza la respuesta y aquel donde termina.
+
+En ambos casos la cabeza añadida es pequeña —una proyección lineal, en el caso más simple— y el
+codificador apenas se mueve. Ese es el atractivo entero del paradigma: un preentrenamiento caro una
+sola vez, y a partir de ahí una adaptación barata por tarea.
+
+## El siguiente paso
+
+Esta lección ha descrito cómo aprende BERT y cómo se usa, pero no de qué está hecho por dentro. La
+siguiente entra en la arquitectura: cómo se combinan las tres tablas de embeddings, qué ocurre
+dentro de una capa del codificador, y qué separa exactamente a la versión base de la grande más allá
+del recuento de parámetros.
+
+---
+
+**Ejercicio.** Cargar `bert-base-uncased` con `transformers` y recorrer `model.named_parameters()`
+sumando los elementos de cada tensor. Comprobar que el total coincide con los $109{,}5$ millones de
+la figura y que `bert.embeddings.word_embeddings.weight` aporta por sí sola algo más del 21 %.
+Repetir con `bert-large-uncased` y verificar que la proporción baja a alrededor del 9 %.
+
+## Referencias
+
+- Xiao y Zhu, *Foundations of Large Language Models* (2025), sec. 1.3.1: [arXiv:2501.09223](https://arxiv.org/abs/2501.09223).
+- Devlin y coautores, *BERT* (2019): [arXiv:1810.04805](https://arxiv.org/abs/1810.04805).
+- Lan y coautores, *ALBERT* (2020): [arXiv:1909.11942](https://arxiv.org/abs/1909.11942) — la factorización de la tabla de embeddings.
+- Joshi y coautores, *SpanBERT* (2020): [arXiv:1907.10529](https://arxiv.org/abs/1907.10529) — enmascaramiento por tramos.
+- Vaswani y coautores, *Attention Is All You Need* (2017): [arXiv:1706.03762](https://arxiv.org/abs/1706.03762) — las posiciones sinusoidales que BERT sustituye por una tabla aprendida.

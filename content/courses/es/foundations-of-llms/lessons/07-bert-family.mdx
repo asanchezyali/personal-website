@@ -1,0 +1,164 @@
+---
+title: 'La familia de BERT'
+language: 'es'
+module: 'El modelo BERT'
+moduleOrder: 2
+order: 3
+summary: 'Lo que RoBERTa cambió y el enmascaramiento dinámico, la destilación y qué transfiere realmente una distribución blanda, la aritmética exacta de la compresión, y los modelos multilingües con el objetivo que alinea dos idiomas.'
+---
+
+Las dos lecciones anteriores describieron BERT como modelo. Esta recorre lo que vino después, en tres
+direcciones que no se estorban: entrenarlo mejor, reducirlo hasta que quepa en producción, y
+extenderlo a muchos idiomas a la vez. Con ella se cierra el arco del preentrenamiento.
+
+## Entrenar lo mismo, mejor
+
+El primer movimiento tras BERT fue el menos vistoso. RoBERTa no cambió la arquitectura: cambió el
+protocolo de entrenamiento. Diez veces más datos —160 GB frente a 16—, lotes mucho mayores,
+entrenamiento más prolongado, y la eliminación de la predicción de la frase siguiente, cuya
+inutilidad quedó documentada en la lección sobre el codificador.
+
+El ajuste técnico que suele citarse es el **enmascaramiento dinámico**. BERT enmascara cada secuencia
+una sola vez, durante el preprocesado, y reutiliza esa misma máscara en todas las épocas: el modelo
+ve exactamente la misma frase corrompida una y otra vez. RoBERTa genera la máscara **en cada pasada**,
+de modo que una sola frase produce tantos ejemplos distintos como épocas tenga el entrenamiento.
+
+La observación general que deja este trabajo merece enunciarse con cuidado, porque suele exagerarse.
+No es que la escala vuelva irrelevante el diseño del objetivo: la lección sobre el codificador mostró
+que ELECTRA mejora sustancialmente la eficiencia muestral con una idea mejor. Lo que RoBERTa
+demuestra es más preciso: **una parte considerable de lo que se atribuía a la arquitectura de BERT
+era en realidad entrenamiento insuficiente**. Antes de proponer un mecanismo nuevo conviene
+comprobar que el anterior estaba bien entrenado.
+
+## Lo que transfiere una distribución blanda
+
+La dirección opuesta busca reducir el modelo. La técnica más extendida es la **destilación**: un
+modelo pequeño, el alumno, se entrena para reproducir la salida de uno grande, el maestro.
+
+El detalle que importa es **qué** copia el alumno. No la etiqueta correcta, que ya está en los datos,
+sino la distribución completa que produce el maestro. Cuando este asigna una probabilidad alta a
+*gato* y, entre las restantes, más a *perro* que a *casa*, esa ordenación contiene información sobre
+la estructura del problema que una etiqueta categórica descarta por completo.
+
+El obstáculo es que esa información queda comprimida contra cero. Para exponerla se ablanda la
+distribución con una **temperatura** $T > 1$:
+
+$$
+p_i(T) = \frac{\exp(z_i/T)}{\sum_j \exp(z_j/T)}
+$$
+
+<Distillation
+  classes={['gato', 'perro', 'coche', 'árbol', 'casa']}
+  logits={[5.0, 2.0, 0.5, 0.2, 0.0]}
+  labels={{
+    hint: 'El mismo maestro, leído a distintas temperaturas.',
+    teacher: 'maestro',
+    wrongMass: 'masa fuera de la respuesta',
+    entropy: 'entropía',
+    order: 'La ordenación se mantiene a cualquier temperatura. Lo que cambia es si esa ordenación tiene masa suficiente para enseñar algo.',
+    note: 'Una etiqueta categórica solo dice «gato». El maestro dice además que un perro se parece más que una casa.',
+    reset: 'Reiniciar',
+  }}
+/>
+
+La figura cuantifica el efecto. Con $T = 1$, todas las clases distintas de la correcta suman un
+$7{,}1\,\%$ de la masa: su contribución al gradiente es despreciable y el alumno aprende poco más
+que la etiqueta. Con $T = 3$ suman un $49{,}5\,\%$, y la entropía pasa de $0{,}33$ a $1{,}36$ sobre
+un máximo de $1{,}61$. La ordenación relativa es la misma en ambos casos; lo que cambia es si pesa
+lo suficiente para enseñar algo.
+
+Conviene precisar que DistilBERT no se entrena solo con eso. Emplea una **pérdida triple** que
+combina el término de destilación con el objetivo de modelado de lenguaje habitual y una distancia
+coseno entre los estados ocultos del alumno y los del maestro. El resultado publicado es un modelo
+un $40\,\%$ menor y un $60\,\%$ más rápido que conserva el $97\,\%$ del rendimiento.
+
+## La aritmética de la compresión
+
+Las técnicas de reducción actúan sobre factores distintos y por eso se acumulan. La destilación
+elimina **pesos**; la cuantización reduce los **bits** de cada uno, almacenando enteros de ocho bits
+en lugar de coma flotante de treinta y dos.
+
+<CompressionStack
+  labels={{
+    hint: 'Las dos técnicas actúan sobre factores distintos, de modo que se componen.',
+    distil: 'destilación',
+    quant: 'cuantización',
+    params: 'parámetros',
+    memory: 'cada uno',
+    factor: 'menor por',
+    note: 'La destilación quita pesos; la cuantización encoge cada uno. Ninguna excluye a la otra.',
+    reset: 'Reiniciar',
+  }}
+/>
+
+Partiendo del recuento de la lección sobre el presupuesto de parámetros, la configuración de
+DistilBERT —seis capas en lugar de doce, sin tabla de segmentos ni pooler— arroja $66{,}4$ millones
+de parámetros frente a los $109{,}5$ de BERT-base, un $39\,\%$ menos que coincide con el $40\,\%$
+publicado. En coma flotante de 32 bits eso son $253$ MiB frente a $418$; con cuantización a ocho
+bits, $63$ MiB. El factor combinado es de **6,6 veces**, y ninguna de las dos técnicas impide la
+otra.
+
+ALBERT ataca un tercer factor. Además de factorizar la tabla de embeddings —tratado en la lección
+sobre el presupuesto—, **comparte los parámetros de una sola capa a lo largo de toda la
+profundidad**: las doce capas de la versión base son la misma capa aplicada doce veces. El recuento
+resultante es de unos $12$ millones frente a los $109{,}5$ de BERT-base. La reducción de dieciocho
+veces que suele citarse corresponde a la versión grande, donde $18$ millones se enfrentan a $335$.
+Conviene señalar que compartir pesos reduce la memoria pero **no** el cómputo: las doce
+aplicaciones siguen ejecutándose.
+
+## Un vocabulario para todos los idiomas
+
+La extensión multilingüe depende de una decisión previa: qué es un token. No puede ser una palabra,
+porque el número de palabras no está acotado y siempre aparecen nuevas. BERT emplea **subpalabras**,
+tratadas en la lección sobre el presupuesto: las frecuentes permanecen enteras y las raras se
+fragmentan en piezas conocidas.
+
+Esa elección es la que hace viable un modelo multilingüe. Un único vocabulario de subpalabras,
+compartido, cubre muchos idiomas sin que ninguna palabra quede fuera, y las piezas de nivel
+subléxico —terminaciones, raíces— se comparten entre lenguas emparentadas. mBERT se entrenó así
+sobre 104 idiomas con una sola tabla de embeddings.
+
+El resultado interesante es la **transferencia entre idiomas**: ajustado el modelo sobre una tarea
+en un idioma, resuelve la misma tarea en otro sobre el que nunca se ajustó. Como todos los idiomas
+comparten un mismo espacio de representación, lo aprendido cruza sin coste adicional.
+
+## Alinear dos idiomas explícitamente
+
+XLM lleva la idea un paso más allá con el **modelado de lenguaje traducido**. En lugar de texto
+monolingüe, se alimentan pares de frases **alineadas** —el mismo contenido en dos idiomas— y se
+enmascara sobre el par completo.
+
+La consecuencia es la que persigue el método: para reconstruir una palabra oculta en español, el
+modelo puede consultar el lado inglés, donde esa información sigue presente. Rellenar el hueco por
+esa vía exige poner en correspondencia ambas secuencias, de modo que el objetivo fuerza la
+alineación en lugar de esperar que emerja.
+
+Del mismo espacio compartido se sigue una propiedad que no requiere maquinaria adicional: la
+alternancia de idiomas dentro de una misma frase se procesa con normalidad, porque cada token es
+simplemente una entrada del único vocabulario.
+
+## El cierre del arco
+
+Siete lecciones y una sola idea. El preentrenamiento convierte texto sin etiquetar en supervisión
+gratuita; las tres arquitecturas se distinguen por qué posiciones puede leer cada posición; y BERT
+es la instancia que lo hizo evidente, junto con la familia que la escaló, la redujo y la extendió.
+
+Lo que sigue queda fuera del preentrenamiento: cómo estos modelos se convierten en asistentes. El
+ajuste por instrucciones, la alineación con preferencias humanas y el razonamiento dentro del
+contexto.
+
+---
+
+**Ejercicio.** Cargar `distilbert-base-uncased` y `bert-base-uncased` con `transformers` y comparar
+el número de parámetros de cada uno, comprobando la reducción del $39\,\%$ de la figura. Aplicar
+después `torch.quantization.quantize_dynamic` sobre las capas lineales del primero y medir el tamaño
+del fichero resultante frente al original.
+
+## Referencias
+
+- Xiao y Zhu, *Foundations of Large Language Models* (2025), secs. 1.3.2 a 1.3.4: [arXiv:2501.09223](https://arxiv.org/abs/2501.09223).
+- Liu y coautores, *RoBERTa* (2019): [arXiv:1907.11692](https://arxiv.org/abs/1907.11692) — enmascaramiento dinámico y protocolo de entrenamiento.
+- Hinton y coautores, *Distilling the Knowledge in a Neural Network* (2015): [arXiv:1503.02531](https://arxiv.org/abs/1503.02531) — las distribuciones blandas y la temperatura.
+- Sanh y coautores, *DistilBERT* (2019): [arXiv:1910.01108](https://arxiv.org/abs/1910.01108) — la pérdida triple.
+- Lan y coautores, *ALBERT* (2020): [arXiv:1909.11942](https://arxiv.org/abs/1909.11942) — compartición de pesos entre capas.
+- Lample y Conneau, *XLM* (2019): [arXiv:1901.07291](https://arxiv.org/abs/1901.07291) — modelado de lenguaje traducido.

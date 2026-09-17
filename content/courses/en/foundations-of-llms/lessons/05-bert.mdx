@@ -1,0 +1,183 @@
+---
+title: 'BERT in particular'
+language: 'en'
+module: 'The BERT model'
+moduleOrder: 2
+order: 1
+summary: 'The sum of two objectives, the three embedding tables that make up the input, the exact parameter count and what it reveals about the design, and the granularity of masking, which matters as much as its rate.'
+---
+
+The previous module developed the self-supervised objectives in the abstract. BERT is the concrete
+instance that popularised them, and about its objectives almost everything has been said: masking and
+its 80/10/10 split were covered in the introductory lesson, and next sentence prediction, along with
+the evidence that it measured something else, in the lesson on the encoder.
+
+This lesson covers what those left out: how the two objectives combine, what the input is actually
+made of, where the parameters go, and a design decision that turned out to matter as much as the
+proportion of hidden tokens.
+
+## Two objectives summed
+
+BERT is pre-trained by optimising **both** tasks at once, and the combination is the simplest
+possible:
+
+$$
+\mathcal{L}_{\text{BERT}} = \mathcal{L}_{\text{MLM}} + \mathcal{L}_{\text{NSP}}
+$$
+
+There is no coefficient weighting one against the other, and no schedule alternating between them.
+Every batch produces both losses and the gradient is that of the sum.
+
+The division of labour is deliberate. Masking operates **within** the sentence, on the relation
+between a word and its immediate context. Next sentence prediction operates **between** sentences, on
+the relation between two segments. Downstream tasks need both scales: sentiment analysis acts on one
+sentence, textual inference on a pair.
+
+The outcome is worth recalling, already treated in the lesson on the encoder: the second task did not
+survive scrutiny. RoBERTa removed it with no loss and ALBERT showed it measured topic shift rather
+than coherence. The sum above describes the model as published, not the recipe one would recommend
+today.
+
+## The input representation
+
+Before the first layer, each token becomes a vector that is the **sum of three** lookups into three
+different tables.
+
+The first is the **token** table, with one entry per vocabulary element. BERT uses WordPiece, so the
+vocabulary holds subwords rather than words: $30{,}522$ entries in the lowercase model.
+
+The second is the **position** table. Unlike the original transformer, which used fixed sinusoidal
+functions, BERT **learns** a table of positions, with one row per index up to the maximum allowed.
+That is where the $512$-token context limit comes from: it is not a restriction of the attention
+mechanism but the number of rows in that table.
+
+The third is the **segment** table, with only two rows, marking whether a token belongs to the first
+segment or the second. It is what allows a pair of sentences to be packed into a single sequence.
+
+Two markers are added to that sequence. `[SEP]` separates the segments and closes the input. `[CLS]`
+occupies position zero, and its output vector is used as a summary of the whole pair, which is what
+the second task's classifier reads. It is worth noting that `[CLS]` summarises nothing by
+construction: it is an ordinary position whose representation takes on that role **because training
+forces it** to.
+
+## The parameter budget
+
+The figures usually quoted —110 million parameters in the base version, 340 in the large one— follow
+exactly from the published configuration, and the breakdown is more informative than the total.
+
+<ParameterBudget
+  labels={{
+    hint: 'Every figure is derived from the published configuration.',
+    embeddings: 'token embeddings',
+    positional: 'position + segment',
+    layers: 'layers',
+    pooler: 'pooler',
+    total: 'total',
+    share: 'the lookup table alone',
+    note: 'The token table holds no context: it is a lookup. ALBERT factorised it for exactly this reason.',
+    reset: 'Reset',
+  }}
+/>
+
+With twelve layers, hidden dimension $768$ and an inner dense network of $3072$, each layer
+contributes some $7.09$ million parameters, and the twelve sum to $85.05$ million. Adding the
+embedding tables and the pooler, the total comes to $109.5$ million, which is the published figure.
+
+The datum deserving attention is another. In the base version the token embedding table takes
+$23.44$ million parameters, that is, **21% of the model**. And that table computes nothing: it is a
+lookup, one row per vocabulary entry, identical whatever the context. A fifth of the model is
+dedicated to storing static vectors.
+
+One of ALBERT's decisions follows from this: it factorises the table into two matrices, $V \times E$
+and $E \times H$ with $E$ much smaller than $H$. With $E = 128$ the cost falls from $23.44$ to $4.01$
+million, nearly six times less, without touching the capacity of the layers. In the large version the
+proportion drops to 9%, because the layers grow faster than the vocabulary: the problem is specific
+to small models.
+
+## The granularity of masking
+
+The introductory lesson covered **how many** tokens are hidden and **what** they are replaced with. A
+third decision remains, which BERT settled in the simplest way and its successors corrected: **which
+unit** is hidden.
+
+BERT masks independent subwords. Since the vocabulary is of subwords, a long word is split into
+several pieces, and hiding only one of them leaves the others in plain sight.
+
+<MaskingGranularity
+  pieces={[
+    { text: 'the' },
+    { text: 'mod' },
+    { text: '##el', cont: true },
+    { text: 'pre' },
+    { text: '##train', cont: true },
+    { text: '##ed', cont: true },
+    { text: 'recon' },
+    { text: '##structs', cont: true },
+    { text: 'the' },
+    { text: 'sen' },
+    { text: '##tence', cont: true },
+  ]}
+  labels={{
+    hint: 'A word split into pieces can be recovered from the pieces left behind.',
+    subword: 'subword',
+    word: 'whole word',
+    span: 'span',
+    hidden: 'pieces hidden',
+    whole: 'words left half-open',
+    leak: 'the surviving pieces give the word away',
+    noLeak: 'no piece of the word survives as a cue',
+    reset: 'Reset',
+  }}
+/>
+
+The problem is visible in the figure. Faced with `pre [MASK] ##ed`, reconstructing the middle piece
+requires no understanding of the sentence: it is enough to know which subwords fit between that
+prefix and that suffix. The task degenerates into an exercise in morphology solvable locally, and the
+model learns less than the count of hidden positions suggests.
+
+The two known corrections attack that granularity. **Whole-word masking** hides all the pieces of one
+word at once, so no fragment is left as a cue. **SpanBERT** goes further and hides contiguous spans of
+several words, forcing reliance on broad context rather than immediate neighbours.
+
+The general lesson outlives the case: in designing a self-supervised objective it is not enough to
+fix how much signal is removed, one has to check that what was removed cannot be deduced by a
+shortcut. It is the same error, at another scale, that the lesson on the encoder identified in next
+sentence prediction.
+
+## The two shapes of fine-tuning
+
+Once pre-training is over, adaptation takes one of two shapes, depending on which part of the output
+is read.
+
+The first reads **only** the `[CLS]` vector and produces one label for the whole input. It is the
+shape of sentiment analysis on a sentence and of textual inference on a pair.
+
+The second reads **every** position and produces one label per token. It is the shape of named entity
+recognition and, with a variant, of extractive question answering, where the head predicts two
+indices: the token where the answer starts and the one where it ends.
+
+In both cases the added head is small —a linear projection, in the simplest case— and the encoder
+barely moves. That is the entire appeal of the paradigm: one expensive pre-training, and from there a
+cheap adaptation per task.
+
+## The next step
+
+This lesson has described how BERT learns and how it is used, but not what it is made of inside. The
+next one enters the architecture: how the three embedding tables combine, what happens inside an
+encoder layer, and what exactly separates the base version from the large one beyond the parameter
+count.
+
+---
+
+**Exercise.** Load `bert-base-uncased` with `transformers` and walk `model.named_parameters()`
+summing the elements of each tensor. Check that the total matches the $109.5$ million in the figure
+and that `bert.embeddings.word_embeddings.weight` alone contributes a little over 21%. Repeat with
+`bert-large-uncased` and verify the proportion drops to around 9%.
+
+## References
+
+- Xiao and Zhu, *Foundations of Large Language Models* (2025), sec. 1.3.1: [arXiv:2501.09223](https://arxiv.org/abs/2501.09223).
+- Devlin and co-authors, *BERT* (2019): [arXiv:1810.04805](https://arxiv.org/abs/1810.04805).
+- Lan and co-authors, *ALBERT* (2020): [arXiv:1909.11942](https://arxiv.org/abs/1909.11942) — the factorised embedding table.
+- Joshi and co-authors, *SpanBERT* (2020): [arXiv:1907.10529](https://arxiv.org/abs/1907.10529) — span masking.
+- Vaswani and co-authors, *Attention Is All You Need* (2017): [arXiv:1706.03762](https://arxiv.org/abs/1706.03762) — the sinusoidal positions BERT replaces with a learned table.
