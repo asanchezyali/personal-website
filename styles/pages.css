@@ -1423,15 +1423,15 @@
   .course-card-summary { margin: 0 0 22px; color: var(--g-600); font-size: 15.5px; line-height: 1.62; }
   .course-card-modules { list-style: none; margin: 0 0 24px; padding: 0; border-top: 1px solid var(--g-200); }
   html.dark .course-card-modules { border-top-color: var(--g-300); }
-  .course-card-modules li { display: grid; grid-template-columns: 28px 1fr auto; gap: 12px; align-items: baseline;
-    padding: 10px 2px; border-bottom: 1px solid var(--g-200); }
+  .course-card-modules li { border-bottom: 1px solid var(--g-200); }
   html.dark .course-card-modules li { border-bottom-color: var(--g-300); }
+  .course-card-modules a { display: grid; grid-template-columns: 28px 1fr auto; gap: 12px; align-items: baseline;
+    padding: 10px 2px; text-decoration: none; }
+  .course-card-modules a:hover .course-card-mtitle { color: var(--s-500); }
   .course-card-mnum { font-family: var(--f-ubuntu); font-size: 11px; font-weight: 700; color: var(--s-500); }
   .course-card-mtitle { font-size: 14.5px; font-weight: 600; color: var(--fg); }
   .course-card-mcount { font-family: var(--f-ubuntu); font-size: 12px; color: var(--g-500); }
   .course-card-actions { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
-  .course-card-alt { font-size: 14px; color: var(--g-600); text-decoration: none; border-bottom: 1px solid var(--g-300); }
-  .course-card-alt:hover { color: var(--fg); border-bottom-color: var(--fg); }
 
   /* Decoding strategies, and the KV cache */
   .dec-stage { flex-direction: column; align-items: stretch; gap: 7px; justify-content: center; }

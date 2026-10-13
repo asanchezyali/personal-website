@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { createTranslation } from '@/i18n/server'
 import type { LocaleTypes } from '@/i18n/settings'
 import CourseHeroFigure from './CourseHeroFigure'
-import { coursePath, getCourses, getLessons, getModules, lessonPath } from './lib'
+import { getCourses, getLessons, getModules, lessonPath } from './lib'
 
 export default async function CoursesIndex({ locale }: { locale: LocaleTypes }) {
   const { t } = await createTranslation(locale, 'courses')
@@ -36,18 +36,22 @@ export default async function CoursesIndex({ locale }: { locale: LocaleTypes }) 
               <div className="course-card-body">
                 {course.level && <span className="course-card-level">{course.level}</span>}
                 <h2>
-                  <Link href={coursePath(locale, course.courseSlug)}>{course.title}</Link>
+                  <Link href={lessonPath(locale, course.courseSlug, lessons[0]?.lessonSlug ?? '')}>
+                    {course.title}
+                  </Link>
                 </h2>
                 <p className="course-card-summary">{course.summary}</p>
 
                 <ol className="course-card-modules">
                   {modules.map((m) => (
                     <li key={m.order}>
-                      <span className="course-card-mnum">{String(m.order).padStart(2, '0')}</span>
-                      <span className="course-card-mtitle">{m.title}</span>
-                      <span className="course-card-mcount">
-                        {t('meta.lessons', { count: m.lessons.length })}
-                      </span>
+                      <Link href={lessonPath(locale, course.courseSlug, m.lessons[0].lessonSlug)}>
+                        <span className="course-card-mnum">{String(m.order).padStart(2, '0')}</span>
+                        <span className="course-card-mtitle">{m.title}</span>
+                        <span className="course-card-mcount">
+                          {t('meta.lessons', { count: m.lessons.length })}
+                        </span>
+                      </Link>
                     </li>
                   ))}
                 </ol>
@@ -58,9 +62,6 @@ export default async function CoursesIndex({ locale }: { locale: LocaleTypes }) 
                     className="course-start"
                   >
                     {t('start')} →
-                  </Link>
-                  <Link href={coursePath(locale, course.courseSlug)} className="course-card-alt">
-                    {t('syllabus')}
                   </Link>
                 </div>
               </div>
