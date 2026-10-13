@@ -28,42 +28,41 @@ export default async function CoursesIndex({ locale }: { locale: LocaleTypes }) 
 
       {/* Every course renders the same way; none is presented as an afterthought. */}
       <section className="courses-grid">
-        {list.map((course) => {
+        {list.map((course, i) => {
           const modules = getModules(locale, course.courseSlug)
           const lessons = getLessons(locale, course.courseSlug)
+          const start = lessonPath(locale, course.courseSlug, lessons[0]?.lessonSlug ?? '')
           return (
             <article key={course.courseSlug} className="course-card">
-              <div className="course-card-body">
+              <div className="course-card-top">
                 {course.level && <span className="course-card-level">{course.level}</span>}
-                <h2>
-                  <Link href={lessonPath(locale, course.courseSlug, lessons[0]?.lessonSlug ?? '')}>
-                    {course.title}
-                  </Link>
-                </h2>
-                <p className="course-card-summary">{course.summary}</p>
-
-                <ol className="course-card-modules">
-                  {modules.map((m) => (
-                    <li key={m.order}>
-                      <Link href={lessonPath(locale, course.courseSlug, m.lessons[0].lessonSlug)}>
-                        <span className="course-card-mnum">{String(m.order).padStart(2, '0')}</span>
-                        <span className="course-card-mtitle">{m.title}</span>
-                        <span className="course-card-mcount">
-                          {t('meta.lessons', { count: m.lessons.length })}
-                        </span>
-                      </Link>
-                    </li>
+                <span className="course-card-index" aria-hidden="true">
+                  {String(i + 1).padStart(2, '0')}
+                </span>
+              </div>
+              <h2>
+                {/* The title link covers the whole card; the button sits above it. */}
+                <Link href={start} className="course-card-link">
+                  {course.title}
+                </Link>
+              </h2>
+              <p className="course-card-summary">{course.summary}</p>
+              {course.tags.length > 0 && (
+                <ul className="course-card-topics">
+                  {course.tags.map((tag) => (
+                    <li key={tag}>{tag.replace(/-/g, ' ')}</li>
                   ))}
-                </ol>
-
-                <div className="course-card-actions">
-                  <Link
-                    href={lessonPath(locale, course.courseSlug, lessons[0]?.lessonSlug ?? '')}
-                    className="course-start"
-                  >
-                    {t('start')} →
-                  </Link>
-                </div>
+                </ul>
+              )}
+              <div className="course-card-foot">
+                <span className="course-card-stats">
+                  {t('meta.lessons', { count: lessons.length })}
+                  <span aria-hidden="true"> · </span>
+                  {t('meta.modules', { count: modules.length })}
+                </span>
+                <Link href={start} className="course-start" tabIndex={-1} aria-hidden="true">
+                  {t('start')} <span className="course-start-arrow">→</span>
+                </Link>
               </div>
             </article>
           )

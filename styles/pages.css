@@ -869,12 +869,6 @@
   html.dark .course-card { border-color: var(--g-300); background: color-mix(in oklab, var(--g-100) 45%, transparent); }
   .course-card:hover { border-color: var(--s-500); transform: translateY(-2px); }
   .course-card { display: flex; }
-  .course-card-body { padding: 26px 28px 28px; display: flex; flex-direction: column; flex: 1; }
-  .course-card-actions { margin-top: auto; }
-  .course-card-body h2 { font-size: 26px; margin: 8px 0 12px; letter-spacing: -0.015em; line-height: 1.15; }
-  .course-card-body h2 a { color: var(--fg); text-decoration: none; }
-  .course-card-body h2 a:hover { color: var(--s-500); }
-  .course-card-body p { margin: 0; color: var(--g-600); font-size: 15px; line-height: 1.6; }
   .course-card-level { display: inline-block; font-family: var(--f-ubuntu); text-transform: uppercase; letter-spacing: .12em; font-size: 10.5px; font-weight: 700; color: var(--s-500); }
   html.dark .course-card-level { color: var(--s-400); }
   .course-card-meta { margin-top: 14px !important; font-size: 13px !important; color: var(--g-500) !important; }
@@ -1420,18 +1414,32 @@
   .am-mode.is-on { border-color: var(--vp-b); background: color-mix(in oklab, var(--vp-b) 16%, transparent); color: var(--fg); font-weight: 700; }
 
   /* Course cards carry the same information for every course */
-  .course-card-summary { margin: 0 0 22px; color: var(--g-600); font-size: 15.5px; line-height: 1.62; }
-  .course-card-modules { list-style: none; margin: 0 0 24px; padding: 0; border-top: 1px solid var(--g-200); }
-  html.dark .course-card-modules { border-top-color: var(--g-300); }
-  .course-card-modules li { border-bottom: 1px solid var(--g-200); }
-  html.dark .course-card-modules li { border-bottom-color: var(--g-300); }
-  .course-card-modules a { display: grid; grid-template-columns: 28px 1fr auto; gap: 12px; align-items: baseline;
-    padding: 10px 2px; text-decoration: none; }
-  .course-card-modules a:hover .course-card-mtitle { color: var(--s-500); }
-  .course-card-mnum { font-family: var(--f-ubuntu); font-size: 11px; font-weight: 700; color: var(--s-500); }
-  .course-card-mtitle { font-size: 14.5px; font-weight: 600; color: var(--fg); }
-  .course-card-mcount { font-family: var(--f-ubuntu); font-size: 12px; color: var(--g-500); }
-  .course-card-actions { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+  /* Course cards: the whole card is one link (to the first lesson), stretched from the title. */
+  .course-card { position: relative; flex-direction: column; padding: 26px 28px 24px; }
+  .course-card-top { display: flex; justify-content: space-between; align-items: baseline; }
+  .course-card-index { font-family: var(--f-ubuntu); font-size: 13px; font-weight: 700; letter-spacing: .08em; color: var(--g-400); }
+  .course-card h2 { font-size: 26px; margin: 10px 0 12px; letter-spacing: -0.015em; line-height: 1.15; }
+  .course-card-link { color: var(--fg); text-decoration: none; }
+  .course-card-link::after { content: ''; position: absolute; inset: 0; border-radius: inherit; }
+  .course-card-link:focus-visible { outline: none; }
+  .course-card:has(.course-card-link:focus-visible) { outline: 2px solid var(--s-500); outline-offset: 3px; }
+  .course-card-summary { margin: 0; color: var(--g-600); font-size: 15.5px; line-height: 1.62;
+    display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  .course-card-topics { list-style: none; display: flex; flex-wrap: wrap; gap: 7px; margin: 18px 0 0; padding: 0; }
+  .course-card-topics li { font-size: 12px; font-weight: 600; color: var(--g-600); background: var(--g-100); padding: 4px 11px; border-radius: 999px; }
+  html.dark .course-card-topics li { background: var(--g-200); }
+  .course-card-summary { margin-bottom: 26px; }
+  .course-card-summary:has(+ .course-card-topics) { margin-bottom: 0; }
+  .course-card-topics { margin-bottom: 26px; }
+  .course-card-foot { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: auto;
+    padding-top: 20px; }
+  .course-card-foot { border-top: 1px solid var(--g-200); }
+  html.dark .course-card-foot { border-top-color: var(--g-300); }
+  .course-card-stats { font-family: var(--f-ubuntu); font-size: 13px; color: var(--g-500); }
+  .course-card .course-start { position: relative; z-index: 1; pointer-events: none; padding: 10px 20px; }
+  .course-start-arrow { display: inline-block; transition: transform .18s var(--ease); }
+  .course-card:hover .course-start-arrow { transform: translateX(3px); }
+  .course-card:hover .course-card-link { color: var(--s-500); }
 
   /* Decoding strategies, and the KV cache */
   .dec-stage { flex-direction: column; align-items: stretch; gap: 7px; justify-content: center; }
