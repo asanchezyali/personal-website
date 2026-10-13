@@ -7,7 +7,7 @@ import { LocaleTypes } from '@/i18n/settings'
 import siteMetadata from '@/lib/siteMetadata'
 
 const IMAGES = Array.from(
-  { length: 14 },
+  { length: 13 },
   (_, i) => `/images/home/${String(i + 1).padStart(2, '0')}_picture.jpg`
 )
 
