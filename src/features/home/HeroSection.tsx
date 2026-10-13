@@ -11,13 +11,8 @@ const IMAGES = Array.from(
   (_, i) => `/images/home/${String(i + 1).padStart(2, '0')}_picture.jpg`
 )
 
-const FLOATS = [
-  { cls: 'f1', idx: 1 },
-  { cls: 'f2', idx: 3 },
-  { cls: 'f3', idx: 5 },
-  { cls: 'f4', idx: 7 },
-  { cls: 'f5', idx: 9 },
-]
+// Deck depth, back to front: the cards behind the main photo preview the next ones.
+const DECK = [2, 1, 0]
 
 interface HeroSectionProps {
   locale: LocaleTypes
@@ -142,32 +137,23 @@ export default function HeroSection({ locale }: HeroSectionProps) {
         </div>
       </div>
 
-      {/* Cloud / photo */}
+      {/* Photo deck */}
       <div className="cloud">
-        {/* Floating cards */}
-        {FLOATS.map(({ cls, idx }) => (
-          <div key={cls} className={`float ${cls}`}>
+        {DECK.map((depth) => (
+          <div
+            key={depth}
+            className={`deck-card d${depth}${depth === 0 && swapping ? ' swap' : ''}`}
+          >
             <Image
-              src={IMAGES[idx % IMAGES.length]}
-              alt=""
-              width={160}
-              height={200}
+              src={IMAGES[(mainIdx + depth) % IMAGES.length]}
+              alt={depth === 0 ? 'Alejandro Sánchez Yalí' : ''}
+              width={320}
+              height={400}
+              priority={depth === 0}
               style={{ objectFit: 'cover', width: '100%', height: '100%' }}
             />
           </div>
         ))}
-
-        {/* Main rotating image */}
-        <div className={`main${swapping ? ' swap' : ''}`}>
-          <Image
-            src={IMAGES[mainIdx]}
-            alt="Alejandro Sánchez Yalí"
-            width={300}
-            height={400}
-            priority
-            style={{ objectFit: 'cover', width: '100%', height: '100%' }}
-          />
-        </div>
       </div>
     </section>
   )
