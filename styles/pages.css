@@ -35,7 +35,7 @@
     display: grid; place-items: center;
   }
   .cloud::before {
-    content: ""; position: absolute; width: 420px; height: 420px; border-radius: 50%;
+    content: ""; position: absolute; width: min(420px, 100%); aspect-ratio: 1; border-radius: 50%;
     background: radial-gradient(circle at 35% 40%, color-mix(in oklab, var(--p-300) 45%, transparent), transparent 60%),
                 radial-gradient(circle at 65% 65%, color-mix(in oklab, var(--s-400) 35%, transparent), transparent 60%);
     filter: blur(50px); pointer-events: none; z-index: 0;
