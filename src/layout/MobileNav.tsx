@@ -1,5 +1,6 @@
 'use client'
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import headerNavLinks from '@/lib/headerNavLinks'
@@ -10,23 +11,36 @@ interface MobileNavProps {
   locale: LocaleTypes
 }
 
+const CloseIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+    <path d="M2 2l14 14M16 2L2 16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+  </svg>
+)
+
 export default function MobileNav({ locale }: MobileNavProps) {
   const { t } = useTranslation(locale, 'common')
   const [isOpen, setIsOpen] = useState(false)
-  const [showBtn, setShowBtn] = useState(false)
+  const [mounted, setMounted] = useState(false)
   const pathname = usePathname()
-  const btnRef = useRef<HTMLButtonElement>(null)
 
-  useEffect(() => {
-    const check = () => setShowBtn(window.innerWidth <= 760)
-    check()
-    window.addEventListener('resize', check)
-    return () => window.removeEventListener('resize', check)
-  }, [])
+  useEffect(() => setMounted(true), [])
 
   useEffect(() => {
     setIsOpen(false)
   }, [pathname])
+
+  // While open: Escape closes, and the page behind does not scroll.
+  useEffect(() => {
+    if (!isOpen) return
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setIsOpen(false)
+    const overflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    window.addEventListener('keydown', onKey)
+    return () => {
+      document.body.style.overflow = overflow
+      window.removeEventListener('keydown', onKey)
+    }
+  }, [isOpen])
 
   function localHref(href: string) {
     if (locale === 'en') return href
@@ -39,26 +53,61 @@ export default function MobileNav({ locale }: MobileNavProps) {
     return pathname.startsWith(localized)
   }
 
-  if (!showBtn) return null
+  // The drawer is portalled to <body>: the header's backdrop-filter makes it the
+  // containing block for fixed children, which would clip the drawer to its height.
+  const drawer = (
+    <div className={`mnav${isOpen ? ' open' : ''}`} aria-hidden={!isOpen}>
+      <button
+        className="mnav-scrim"
+        aria-label={t('closemenu')}
+        tabIndex={-1}
+        onClick={() => setIsOpen(false)}
+      />
+      <nav id="mobile-nav" className="mnav-panel" aria-label="Main navigation">
+        <button
+          className="icon-btn mnav-close"
+          aria-label={t('closemenu')}
+          tabIndex={isOpen ? 0 : -1}
+          onClick={() => setIsOpen(false)}
+        >
+          <CloseIcon />
+        </button>
+        <div className="mnav-links">
+          {headerNavLinks.map((link) => (
+            <Link
+              key={link.href}
+              href={localHref(link.href)}
+              aria-current={isActive(link.href) ? 'page' : undefined}
+              tabIndex={isOpen ? 0 : -1}
+            >
+              {t(link.tkey)}
+            </Link>
+          ))}
+        </div>
+        <a
+          href="https://cal.com/asanchezyali/30min"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="btn primary mnav-cta"
+          tabIndex={isOpen ? 0 : -1}
+        >
+          {t('contact')} <span className="a">→</span>
+        </a>
+      </nav>
+    </div>
+  )
 
   return (
     <>
       <button
-        ref={btnRef}
-        className="icon-btn"
+        className="icon-btn menu-btn"
         aria-label={t('togglemenu')}
         aria-expanded={isOpen}
+        aria-controls="mobile-nav"
         onClick={() => setIsOpen((v) => !v)}
       >
         {isOpen ? (
-          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-            <path
-              d="M2 2l14 14M16 2L2 16"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-            />
-          </svg>
+          <CloseIcon />
         ) : (
           <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
             <path
@@ -70,82 +119,7 @@ export default function MobileNav({ locale }: MobileNavProps) {
           </svg>
         )}
       </button>
-
-      {isOpen && (
-        <>
-          <div
-            role="button"
-            tabIndex={0}
-            aria-label={t('closemenu')}
-            style={{
-              position: 'fixed',
-              inset: 0,
-              zIndex: 50,
-              background: 'rgba(0,0,0,0.3)',
-              backdropFilter: 'blur(4px)',
-            }}
-            onClick={() => setIsOpen(false)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault()
-                setIsOpen(false)
-              }
-            }}
-          />
-          <nav
-            style={{
-              position: 'fixed',
-              top: 0,
-              right: 0,
-              bottom: 0,
-              width: 'min(320px, 85vw)',
-              zIndex: 55,
-              background: 'var(--bg)',
-              borderLeft: '1px solid var(--g-200)',
-              padding: '72px 24px 32px',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: 4,
-            }}
-          >
-            <button
-              onClick={() => setIsOpen(false)}
-              className="icon-btn"
-              aria-label={t('closemenu')}
-              style={{ position: 'absolute', top: 16, right: 16 }}
-            >
-              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                <path
-                  d="M2 2l14 14M16 2L2 16"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                />
-              </svg>
-            </button>
-
-            {headerNavLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={localHref(link.href)}
-                aria-current={isActive(link.href) ? 'page' : undefined}
-                style={{
-                  padding: '12px 16px',
-                  borderRadius: 10,
-                  fontFamily: 'var(--f-lato)',
-                  fontSize: 15,
-                  fontWeight: 500,
-                  color: isActive(link.href) ? 'var(--p-500)' : 'var(--g-600)',
-                  background: isActive(link.href) ? 'var(--p-50)' : 'transparent',
-                  transition: 'all .2s var(--ease)',
-                }}
-              >
-                {t(link.tkey)}
-              </Link>
-            ))}
-          </nav>
-        </>
-      )}
+      {mounted && createPortal(drawer, document.body)}
     </>
   )
 }
