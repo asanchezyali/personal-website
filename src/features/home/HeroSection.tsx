@@ -11,8 +11,12 @@ const IMAGES = Array.from(
   (_, i) => `/images/home/${String(i + 1).padStart(2, '0')}_picture.jpg`
 )
 
-// Deck depth, back to front: the cards behind the main photo preview the next ones.
-const DECK = [2, 1, 0]
+// Each photo is one card that keeps its element and only changes depth, so moving
+// between photos is a CSS transition, never an image swap. Depth 0 is the front,
+// 1 and 2 are fanned out behind it, 3 waits invisible at the back (already loaded),
+// and "out" is the previous front card sliding away.
+const DEPTHS = ['out', 'd0', 'd1', 'd2', 'd3'] as const
+const INTERVAL_MS = 4500
 
 interface HeroSectionProps {
   locale: LocaleTypes
@@ -21,18 +25,18 @@ interface HeroSectionProps {
 export default function HeroSection({ locale }: HeroSectionProps) {
   const { t } = useTranslation(locale, 'home')
   const [mainIdx, setMainIdx] = useState(0)
-  const [swapping, setSwapping] = useState(false)
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setSwapping(true)
-      setTimeout(() => {
-        setMainIdx((i) => (i + 1) % IMAGES.length)
-        setSwapping(false)
-      }, 400)
-    }, 4000)
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    const interval = setInterval(() => setMainIdx((i) => (i + 1) % IMAGES.length), INTERVAL_MS)
     return () => clearInterval(interval)
   }, [])
+
+  // The photos currently in the deck, keyed by image index so React keeps each element.
+  const deck = DEPTHS.map((depth, k) => ({
+    depth,
+    img: (mainIdx + k - 1 + IMAGES.length) % IMAGES.length,
+  }))
 
   function localHref(href: string) {
     if (locale === 'en') return href
@@ -139,17 +143,15 @@ export default function HeroSection({ locale }: HeroSectionProps) {
 
       {/* Photo deck */}
       <div className="cloud">
-        {DECK.map((depth) => (
-          <div
-            key={depth}
-            className={`deck-card d${depth}${depth === 0 && swapping ? ' swap' : ''}`}
-          >
+        {deck.map(({ depth, img }) => (
+          <div key={img} className={`deck-card ${depth}`} aria-hidden={depth !== 'd0'}>
             <Image
-              src={IMAGES[(mainIdx + depth) % IMAGES.length]}
-              alt={depth === 0 ? 'Alejandro Sánchez Yalí' : ''}
+              src={IMAGES[img]}
+              alt={depth === 'd0' ? 'Alejandro Sánchez Yalí' : ''}
               width={320}
               height={400}
-              priority={depth === 0}
+              priority={img < 4}
+              loading="eager"
               style={{ objectFit: 'cover', width: '100%', height: '100%' }}
             />
           </div>
