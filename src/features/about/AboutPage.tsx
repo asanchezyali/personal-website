@@ -43,10 +43,11 @@ export default function AboutPage({ author, locale }: AboutPageProps) {
   const { t } = useTranslation(locale, 'about')
 
   const timelineMeta = [
-    { when: '2025 — Present', where: 'Lapzo', lead: true },
-    { when: '2024 — Present', where: 'Independent' },
-    { when: '2021 — 2024', where: 'Monadical' },
-    { when: '2018 — 2020', where: 'BCFort' },
+    { when: 'Oct 2026 — Present', where: 'Independent', lead: true },
+    { when: 'Aug 2025 — Sep 2026', where: 'Lapzo' },
+    { when: 'Aug 2024 — Jul 2025', where: 'Independent' },
+    { when: 'Apr 2021 — Aug 2024', where: 'Monadical' },
+    { when: 'Aug 2018 — Oct 2020', where: 'BCFort' },
     { when: '2010 — 2021', where: 'Universidad de Antioquia' },
   ]
   const timeline = timelineMeta.map((m, i) => ({
@@ -317,9 +318,12 @@ export default function AboutPage({ author, locale }: AboutPageProps) {
           >
             {t('cta.button')}
           </a>
-          <Link href={locale === 'en' ? '/blog' : `/${locale}/blog`} className="btn ghost">
-            {t('cta.link')}
-          </Link>
+          <a href="/files/AlejandroSanchezYali-CV.pdf" target="_blank" className="btn ghost">
+            {t('cta.cv')}
+          </a>
+          <a href="mailto:asanchezyali@gmail.com" className="btn ghost">
+            {t('cta.email')}
+          </a>
         </div>
       </section>
     </>

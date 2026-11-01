@@ -65,32 +65,38 @@
     "resume_cta": "View Full Resume",
     "milestones": [
       {
-        "year": "2025 – Present",
+        "year": "Oct 2026 – Present",
+        "role": "AI Engineer · Independent consultant",
+        "company": "Independent",
+        "description": "Lead engineer of Aluna, an AI recruitment platform: Next.js and FastAPI, durable analysis pipelines on Inngest and multi-model routing with LiteLLM."
+      },
+      {
+        "year": "Aug 2025 – Sep 2026",
         "role": "AI Specialist",
         "company": "Lapzo",
-        "description": "Building intelligent learning systems powered by LLMs, RAG pipelines, and agentic workflows."
+        "description": "Built an AI educational content generator with LangChain, LangGraph and n8n, and a Digital Professor that explains course content in real-time conversation."
       },
       {
-        "year": "2024 – Present",
-        "role": "Independent projects",
+        "year": "Aug 2024 – Jul 2025",
+        "role": "Independent Software & AI Consultant",
         "company": "Independent",
-        "description": "AI consulting and full-stack development for startups — from conversational agents to image generation platforms."
+        "description": "Led the engineering of CREARIA's multi-tenant AI support agent on WhatsApp, email and Instagram."
       },
       {
-        "year": "2021 – 2024",
-        "role": "Full Stack Developer",
+        "year": "Apr 2021 – Aug 2024",
+        "role": "Full Stack Engineer",
         "company": "Monadical",
         "description": "Developed AI avatar systems, real-time video pipelines, and open-source tooling with Python, React, and Three.js."
       },
       {
-        "year": "2018 – 2020",
-        "role": "Full Stack Developer",
+        "year": "Aug 2018 – Oct 2020",
+        "role": "Full Stack Engineer",
         "company": "BCFort",
-        "description": "Built blockchain-based platforms and scalable web applications using React, NestJS, and cloud infrastructure."
+        "description": "Built blockchain-based platforms and scalable web applications with Django, Node.js, React, Solidity and AWS."
       },
       {
         "year": "2010 – 2021",
-        "role": "Professor",
+        "role": "Professor (part-time)",
         "company": "Universidad de Antioquia",
         "description": "Taught mathematics, linear algebra, and calculus. Mentored students in mathematical modeling and computational thinking."
       }

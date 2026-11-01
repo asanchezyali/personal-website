@@ -21,23 +21,27 @@
     "p": "A non-linear walk through mathematics, teaching, and software.",
     "timeline": [
       {
+        "title": "AI Engineer · Independent consultant",
+        "desc": "Lead engineer of Aluna, an AI recruitment platform: Next.js and FastAPI, durable analysis pipelines on Inngest and multi-model routing with LiteLLM."
+      },
+      {
         "title": "AI Specialist",
-        "desc": "Building intelligent learning systems powered by LLMs, RAG pipelines, and agentic workflows."
+        "desc": "Built an AI educational content generator with LangChain, LangGraph and n8n, and a Digital Professor that explains course content in real-time conversation."
       },
       {
-        "title": "Independent projects",
-        "desc": "Independent engineering work, from conversational agents to image generation platforms."
+        "title": "Independent Software & AI Consultant",
+        "desc": "Led the engineering of CREARIA's multi-tenant AI support agent on WhatsApp, email and Instagram."
       },
       {
-        "title": "Full Stack Developer",
+        "title": "Full Stack Engineer",
         "desc": "Developed AI avatar systems, real-time video pipelines, and open-source tooling with Python, React, and Three.js."
       },
       {
-        "title": "Full Stack Developer",
-        "desc": "Built blockchain-based platforms and scalable web applications using React, NestJS, and cloud infrastructure."
+        "title": "Full Stack Engineer",
+        "desc": "Built blockchain-based platforms and scalable web applications with Django, Node.js, React, Solidity and AWS."
       },
       {
-        "title": "Professor",
+        "title": "Professor (part-time)",
         "desc": "Taught mathematics, linear algebra, and calculus. Mentored students in mathematical modeling and computational thinking."
       }
     ]
@@ -66,20 +70,44 @@
     "building": "Building",
     "thinking": "Thinking & shipping",
     "buildTools": [
-      { "cm": "data, ML, glue" },
-      { "cm": "everywhere else" },
-      { "cm": "front of house" },
-      { "cm": "default choice" },
-      { "cm": "when Web3 fits" },
-      { "cm": "when it matters" }
+      {
+        "cm": "data, ML, glue"
+      },
+      {
+        "cm": "everywhere else"
+      },
+      {
+        "cm": "front of house"
+      },
+      {
+        "cm": "default choice"
+      },
+      {
+        "cm": "when Web3 fits"
+      },
+      {
+        "cm": "when it matters"
+      }
     ],
     "thinkTools": [
-      { "cm": "for the math" },
-      { "cm": "second brain" },
-      { "cm": "for early sketches" },
-      { "cm": "to stay honest" },
-      { "cm": "daily drivers" },
-      { "cm": "still unbeaten" }
+      {
+        "cm": "for the math"
+      },
+      {
+        "cm": "second brain"
+      },
+      {
+        "cm": "for early sketches"
+      },
+      {
+        "cm": "to stay honest"
+      },
+      {
+        "cm": "daily drivers"
+      },
+      {
+        "cm": "still unbeaten"
+      }
     ]
   },
   "now": {
@@ -108,19 +136,31 @@
     "eyebrow": "Elsewhere on the internet",
     "h2": "Where to find me",
     "items": [
-      { "desc": "Open source, experiments, and a few things I wish I'd pushed sooner." },
-      { "desc": "The long-form résumé version. Light on buzzwords, I promise." },
-      { "desc": "Half-formed thoughts, notes from the field, the occasional hot take." },
-      { "desc": "Visual notes, and what the work looks like before it is finished." },
-      { "desc": "A space to study mathematics, software, and artificial intelligence." }
+      {
+        "desc": "Open source, experiments, and a few things I wish I'd pushed sooner."
+      },
+      {
+        "desc": "The long-form résumé version. Light on buzzwords, I promise."
+      },
+      {
+        "desc": "Half-formed thoughts, notes from the field, the occasional hot take."
+      },
+      {
+        "desc": "Visual notes, and what the work looks like before it is finished."
+      },
+      {
+        "desc": "A space to study mathematics, software, and artificial intelligence."
+      }
     ],
     "discord_cta": "Join the Discord →"
   },
   "cta": {
     "h2_pre": "If you've read this far, we might ",
     "h2_accent": "enjoy working together",
-    "p": "I take on a few projects a year. If you're building something that needs care, let's talk.",
+    "p": "I'm open to remote AI engineering roles and contract work, available now. English B2, based in Colombia (UTC−5).",
     "button": "Start a conversation →",
-    "link": "Read the blog first"
+    "link": "Read the blog first",
+    "cv": "Download my CV",
+    "email": "asanchezyali@gmail.com"
   }
 }

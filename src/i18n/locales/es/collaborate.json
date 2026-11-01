@@ -65,34 +65,40 @@
     "resume_cta": "Ver Currículum Completo",
     "milestones": [
       {
-        "year": "2025 – Presente",
+        "year": "Oct 2026 – Presente",
+        "role": "Ingeniero de IA · Consultor independiente",
+        "company": "Independiente",
+        "description": "Ingeniero principal de Aluna, una plataforma de reclutamiento con IA: Next.js y FastAPI, pipelines de análisis durables en Inngest y enrutamiento entre modelos con LiteLLM."
+      },
+      {
+        "year": "Ago 2025 – Sep 2026",
         "role": "Especialista en IA",
         "company": "Lapzo",
-        "description": "Construyendo sistemas de aprendizaje inteligentes impulsados por LLMs, pipelines RAG y flujos de trabajo agénticos."
+        "description": "Construí un generador de contenido educativo con IA usando LangChain, LangGraph y n8n, y un Profesor Digital que explica los cursos en conversación en tiempo real."
       },
       {
-        "year": "2024 – Presente",
-        "role": "Proyectos independientes",
+        "year": "Ago 2024 – Jul 2025",
+        "role": "Consultor independiente de software e IA",
         "company": "Independiente",
-        "description": "Consultoría en IA y desarrollo full-stack para startups — desde agentes conversacionales hasta plataformas de generación de imágenes."
+        "description": "Lideré la ingeniería del agente de soporte multiempresa de CREARIA en WhatsApp, correo e Instagram."
       },
       {
-        "year": "2021 – 2024",
-        "role": "Desarrollador Full Stack",
+        "year": "Abr 2021 – Ago 2024",
+        "role": "Ingeniero Full Stack",
         "company": "Monadical",
-        "description": "Desarrollé sistemas de avatares IA, pipelines de video en tiempo real y herramientas open-source con Python, React y Three.js."
+        "description": "Desarrollé sistemas de avatares con IA, pipelines de video en tiempo real y herramientas de código abierto con Python, React y Three.js."
       },
       {
-        "year": "2018 – 2020",
-        "role": "Desarrollador Full Stack",
+        "year": "Ago 2018 – Oct 2020",
+        "role": "Ingeniero Full Stack",
         "company": "BCFort",
-        "description": "Construí plataformas basadas en blockchain y aplicaciones web escalables usando React, NestJS e infraestructura en la nube."
+        "description": "Construí plataformas basadas en blockchain y aplicaciones web escalables con Django, Node.js, React, Solidity y AWS."
       },
       {
         "year": "2010 – 2021",
-        "role": "Profesor",
+        "role": "Profesor de cátedra",
         "company": "Universidad de Antioquia",
-        "description": "Enseñé matemáticas, álgebra lineal y cálculo. Mentoría a estudiantes en modelado matemático y pensamiento computacional."
+        "description": "Enseñé matemáticas, álgebra lineal y cálculo. Acompañé a estudiantes en modelado matemático y pensamiento computacional."
       }
     ]
   },

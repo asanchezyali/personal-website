@@ -21,23 +21,27 @@
     "p": "Un recorrido no lineal por las matemáticas, la enseñanza y el software.",
     "timeline": [
       {
+        "title": "Ingeniero de IA · Consultor independiente",
+        "desc": "Ingeniero principal de Aluna, una plataforma de reclutamiento con IA: Next.js y FastAPI, pipelines de análisis durables en Inngest y enrutamiento entre modelos con LiteLLM."
+      },
+      {
         "title": "Especialista en IA",
-        "desc": "Construyo sistemas de aprendizaje inteligentes impulsados por LLMs, pipelines de RAG y flujos de trabajo con agentes."
+        "desc": "Construí un generador de contenido educativo con IA usando LangChain, LangGraph y n8n, y un Profesor Digital que explica los cursos en conversación en tiempo real."
       },
       {
-        "title": "Proyectos independientes",
-        "desc": "Trabajo de ingeniería independiente, desde agentes conversacionales hasta plataformas de generación de imágenes."
+        "title": "Consultor independiente de software e IA",
+        "desc": "Lideré la ingeniería del agente de soporte multiempresa de CREARIA en WhatsApp, correo e Instagram."
       },
       {
-        "title": "Desarrollador Full Stack",
+        "title": "Ingeniero Full Stack",
         "desc": "Desarrollé sistemas de avatares con IA, pipelines de video en tiempo real y herramientas de código abierto con Python, React y Three.js."
       },
       {
-        "title": "Desarrollador Full Stack",
-        "desc": "Construí plataformas basadas en blockchain y aplicaciones web escalables usando React, NestJS e infraestructura en la nube."
+        "title": "Ingeniero Full Stack",
+        "desc": "Construí plataformas basadas en blockchain y aplicaciones web escalables con Django, Node.js, React, Solidity y AWS."
       },
       {
-        "title": "Profesor",
+        "title": "Profesor de cátedra",
         "desc": "Enseñé matemáticas, álgebra lineal y cálculo. Acompañé a estudiantes en modelado matemático y pensamiento computacional."
       }
     ]
@@ -66,20 +70,44 @@
     "building": "Construir",
     "thinking": "Pensar y entregar",
     "buildTools": [
-      { "cm": "datos, ML, pegamento" },
-      { "cm": "todo lo demás" },
-      { "cm": "la cara visible" },
-      { "cm": "opción por defecto" },
-      { "cm": "cuando encaja la Web3" },
-      { "cm": "cuando importa" }
+      {
+        "cm": "datos, ML, pegamento"
+      },
+      {
+        "cm": "todo lo demás"
+      },
+      {
+        "cm": "la cara visible"
+      },
+      {
+        "cm": "opción por defecto"
+      },
+      {
+        "cm": "cuando encaja la Web3"
+      },
+      {
+        "cm": "cuando importa"
+      }
     ],
     "thinkTools": [
-      { "cm": "para las matemáticas" },
-      { "cm": "segundo cerebro" },
-      { "cm": "para bocetos tempranos" },
-      { "cm": "para no engañarme" },
-      { "cm": "el día a día" },
-      { "cm": "aún imbatibles" }
+      {
+        "cm": "para las matemáticas"
+      },
+      {
+        "cm": "segundo cerebro"
+      },
+      {
+        "cm": "para bocetos tempranos"
+      },
+      {
+        "cm": "para no engañarme"
+      },
+      {
+        "cm": "el día a día"
+      },
+      {
+        "cm": "aún imbatibles"
+      }
     ]
   },
   "now": {
@@ -108,12 +136,18 @@
     "eyebrow": "En otros rincones de internet",
     "h2": "Dónde encontrarme",
     "items": [
-      { "desc": "Código abierto, experimentos y algunas cosas que ojalá hubiera publicado antes." },
-      { "desc": "La versión extendida del currículum. Con pocas palabras de moda, lo prometo." },
+      {
+        "desc": "Código abierto, experimentos y algunas cosas que ojalá hubiera publicado antes."
+      },
+      {
+        "desc": "La versión extendida del currículum. Con pocas palabras de moda, lo prometo."
+      },
       {
         "desc": "Ideas a medio formar, notas de campo y alguna opinión arriesgada de vez en cuando."
       },
-      { "desc": "Notas visuales y el aspecto que tiene el trabajo antes de estar terminado." },
+      {
+        "desc": "Notas visuales y el aspecto que tiene el trabajo antes de estar terminado."
+      },
       {
         "desc": "Un espacio para estudiar matemáticas, software e inteligencia artificial."
       }
@@ -123,8 +157,10 @@
   "cta": {
     "h2_pre": "Si has leído hasta aquí, quizás ",
     "h2_accent": "disfrutemos trabajar juntos",
-    "p": "Tomo solo algunos proyectos al año. Si estás construyendo algo que necesita cuidado, hablemos.",
+    "p": "Estoy disponible para roles remotos de ingeniería de IA y contratos, desde ya. Inglés B2, en Colombia (UTC−5).",
     "button": "Empecemos una conversación →",
-    "link": "Lee el blog primero"
+    "link": "Lee el blog primero",
+    "cv": "Descarga mi CV",
+    "email": "asanchezyali@gmail.com"
   }
 }
