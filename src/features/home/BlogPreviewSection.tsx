@@ -22,7 +22,7 @@ export default function BlogPreviewSection({ locale, posts }: BlogPreviewSection
   }
 
   const latest = posts
-    .filter((p) => p.language === locale && !p.draft)
+    .filter((p) => p.language === locale && !p.draft && p.slug.includes('/case-studies/'))
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
     .slice(0, 3)
 

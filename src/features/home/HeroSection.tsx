@@ -1,7 +1,6 @@
 'use client'
 import React, { useState, useEffect } from 'react'
 import Image from 'next/image'
-import Link from 'next/link'
 import { useTranslation } from '@/i18n/client'
 import { LocaleTypes } from '@/i18n/settings'
 import siteMetadata from '@/lib/siteMetadata'
@@ -38,11 +37,6 @@ export default function HeroSection({ locale }: HeroSectionProps) {
     img: (mainIdx + k - 1 + IMAGES.length) % IMAGES.length,
   }))
 
-  function localHref(href: string) {
-    if (locale === 'en') return href
-    return href === '/' ? `/${locale}` : `/${locale}${href}`
-  }
-
   return (
     <section className="hero">
       {/* Copy */}
@@ -78,9 +72,9 @@ export default function HeroSection({ locale }: HeroSectionProps) {
           >
             {t('hero.button_1')} <span className="a">→</span>
           </a>
-          <Link href={localHref('/collaborate')} className="btn dark">
+          <a href="/files/AlejandroSanchezYali-CV.pdf" target="_blank" className="btn dark">
             {t('hero.button_2')}
-          </Link>
+          </a>
         </div>
         <div className="socials-row">
           <a

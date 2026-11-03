@@ -108,11 +108,11 @@
     "description": "Una selección de proyectos que he construido o liderado — abarcando IA, desarrollo full-stack y automatización de flujos de trabajo.",
     "project_1": {
       "title": "Plixiq",
-      "description": "Plataforma multi-tenant de IA que unifica el acceso a LLMs para equipos y empresas.",
-      "role": "Co-fundador · Full-stack",
-      "context": "Las empresas necesitan experimentar con múltiples proveedores de LLM sin gestionar claves API, facturación y controles de acceso separados para cada miembro del equipo.",
-      "problem": "La adopción de LLMs en equipos está fragmentada — cada desarrollador tiene sus propias cuentas, los costos son invisibles, y no hay forma unificada de gestionar modelos, límites de uso o enrutamiento de prompts.",
-      "solution": "Construí una plataforma multi-tenant con LiteLLM como gateway unificado de modelos, frontend en Next.js y backend en Python. Los equipos tienen un dashboard para gestionar modelos, rastrear costos, establecer límites por usuario y enrutar prompts automáticamente.",
+      "description": "SaaS multi-tenant que pone agentes de IA en WhatsApp para negocios: responden, agendan citas y pasan el chat a una persona. Construido y desplegado.",
+      "role": "Arquitecto e ingeniero líder",
+      "context": "Los negocios pequeños responden las mismas preguntas por WhatsApp todo el día, agendan citas a mano y pierden clientes fuera del horario.",
+      "problem": "Los chatbots genéricos fallan con preguntas propias del negocio, no pueden hacer acciones como agendar y dejan al cliente atascado cuando fallan.",
+      "solution": "Construí un SaaS multi-tenant donde cada negocio tiene su propio agente de IA en WhatsApp: responde con el conocimiento del negocio, revisa disponibilidad y agenda, y pasa el chat a un operador humano con todo el contexto. Un monolito modular con 14 componentes, LiteLLM con un modelo de respaldo por agente y un panel de operadores en tiempo real.",
       "link": "/es/blog/case-studies/plixiq",
       "technologies": [
         "Python",

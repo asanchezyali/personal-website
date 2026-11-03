@@ -1,17 +1,17 @@
 {
   "hero": {
-    "roll": "AI Engineer",
-    "subtitle": "AI Engineer · M.Sc. in Mathematics",
+    "roll": "Software Engineer",
+    "subtitle": "Software Engineer · AI · M.Sc. in Mathematics",
     "title_1": "I'm Alejandro Sánchez Yalí",
-    "title_2": "I build LLM systems that hold up in production: agents, RAG and evals. Open to remote AI engineering roles and contract work.",
-    "button_1": "Contact Me",
-    "button_2": "Let's Collaborate",
-    "blog_section": "Notes on AI, Blockchain, and Cutting-Edge Tech",
-    "blog_description": "Exploring technology, development, and innovation through detailed analyses and practical guides"
+    "title_2": "I build LLM systems that hold up in production: agents, RAG and evals. Open to remote software and AI engineering roles and contract work.",
+    "button_1": "Book a call",
+    "button_2": "Download CV",
+    "blog_section": "Selected work",
+    "blog_description": "Case studies of systems I designed and built: the architecture, the decisions and what came out of them."
   },
   "stack": {
-    "title": "Building bit by bit",
-    "description": "I love experimenting with modern technologies to create unique solutions that solve real problems. Every line of code is an opportunity to learn something new."
+    "title": "What I build with",
+    "description": "Python and TypeScript on the backend and frontend, PostgreSQL and Redis for data, and LLM providers behind one interface."
   },
   "blog": "Blog",
   "greeting": "Latest",
@@ -51,5 +51,10 @@
     "topic_3": "Artificial Intelligence",
     "discord_cta": "Join Discord",
     "github_cta": "Follow on GitHub"
+  },
+  "courses": {
+    "title": "Courses",
+    "description": "Free courses where I teach the math and engineering behind modern AI, from the original formulations.",
+    "cta": "All courses"
   }
 }

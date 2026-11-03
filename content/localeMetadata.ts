@@ -3,8 +3,8 @@ type Metadata = {
 }
 
 export const maintitle: Metadata = {
-  en: 'Alejandro Sánchez Yalí · AI Engineer',
-  es: 'Alejandro Sánchez Yalí · Ingeniero de IA',
+  en: 'Alejandro Sánchez Yalí · Software Engineer',
+  es: 'Alejandro Sánchez Yalí · Ingeniero de software',
 }
 
 export const maindescription: Metadata = {

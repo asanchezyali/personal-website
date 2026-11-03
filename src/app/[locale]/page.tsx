@@ -2,6 +2,7 @@ import { LocaleTypes } from '@/i18n/settings'
 import HeroSection from '@/features/home/HeroSection'
 import TechStackSection from '@/features/home/TechStackSection'
 import BlogPreviewSection from '@/features/home/BlogPreviewSection'
+import CoursesPreviewSection from '@/features/home/CoursesPreviewSection'
 import CommunitySection from '@/features/home/CommunitySection'
 import { posts } from '#site/content'
 
@@ -15,8 +16,9 @@ export default async function Home(props: HomeProps) {
       <div className="wrap">
         <HeroSection locale={locale} />
       </div>
-      <TechStackSection locale={locale} />
       <BlogPreviewSection locale={locale} posts={posts} />
+      <CoursesPreviewSection locale={locale} />
+      <TechStackSection locale={locale} />
       <CommunitySection locale={locale} />
     </>
   )

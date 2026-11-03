@@ -108,11 +108,11 @@
     "description": "A selection of projects I've built or led — spanning AI, full-stack development, and workflow automation.",
     "project_1": {
       "title": "Plixiq",
-      "description": "Multi-tenant AI platform that unifies LLM access for teams and businesses.",
-      "role": "Co-founder · Full-stack",
-      "context": "Companies need to experiment with multiple LLM providers without managing separate API keys, billing, and access controls for each team member.",
-      "problem": "LLM adoption in teams is fragmented — each developer signs up for their own accounts, costs are invisible, and there's no unified way to manage models, usage limits, or prompt routing.",
-      "solution": "Built a multi-tenant platform with LiteLLM as the unified model gateway, Next.js frontend, and Python backend. Teams get a single dashboard to manage models, track costs, set usage limits per user, and route prompts to the best provider automatically.",
+      "description": "Multi-tenant SaaS that runs AI agents on WhatsApp for businesses: they answer, book appointments and hand off to a person. Built and deployed.",
+      "role": "Architect and lead engineer",
+      "context": "Small businesses answer the same questions on WhatsApp all day, book appointments by hand and lose customers after hours.",
+      "problem": "Generic chatbots break on business-specific questions, can not take actions like booking, and leave the customer stuck when they fail.",
+      "solution": "Built a multi-tenant SaaS where each business runs its own AI agent on WhatsApp: it answers from the business knowledge, checks availability and books, and hands the chat to a human operator with full context. A modular monolith with 14 components, LiteLLM with a fallback model per agent, and a real-time operator dashboard.",
       "link": "/blog/case-studies/plixiq",
       "technologies": [
         "Python",
