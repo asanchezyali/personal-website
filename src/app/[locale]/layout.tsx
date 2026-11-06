@@ -72,10 +72,10 @@ export default async function RootLayout(props: LayoutProps) {
       suppressHydrationWarning
     >
       <head>
-        <link rel="apple-touch-icon" sizes="76x76" href="/static/favicons/apple-touch-icon.png" />
-        <link rel="icon" type="image/png" sizes="32x32" href="/static/favicons/favicon-32x32.png" />
-        <link rel="icon" type="image/png" sizes="16x16" href="/static/favicons/favicon-16x16.png" />
-        <link rel="manifest" href="/static/favicons/site.webmanifest" />
+        <link rel="apple-touch-icon" sizes="76x76" href="/favicons/apple-touch-icon.png" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicons/favicon-32x32.png" />
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicons/favicon-16x16.png" />
+        <link rel="manifest" href="/favicons/site.webmanifest" />
         <meta name="theme-color" media="(prefers-color-scheme: light)" content="#FFFDF7" />
         <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#141420" />
         <link rel="alternate" type="application/rss+xml" href="/feed.xml" />

@@ -75,7 +75,7 @@ const posts = defineCollection({
         datePublished: data.date,
         dateModified: data.lastmod || data.date,
         description: data.summary,
-        image: data.images ? data.images[0] : '/static/images/twitter-card.png',
+        image: data.images ? data.images[0] : '/images/twitter-card.png',
         url: `https://www.asanchezyali.com/${data.language}/blog/${data.slug}`,
       },
     })),

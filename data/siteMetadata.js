@@ -9,7 +9,7 @@ const siteMetadata = {
   siteUrl: 'https://asanchezyali.com',
   siteRepo: 'https://github.com/asanchezyali/personal-website',
   siteLogo: '/static/images/logo.png',
-  socialBanner: '/static/images/twitter-card.png',
+  socialBanner: '/images/twitter-card.png',
   mastodon: 'https://mastodon.social/@mastodonuser',
   email: 'alejandro@piagents.dev',
   github: 'https://github.com/asanchezyali',
