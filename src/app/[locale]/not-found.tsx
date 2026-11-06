@@ -1,12 +1,21 @@
-import Link from 'next/link'
-import { headers } from 'next/headers'
-import { createTranslation } from '@/i18n/server'
-import { LocaleTypes } from '@/i18n/settings'
+'use client'
 
-export default async function NotFound() {
-  const pathname = (await headers()).get('x-pathname') ?? ''
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+import { LocaleTypes } from '@/i18n/settings'
+import en from '@/i18n/locales/en/notfound.json'
+import es from '@/i18n/locales/es/notfound.json'
+
+const strings: Record<LocaleTypes, typeof en> = { en, es }
+
+// Client component on purpose: reading request headers here (headers()) made
+// every route under [locale] opt out of static prerendering, so no page was
+// cached by the CDN. The strings are imported directly so the 404 text is in
+// the server-rendered HTML instead of loading after hydration.
+export default function NotFound() {
+  const pathname = usePathname() ?? ''
   const locale: LocaleTypes = pathname.startsWith('/es') ? 'es' : 'en'
-  const { t } = await createTranslation(locale, 'notfound')
+  const t = (key: keyof typeof en) => strings[locale][key]
 
   return (
     <div

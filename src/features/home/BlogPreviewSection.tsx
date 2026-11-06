@@ -4,12 +4,12 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useTranslation } from '@/i18n/client'
 import { LocaleTypes } from '@/i18n/settings'
-import { Blog } from '#site/content'
+import type { PostSummary } from '@/lib/postSummary'
 import { formatDate } from 'pliny/utils/formatDate'
 
 interface BlogPreviewSectionProps {
   locale: LocaleTypes
-  posts: Blog[]
+  posts: PostSummary[]
 }
 
 export default function BlogPreviewSection({ locale, posts }: BlogPreviewSectionProps) {

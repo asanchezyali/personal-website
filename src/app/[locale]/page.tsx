@@ -5,6 +5,7 @@ import BlogPreviewSection from '@/features/home/BlogPreviewSection'
 import CoursesPreviewSection from '@/features/home/CoursesPreviewSection'
 import CommunitySection from '@/features/home/CommunitySection'
 import { posts } from '#site/content'
+import { toPostSummary } from '@/lib/postSummary'
 
 type HomeProps = { params: Promise<{ locale: LocaleTypes }> }
 
@@ -16,7 +17,7 @@ export default async function Home(props: HomeProps) {
       <div className="wrap">
         <HeroSection locale={locale} />
       </div>
-      <BlogPreviewSection locale={locale} posts={posts} />
+      <BlogPreviewSection locale={locale} posts={posts.map(toPostSummary)} />
       <CoursesPreviewSection locale={locale} />
       <TechStackSection locale={locale} />
       <CommunitySection locale={locale} />

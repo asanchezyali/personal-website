@@ -2,14 +2,14 @@
 import React, { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Blog } from '#site/content'
+import type { PostSummary } from '@/lib/postSummary'
 import { LocaleTypes } from '@/i18n/settings'
 import { useTranslation } from '@/i18n/client'
 import { formatDate } from 'pliny/utils/formatDate'
 
 interface BlogPageClientProps {
   locale: LocaleTypes
-  posts: Blog[]
+  posts: PostSummary[]
   tags: Record<string, number>
 }
 
@@ -50,7 +50,7 @@ export default function BlogPageClient({ locale, posts, tags }: BlogPageClientPr
   const rest = filtered.slice(1)
 
   // Group by year
-  const byYear: Record<string, Blog[]> = {}
+  const byYear: Record<string, PostSummary[]> = {}
   rest.forEach((p) => {
     const y = new Date(p.date).getFullYear().toString()
     if (!byYear[y]) byYear[y] = []
@@ -58,7 +58,7 @@ export default function BlogPageClient({ locale, posts, tags }: BlogPageClientPr
   })
   const years = Object.keys(byYear).sort((a, b) => Number(b) - Number(a))
 
-  function postSlug(post: Blog) {
+  function postSlug(post: PostSummary) {
     // Remove "blog/en/" or "blog/es/" prefix
     const parts = post.slug.replace(/^blog\/[a-z]{2}\//, '')
     return localHref(`/blog/${parts}`)

@@ -4,6 +4,7 @@ import { LocaleTypes } from '@/i18n/settings'
 import siteMetadata from '@/lib/siteMetadata'
 import BlogPageClient from '@/features/blog/BlogPageClient'
 import { posts } from '#site/content'
+import { toPostSummary } from '@/lib/postSummary'
 import tagData from '../tag-data.json'
 
 type BlogPageProps = { params: Promise<{ locale: LocaleTypes }> }
@@ -26,5 +27,5 @@ export default async function BlogPage(props: BlogPageProps) {
   const { locale } = await props.params
   const tags = (tagData as Record<string, Record<string, number>>)[locale] || {}
 
-  return <BlogPageClient locale={locale} posts={posts} tags={tags} />
+  return <BlogPageClient locale={locale} posts={posts.map(toPostSummary)} tags={tags} />
 }
