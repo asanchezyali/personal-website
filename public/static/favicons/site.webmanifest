@@ -1,0 +1,14 @@
+{
+  "name": "Alejandro Sánchez Yalí",
+  "short_name": "yali dev",
+  "icons": [
+    {
+      "src": "/static/favicons/android-chrome-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png"
+    }
+  ],
+  "theme_color": "#141420",
+  "background_color": "#141420",
+  "display": "standalone"
+}
