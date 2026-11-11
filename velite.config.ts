@@ -76,7 +76,8 @@ const posts = defineCollection({
         dateModified: data.lastmod || data.date,
         description: data.summary,
         image: data.images ? data.images[0] : '/images/twitter-card.png',
-        url: `https://www.asanchezyali.com/${data.language}/blog/${data.slug}`,
+        // data.slug is 'blog/<lang>/<path>': keep <path>, and prefix the locale except for English.
+        url: `https://www.asanchezyali.com/${data.language === 'en' ? '' : data.language + '/'}blog/${data.slug.split('/').slice(2).join('/')}`,
       },
     })),
 })

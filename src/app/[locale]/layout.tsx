@@ -12,6 +12,10 @@ import { type LocaleTypes, locales } from '@/i18n/settings'
 import { ThemeProvider } from '@/shared/hooks/useTheme'
 import Header from '@/layout/Header'
 import Footer from '@/layout/Footer'
+import { pageAlternates, publicUrl } from '@/lib/publicUrl'
+
+// Only the locales above exist; any other first segment (e.g. /wp-login.php) is a static 404.
+export const dynamicParams = false
 
 export async function generateStaticParams() {
   return locales.map((locale) => ({ locale }))
@@ -30,16 +34,14 @@ export async function generateMetadata(props: {
     openGraph: {
       title: maintitle[locale],
       description: maindescription[locale],
-      url: './',
+      url: publicUrl(locale),
       siteName: maintitle[locale],
       images: [siteMetadata.socialBanner],
       locale,
       type: 'website',
     },
-    alternates: {
-      canonical: './',
-      types: { 'application/rss+xml': `${siteMetadata.siteUrl}/feed.xml` },
-    },
+    // Pages override this with their own path; the home page and 404s keep it.
+    alternates: pageAlternates(locale),
     robots: {
       index: true,
       follow: true,
@@ -78,7 +80,6 @@ export default async function RootLayout(props: LayoutProps) {
         <link rel="manifest" href="/favicons/site.webmanifest" />
         <meta name="theme-color" media="(prefers-color-scheme: light)" content="#FFFDF7" />
         <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#141420" />
-        <link rel="alternate" type="application/rss+xml" href="/feed.xml" />
       </head>
       <body>
         <Analytics analyticsConfig={siteMetadata.analytics as AnalyticsConfig} />

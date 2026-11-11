@@ -4,6 +4,7 @@ import { LocaleTypes } from '@/i18n/settings'
 import siteMetadata from '@/lib/siteMetadata'
 import TagsPageClient from '@/features/tags/TagsPageClient'
 import tagData from '../tag-data.json'
+import { pageAlternates, publicUrl } from '@/lib/publicUrl'
 
 type TagsPageProps = { params: Promise<{ locale: LocaleTypes }> }
 
@@ -12,9 +13,10 @@ export async function generateMetadata(props: TagsPageProps): Promise<Metadata> 
   const { t } = await createTranslation(locale, 'common')
   return {
     title: t('tags'),
+    alternates: pageAlternates(locale, 'tags'),
     openGraph: {
       title: t('tags'),
-      url: `${siteMetadata.siteUrl}/${locale === 'en' ? '' : locale + '/'}tags`,
+      url: publicUrl(locale, 'tags'),
     },
   }
 }

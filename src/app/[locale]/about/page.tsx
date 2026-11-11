@@ -5,6 +5,7 @@ import { LocaleTypes } from '@/i18n/settings'
 import siteMetadata from '@/lib/siteMetadata'
 import AboutPage from '@/features/about/AboutPage'
 import { authors } from '#site/content'
+import { pageAlternates, publicUrl } from '@/lib/publicUrl'
 
 type AboutPageProps = { params: Promise<{ locale: LocaleTypes }> }
 
@@ -13,9 +14,10 @@ export async function generateMetadata(props: AboutPageProps): Promise<Metadata>
   const { t } = await createTranslation(locale, 'about')
   return {
     title: t('about'),
+    alternates: pageAlternates(locale, 'about'),
     openGraph: {
       title: t('about'),
-      url: `${siteMetadata.siteUrl}/${locale === 'en' ? '' : locale + '/'}about`,
+      url: publicUrl(locale, 'about'),
     },
   }
 }

@@ -6,7 +6,7 @@ const siteMetadata = {
     'A space dedicated to exploring the intersections of mathematics, computer science, software development, artificial intelligence, and deep learning.',
   language: 'en',
   theme: 'system',
-  siteUrl: 'https://asanchezyali.com',
+  siteUrl: 'https://www.asanchezyali.com',
   siteRepo: 'https://github.com/asanchezyali/personal-website',
   siteLogo: '/static/images/logo.png',
   socialBanner: '/images/twitter-card.png',

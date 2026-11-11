@@ -6,6 +6,7 @@ import BlogPageClient from '@/features/blog/BlogPageClient'
 import { posts } from '#site/content'
 import { toPostSummary } from '@/lib/postSummary'
 import tagData from '../tag-data.json'
+import { pageAlternates, publicUrl } from '@/lib/publicUrl'
 
 type BlogPageProps = { params: Promise<{ locale: LocaleTypes }> }
 
@@ -15,10 +16,11 @@ export async function generateMetadata(props: BlogPageProps): Promise<Metadata> 
   return {
     title: t('title'),
     description: t('description'),
+    alternates: pageAlternates(locale, 'blog'),
     openGraph: {
       title: t('title'),
       description: t('description'),
-      url: `${siteMetadata.siteUrl}/${locale === 'en' ? '' : locale + '/'}blog`,
+      url: publicUrl(locale, 'blog'),
     },
   }
 }

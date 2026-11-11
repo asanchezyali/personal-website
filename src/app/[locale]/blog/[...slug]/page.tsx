@@ -5,6 +5,7 @@ import siteMetadata from '@/lib/siteMetadata'
 import PostLayout from '@/features/blog/PostLayout'
 import { MDXContent } from '@/shared/mdx/MDXContent'
 import { posts, authors } from '#site/content'
+import { pageAlternates, publicUrl } from '@/lib/publicUrl'
 
 type SlugPageProps = {
   params: Promise<{ locale: LocaleTypes; slug: string[] }>
@@ -31,7 +32,9 @@ export async function generateMetadata(props: SlugPageProps): Promise<Metadata> 
   return {
     title: post.title,
     description: post.summary,
+    alternates: pageAlternates(locale, `blog/${slug.join('/')}`),
     openGraph: {
+      url: publicUrl(locale, `blog/${slug.join('/')}`),
       title: post.title,
       description: post.summary,
       images: post.headerImage ? [post.headerImage] : [siteMetadata.socialBanner],

@@ -194,7 +194,7 @@ export default function Footer() {
                 <Link href={localHref('/tags')}>{tc('tags')}</Link>
               </li>
               <li>
-                <a href={`${siteMetadata.siteUrl}/feed.xml`} target="_blank" rel="noreferrer">
+                <a href={`/${locale}/feed.xml`} target="_blank" rel="noreferrer">
                   {t('rss_feed')}
                 </a>
               </li>

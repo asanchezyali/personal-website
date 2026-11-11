@@ -3,6 +3,7 @@ import { createTranslation } from '@/i18n/server'
 import { LocaleTypes } from '@/i18n/settings'
 import siteMetadata from '@/lib/siteMetadata'
 import CollaboratePage from '@/features/collaborate/CollaboratePage'
+import { pageAlternates, publicUrl } from '@/lib/publicUrl'
 
 type CollaboratePageProps = { params: Promise<{ locale: LocaleTypes }> }
 
@@ -12,10 +13,11 @@ export async function generateMetadata(props: CollaboratePageProps): Promise<Met
   return {
     title: t('hero.title'),
     description: t('hero.description'),
+    alternates: pageAlternates(locale, 'collaborate'),
     openGraph: {
       title: t('hero.title'),
       description: t('hero.description'),
-      url: `${siteMetadata.siteUrl}/${locale === 'en' ? '' : locale + '/'}collaborate`,
+      url: publicUrl(locale, 'collaborate'),
     },
   }
 }

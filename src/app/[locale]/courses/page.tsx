@@ -3,6 +3,7 @@ import { createTranslation } from '@/i18n/server'
 import { LocaleTypes } from '@/i18n/settings'
 import siteMetadata from '@/lib/siteMetadata'
 import CoursesIndex from '@/features/courses/CoursesIndex'
+import { pageAlternates, publicUrl } from '@/lib/publicUrl'
 
 type Props = { params: Promise<{ locale: LocaleTypes }> }
 
@@ -12,10 +13,11 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
   return {
     title: t('hero.title_pre') + t('hero.title_accent'),
     description: t('hero.lead'),
+    alternates: pageAlternates(locale, 'courses'),
     openGraph: {
       title: t('hero.title_pre') + t('hero.title_accent'),
       description: t('hero.lead'),
-      url: `${siteMetadata.siteUrl}/${locale === 'en' ? '' : locale + '/'}courses`,
+      url: publicUrl(locale, 'courses'),
     },
   }
 }
