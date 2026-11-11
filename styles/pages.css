@@ -1536,3 +1536,64 @@
   .fvf-bar { display: block; height: 100%; border-radius: 3px; background: var(--g-500); }
   .fvf-bar.is-sel { background: var(--vp-c); }
   .fvf-bar.is-base { background: var(--vp-b); }
+
+  /* Figure, Aside (long-form AI systems posts) */
+  .post-body .fig { margin: 34px 0; }
+  .post-body .fig > .smap, .post-body .fig > .cshare, .post-body .fig > .lbud { margin: 0; }
+  .post-body .fig-cap { margin-top: 10px; font-size: 13.5px; line-height: 1.55; color: var(--g-500); }
+  .post-body .fig-num { font-family: var(--f-ubuntu); font-weight: 700; color: var(--g-700); }
+  html.dark .post-body .fig-num { color: var(--g-700); }
+  .post-body .callout.aside { font-size: 15px; }
+  .post-body .callout.aside p + p { margin-top: 8px; }
+
+  /* System map */
+  .smap { margin: 30px 0; border: 1px solid var(--g-200); border-radius: 16px; padding: 18px; background: color-mix(in oklab, var(--g-50) 60%, transparent); }
+  html.dark .smap { border-color: var(--g-300); background: color-mix(in oklab, var(--g-100) 45%, transparent); }
+  .smap svg { width: 100%; height: auto; display: block; }
+  .sm-box { cursor: pointer; outline: none; }
+  .sm-box rect { fill: color-mix(in oklab, var(--vp-b) 10%, var(--bg, transparent)); stroke: var(--vp-b); stroke-width: 1.4; transition: opacity .18s var(--ease), fill .18s var(--ease); }
+  .sm-box text { font-family: var(--f-ubuntu); font-size: 15px; font-weight: 700; fill: var(--fg); pointer-events: none; }
+  .sm-box.is-on rect { fill: color-mix(in oklab, var(--vp-a) 18%, transparent); stroke: var(--vp-a); stroke-width: 2.2; }
+  .sm-box.is-dim { opacity: .38; }
+  .sm-box:hover, .sm-box:focus-visible { opacity: 1; }
+  .post-body .smap-detail { margin: 12px 0 0; font-size: 13.5px; line-height: 1.5; color: var(--g-600); min-height: 1.5em; }
+
+  /* Code share (predict, then reveal) */
+  .cshare { margin: 30px 0; border: 1px solid var(--g-200); border-radius: 16px; padding: 20px 22px; background: color-mix(in oklab, var(--g-50) 60%, transparent); display: flex; flex-direction: column; gap: 14px; }
+  html.dark .cshare { border-color: var(--g-300); background: color-mix(in oklab, var(--g-100) 45%, transparent); }
+  .cshare-ask { display: flex; flex-direction: column; gap: 10px; }
+  .post-body .cshare-q { margin: 0; font-weight: 600; color: var(--fg); }
+  .cshare-reveal { align-self: flex-start; font-size: 13px; font-weight: 700; padding: 7px 16px; border-radius: 999px; border: 1px solid var(--vp-a); background: color-mix(in oklab, var(--vp-a) 14%, transparent); color: var(--fg); cursor: pointer; }
+  .cshare-bars { display: flex; flex-direction: column; gap: 7px; }
+  .post-body .cshare-verdict { margin: 0 0 6px; font-size: 14px; color: var(--g-600); }
+  .cshare-verdict strong { color: var(--fg); }
+  .cshare-row { display: grid; grid-template-columns: minmax(120px, 34%) 1fr 116px; gap: 10px; align-items: center; }
+  .cshare-label { font-family: var(--f-ubuntu); font-size: 12px; color: var(--g-500); }
+  .cshare-bar { display: block; height: 100%; border-radius: 3px; background: var(--g-400); }
+  .cshare-row.is-answer .cshare-label { color: var(--vp-a); font-weight: 700; }
+  .cshare-row.is-answer .cshare-bar { background: var(--vp-a); min-width: 3px; }
+
+  /* Latency budget waterfall */
+  .lbud { margin: 30px 0; border: 1px solid var(--g-200); border-radius: 16px; overflow: hidden; background: color-mix(in oklab, var(--g-50) 60%, transparent); display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); }
+  html.dark .lbud { border-color: var(--g-300); background: color-mix(in oklab, var(--g-100) 45%, transparent); }
+  .lbud-stage { padding: 18px; display: flex; flex-direction: column; gap: 7px; justify-content: center; }
+  .lbud-controls { padding: 20px 22px; border-left: 1px solid var(--g-200); display: flex; flex-direction: column; gap: 10px; justify-content: center; }
+  html.dark .lbud-controls { border-left-color: var(--g-300); }
+  .lbud-row { display: grid; grid-template-columns: 118px 1fr 58px; gap: 10px; align-items: center; }
+  .lbud-label { font-family: var(--f-ubuntu); font-size: 11.5px; color: var(--g-500); }
+  .lbud-track { position: relative; height: 11px; border-radius: 3px; background: var(--g-200); }
+  .lbud-bar { position: absolute; top: 0; height: 100%; border-radius: 3px; background: var(--g-500); transition: left .2s var(--ease), width .2s var(--ease); }
+  .lbud-bar.is-model { background: var(--vp-c); }
+  .lbud-bar.is-guard { background: var(--vp-b); }
+  .lbud-bar.is-fail { background: var(--vp-a); }
+  .lbud-row.is-async .lbud-bar { opacity: .45; background-image: repeating-linear-gradient(45deg, transparent 0 4px, color-mix(in oklab, var(--bg, #fff) 50%, transparent) 4px 8px); }
+  .post-body .lbud-sum { margin: 8px 0 0; font-size: 13px; color: var(--g-600); }
+  .lbud-sum strong { color: var(--fg); }
+  .lb-slider { grid-template-columns: 92px 1fr 52px; }
+  @media (max-width: 900px) {
+    .lbud { grid-template-columns: 1fr; }
+    .lbud-controls { border-left: none; border-top: 1px solid var(--g-200); }
+    html.dark .lbud-controls { border-top-color: var(--g-300); }
+    .cshare-row { grid-template-columns: 1fr 96px; }
+    .cshare-row .dec-track { grid-column: 1 / -1; grid-row: 2; }
+  }

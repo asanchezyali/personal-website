@@ -8,6 +8,11 @@ import WebsiteEmbed from './WebsiteEmbed'
 import MathBox from './MathBox'
 import ImageBox from './ImageBox'
 import Reference from './Reference'
+import Aside from './Aside'
+import Figure from './Figure'
+import SystemMap from './SystemMap'
+import CodeShare from './CodeShare'
+import LatencyBudget from './LatencyBudget'
 import StackList from './StackList'
 import CaseSummary from './CaseSummary'
 import VectorPlot from './VectorPlot'
@@ -144,4 +149,9 @@ export const components: MDXComponents = {
   WebsiteEmbed,
   MathBox,
   Reference,
+  Aside,
+  Figure,
+  SystemMap,
+  CodeShare,
+  LatencyBudget,
 }

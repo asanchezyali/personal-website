@@ -1,0 +1,578 @@
+---
+title: 'El modelo es la caja más pequeña: anatomía de un sistema de IA'
+date: '2026/11/11'
+tags: ['arquitectura-de-ia', 'llm', 'system-design', 'mlops', 'plixiq']
+draft: false
+summary: 'En Plixiq, 25 de las 25.249 líneas del backend llaman al modelo. Este artículo recorre las capas que rodean al LLM (contexto, inferencia, gateway, guardrails y monitoreo) con fuentes primarias, una medición sobre código real, una simulación de latencia de cola y un checklist para diseñar tu propio sistema.'
+layout: PostLayout
+language: 'es'
+authors: ['yali']
+series:
+  title: 'Arquitectura de sistemas de IA'
+  order: 1
+---
+
+Hace unas semanas conté las líneas de [Plixiq](/es/blog/case-studies/plixiq), la plataforma de agentes de
+IA para WhatsApp que construí y desplegué. El backend tiene 25.249 líneas de Python, sin contar pruebas ni
+migraciones. ¿Cuántas de ellas llaman al modelo de lenguaje?
+
+Antes de seguir, haz tu apuesta.
+
+<Figure
+  n={1}
+  label="Figura"
+  caption="Las líneas del backend de Plixiq (commit cb99c7b, 11-nov-2026) agrupadas por capa. Cuento líneas no vacías y sin comentarios; el método está al final del artículo."
+>
+  <CodeShare
+    locale="es-CO"
+    answer="model_call"
+    exactLines={25}
+    buckets={[
+      { id: 'api', label: 'API, autenticación y esquemas', lines: 8401 },
+      { id: 'infra', label: 'Plataforma e infraestructura', lines: 3678 },
+      { id: 'orchestration', label: 'Orquestación y estado', lines: 3212 },
+      { id: 'context', label: 'Contexto y herramientas', lines: 2721 },
+      { id: 'domain', label: 'Dominio del negocio', lines: 2490 },
+      { id: 'cost', label: 'Costos y medición de uso', lines: 1861 },
+      { id: 'channel', label: 'Canal de WhatsApp', lines: 1500 },
+      { id: 'guardrails', label: 'Guardrails y escalamiento', lines: 679 },
+      { id: 'model_call', label: 'Cliente del modelo', lines: 414 },
+      { id: 'observability', label: 'Observabilidad y auditoría', lines: 293 },
+    ]}
+    labels={{
+      question: '¿Qué porcentaje del backend crees que llama al modelo?',
+      guess: 'apuesta',
+      reveal: 'Revelar',
+      yourGuess: 'Tu apuesta',
+      actual: 'Módulo del modelo',
+      exact: 'la llamada en sí',
+      lines: 'líneas',
+      reset: 'Apostar de nuevo',
+    }}
+  />
+</Figure>
+
+Las expresiones que invocan `litellm.acompletion` ocupan 25 líneas: el 0,10 % del backend. Si sumo todo el
+módulo que envuelve esa llamada (reintentos, fallback, conteo de tokens, manejo de errores), llego a 414
+líneas, el 1,64 %. El 98 % restante es todo lo demás: la API, el estado de la conversación, las
+herramientas que el agente puede usar, los guardrails, la facturación, el canal de WhatsApp.
+
+Este resultado no es nuevo. En 2015, un equipo de Google publicó en NeurIPS un artículo con una figura que
+se volvió famosa: una caja negra diminuta, rotulada _ML Code_, rodeada de cajas mucho más grandes para la
+recolección de datos, la verificación, la configuración, el monitoreo y la infraestructura de servicio. La
+leyenda dice: "Solo una fracción pequeña de los sistemas de ML del mundo real está compuesta por el código
+de ML [...]. La infraestructura que lo rodea es vasta y compleja"[^sculley].
+
+Lo que cambió en 2026 es que la caja se hizo todavía más pequeña. En 2015 esa caja tenía código de
+entrenamiento. Hoy, para muchos equipos, es una llamada HTTP a un modelo que no entrenaron.
+
+**La tesis de este artículo:** en un sistema de IA, el modelo es la caja más pequeña, y la confiabilidad se
+diseña en las capas que lo rodean. Si sabes qué hace cada capa, qué falla cuando falta y cuánto cuesta en
+latencia, puedes diseñar un sistema en el que alguien confíe.
+
+## El mapa
+
+Voy a usar este mapa durante todo el artículo. Haz clic en una capa para ver qué hace.
+
+<Figure
+  n={2}
+  label="Figura"
+  caption="Las capas de un sistema de IA en 2026. El modelo aparece como la caja más angosta a propósito. El monitoreo atraviesa todas las capas."
+>
+  <SystemMap
+    layers={[
+      { id: 'app', label: 'Aplicación', detail: 'El producto: interfaz, canales (WhatsApp, web) y reglas del negocio.' },
+      { id: 'gateway', label: 'Gateway y guardrails', detail: 'Autenticación, límites de uso, enrutamiento entre modelos, fallbacks y verificaciones de entrada y salida.' },
+      { id: 'context', label: 'Datos y contexto', detail: 'Lo que el modelo ve: recuperación (RAG), herramientas, memoria de la conversación y el prompt.' },
+      { id: 'model', label: 'Modelo', detail: 'Los pesos, o la API que los esconde.' },
+      { id: 'inference', label: 'Inferencia', detail: 'El servicio del modelo: prefill, decode, batching y KV cache.' },
+      { id: 'hardware', label: 'Hardware', detail: 'GPUs, memoria, red y almacenamiento; o la factura del proveedor.' },
+    ]}
+    side={{ id: 'monitoring', label: 'Monitoreo y evals', detail: 'Trazas, métricas, costos, evaluaciones y alertas, en todas las capas.' }}
+    labels={{ hint: 'Haz clic en una capa para ver qué hace.' }}
+  />
+</Figure>
+
+El orden de las secciones sigue una idea que tomé de Chip Huyen, que en su guía de plataformas de IA
+generativa empieza "desde la arquitectura más simple" y agrega componentes de forma progresiva[^huyen]. Voy
+a hacer lo mismo, con una regla: cada capa entra porque la versión anterior se rompió.
+
+**¿Qué necesitas saber?** Qué es un LLM, qué es una API HTTP y algo de Python. **¿Qué te llevas?** Una forma de
+razonar sobre dónde se va el tiempo de una petición, por qué un fallback cambia tu p99 y un checklist de
+diez preguntas para revisar tu arquitectura.
+
+## Versión 0: una demo que funciona en tu portátil
+
+Todo sistema de IA empieza así:
+
+```python
+import litellm
+
+response = litellm.completion(
+    model="anthropic/claude-sonnet-5-5",
+    messages=[{"role": "user", "content": "¿A qué hora abre la tienda?"}],
+)
+print(response.choices[0].message.content)
+```
+
+Ocho líneas, y la respuesta suena razonable. El problema es lo que esta versión no puede hacer:
+
+- No sabe a qué hora abre **tu** tienda. El modelo solo conoce lo que vio durante el entrenamiento.
+- Si el proveedor tarda 40 segundos o devuelve un error de sobrecarga, el usuario se queda esperando o ve una traza.
+- No sabes cuánto costó la llamada, ni si la respuesta fue buena, ni si alguien le pidió al modelo que
+  ignorara sus instrucciones.
+
+Las Reglas de ML de Google empiezan con un consejo que conviene recordar aquí: "No tengas miedo de lanzar
+un producto sin machine learning". La regla 4 agrega: "Mantén simple el primer modelo y haz bien la
+infraestructura"[^zinkevich]. Ambas reglas apuntan a lo mismo: el esfuerzo de ingeniería va en lo que rodea
+al modelo.
+
+<Aside title="¿No basta con un framework de agentes?">
+
+Un framework te da piezas, no decisiones. El equipo de Anthropic que escribió _Building effective agents_
+recomienda "encontrar la solución más simple posible, y aumentar la complejidad solo cuando haga
+falta"[^anthropic]. Su bloque básico es un LLM "aumentado" con recuperación, herramientas y memoria. Esas
+tres cosas son justamente la siguiente capa.
+
+</Aside>
+
+## La calidad de la respuesta se decide antes de llamar al modelo
+
+La primera falla de la versión 0 es de información. El modelo responde con seguridad sobre una tienda que
+no conoce. Lo que hay que cambiar es lo que el modelo ve.
+
+La capa de **datos y contexto** construye, en cada petición, el paquete que recibe el modelo: el prompt del
+sistema, los fragmentos recuperados de una base de conocimiento (RAG), las definiciones de las herramientas
+que puede invocar y la memoria de la conversación.
+
+<Figure
+  n={3}
+  label="Figura"
+  caption="La capa de datos y contexto. En Plixiq ocupa el 10,8 % del backend, seis veces más que el cliente del modelo."
+>
+  <SystemMap
+    highlight="context"
+    layers={[
+      { id: 'app', label: 'Aplicación', detail: 'El producto: interfaz, canales y reglas del negocio.' },
+      { id: 'gateway', label: 'Gateway y guardrails', detail: 'Autenticación, enrutamiento, fallbacks y verificaciones.' },
+      { id: 'context', label: 'Datos y contexto', detail: 'Recuperación, herramientas, memoria y prompt. Aquí se decide qué sabe el modelo en cada petición.' },
+      { id: 'model', label: 'Modelo', detail: 'Los pesos, o la API que los esconde.' },
+      { id: 'inference', label: 'Inferencia', detail: 'Prefill, decode, batching, KV cache.' },
+      { id: 'hardware', label: 'Hardware', detail: 'GPUs, memoria, red y almacenamiento.' },
+    ]}
+    side={{ id: 'monitoring', label: 'Monitoreo y evals', detail: 'Trazas, métricas, costos y evaluaciones.' }}
+  />
+</Figure>
+
+En Plixiq, esta capa tiene 2.721 líneas. La mayoría son herramientas: consultar disponibilidad en un
+calendario, crear una reserva, buscar un producto en el catálogo. Cada herramienta es código determinista
+con validaciones, porque el modelo decide _cuándo_ llamarla, pero el código decide _qué pasa_.
+
+El artículo de Sculley y sus coautores ya advertía sobre los riesgos de esta capa. Dos de sus categorías de
+deuda técnica aplican casi palabra por palabra a un sistema con LLM:
+
+- **Código pegamento** (_glue code_): "una cantidad masiva de código de soporte escrito para meter y sacar
+  datos de paquetes de propósito general"[^sculley]. Los mismos autores estiman que un sistema maduro puede
+  terminar siendo "(como máximo) 5 % código de machine learning y (como mínimo) 95 % código pegamento".
+- **Selvas de pipelines**: la preparación de datos que crece como "una selva de extracciones, uniones y
+  muestreos". En un sistema con RAG, la selva es la ingesta: documentos que se dividen, se vectorizan y se
+  vuelven a indexar con reglas que nadie documentó.
+
+El principio que resume la capa también es de 2015: **CACE**, "_Changing Anything Changes Everything_"
+(cambiar cualquier cosa cambia todo)[^sculley]. Si cambias el tamaño de los fragmentos del índice, cambian
+las respuestas. Si cambias la descripción de una herramienta, cambia cuándo la usa el modelo. Ninguno de
+esos cambios toca el modelo, y ambos cambian el comportamiento del sistema.
+
+**¿Cuándo no hace falta RAG?** Si el conocimiento cabe en el prompt y cambia poco (un horario, una lista de
+precios corta), ponerlo directamente en el prompt del sistema es más simple y más fácil de depurar que un
+índice vectorial.
+
+<Aside title="¿Y si uso un modelo con contexto de un millón de tokens?">
+
+Meter todo en el contexto cambia el problema, no lo elimina. Cada token de entrada se paga y alarga el
+prefill, que es la fase que determina cuánto tarda el primer token (lo verás en la siguiente sección). El
+caché de prompts ayuda: en la API de Anthropic, leer tokens desde el caché cuesta 0,1 veces el precio base
+de entrada en la mayoría de los modelos, y escribirlos en un caché de 5 minutos cuesta 1,25 veces[^caching].
+Pero el caché solo sirve si el prefijo del prompt se repite exactamente.
+
+</Aside>
+
+## La latencia vive en el decode
+
+Supongamos que el contexto ya es bueno. La siguiente queja de los usuarios es que el agente es lento. Para
+saber dónde se va el tiempo hay que entender cómo genera texto un LLM, porque lo hace en dos fases con
+perfiles de costo distintos.
+
+1. **Prefill.** El modelo procesa todo el prompt de una vez, en paralelo, y produce el primer token. Es una
+   fase limitada por el cómputo.
+2. **Decode.** El modelo genera los tokens restantes uno por uno. Cada paso procesa un solo token nuevo,
+   pero tiene que leer de memoria los pesos y el KV cache completos. Es una fase limitada por el ancho de
+   banda de la memoria.
+
+No es una intuición mía. El artículo de DistServe (OSDI 2024) lo describe así: el prefill "tiende a estar
+limitado por el cómputo", mientras que el decode, "a pesar de procesar un solo token nuevo por paso, incurre
+en un nivel de entrada/salida similar al del prefill, lo que lo limita por el ancho de banda de memoria de la
+GPU"[^distserve]. Splitwise (ISCA 2024) llega a la misma división: una fase de prompt "intensiva en cómputo"
+y una fase de generación "intensiva en memoria"[^splitwise].
+
+La consecuencia práctica es que el tiempo total de una respuesta crece con el número de tokens de salida.
+Pruébalo en la figura 4: es la línea de tiempo de una sola petición de chat.
+
+<Figure
+  n={4}
+  label="Figura"
+  caption="Presupuesto de latencia de una petición. Todos los valores son supuestos ajustables; la forma de la cascada es lo que importa. Prueba a subir los tokens de salida, activar el caché o simular que el modelo primario se cae."
+>
+  <LatencyBudget
+    locale="es-CO"
+    labels={{
+      gateway: 'gateway + auth',
+      inputGuard: 'guard de entrada',
+      retrieval: 'recuperación',
+      prefill: 'prefill (TTFT)',
+      decode: 'decode',
+      outputGuard: 'guard de salida',
+      telemetry: 'telemetría',
+      cache: 'acierto de caché',
+      timeout: 'timeout primario',
+      fallback: 'fallback',
+      guardMs: 'guard',
+      retrievalMs: 'recuperación',
+      ttft: 'TTFT',
+      tokens: 'tokens',
+      speed: 'tokens/s',
+      cacheHit: 'acierto de caché',
+      blockingGuard: 'guard de salida bloqueante',
+      primaryDown: 'primario caído',
+      firstToken: 'primer token visible',
+      fullAnswer: 'respuesta completa',
+      decodeShare: 'peso del decode',
+      offPath: 'en segundo plano',
+      hint: 'Cada número es un supuesto. Reemplázalos con tus propias trazas.',
+      reset: 'Reiniciar',
+    }}
+  />
+</Figure>
+
+Tres cosas que vale la pena notar en la figura:
+
+- Con los valores iniciales (250 tokens a 60 tokens por segundo), el decode se lleva cerca del 85 % del
+  tiempo. La palanca más barata para la latencia es una respuesta más corta.
+  En un canal como WhatsApp, eso además mejora la experiencia.
+- El **guard de salida bloqueante** retrasa el primer token visible hasta el final: si verificas la
+  respuesta completa antes de mostrarla, pierdes el streaming. Es un trade-off real entre seguridad y
+  latencia percibida. Una alternativa es verificar por fragmentos, o verificar en segundo plano y corregir
+  después, según el riesgo del dominio.
+- La **telemetría** va en segundo plano. Registrar una traza nunca debería sumar tiempo a la petición del
+  usuario.
+
+**Si alojas tu propio modelo**, la memoria del KV cache se vuelve tu problema. El artículo de vLLM (SOSP
+2023) midió que en los sistemas existentes "solo entre el 20,4 % y el 38,2 % de la memoria del KV cache se
+usa para guardar los estados de los tokens"; su técnica, PagedAttention, mejora el throughput "de 2 a 4
+veces con el mismo nivel de latencia"[^vllm]. En mi curso de LLMs hay un
+[calculador interactivo del tamaño del KV cache](/es/courses/foundations-of-llms/02-decoder-pre-training)
+si quieres ver cuánto pesa para modelos concretos.
+
+**Si usas una API**, heredas estas decisiones del proveedor. Lo que sí controlas es el número de tokens de
+entrada (prefill) y de salida (decode), el caché y el streaming.
+
+## Un fallback es otro modelo
+
+La tercera falla llega un martes cualquiera: el proveedor responde con errores de sobrecarga o deja de
+responder. La versión 0 se cae con él.
+
+La capa de **gateway** se pone entre tu aplicación y los proveedores. Centraliza la autenticación, los
+límites de uso, el registro de costos y, sobre todo, el enrutamiento: a qué modelo va cada petición y qué
+pasa si ese modelo falla. Vercel, por ejemplo, documenta en su AI Gateway una lista de modelos de respaldo
+que "se prueban en orden si el modelo primario falla o no está disponible"[^vercel-docs].
+
+¿Qué tan seguido pasa? Vercel publicó en mayo de 2026 que "aproximadamente el 3,5 % de las peticiones en AI
+Gateway se completan después de un fallback", medido sobre siete meses de tráfico[^vercel-index]. Es un
+número que el proveedor reporta sobre su propia plataforma, pero da un orden de magnitud: no es un evento
+raro.
+
+Una implementación mínima con un timeout explícito se ve así:
+
+```python
+import asyncio
+
+import litellm
+import openai
+
+PRIMARY = "anthropic/claude-sonnet-5-5"
+FALLBACK = "anthropic/claude-haiku-5-5"
+CANNED_REPLY = "Estoy teniendo problemas para responder. Te paso con una persona."
+
+
+async def answer(messages: list[dict], timeout_s: float = 8.0) -> str:
+    for model in (PRIMARY, FALLBACK):
+        try:
+            response = await asyncio.wait_for(
+                litellm.acompletion(model=model, messages=messages),
+                timeout=timeout_s,
+            )
+            return response.choices[0].message.content
+        except (asyncio.TimeoutError, openai.APIError):
+            # litellm maps provider errors to subclasses of openai.APIError.
+            continue  # In a real system: emit a metric with the model and the error type.
+    return CANNED_REPLY
+```
+
+El código es corto. Lo difícil es elegir el `timeout_s`, y aquí hay un efecto que no es obvio hasta que lo
+mides. Escribí una simulación (el código está en la sección de metodología): 200.000 peticiones con
+latencias log-normales, una mediana de 2 s para el modelo primario y 2,5 s para el de respaldo. Una fracción
+de las peticiones al primario se cuelga hasta que vence el timeout y luego pasa al respaldo.
+
+| fallas del primario | timeout | p50    | p95    | p99         |
+| ------------------- | ------- | ------ | ------ | ----------- |
+| 0 %                 | 5 s     | 2,00 s | 3,56 s | 4,49 s      |
+| 0,5 %               | 5 s     | 2,01 s | 3,62 s | 4,92 s      |
+| 1 %                 | 5 s     | 2,01 s | 3,68 s | 6,37 s      |
+| 3,5 %               | 5 s     | 2,03 s | 4,22 s | 8,01 s      |
+| 1 %                 | 30 s    | 2,01 s | 3,68 s | **31,01 s** |
+| 3,5 %               | 30 s    | 2,03 s | 4,22 s | **33,01 s** |
+
+La mediana casi no se mueve. El p99 sí: **en cuanto más del 1 % de las peticiones pasa por el fallback, tu p99
+deja de depender del modelo y pasa a depender de tu timeout**. Con un timeout de 30 s, el 1 % de usuarios más
+lento espera más de 31 segundos. Con la tasa que reporta Vercel (3,5 %), incluso el p95 empieza a moverse.
+
+De ahí salen tres reglas de diseño:
+
+1. **El timeout es una decisión de producto**, no un valor por defecto de la biblioteca. Ponlo cerca del p99
+   sano del modelo primario, no en 30 o 60 segundos.
+2. **Un fallback es otro modelo.** Tiene otro estilo, otros límites de contexto y otra forma de usar las
+   herramientas. Evalúalo con el mismo conjunto de pruebas que el primario antes de ponerlo en la cadena.
+3. **Mide la tasa de fallback.** Si no sabes qué fracción de tus peticiones termina en el respaldo, no
+   sabes cuál es tu latencia real.
+
+Los **guardrails** viven en la misma capa: verificaciones de entrada (intentos de inyección de prompt, datos
+personales que no deberían salir) y de salida (formato, contenido prohibido, promesas que el negocio no
+puede cumplir). En Plixiq, la capa de guardrails y escalamiento tiene 679 líneas, e incluye la herramienta
+que transfiere la conversación a una persona. Cada guard suma latencia en la ruta de la petición, como viste
+en la figura 4, así que la pregunta de diseño es cuáles deben bloquear y cuáles pueden correr en segundo
+plano.
+
+<Aside tone="warn" title="Una trampa común">
+
+Probar el fallback desconectando el proveedor en local no basta. El caso que más duele es la conexión que
+se queda abierta sin responder. Si tu código solo captura excepciones y no
+tiene un timeout explícito, el fallback nunca se activa.
+
+La segunda trampa está en qué excepción capturas. En `litellm`, los errores de límite de uso, de timeout
+y de servicio no disponible heredan de `openai.APIError`, no de `litellm.exceptions.APIError`. Si capturas la
+clase de `litellm`, esos errores atraviesan tu bloque `except` y el fallback tampoco se activa. Lo comprobé
+revisando la jerarquía de clases en el entorno de Plixiq antes de escribir el ejemplo.
+
+</Aside>
+
+## Si no lo mides, no puedes confiar en él
+
+Con contexto, gateway y guardrails, el sistema ya responde bien la mayoría de las veces. ¿Cómo lo sabes?
+Esta es la capa que convierte "parece que funciona" en un número.
+
+<Figure
+  n={5}
+  label="Figura"
+  caption="El monitoreo atraviesa todas las capas. Es la única forma de saber si el sistema se degrada sin que nadie lo reporte."
+>
+  <SystemMap
+    highlight="monitoring"
+    layers={[
+      { id: 'app', label: 'Aplicación', detail: 'El producto: interfaz, canales y reglas del negocio.' },
+      { id: 'gateway', label: 'Gateway y guardrails', detail: 'Autenticación, enrutamiento, fallbacks y verificaciones.' },
+      { id: 'context', label: 'Datos y contexto', detail: 'Recuperación, herramientas, memoria y prompt.' },
+      { id: 'model', label: 'Modelo', detail: 'Los pesos, o la API que los esconde.' },
+      { id: 'inference', label: 'Inferencia', detail: 'Prefill, decode, batching, KV cache.' },
+      { id: 'hardware', label: 'Hardware', detail: 'GPUs, memoria, red y almacenamiento.' },
+    ]}
+    side={{ id: 'monitoring', label: 'Monitoreo y evals', detail: 'Trazas por petición, latencia por fase, tokens y costo, tasa de fallback, resultados de evaluaciones y alertas.' }}
+  />
+</Figure>
+
+El monitoreo de un sistema con LLM tiene dos partes que conviene no confundir.
+
+**La primera es operativa:** latencia por fase, tokens, costo por petición, tasa de errores y de fallback.
+OpenTelemetry está estandarizando cómo se nombran estas señales en sus convenciones semánticas para IA
+generativa. Ojo con la fecha: las convenciones siguen en estado _Development_ y en 2026 se movieron a un
+repositorio propio, donde métricas como `gen_ai.client.token.usage` se reemplazaron por histogramas
+separados por dirección, por ejemplo `gen_ai.client.inference.usage.input_tokens`. El tiempo hasta el primer
+fragmento se registra como `gen_ai.client.inference.time_to_first_chunk`[^otel]. Si instrumentas hoy, fija la
+versión de las convenciones que usas.
+
+**La segunda es de calidad:** ¿las respuestas son correctas? Aquí no hay atajo. Hamel Husain lo resume así: "los productos que fracasan
+casi siempre comparten una causa raíz: no haber creado sistemas de evaluación robustos"[^husain].
+
+La forma más simple de empezar es la que los equipos de ML llaman un **canario**: un conjunto fijo de casos
+con respuestas conocidas (un _gold standard_) que corre antes de cada despliegue y bloquea el despliegue si la
+calidad cae.
+
+```python
+import json
+import sys
+
+from my_agent import answer_sync  # The system under test.
+
+THRESHOLD = 0.9
+
+
+def passes(case: dict, reply: str) -> bool:
+    # Start with checks you can write as code; add an LLM judge only for what code can't check.
+    return all(term.lower() in reply.lower() for term in case["must_include"])
+
+
+def main(path: str = "golden_set.jsonl") -> None:
+    cases = [json.loads(line) for line in open(path)]
+    score = sum(passes(c, answer_sync(c["messages"])) for c in cases) / len(cases)
+    print(f"golden set: {score:.1%} ({len(cases)} cases)")
+    sys.exit(0 if score >= THRESHOLD else 1)  # A non-zero exit blocks the deploy in CI.
+
+
+if __name__ == "__main__":
+    main()
+```
+
+Este script hace lo que el principio CACE pide: cada vez que cambias un prompt, la descripción de una
+herramienta, el índice de RAG o el modelo de respaldo, el conjunto de casos te dice si rompiste algo que ya
+funcionaba.
+
+Hay una lección incómoda en la figura 1: en Plixiq, observabilidad y auditoría son la capa más delgada, con
+293 líneas, el 1,16 %. Parte de la instrumentación vive dentro de otros módulos (el cliente del modelo
+registra métricas y trazas), así que el número subestima el esfuerzo real. Pero confirma un patrón común: es
+la capa que se deja para después.
+
+Para quien necesite un marco más formal, el AI Risk Management Framework del NIST organiza este trabajo en
+cuatro funciones (gobernar, mapear, medir y gestionar) y lista las características de un sistema de IA
+confiable: válido y fiable, seguro, protegido y resiliente, responsable y transparente, explicable e
+interpretable, con privacidad reforzada y justo, con los sesgos dañinos gestionados[^nist]. Para los sistemas
+de ML clásicos, el _ML Test Score_ de Google propone 28 pruebas y necesidades de monitoreo concretas[^breck].
+
+## API o GPUs propias: una decisión de arquitectura
+
+La última capa es la de abajo. Para la mayoría de los productos que empiezan, la capa de hardware es una
+factura: usas una API y el proveedor resuelve la inferencia. Alojar un modelo propio tiene sentido cuando
+pasa algo de esto:
+
+- los datos no pueden salir de tu infraestructura,
+- el volumen es tan alto y estable que el costo por token de la API supera el de operar GPUs,
+- necesitas un modelo ajustado (fine-tuned) que el proveedor no sirve.
+
+Si eliges alojarlo, todo lo de la sección de inferencia pasa a ser tu responsabilidad: el batching, el KV
+cache, la elección entre prefill y decode en las mismas máquinas o separados (la idea central de DistServe y
+Splitwise)[^distserve][^splitwise]. Y las capas de arriba no desaparecen: el gateway, los guardrails y las
+evaluaciones siguen siendo necesarios.
+
+## Una petición, de punta a punta
+
+Junta las capas y sigue un mensaje real, por ejemplo un cliente que escribe por WhatsApp "¿tienen mesa para
+cuatro el sábado a las 8?":
+
+1. **Aplicación.** El webhook del canal recibe el mensaje y lo asocia a una conversación.
+2. **Gateway.** Se autentica el tenant, se verifican los límites de uso y el guard de entrada revisa el texto.
+3. **Contexto.** Se carga el historial de la conversación y se arma el prompt con las herramientas
+   disponibles, entre ellas `check_availability`.
+4. **Modelo e inferencia.** El modelo decide llamar a `check_availability` con fecha, hora y número de
+   personas.
+5. **Contexto otra vez.** El código de la herramienta consulta el calendario y devuelve el resultado.
+6. **Modelo e inferencia.** Segunda llamada: el modelo redacta la respuesta con la disponibilidad real.
+7. **Gateway.** El guard de salida revisa la respuesta.
+8. **Aplicación.** La respuesta sale por WhatsApp.
+9. **Monitoreo, en segundo plano.** Se registran la traza, los tokens, el costo y la latencia de cada fase.
+
+Dos detalles de diseño salen de este recorrido. Primero, **una pregunta del usuario puede costar varias
+llamadas al modelo**: cada llamada a una herramienta agrega un ciclo de prefill y decode. Tu presupuesto de
+latencia tiene que contar ciclos, no peticiones. Segundo, **el estado vive en un solo lugar**: la
+conversación se guarda en la capa de contexto, y los demás componentes pueden ser sin estado, lo que hace
+mucho más fácil escalarlos.
+
+## Modos de falla
+
+| Síntoma                                         | Causa probable                                             | Solución                                                          |
+| ----------------------------------------------- | ---------------------------------------------------------- | ----------------------------------------------------------------- |
+| El agente inventa datos del negocio             | El contexto no trae la información, o la trae enterrada    | Revisa qué recupera el RAG para esa pregunta antes de tocar el prompt |
+| El p99 es 10 veces la mediana                   | Fallbacks con timeouts largos                              | Baja el timeout cerca del p99 sano y mide la tasa de fallback     |
+| Las respuestas tardan aunque el modelo es rápido | Respuestas largas, o varias llamadas a herramientas         | Limita los tokens de salida y cuenta ciclos por pregunta          |
+| Un cambio pequeño de prompt rompe otro flujo     | CACE: todo depende de todo                                 | Conjunto de casos que corre antes de cada despliegue              |
+| El costo sube sin que suba el tráfico            | Contexto que crece con el historial, o caché que no acierta | Registra tokens de entrada por petición y la tasa de acierto del caché |
+| El fallback responde con otro formato            | El modelo de respaldo nunca se evaluó                      | Evalúa el respaldo con el mismo conjunto que el primario          |
+
+## El checklist: diez preguntas para tu arquitectura
+
+1. ¿Qué parte de la respuesta depende del contexto y qué parte del modelo? ¿Puedes ver el contexto exacto
+   de una petición en producción?
+2. ¿Cuál es tu presupuesto de latencia, separado en primer token y respuesta completa?
+3. ¿Cuántas llamadas al modelo hace, en promedio, una pregunta del usuario?
+4. ¿Qué timeout tiene cada llamada, y quién lo eligió?
+5. ¿Qué fracción de peticiones termina en el fallback? ¿Evaluaste el modelo de respaldo?
+6. ¿Qué guardrails bloquean la respuesta y cuáles corren en segundo plano? ¿Por qué?
+7. ¿Cuánto cuesta una conversación típica, y lo sabes por petición, no por factura mensual?
+8. ¿Tienes un conjunto fijo de casos que corre antes de cada despliegue?
+9. ¿Qué pasa cuando todo falla? ¿Hay una respuesta de cortesía y una forma de pasar a una persona?
+10. ¿Dónde vive el estado de la conversación, y qué componentes son sin estado?
+
+Si alguna respuesta es "no sé", ahí está la siguiente tarea.
+
+## Metodología y límites
+
+**El conteo de líneas.** Conté líneas no vacías y sin comentarios en `backend/src` de Plixiq (commit
+`cb99c7b`, 11 de noviembre de 2026), sin pruebas ni migraciones. Asigné cada archivo a una capa con reglas
+por ruta; la asignación es mía y otra persona podría mover algunos archivos de capa. La cifra de 25 líneas
+cuenta las líneas que ocupan las expresiones `litellm.acompletion(...)`, medidas con el árbol sintáctico de
+Python. Las líneas de código no miden esfuerzo ni complejidad: una línea de un prompt puede costar más horas
+que cien de un esquema de la API. Lo que sí muestran es dónde vive el código que hay que mantener. El
+frontend (unas 25.800 líneas más) no entra en el conteo.
+
+**La simulación.** Las latencias son log-normales con σ = 0,35 en escala logarítmica y semilla fija, con
+200.000 peticiones por escenario. Los valores son supuestos, no mediciones de un proveedor. El modelo de falla
+es el peor caso (la petición se cuelga hasta el timeout); un error inmediato cuesta mucho menos. El resultado
+que importa no depende de los supuestos: si la tasa de fallback supera el 1 %, el p99 queda por encima del
+timeout.
+
+```python
+import math
+import random
+
+N, SEED, SIGMA = 200_000, 7, 0.35
+
+
+def simulate(p_fail: float, timeout_s: float, primary_s=2.0, fallback_s=2.5):
+    rng = random.Random(SEED)
+    draw = lambda median: rng.lognormvariate(math.log(median), SIGMA)
+    xs = sorted(
+        timeout_s + draw(fallback_s) if rng.random() < p_fail else draw(primary_s)
+        for _ in range(N)
+    )
+    return [xs[int(q * N)] for q in (0.50, 0.95, 0.99)]
+
+
+for timeout_s in (5.0, 30.0):
+    for p_fail in (0.0, 0.005, 0.01, 0.035):
+        print(p_fail, timeout_s, [round(x, 2) for x in simulate(p_fail, timeout_s)])
+```
+
+**Lo que dejé fuera.** Los agentes con muchos pasos, la evaluación con LLM como juez, el diseño del RAG en
+detalle y el costo comparado entre API y GPUs propias. Los dos primeros vuelven en los siguientes
+artículos de la serie.
+
+## Lo que sigue
+
+El siguiente artículo de la serie toma la sección "Una petición, de punta a punta" y la convierte en un
+diseño completo: el gateway, el RAG, el estado de la sesión y la telemetría asíncrona, con un simulador
+de cadenas de fallback.
+
+Si estás diseñando un sistema de IA y quieres una segunda opinión sobre su arquitectura, puedes
+[escribirme](/es/collaborate).
+
+[^sculley]: D. Sculley, G. Holt, D. Golovin, E. Davydov, T. Phillips, D. Ebner, V. Chaudhary, M. Young, J.-F. Crespo y D. Dennison. "[Hidden Technical Debt in Machine Learning Systems](https://proceedings.neurips.cc/paper_files/paper/2015/hash/86df7dcfd896fcaf2674f757a2463eba-Abstract.html)". _NeurIPS 28_, 2015. Las citas son traducciones mías de la figura 1 y de las secciones sobre código pegamento y CACE.
+[^zinkevich]: M. Zinkevich. "[Rules of Machine Learning: Best Practices for ML Engineering](https://developers.google.com/machine-learning/guides/rules-of-ml)". Google for Developers. Reglas 1 y 4.
+[^anthropic]: E. Schluntz y B. Zhang. "[Building effective agents](https://www.anthropic.com/engineering/building-effective-agents)". Anthropic, diciembre de 2024.
+[^huyen]: C. Huyen. "[Building A Generative AI Platform](https://huyenchip.com/2024/07/25/genai-platform.html)". 25 de julio de 2024.
+[^caching]: Anthropic. "[Prompt caching](https://platform.claude.com/docs/en/build-with-claude/prompt-caching)". Documentación de Claude, consultada el 11 de noviembre de 2026. Algunos modelos tienen precios de lectura de caché menores.
+[^distserve]: Y. Zhong, S. Liu, J. Chen, J. Hu, Y. Zhu, X. Liu, X. Jin y H. Zhang. "[DistServe: Disaggregating Prefill and Decoding for Goodput-optimized Large Language Model Serving](https://arxiv.org/abs/2401.09670)". _OSDI 2024_.
+[^splitwise]: P. Patel, E. Choukse, C. Zhang, A. Shah, Í. Goiri, S. Maleki y R. Bianchini. "[Splitwise: Efficient Generative LLM Inference Using Phase Splitting](https://arxiv.org/abs/2311.18677)". _ISCA 2024_.
+[^vllm]: W. Kwon, Z. Li, S. Zhuang, Y. Sheng, L. Zheng, C. H. Yu, J. E. Gonzalez, H. Zhang e I. Stoica. "[Efficient Memory Management for Large Language Model Serving with PagedAttention](https://arxiv.org/abs/2309.06180)". _SOSP 2023_.
+[^vercel-docs]: Vercel. "[AI Gateway: Model fallbacks](https://vercel.com/docs/ai-gateway/models-and-providers/model-fallbacks)". Documentación, consultada el 11 de noviembre de 2026.
+[^vercel-index]: H. Arora e Y. Zhou. "[AI Gateway Production Index](https://vercel.com/blog/ai-gateway-production-index)". Blog de Vercel, mayo de 2026. Cifra reportada por Vercel sobre su propia plataforma.
+[^otel]: OpenTelemetry. "[Semantic conventions for generative AI](https://github.com/open-telemetry/semantic-conventions-genai)". Estado: _Development_, consultado el 11 de noviembre de 2026.
+[^husain]: H. Husain. "[Your AI Product Needs Evals](https://hamel.dev/blog/posts/evals/)". Marzo de 2024.
+[^nist]: NIST. "[Artificial Intelligence Risk Management Framework (AI RMF 1.0)](https://nvlpubs.nist.gov/nistpubs/ai/NIST.AI.100-1.pdf)". NIST AI 100-1, enero de 2023.
+[^breck]: E. Breck, S. Cai, E. Nielsen, M. Salib y D. Sculley. "[The ML Test Score: A Rubric for ML Production Readiness and Technical Debt Reduction](https://research.google/pubs/the-ml-test-score-a-rubric-for-ml-production-readiness-and-technical-debt-reduction/)". _IEEE Big Data 2017_.
