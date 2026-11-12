@@ -79,19 +79,19 @@ Voy a usar este mapa durante todo el artículo. Haz clic en una capa para ver qu
 <Figure
   n={2}
   label="Figura"
-  caption="Las capas de un sistema de IA en 2026. El modelo aparece como la caja más angosta a propósito. El monitoreo atraviesa todas las capas."
+  caption="Las capas de un sistema de IA en 2026, con sus componentes. Una petición baja hasta el hardware y vuelve; la columna de monitoreo registra su traza, una barra por capa, anidadas como en OpenTelemetry. El modelo es la caja más angosta a propósito."
 >
   <SystemMap
     layers={[
-      { id: 'app', label: 'Aplicación', detail: 'El producto: interfaz, canales (WhatsApp, web) y reglas del negocio.' },
-      { id: 'gateway', label: 'Gateway y guardrails', detail: 'Autenticación, límites de uso, enrutamiento entre modelos, fallbacks y verificaciones de entrada y salida.' },
-      { id: 'context', label: 'Datos y contexto', detail: 'Lo que el modelo ve: recuperación (RAG), herramientas, memoria de la conversación y el prompt.' },
-      { id: 'model', label: 'Modelo', detail: 'Los pesos, o la API que los esconde.' },
-      { id: 'inference', label: 'Inferencia', detail: 'El servicio del modelo: prefill, decode, batching y KV cache.' },
-      { id: 'hardware', label: 'Hardware', detail: 'GPUs, memoria, red y almacenamiento; o la factura del proveedor.' },
+      { id: 'app', label: 'Aplicación', detail: 'El producto: interfaz, canales (WhatsApp, web) y reglas del negocio.', parts: ['WhatsApp', 'Web', 'Reglas del negocio'] },
+      { id: 'gateway', label: 'Gateway y guardrails', detail: 'Autenticación, límites de uso, enrutamiento entre modelos, fallbacks y verificaciones de entrada y salida.', parts: ['Auth', 'Límites de uso', 'Router', 'Fallback', 'Guards'] },
+      { id: 'context', label: 'Datos y contexto', detail: 'Lo que el modelo ve: recuperación (RAG), herramientas, memoria de la conversación y el prompt.', parts: ['RAG', 'Base vectorial', 'Herramientas', 'Memoria', 'Prompt'] },
+      { id: 'model', label: 'Modelo', detail: 'Los pesos, o la API que los esconde.', parts: ['LLM'] },
+      { id: 'inference', label: 'Inferencia', detail: 'El servicio del modelo: prefill, decode, batching y KV cache.', parts: ['Prefill', 'Decode', 'Batching', 'KV cache'] },
+      { id: 'hardware', label: 'Hardware', detail: 'GPUs, memoria, red y almacenamiento; o la factura del proveedor.', parts: ['GPU', 'HBM', 'Red'] },
     ]}
-    side={{ id: 'monitoring', label: 'Monitoreo y evals', detail: 'Trazas, métricas, costos, evaluaciones y alertas, en todas las capas.' }}
-    labels={{ hint: 'Haz clic en una capa para ver qué hace.' }}
+    side={{ id: 'monitoring', label: 'Monitoreo y evals', detail: 'Trazas, métricas, costos, evaluaciones y alertas, en todas las capas.', parts: ['p99', 'Tokens', 'Costo', 'Evals'] }}
+    labels={{ hint: 'Haz clic en una capa para ver qué hace.', request: 'petición', response: 'respuesta', trace: 'Una petición, una traza: cada barra es el tiempo que la petición pasa dentro de una capa.', play: 'Reanudar', pause: 'Pausa' }}
   />
 </Figure>
 
@@ -155,14 +155,15 @@ que puede invocar y la memoria de la conversación.
   <SystemMap
     highlight="context"
     layers={[
-      { id: 'app', label: 'Aplicación', detail: 'El producto: interfaz, canales y reglas del negocio.' },
-      { id: 'gateway', label: 'Gateway y guardrails', detail: 'Autenticación, enrutamiento, fallbacks y verificaciones.' },
-      { id: 'context', label: 'Datos y contexto', detail: 'Recuperación, herramientas, memoria y prompt. Aquí se decide qué sabe el modelo en cada petición.' },
-      { id: 'model', label: 'Modelo', detail: 'Los pesos, o la API que los esconde.' },
-      { id: 'inference', label: 'Inferencia', detail: 'Prefill, decode, batching, KV cache.' },
-      { id: 'hardware', label: 'Hardware', detail: 'GPUs, memoria, red y almacenamiento.' },
+      { id: 'app', label: 'Aplicación', detail: 'El producto: interfaz, canales y reglas del negocio.', parts: ['WhatsApp', 'Web', 'Reglas del negocio'] },
+      { id: 'gateway', label: 'Gateway y guardrails', detail: 'Autenticación, enrutamiento, fallbacks y verificaciones.', parts: ['Auth', 'Límites de uso', 'Router', 'Fallback', 'Guards'] },
+      { id: 'context', label: 'Datos y contexto', detail: 'Recuperación, herramientas, memoria y prompt. Aquí se decide qué sabe el modelo en cada petición.', parts: ['RAG', 'Base vectorial', 'Herramientas', 'Memoria', 'Prompt'] },
+      { id: 'model', label: 'Modelo', detail: 'Los pesos, o la API que los esconde.', parts: ['LLM'] },
+      { id: 'inference', label: 'Inferencia', detail: 'Prefill, decode, batching, KV cache.', parts: ['Prefill', 'Decode', 'Batching', 'KV cache'] },
+      { id: 'hardware', label: 'Hardware', detail: 'GPUs, memoria, red y almacenamiento.', parts: ['GPU', 'HBM', 'Red'] },
     ]}
-    side={{ id: 'monitoring', label: 'Monitoreo y evals', detail: 'Trazas, métricas, costos y evaluaciones.' }}
+    side={{ id: 'monitoring', label: 'Monitoreo y evals', detail: 'Trazas, métricas, costos y evaluaciones.', parts: ['p99', 'Tokens', 'Costo', 'Evals'] }}
+    labels={{ hint: 'Haz clic en una capa para ver qué hace.', request: 'petición', response: 'respuesta', trace: 'Una petición, una traza: cada barra es el tiempo que la petición pasa dentro de una capa.', play: 'Reanudar', pause: 'Pausa' }}
   />
 </Figure>
 
@@ -380,14 +381,15 @@ Esta es la capa que convierte "parece que funciona" en un número.
   <SystemMap
     highlight="monitoring"
     layers={[
-      { id: 'app', label: 'Aplicación', detail: 'El producto: interfaz, canales y reglas del negocio.' },
-      { id: 'gateway', label: 'Gateway y guardrails', detail: 'Autenticación, enrutamiento, fallbacks y verificaciones.' },
-      { id: 'context', label: 'Datos y contexto', detail: 'Recuperación, herramientas, memoria y prompt.' },
-      { id: 'model', label: 'Modelo', detail: 'Los pesos, o la API que los esconde.' },
-      { id: 'inference', label: 'Inferencia', detail: 'Prefill, decode, batching, KV cache.' },
-      { id: 'hardware', label: 'Hardware', detail: 'GPUs, memoria, red y almacenamiento.' },
+      { id: 'app', label: 'Aplicación', detail: 'El producto: interfaz, canales y reglas del negocio.', parts: ['WhatsApp', 'Web', 'Reglas del negocio'] },
+      { id: 'gateway', label: 'Gateway y guardrails', detail: 'Autenticación, enrutamiento, fallbacks y verificaciones.', parts: ['Auth', 'Límites de uso', 'Router', 'Fallback', 'Guards'] },
+      { id: 'context', label: 'Datos y contexto', detail: 'Recuperación, herramientas, memoria y prompt.', parts: ['RAG', 'Base vectorial', 'Herramientas', 'Memoria', 'Prompt'] },
+      { id: 'model', label: 'Modelo', detail: 'Los pesos, o la API que los esconde.', parts: ['LLM'] },
+      { id: 'inference', label: 'Inferencia', detail: 'Prefill, decode, batching, KV cache.', parts: ['Prefill', 'Decode', 'Batching', 'KV cache'] },
+      { id: 'hardware', label: 'Hardware', detail: 'GPUs, memoria, red y almacenamiento.', parts: ['GPU', 'HBM', 'Red'] },
     ]}
-    side={{ id: 'monitoring', label: 'Monitoreo y evals', detail: 'Trazas por petición, latencia por fase, tokens y costo, tasa de fallback, resultados de evaluaciones y alertas.' }}
+    side={{ id: 'monitoring', label: 'Monitoreo y evals', detail: 'Trazas por petición, latencia por fase, tokens y costo, tasa de fallback, resultados de evaluaciones y alertas.', parts: ['p99', 'Tokens', 'Costo', 'Evals'] }}
+    labels={{ hint: 'Haz clic en una capa para ver qué hace.', request: 'petición', response: 'respuesta', trace: 'Una petición, una traza: cada barra es el tiempo que la petición pasa dentro de una capa.', play: 'Reanudar', pause: 'Pausa' }}
   />
 </Figure>
 
