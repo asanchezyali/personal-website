@@ -65,7 +65,7 @@ export default function HeroSection({ locale }: HeroSectionProps) {
         <p className="lede">{t('hero.title_2')}</p>
         <div className="ctas">
           <a
-            href="https://cal.com/asanchezyali/30min"
+            href="https://cal.com/asanchezyali/project-discovery-call"
             target="_blank"
             rel="noopener noreferrer"
             className="btn primary"

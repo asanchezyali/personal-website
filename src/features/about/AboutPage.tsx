@@ -152,7 +152,7 @@ export default function AboutPage({ author, locale }: AboutPageProps) {
             </div>
             <div className="ctas">
               <a
-                href="https://cal.com/asanchezyali/30min"
+                href="https://cal.com/asanchezyali/project-discovery-call"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn primary"
@@ -311,7 +311,7 @@ export default function AboutPage({ author, locale }: AboutPageProps) {
         <p>{t('cta.p')}</p>
         <div className="buttons">
           <a
-            href="https://cal.com/asanchezyali/30min"
+            href="https://cal.com/asanchezyali/project-discovery-call"
             target="_blank"
             rel="noopener noreferrer"
             className="btn primary"

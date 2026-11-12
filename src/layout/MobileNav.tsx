@@ -85,7 +85,7 @@ export default function MobileNav({ locale }: MobileNavProps) {
           ))}
         </div>
         <a
-          href="https://cal.com/asanchezyali/30min"
+          href="https://cal.com/asanchezyali/project-discovery-call"
           target="_blank"
           rel="noopener noreferrer"
           className="btn primary mnav-cta"

@@ -44,7 +44,7 @@ export default function CollaboratePage({ locale }: CollaboratePageProps) {
         <p>{t('hero.description')}</p>
         <div className="ctas">
           <a
-            href="https://cal.com/asanchezyali/30min"
+            href="https://cal.com/asanchezyali/project-discovery-call"
             target="_blank"
             rel="noopener noreferrer"
             className="btn primary"
@@ -284,7 +284,7 @@ export default function CollaboratePage({ locale }: CollaboratePageProps) {
         <div className="channels">
           <a
             className="channel"
-            href="https://cal.com/asanchezyali/30min"
+            href="https://cal.com/asanchezyali/project-discovery-call"
             target="_blank"
             rel="noreferrer"
           >
@@ -307,7 +307,7 @@ export default function CollaboratePage({ locale }: CollaboratePageProps) {
             </span>
             <div>
               <div className="lbl">{t('connect.channels.meetings')}</div>
-              <div className="val">cal.com/asanchezyali/30min</div>
+              <div className="val">cal.com/asanchezyali/project-discovery-call</div>
             </div>
             <span className="arr">↗</span>
           </a>
